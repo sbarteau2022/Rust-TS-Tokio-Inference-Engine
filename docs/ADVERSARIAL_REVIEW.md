@@ -15,13 +15,16 @@ related_files:
     lines: "1-1015"
     role: "config"
   - path: "Cargo.toml"
-    lines: "1-29"
+    lines: "1-33"
     role: "config"
   - path: "backend/rapid_worker.py"
     lines: "1-165"
     role: "primary"
   - path: "build.rs"
     lines: "1-60"
+    role: "primary"
+  - path: "examples/native_discriminators.rs"
+    lines: "1-145"
     role: "primary"
   - path: "fixtures/atan2.amvk"
     lines: null
@@ -43,6 +46,9 @@ related_files:
     role: "test"
   - path: "fixtures/native-heldout.tsv"
     lines: "1-16"
+    role: "test"
+  - path: "fixtures/native-interpretation-probes.tsv"
+    lines: "1-4"
     role: "test"
   - path: "fixtures/native-model.path"
     lines: "1-1"
@@ -416,3 +422,25 @@ composed graph. Stable semantic failure remains a failed gate, never rewritten
 as a passing quality claim. Native process/GPU fault isolation, physical MLX
 command-buffer cap, tensor batching and sustained serving SLO qualification
 remain limitations despite the logical three-lease admission bound.
+
+
+# Frozen-failure discriminator review — 2026-10-22
+
+Self-review, no delegated or independent reviewer. The new native diagnostic uses
+only fixed fixture prompts, public typed executor state, bounded 32-token decode,
+actual EOS and checked finite/bounded logits. Stable logsumexp tests cover offset
+invariance and malformed inputs. Its native feature requirement preserves minimal
+builds. Ordinary application serving code and both original fixtures are unchanged.
+Source indexing now includes examples. Bad diagnostic CLI forms reject before
+opening weights. Source hashes demonstrate the isolated embedding control changes
+only one arithmetic line while canonical corrected source remains untouched.
+
+The first stock comparison was rejected as a reference after discovering MTP
+sidecar-driven norm shifting. Accepted comparison uses symlinks to identical main
+shards, unchanged stock engine code and exact boundary token/template parity.
+Installed package RECORD and imported-module checks narrow contamination risk;
+these are recorded provenance, not an independent supply-chain audit. The regex
+warning is retained; parity covers tested prompts only. Stock BF16/F32 varies more
+than KV precision, so no KV-only causal claim is made. The async-cleanup probe's
+profile-dependent winner and thin cancellation margins remain explicit. A shared
+wrong answer does not establish all-route model correctness or production quality.

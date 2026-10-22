@@ -15,13 +15,16 @@ related_files:
     lines: "1-1015"
     role: "config"
   - path: "Cargo.toml"
-    lines: "1-29"
+    lines: "1-33"
     role: "config"
   - path: "backend/rapid_worker.py"
     lines: "1-165"
     role: "primary"
   - path: "build.rs"
     lines: "1-60"
+    role: "primary"
+  - path: "examples/native_discriminators.rs"
+    lines: "1-145"
     role: "primary"
   - path: "fixtures/atan2.amvk"
     lines: null
@@ -43,6 +46,9 @@ related_files:
     role: "test"
   - path: "fixtures/native-heldout.tsv"
     lines: "1-16"
+    role: "test"
+  - path: "fixtures/native-interpretation-probes.tsv"
+    lines: "1-4"
     role: "test"
   - path: "fixtures/native-model.path"
     lines: "1-1"
@@ -484,3 +490,20 @@ held-out cases; never special-case r10 or constrain away its wrong answer.
 3. After quality gates, advance completion-owned device state, actual tensor
 batching, paged regular KV and separately qualified TurboQuant attention. Keep
 MTP/drafting, ANE/AMX and proposed sampling rates gated by their own evidence.
+
+
+## After requested failure discriminators
+
+Stock mlx-lm, isolated from Rapid/DSpark and loaded from the same indexed main
+shards, reproduces both frozen answers. Native baseline has neither speculation
+nor prefix reuse nor quantized KV. The cancellation margin remains thin across
+stock BF16/F32 and native F32. Core drop semantics probes agree; an async-cleanup
+follow-up is precision-sensitive. Preserve original exactness and semantic gates;
+use explicit choices only where the API declares that output contract.
+
+Do not treat this agreement as all-route graph equivalence or fix a known model
+miss by rewriting expected answers. Finish paired real-prompt embedding margins,
+then extend reference comparisons to the frozen suite before assigning a wider
+fidelity label. Keep production readiness separate from backend fidelity and
+measured model behavior. Device-state/batching/KV work stays experimental until
+its numerical, cancellation, resource and quality gates pass.

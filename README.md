@@ -1,8 +1,8 @@
 ---
 title: "Rust Server — Apple native kernel compiler and runtime"
 document_type: "implementation"
-version: "1.17.0"
-date: "2026-10-22T22:53:08Z"
+version: "1.18.0"
+date: "2026-10-22T23:14:48Z"
 implementation_date: null
 author: "Codex for Stewart Barteau"
 reviewers: []
@@ -15,13 +15,16 @@ related_files:
     lines: "1-1015"
     role: "config"
   - path: "Cargo.toml"
-    lines: "1-29"
+    lines: "1-33"
     role: "config"
   - path: "backend/rapid_worker.py"
     lines: "1-165"
     role: "primary"
   - path: "build.rs"
     lines: "1-60"
+    role: "primary"
+  - path: "examples/native_discriminators.rs"
+    lines: "1-145"
     role: "primary"
   - path: "fixtures/atan2.amvk"
     lines: null
@@ -43,6 +46,9 @@ related_files:
     role: "test"
   - path: "fixtures/native-heldout.tsv"
     lines: "1-16"
+    role: "test"
+  - path: "fixtures/native-interpretation-probes.tsv"
+    lines: "1-4"
     role: "test"
   - path: "fixtures/native-model.path"
     lines: "1-1"
@@ -729,3 +735,44 @@ cases, 14,000 malformed FFI descriptors, Clippy and Metal/compiler gates pass.
 Combined emits `READY` then EOS. Unchanged model gates remain **20/20 contracted,
 15/16 raw, 23/24 extended**; context-512 continuation, overflow, isolation and
 drain pass. These are limited local results, not production qualification.
+
+
+## Frozen-failure discriminators
+
+The native baseline already has speculation and prefix reuse disabled and regular
+FP32 KV. These are recorded as existing settings, not counted as ablations;
+KV-only 16-bit native control is unsupported. The separately authorized stock
+mlx-lm reference remains outside the Rust server. Its checkpoint-dtype lane has
+unquantized BF16 KV; its widened-parameter lane has FP32 KV.
+
+A stock-loader hazard was observed: glob-loading the separate MTP sidecar shifts
+already-sanitized main norms and produces garbled text. The accepted reference
+uses unchanged stock engine code on a symlink view of exactly the four indexed
+main shards and the same boundary artifacts. The failed original-directory run
+is retained. All 166 installed mlx-lm Python source files match package RECORD;
+no Rapid/DSpark/DFlash modules are imported. Both prompts' template and token IDs
+match the native boundary exactly.
+
+Stock reproduces cancellation `No` and borrowing `No.` in both profiles. The
+lowercase no-minus-yes cancellation margin is 0.125 at checkpoint dtypes, 0.082024
+in stock FP32 and 0.107872 natively. These are thin margins, not evidence of a
+wide behavioral preference. The raw capitalization failure remains separate.
+Core drop/poll/owned-field probes agree, while an async-cleanup follow-up changes
+answer with stock precision. See [experiment design and limitations](docs/NATIVE_DISCRIMINATORS.md).
+
+`cargo run --release --locked --example native_discriminators` records both
+original prompts' native logits, stable logprobs, raw greedy output and drain.
+`--probes` runs separately labeled interpretation questions. This is an offline
+diagnostic with finite/bounds checks and two scalar tests; it changes no server
+configuration, fixture expectation, output contract or default decoding policy.
+
+
+Real-prompt embedding A/B (isolated control build, same native diagnostic):
+cancellation no-minus-yes moves **0.108324 → 0.107872**, a **-0.000452** delta;
+raw answer stays `No`. Borrowing stays `No.`. This confirms wiring and a small
+numerical effect, without establishing a semantic cure. Original fixture gates
+remain unchanged. [Measurements and reproducible provenance](evidence/native-discriminators/EXPERIMENTS.md).
+
+1.18.0 — 2026-10-22 — Native margin diagnostic, authorized external stock
+reference, indexed-shard loader control, interpretation probes and isolated
+real-prompt embedding A/B. Server runtime remains Rust-owned MLX.

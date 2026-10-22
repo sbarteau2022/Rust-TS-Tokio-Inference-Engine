@@ -1,0 +1,9 @@
+{
+  "canonical_source_sha256": "facdb98e0334fa947417facf80898097d9bba0936b963037691903402d6d2a2a",
+  "control_source_sha256": "1d8cd34be07c1644707d9548ce7f69c102d97792508b1c2a796b9c8790d92b9e",
+  "canonical_source_modified": false,
+  "variation": "omit only embedding scales/biases FP32 widening",
+  "release_cache_cloned": true,
+  "control_binary_sha256": "07c89cdc089da461256d93e116bd3173865760a1730f29ac8decc7c0056638d5",
+  "control_exit": 0
+}

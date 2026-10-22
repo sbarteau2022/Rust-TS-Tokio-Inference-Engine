@@ -1,0 +1,14 @@
+{
+  "pass": true,
+  "rust": {
+    "default": 116,
+    "debug": 116,
+    "minimal": 87,
+    "margin": 2
+  },
+  "typescript_tests": 5,
+  "scalar_projection_embedding": 93,
+  "scalar_operator": 43,
+  "model_smoke": "READY then EOS",
+  "production_qualified": false
+}

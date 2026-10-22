@@ -1,0 +1,30 @@
+NATIVE identity=509cc92543203798f2db08b6fb6cbb38a80942fc0437ae81a3ef9ff27720915b activation=f32 kv=f32 speculation=false prefix_reuse=false embedding_correction=build-bound
+INPUT case=poll-after-drop prompt="When a Rust future is dropped, is that same future ever polled again? Reply with only yes or no." ids=[248045, 846, 198, 4350, 264, 32671, 3725, 369, 11878, 11, 369, 421, 1788, 3725, 3397, 80737, 1495, 30, 17308, 440, 1132, 9542, 466, 874, 13, 248046, 198, 248045, 74455, 198, 248068, 271, 248069, 271]
+SCORE case=poll-after-drop candidate=yes token=9405 logit=18.207584381 logprob=-3.105740957
+SCORE case=poll-after-drop candidate=no token=2083 logit=19.750835419 logprob=-1.562489919
+SCORE case=poll-after-drop candidate=Yes token=9175 logit=19.048767090 logprob=-2.264558248
+SCORE case=poll-after-drop candidate=No token=2665 logit=20.851171494 logprob=-0.462153845
+MARGIN case=poll-after-drop no_minus_yes=1.543251038 capital_No_minus_no=1.100336075
+OUTPUT case=poll-after-drop text="No." tokens=[2665, 13, 248046] finish=eos
+INPUT case=owned-fields-drop prompt="When an owned Rust future is dropped, do the Drop implementations of its initialized owned fields run? Reply with only yes or no." ids=[248045, 846, 198, 4350, 449, 12567, 32671, 3725, 369, 11878, 11, 635, 279, 15272, 37066, 314, 1141, 16761, 12567, 4881, 1542, 30, 17308, 440, 1132, 9542, 466, 874, 13, 248046, 198, 248045, 74455, 198, 248068, 271, 248069, 271]
+SCORE case=owned-fields-drop candidate=yes token=9405 logit=20.094581604 logprob=-0.754563531
+SCORE case=owned-fields-drop candidate=no token=2083 logit=18.686317444 logprob=-2.162827691
+SCORE case=owned-fields-drop candidate=Yes token=9175 logit=19.684906006 logprob=-1.164239129
+SCORE case=owned-fields-drop candidate=No token=2665 logit=18.385196686 logprob=-2.463948449
+MARGIN case=owned-fields-drop no_minus_yes=-1.408264160 capital_No_minus_no=-0.301120758
+OUTPUT case=owned-fields-drop text="yes" tokens=[9405, 248046] finish=eos
+INPUT case=async-drop-cleanup prompt="Can dropping a Rust future await asynchronous cleanup? Reply with only yes or no." ids=[248045, 846, 198, 6503, 24304, 264, 32671, 3725, 2454, 37715, 20635, 30, 17308, 440, 1132, 9542, 466, 874, 13, 248046, 198, 248045, 74455, 198, 248068, 271, 248069, 271]
+SCORE case=async-drop-cleanup candidate=yes token=9405 logit=19.206211090 logprob=-1.430338084
+SCORE case=async-drop-cleanup candidate=no token=2083 logit=18.720558167 logprob=-1.915991007
+SCORE case=async-drop-cleanup candidate=Yes token=9175 logit=19.435070038 logprob=-1.201479136
+SCORE case=async-drop-cleanup candidate=No token=2665 logit=19.412481308 logprob=-1.224067866
+MARGIN case=async-drop-cleanup no_minus_yes=-0.485652924 capital_No_minus_no=0.691923141
+OUTPUT case=async-drop-cleanup text="Yes" tokens=[9175, 248046] finish=eos
+INPUT case=joinhandle-detach prompt="Does dropping a JoinHandle cancel an already spawned Tokio task? Reply with only yes or no." ids=[248045, 846, 198, 20810, 24304, 264, 15988, 6781, 8848, 449, 2582, 50763, 239784, 3274, 30, 17308, 440, 1132, 9542, 466, 874, 13, 248046, 198, 248045, 74455, 198, 248068, 271, 248069, 271]
+SCORE case=joinhandle-detach candidate=yes token=9405 logit=16.926319122 logprob=-3.668840371
+SCORE case=joinhandle-detach candidate=no token=2083 logit=18.954639435 logprob=-1.640520058
+SCORE case=joinhandle-detach candidate=Yes token=9175 logit=17.792919159 logprob=-2.802240334
+SCORE case=joinhandle-detach candidate=No token=2665 logit=20.238836288 logprob=-0.356323205
+MARGIN case=joinhandle-detach no_minus_yes=2.028320312 capital_No_minus_no=1.284196854
+OUTPUT case=joinhandle-detach text="No." tokens=[2665, 13, 248046] finish=eos
+DRAIN leases=0

@@ -1,0 +1,29 @@
+{
+  "mlx_lm": "0.31.3",
+  "mlx": "0.32.4",
+  "python": "3.12.14 (main, Aug 25 2026, 13:50:33) [Clang 22.1.3 ]",
+  "executable": "/Users/stewartbarteau/.local/share/uv/tools/rapid-mlx/bin/python",
+  "forbidden_modules": [],
+  "source_sha256": {
+    "/Users/stewartbarteau/.local/share/uv/tools/rapid-mlx/lib/python3.12/site-packages/mlx_lm/_version.py": "f0da9bc5c5c1bf21d576f7aa67b4eda887f1c7f0666746187b493e6831c4af6c",
+    "/Users/stewartbarteau/.local/share/uv/tools/rapid-mlx/lib/python3.12/site-packages/mlx_lm/tokenizer_utils.py": "25784bb03c922d0d7832ce6c66a6cd4eb3a4820b6c5a8e583dedb63a018fb56a",
+    "/Users/stewartbarteau/.local/share/uv/tools/rapid-mlx/lib/python3.12/site-packages/mlx_lm/utils.py": "ba0371e9c88d52b34d71271945c2394005fbcb2bfb2ee9f6f82d627a33b72422",
+    "/Users/stewartbarteau/.local/share/uv/tools/rapid-mlx/lib/python3.12/site-packages/mlx_lm/convert.py": "dc60df164c2d51ee2f05f5f9f3324bc3a44a59dd2ccddb75dde680e854ce5e9a",
+    "/Users/stewartbarteau/.local/share/uv/tools/rapid-mlx/lib/python3.12/site-packages/mlx_lm/models/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "/Users/stewartbarteau/.local/share/uv/tools/rapid-mlx/lib/python3.12/site-packages/mlx_lm/models/base.py": "61330e1c065739cd712bfeb09d673f33797cde7e613e95bf6d9ebbee9006f373",
+    "/Users/stewartbarteau/.local/share/uv/tools/rapid-mlx/lib/python3.12/site-packages/mlx_lm/models/cache.py": "819ed95dcbf755652363cfdb15a639890447abb534a06dcefd52c7fff5055750",
+    "/Users/stewartbarteau/.local/share/uv/tools/rapid-mlx/lib/python3.12/site-packages/mlx_lm/sample_utils.py": "c0ce439f8dbf0d4e6d0f37f728a324f3f72878e6a9123df41be520804c596d67",
+    "/Users/stewartbarteau/.local/share/uv/tools/rapid-mlx/lib/python3.12/site-packages/mlx_lm/generate.py": "270778ad53eaca55a8533d82e6752660fe5d2605c4aa0879b48a50a91f69345f",
+    "/Users/stewartbarteau/.local/share/uv/tools/rapid-mlx/lib/python3.12/site-packages/mlx_lm/__init__.py": "f9ffa88772d26e537a98aa39ab16488a7a0d13cc1fac5d665376132c94b49608",
+    "/Users/stewartbarteau/.local/share/uv/tools/rapid-mlx/lib/python3.12/site-packages/mlx_lm/models/gated_delta.py": "79c8376a51c694b03e54d2f996ced6ea6c8c42868b8571529f97334db165a3e1",
+    "/Users/stewartbarteau/.local/share/uv/tools/rapid-mlx/lib/python3.12/site-packages/mlx_lm/models/activations.py": "dbca5bae41ba0a8380a53903c3e98da37c1e15b46383bc2edb5806ba94fafe72",
+    "/Users/stewartbarteau/.local/share/uv/tools/rapid-mlx/lib/python3.12/site-packages/mlx_lm/models/rope_utils.py": "9f68c938c040fa111d13f2ed95c70e8261515fb3b54f8a0a474c096baf4e087a",
+    "/Users/stewartbarteau/.local/share/uv/tools/rapid-mlx/lib/python3.12/site-packages/mlx_lm/models/switch_layers.py": "073a6a808d5c90bb699a2ecca0e559b06727ae96dbc1f0253e4c7e77e4ee1ef2",
+    "/Users/stewartbarteau/.local/share/uv/tools/rapid-mlx/lib/python3.12/site-packages/mlx_lm/models/qwen3_next.py": "3c572fe3fbb36721efab4d80d1bb6af11beb4ad1caae18deefc9fc84cbcd9b79",
+    "/Users/stewartbarteau/.local/share/uv/tools/rapid-mlx/lib/python3.12/site-packages/mlx_lm/models/qwen3_5.py": "f0daa30bba5cb521c8bdfa7093101a544c6a37bbba09bca582288219cb04ae3a",
+    "/Users/stewartbarteau/.local/share/uv/tools/rapid-mlx/lib/python3.12/site-packages/mlx_lm/models/qwen3_5_moe.py": "ef9e8e1f6a5c097b29587c8330e8eb9c9cbdc52fbb4597fbc2362606c1996619",
+    "/Users/stewartbarteau/.local/share/uv/tools/rapid-mlx/lib/python3.12/site-packages/mlx_lm/tool_parsers/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "/Users/stewartbarteau/.local/share/uv/tools/rapid-mlx/lib/python3.12/site-packages/mlx_lm/tool_parsers/qwen3_coder.py": "32de6d9f7472a1f00a2acfaacaf13e0e0864cfc19adebbff688ac5004b8ecc25"
+  },
+  "seconds": 5.702338695526123
+}

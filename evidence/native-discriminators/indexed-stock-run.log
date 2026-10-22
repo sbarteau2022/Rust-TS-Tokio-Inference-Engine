@@ -1,0 +1,5 @@
+[transformers] The tokenizer you are loading from '/tmp/rust-server-combined-indexed-stock-view' with an incorrect regex pattern: https://huggingface.co/mistralai/Mistral-Small-3.1-24B-Instruct-2503/discussions/84#69121093e8b480e709447d5e. This will lead to incorrect tokenization. You should set the `fix_mistral_regex=True` flag when loading this tokenizer to fix this issue.
+STOCK r10 checkpoint-dtypes No 0.125
+STOCK rust-borrow checkpoint-dtypes No. 7.1875
+STOCK r10 f32-parameters No 0.08202362060546875
+STOCK rust-borrow f32-parameters No. 7.088315963745117

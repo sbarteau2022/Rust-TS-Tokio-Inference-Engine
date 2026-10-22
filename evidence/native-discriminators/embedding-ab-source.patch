@@ -1,0 +1,11 @@
+--- corrected/native/qwen_model.inc
++++ control/native/qwen_model.inc
+@@ -134,7 +134,7 @@
+  try{
+  auto ids=mx::array(tokens,{int(count)},mx::uint32);std::string embed="language_model.model.embed_tokens";auto [group,bits]=m.quant(embed);
+  auto embed_scales=mx::take(m.w(embed+".scales"),ids,0,s),embed_biases=mx::take(m.w(embed+".biases"),ids,0,s);
+- if(c.activation_precision){embed_scales=mx::astype(embed_scales,mx::float32,s);embed_biases=mx::astype(embed_biases,mx::float32,s);}
++ // Ablation only: retain BF16 embedding affine arithmetic.
+  auto x=mx::reshape(mx::dequantize(mx::take(m.w(embed+".weight"),ids,0,s),embed_scales,embed_biases,group,bits,"affine",{},c.activation_precision?std::optional<mx::Dtype>{mx::float32}:std::nullopt,s),{1,int(count),c.hidden},s);
+  if(m.operators)m.check_embedding(ids,x,embed,group,bits);
+  size_t read=0,write=0;

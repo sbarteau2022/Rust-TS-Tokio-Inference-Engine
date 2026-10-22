@@ -1,0 +1,440 @@
+---
+title: "Frozen-failure native/reference discriminators"
+document_type: "architecture"
+version: "1.0.0"
+date: "2026-10-22T23:07:00Z"
+implementation_date: null
+author: "Codex for Stewart Barteau"
+reviewers: []
+status: "draft"
+related_files:
+  - path: ".gitignore"
+    lines: "1-9"
+    role: "config"
+  - path: "Cargo.lock"
+    lines: "1-1015"
+    role: "config"
+  - path: "Cargo.toml"
+    lines: "1-33"
+    role: "config"
+  - path: "backend/rapid_worker.py"
+    lines: "1-165"
+    role: "primary"
+  - path: "build.rs"
+    lines: "1-60"
+    role: "primary"
+  - path: "examples/native_discriminators.rs"
+    lines: "1-145"
+    role: "primary"
+  - path: "fixtures/atan2.amvk"
+    lines: null
+    role: "test"
+  - path: "fixtures/cache-config-bench.json"
+    lines: "1-13"
+    role: "test"
+  - path: "fixtures/cos.amvk"
+    lines: null
+    role: "test"
+  - path: "fixtures/elementwise.amvk"
+    lines: null
+    role: "test"
+  - path: "fixtures/native-choice-heldout.tsv"
+    lines: "1-4"
+    role: "test"
+  - path: "fixtures/native-domain-heldout.tsv"
+    lines: "1-24"
+    role: "test"
+  - path: "fixtures/native-heldout.tsv"
+    lines: "1-16"
+    role: "test"
+  - path: "fixtures/native-interpretation-probes.tsv"
+    lines: "1-4"
+    role: "test"
+  - path: "fixtures/native-model.path"
+    lines: "1-1"
+    role: "test"
+  - path: "fixtures/qwen-prompts-long.json"
+    lines: "1-4"
+    role: "test"
+  - path: "fixtures/qwen-prompts.json"
+    lines: "1-6"
+    role: "test"
+  - path: "fixtures/qwen-serving-long.json"
+    lines: "1-21"
+    role: "test"
+  - path: "fixtures/qwen-serving.json"
+    lines: "1-21"
+    role: "test"
+  - path: "fixtures/rectangular.amvk"
+    lines: null
+    role: "test"
+  - path: "fixtures/sin.amvk"
+    lines: null
+    role: "test"
+  - path: "fixtures/square.amvk"
+    lines: null
+    role: "test"
+  - path: "fixtures/tanh.amvk"
+    lines: null
+    role: "test"
+  - path: "judges/benchmark.py"
+    lines: "1-51"
+    role: "test"
+  - path: "judges/cordic.py"
+    lines: "1-30"
+    role: "test"
+  - path: "judges/generate_cordic.py"
+    lines: "1-44"
+    role: "test"
+  - path: "judges/macro.py"
+    lines: "1-14"
+    role: "test"
+  - path: "judges/model_ab.py"
+    lines: "1-93"
+    role: "test"
+  - path: "judges/operator_reference.cpp"
+    lines: "1-29"
+    role: "test"
+  - path: "judges/projection_reference.cpp"
+    lines: "1-53"
+    role: "test"
+  - path: "judges/resources.py"
+    lines: "1-35"
+    role: "test"
+  - path: "judges/run.py"
+    lines: "1-206"
+    role: "test"
+  - path: "native/attention_reference.h"
+    lines: "1-21"
+    role: "primary"
+  - path: "native/mlx_bridge.cpp"
+    lines: "1-178"
+    role: "primary"
+  - path: "native/mlx_bridge.h"
+    lines: "1-67"
+    role: "primary"
+  - path: "native/operator_probe.inc"
+    lines: "1-28"
+    role: "primary"
+  - path: "native/operator_reference.h"
+    lines: "1-58"
+    role: "primary"
+  - path: "native/projection_probe.inc"
+    lines: "1-22"
+    role: "primary"
+  - path: "native/projection_reference.h"
+    lines: "1-30"
+    role: "primary"
+  - path: "native/qwen_model.inc"
+    lines: "1-160"
+    role: "primary"
+  - path: "native/telemetry.cpp"
+    lines: "1-23"
+    role: "primary"
+  - path: "package-lock.json"
+    lines: "1-1072"
+    role: "config"
+  - path: "package.json"
+    lines: "1-21"
+    role: "config"
+  - path: "requirements-bench.txt"
+    lines: "1-2"
+    role: "config"
+  - path: "run.sh"
+    lines: "1-5"
+    role: "primary"
+  - path: "schema/trace.fbs"
+    lines: "1-12"
+    role: "primary"
+  - path: "src/backend.rs"
+    lines: "1-614"
+    role: "primary"
+  - path: "src/cache/mod.rs"
+    lines: "1-1068"
+    role: "primary"
+  - path: "src/chain.rs"
+    lines: "1-50"
+    role: "primary"
+  - path: "src/completion.rs"
+    lines: "1-218"
+    role: "primary"
+  - path: "src/cordic.rs"
+    lines: "1-204"
+    role: "primary"
+  - path: "src/cordic_tables.rs"
+    lines: "1-102"
+    role: "primary"
+  - path: "src/execute.rs"
+    lines: "1-122"
+    role: "primary"
+  - path: "src/gpu.rs"
+    lines: "1-440"
+    role: "primary"
+  - path: "src/ir.rs"
+    lines: "1-646"
+    role: "primary"
+  - path: "src/lib.rs"
+    lines: "1-30"
+    role: "primary"
+  - path: "src/macro_bench.rs"
+    lines: "1-81"
+    role: "primary"
+  - path: "src/main.rs"
+    lines: "1-447"
+    role: "primary"
+  - path: "src/runtime.rs"
+    lines: "1-366"
+    role: "primary"
+  - path: "src/sampled.rs"
+    lines: "1-193"
+    role: "primary"
+  - path: "src/serving/choices.rs"
+    lines: "1-123"
+    role: "primary"
+  - path: "src/serving/completion_ledger.rs"
+    lines: "1-100"
+    role: "primary"
+  - path: "src/serving/config.rs"
+    lines: "1-51"
+    role: "primary"
+  - path: "src/serving/kv.rs"
+    lines: "1-280"
+    role: "primary"
+  - path: "src/serving/mod.rs"
+    lines: "1-99"
+    role: "primary"
+  - path: "src/serving/model_ir.rs"
+    lines: "1-244"
+    role: "primary"
+  - path: "src/serving/native_boundary.rs"
+    lines: "1-193"
+    role: "primary"
+  - path: "src/serving/native_diagnose.rs"
+    lines: "1-104"
+    role: "primary"
+  - path: "src/serving/native_extended.rs"
+    lines: "1-214"
+    role: "primary"
+  - path: "src/serving/native_ingestion.rs"
+    lines: "1-272"
+    role: "primary"
+  - path: "src/serving/native_mlx.rs"
+    lines: "1-925"
+    role: "primary"
+  - path: "src/serving/native_ops.rs"
+    lines: "1-273"
+    role: "primary"
+  - path: "src/serving/native_qwen.rs"
+    lines: "1-662"
+    role: "primary"
+  - path: "src/serving/native_reference.rs"
+    lines: "1-100"
+    role: "primary"
+  - path: "src/serving/native_state.rs"
+    lines: "1-194"
+    role: "primary"
+  - path: "src/serving/native_tokenizer.rs"
+    lines: "1-123"
+    role: "primary"
+  - path: "src/serving/qwen_tests.rs"
+    lines: "1-566"
+    role: "primary"
+  - path: "src/serving/rapid.rs"
+    lines: "1-265"
+    role: "primary"
+  - path: "src/serving/scheduler.rs"
+    lines: "1-632"
+    role: "primary"
+  - path: "src/serving/weights.rs"
+    lines: "1-395"
+    role: "primary"
+  - path: "src/telemetry.rs"
+    lines: "1-26"
+    role: "primary"
+  - path: "src/trace_generated.rs"
+    lines: "1-1523"
+    role: "primary"
+  - path: "src/wire.rs"
+    lines: "1-124"
+    role: "primary"
+  - path: "tests/adversarial.rs"
+    lines: "1-456"
+    role: "test"
+  - path: "tests/async_completion.rs"
+    lines: "1-192"
+    role: "test"
+  - path: "tests/cache_control.rs"
+    lines: "1-419"
+    role: "test"
+  - path: "tests/cordic.rs"
+    lines: "1-264"
+    role: "test"
+  - path: "tests/fixed_point.rs"
+    lines: "1-146"
+    role: "test"
+  - path: "tests/grid.rs"
+    lines: "1-41"
+    role: "test"
+  - path: "tests/native_execution.rs"
+    lines: "1-486"
+    role: "test"
+  - path: "tests/native_mlx.rs"
+    lines: "1-297"
+    role: "test"
+  - path: "tests/output_choices.rs"
+    lines: "1-110"
+    role: "test"
+  - path: "tests/production_pipeline.rs"
+    lines: "1-315"
+    role: "test"
+  - path: "tests/rapid_rpc.rs"
+    lines: "1-76"
+    role: "test"
+  - path: "tests/resources.rs"
+    lines: "1-341"
+    role: "test"
+  - path: "tests/serving.rs"
+    lines: "1-426"
+    role: "test"
+  - path: "ts/generated/trace.ts"
+    lines: "1-5"
+    role: "primary"
+  - path: "ts/generated/wire/add.ts"
+    lines: "1-68"
+    role: "primary"
+  - path: "ts/generated/wire/cordic.ts"
+    lines: "1-78"
+    role: "primary"
+  - path: "ts/generated/wire/dot.ts"
+    lines: "1-68"
+    role: "primary"
+  - path: "ts/generated/wire/load.ts"
+    lines: "1-81"
+    role: "primary"
+  - path: "ts/generated/wire/op.ts"
+    lines: "1-61"
+    role: "primary"
+  - path: "ts/generated/wire/operation.ts"
+    lines: "1-54"
+    role: "primary"
+  - path: "ts/generated/wire/relu.ts"
+    lines: "1-58"
+    role: "primary"
+  - path: "ts/generated/wire/store.ts"
+    lines: "1-61"
+    role: "primary"
+  - path: "ts/generated/wire/trace.ts"
+    lines: "1-91"
+    role: "primary"
+  - path: "ts/generated/wire.ts"
+    lines: "1-13"
+    role: "primary"
+  - path: "ts/smoke.ts"
+    lines: "1-1"
+    role: "primary"
+  - path: "ts/trace.test.ts"
+    lines: "1-45"
+    role: "test"
+  - path: "ts/trace.ts"
+    lines: "1-73"
+    role: "primary"
+  - path: "tsconfig.json"
+    lines: "1-1"
+    role: "config"
+related_issues: []
+related_documents: ["NATIVE_QWEN_GENERATION.md", "NEXT_STEPS.md"]
+tags: [mlx, qualification, ablation]
+---
+# Design before experiment implementation
+
+The user requests discriminators in order: same-server serving-feature ablations,
+stock mlx-lm reference, interpretation probes, then embedding correction margins
+on real prompts. Preserve both original fixture questions and expected answers.
+No experiment trains weights, changes fixture answers or promotes production.
+
+# Baseline and admissible controls
+
+The current native Rust Qwen path uses greedy decoding, regular FP32 attention
+KV, no speculative/MTP/drafting path and no prefix reuse. These features are
+already absent; toggling absent features is not an ablation. BF16 activation mode
+also changes activations and is not a clean KV-only 16-bit control. Record native
+16-bit-KV-only as unsupported rather than fabricate an isolated comparison.
+The stock checkpoint-dtype lane provides a separately labeled unquantized KV
+control; record its actual KV and recurrent state dtypes.
+
+Use exact selected Combined main weights, single-turn thinking-disabled template,
+prefill chunks of eight, fresh cache/state per case, greedy argmax, EOS and a
+32-token bound. Measure raw output plus first-answer-position logits/logprobs for
+both yes/no and capitalization candidates. Their logprob difference equals the
+logit difference at the same position. Do not compare length-normalized answer
+sequence scores as if they were a first-token margin. Verify template text and
+prompt token IDs agree across lanes. Keep implementation/profile differences
+explicit: agreement or disagreement under mismatched precision is not a complete
+causal separation of model behavior from implementation.
+
+# Stock reference boundary and observed loader hazard
+
+The user explicitly authorizes stock mlx-lm as a reference experiment. It is a
+separate local test process, never a Python server worker or JSON runtime
+transport. Record installed versions, imported source hashes, no Rapid/DSpark/
+DFlash imports, no speculation and fresh nonquantized KV caches.
+
+The initial unmodified directory load produces garbled text: stock's loader
+matches `model*.safetensors`, includes `model-mtp.safetensors`, and its sanitizer
+uses MTP presence to shift norms. This main checkpoint is already sanitized;
+native main-shard execution excludes the sidecar. Preserve the failed control.
+Rerun unchanged stock engine code on a symlink view of the exact index-listed
+four main shards and the same config/tokenizer/template files. Record symlink
+identities and excluded sidecar. Do not edit checkpoint weights or patch the
+stock sanitizer. This qualifies an index-defined text reference, not the stock
+loader's compatibility with the original mixed main/sidecar directory.
+
+Run checkpoint-native parameter dtypes first, then stock `set_dtype(float32)`
+(which widens only floating parameters and preserves packed integer weights).
+This second profile narrows activation-precision confounding without making the
+stock attention/recurrent kernels identical to the native reference kernels.
+
+# Native margin diagnostic and embedding experiment
+
+A standalone Rust diagnostic may reuse public QwenExecutor and NativeTokenizer
+interfaces, immutable fixture prompts and fresh state. It must use actual model
+logits, finite checks, a stable logsumexp, actual EOS and a bounded generation
+loop. No expected answer enters execution. Keep it outside server admission and
+serving defaults; complete leases/drain before exit. Add synthetic tests for
+margin invariance to common logit offsets and invalid/nonfinite inputs.
+
+After the first two discriminators, test interpretation prompts as separately
+labeled new questions, never replacements for r10. Then compare corrected and
+uncorrected embedding arithmetic on the exact original questions. Build the
+uncorrected diagnostic in isolation or restore its single-source mutation in a
+finally block; preserve executable/source hashes and restore corrected source
+before regression and shipping. Report margin deltas, not just winners. A tiny
+or zero delta alone cannot prove an unwired correction; causal assertions need
+embedding intermediates and full-graph evidence as well.
+
+# Qualification
+
+Keep raw orthographic and semantic failures separate. Raw exactness stays failed;
+explicit-choice output remains a separate contract. A reference mismatch triggers
+localization of the first layer/state discrepancy. A matching reference answer
+with a measured thin margin supports behavior/profile sensitivity but does not
+establish all-route graph equivalence. Independent review remains outstanding.
+
+
+# Measured outcome
+
+Stock index-defined text reference reproduces both original answers. Cancellation
+lowercase no-minus-yes margins: checkpoint dtypes 0.125, stock F32 0.082023621,
+native corrected F32 0.107872009. Capitalized No-minus-Yes in native is 0.612108230.
+The drop/poll and owned-fields questions are answered correctly by all profiles.
+The async-cleanup follow-up returns No. in stock checkpoint dtypes but Yes in
+stock F32 and native F32; this is a precision-profile effect, not an isolated
+KV-only effect. It prevents calling the entire result a harmless framing issue.
+
+An isolated build omitting only the embedding casts returns r10 margin
+0.108324051; corrected returns 0.107872009, a -0.000452042 delta toward yes.
+Both raw winners are No. Borrowing stays No. with no-minus-yes delta -0.000455857.
+The correction affects real prompts and is too small here to change decisions.
+No all-route fidelity, production qualification or dose-response cure is claimed.
+All original prompts/expectations remain intact. Complete reports and source/
+binary/package/view bindings are in evidence/native-discriminators/.

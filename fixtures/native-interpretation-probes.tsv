@@ -1,0 +1,4 @@
+poll-after-drop	When a Rust future is dropped, is that same future ever polled again? Reply with only yes or no.
+owned-fields-drop	When an owned Rust future is dropped, do the Drop implementations of its initialized owned fields run? Reply with only yes or no.
+async-drop-cleanup	Can dropping a Rust future await asynchronous cleanup? Reply with only yes or no.
+joinhandle-detach	Does dropping a JoinHandle cancel an already spawned Tokio task? Reply with only yes or no.

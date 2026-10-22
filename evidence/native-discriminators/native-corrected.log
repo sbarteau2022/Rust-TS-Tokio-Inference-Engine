@@ -1,0 +1,16 @@
+NATIVE identity=509cc92543203798f2db08b6fb6cbb38a80942fc0437ae81a3ef9ff27720915b activation=f32 kv=f32 speculation=false prefix_reuse=false embedding_correction=build-bound
+INPUT case=r10 prompt="Can a Rust future be cancelled by dropping it before completion? Reply with only yes or no." ids=[248045, 846, 198, 6503, 264, 32671, 3725, 381, 24863, 539, 24304, 424, 1518, 9463, 30, 17308, 440, 1132, 9542, 466, 874, 13, 248046, 198, 248045, 74455, 198, 248068, 271, 248069, 271]
+SCORE case=r10 candidate=yes token=9405 logit=19.005435944 logprob=-2.021705210
+SCORE case=r10 candidate=no token=2083 logit=19.113307953 logprob=-1.913833200
+SCORE case=r10 candidate=Yes token=9175 logit=19.633417130 logprob=-1.393724024
+SCORE case=r10 candidate=No token=2665 logit=20.245525360 logprob=-0.781615793
+MARGIN case=r10 no_minus_yes=0.107872009 capital_No_minus_no=1.132217407
+OUTPUT case=r10 text="No" tokens=[2665, 248046] finish=eos
+INPUT case=rust-borrow prompt="Does Rust allow two simultaneous mutable references to the same value in safe code? Reply with only yes or no." ids=[248045, 846, 198, 20810, 32671, 2070, 1330, 55606, 24983, 14619, 310, 279, 1788, 869, 303, 5902, 1970, 30, 17308, 440, 1132, 9542, 466, 874, 13, 248046, 198, 248045, 74455, 198, 248068, 271, 248069, 271]
+SCORE case=rust-borrow candidate=yes token=9405 logit=13.318815231 logprob=-8.250478885
+SCORE case=rust-borrow candidate=no token=2083 logit=20.408781052 logprob=-1.160513065
+SCORE case=rust-borrow candidate=Yes token=9175 logit=14.092345238 logprob=-7.476948879
+SCORE case=rust-borrow candidate=No token=2665 logit=21.176494598 logprob=-0.392799518
+MARGIN case=rust-borrow no_minus_yes=7.089965820 capital_No_minus_no=0.767713547
+OUTPUT case=rust-borrow text="No." tokens=[2665, 13, 248046] finish=eos
+DRAIN leases=0

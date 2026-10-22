@@ -1,0 +1,15 @@
+{
+  "native": {
+    "speculation": false,
+    "prefix_reuse": false,
+    "kv_dtype": "float32",
+    "kv_quantization": false,
+    "greedy": true
+  },
+  "requested_controls": {
+    "speculation_off": "already disabled; no-op, not counted as ablation",
+    "prefix_cache_off": "already disabled; no-op, not counted as ablation",
+    "kv_16_bits_only": "not an independent native configuration; activation bf16 also changes activations, so not reported as KV-only ablation"
+  },
+  "stock": "fresh unquantized caches; actual dtypes in each result"
+}

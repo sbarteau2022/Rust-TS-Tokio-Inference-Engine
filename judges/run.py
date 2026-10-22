@@ -193,7 +193,7 @@ def main():
     run([binary, "kernel-judge", "artifacts", str(capture_path)], "capture-judge.json", env=dict(ENV, METAL_CAPTURE_ENABLED="1"))
     assert capture_path.is_dir() and any(capture_path.iterdir())
     (EVIDENCE / "capture-path.txt").write_text(str(capture_path) + "\n")
-    source = [p for directory in ["src", "ts", "native", "schema", "tests", "judges", "fixtures", "backend"]
+    source = [p for directory in ["src", "ts", "native", "schema", "tests", "judges", "fixtures", "backend", "examples"]
               for p in (ROOT / directory).rglob("*") if p.is_file() and "__pycache__" not in str(p)]
     source += [ROOT / p for p in ["Cargo.toml", "Cargo.lock", "build.rs", "package.json", "package-lock.json", "tsconfig.json", "run.sh", "requirements-bench.txt"]]
     hashes = {str(p.relative_to(ROOT)): hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted(source)}

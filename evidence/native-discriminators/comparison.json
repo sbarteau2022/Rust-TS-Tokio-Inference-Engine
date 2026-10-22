@@ -1,0 +1,4765 @@
+{
+  "native_corrected": {
+    "r10": {
+      "scores": {
+        "yes": {
+          "logit": 19.005435944,
+          "logprob": -2.02170521
+        },
+        "no": {
+          "logit": 19.113307953,
+          "logprob": -1.9138332
+        },
+        "Yes": {
+          "logit": 19.63341713,
+          "logprob": -1.393724024
+        },
+        "No": {
+          "logit": 20.24552536,
+          "logprob": -0.781615793
+        }
+      },
+      "prompt_ids": [
+        248045,
+        846,
+        198,
+        6503,
+        264,
+        32671,
+        3725,
+        381,
+        24863,
+        539,
+        24304,
+        424,
+        1518,
+        9463,
+        30,
+        17308,
+        440,
+        1132,
+        9542,
+        466,
+        874,
+        13,
+        248046,
+        198,
+        248045,
+        74455,
+        198,
+        248068,
+        271,
+        248069,
+        271
+      ],
+      "no_minus_yes": 0.107872009,
+      "capital_No_minus_no": 1.132217407,
+      "text": "No",
+      "finish": "eos"
+    },
+    "rust-borrow": {
+      "scores": {
+        "yes": {
+          "logit": 13.318815231,
+          "logprob": -8.250478885
+        },
+        "no": {
+          "logit": 20.408781052,
+          "logprob": -1.160513065
+        },
+        "Yes": {
+          "logit": 14.092345238,
+          "logprob": -7.476948879
+        },
+        "No": {
+          "logit": 21.176494598,
+          "logprob": -0.392799518
+        }
+      },
+      "prompt_ids": [
+        248045,
+        846,
+        198,
+        20810,
+        32671,
+        2070,
+        1330,
+        55606,
+        24983,
+        14619,
+        310,
+        279,
+        1788,
+        869,
+        303,
+        5902,
+        1970,
+        30,
+        17308,
+        440,
+        1132,
+        9542,
+        466,
+        874,
+        13,
+        248046,
+        198,
+        248045,
+        74455,
+        198,
+        248068,
+        271,
+        248069,
+        271
+      ],
+      "no_minus_yes": 7.08996582,
+      "capital_No_minus_no": 0.767713547,
+      "text": "No.",
+      "finish": "eos"
+    }
+  },
+  "native_uncorrected": {
+    "r10": {
+      "scores": {
+        "yes": {
+          "logit": 19.005685806,
+          "logprob": -2.021747482
+        },
+        "no": {
+          "logit": 19.114009857,
+          "logprob": -1.913423431
+        },
+        "Yes": {
+          "logit": 19.633464813,
+          "logprob": -1.393968475
+        },
+        "No": {
+          "logit": 20.245847702,
+          "logprob": -0.781585586
+        }
+      },
+      "prompt_ids": [
+        248045,
+        846,
+        198,
+        6503,
+        264,
+        32671,
+        3725,
+        381,
+        24863,
+        539,
+        24304,
+        424,
+        1518,
+        9463,
+        30,
+        17308,
+        440,
+        1132,
+        9542,
+        466,
+        874,
+        13,
+        248046,
+        198,
+        248045,
+        74455,
+        198,
+        248068,
+        271,
+        248069,
+        271
+      ],
+      "no_minus_yes": 0.108324051,
+      "capital_No_minus_no": 1.131837845,
+      "text": "No",
+      "finish": "eos"
+    },
+    "rust-borrow": {
+      "scores": {
+        "yes": {
+          "logit": 13.318164825,
+          "logprob": -8.251245964
+        },
+        "no": {
+          "logit": 20.408586502,
+          "logprob": -1.160824287
+        },
+        "Yes": {
+          "logit": 14.092082977,
+          "logprob": -7.477327812
+        },
+        "No": {
+          "logit": 21.176757812,
+          "logprob": -0.392652977
+        }
+      },
+      "prompt_ids": [
+        248045,
+        846,
+        198,
+        20810,
+        32671,
+        2070,
+        1330,
+        55606,
+        24983,
+        14619,
+        310,
+        279,
+        1788,
+        869,
+        303,
+        5902,
+        1970,
+        30,
+        17308,
+        440,
+        1132,
+        9542,
+        466,
+        874,
+        13,
+        248046,
+        198,
+        248045,
+        74455,
+        198,
+        248068,
+        271,
+        248069,
+        271
+      ],
+      "no_minus_yes": 7.090421677,
+      "capital_No_minus_no": 0.76817131,
+      "text": "No.",
+      "finish": "eos"
+    }
+  },
+  "native_interpretation": {
+    "poll-after-drop": {
+      "scores": {
+        "yes": {
+          "logit": 18.207584381,
+          "logprob": -3.105740957
+        },
+        "no": {
+          "logit": 19.750835419,
+          "logprob": -1.562489919
+        },
+        "Yes": {
+          "logit": 19.04876709,
+          "logprob": -2.264558248
+        },
+        "No": {
+          "logit": 20.851171494,
+          "logprob": -0.462153845
+        }
+      },
+      "prompt_ids": [
+        248045,
+        846,
+        198,
+        4350,
+        264,
+        32671,
+        3725,
+        369,
+        11878,
+        11,
+        369,
+        421,
+        1788,
+        3725,
+        3397,
+        80737,
+        1495,
+        30,
+        17308,
+        440,
+        1132,
+        9542,
+        466,
+        874,
+        13,
+        248046,
+        198,
+        248045,
+        74455,
+        198,
+        248068,
+        271,
+        248069,
+        271
+      ],
+      "no_minus_yes": 1.543251038,
+      "capital_No_minus_no": 1.100336075,
+      "text": "No.",
+      "finish": "eos"
+    },
+    "owned-fields-drop": {
+      "scores": {
+        "yes": {
+          "logit": 20.094581604,
+          "logprob": -0.754563531
+        },
+        "no": {
+          "logit": 18.686317444,
+          "logprob": -2.162827691
+        },
+        "Yes": {
+          "logit": 19.684906006,
+          "logprob": -1.164239129
+        },
+        "No": {
+          "logit": 18.385196686,
+          "logprob": -2.463948449
+        }
+      },
+      "prompt_ids": [
+        248045,
+        846,
+        198,
+        4350,
+        449,
+        12567,
+        32671,
+        3725,
+        369,
+        11878,
+        11,
+        635,
+        279,
+        15272,
+        37066,
+        314,
+        1141,
+        16761,
+        12567,
+        4881,
+        1542,
+        30,
+        17308,
+        440,
+        1132,
+        9542,
+        466,
+        874,
+        13,
+        248046,
+        198,
+        248045,
+        74455,
+        198,
+        248068,
+        271,
+        248069,
+        271
+      ],
+      "no_minus_yes": -1.40826416,
+      "capital_No_minus_no": -0.301120758,
+      "text": "yes",
+      "finish": "eos"
+    },
+    "async-drop-cleanup": {
+      "scores": {
+        "yes": {
+          "logit": 19.20621109,
+          "logprob": -1.430338084
+        },
+        "no": {
+          "logit": 18.720558167,
+          "logprob": -1.915991007
+        },
+        "Yes": {
+          "logit": 19.435070038,
+          "logprob": -1.201479136
+        },
+        "No": {
+          "logit": 19.412481308,
+          "logprob": -1.224067866
+        }
+      },
+      "prompt_ids": [
+        248045,
+        846,
+        198,
+        6503,
+        24304,
+        264,
+        32671,
+        3725,
+        2454,
+        37715,
+        20635,
+        30,
+        17308,
+        440,
+        1132,
+        9542,
+        466,
+        874,
+        13,
+        248046,
+        198,
+        248045,
+        74455,
+        198,
+        248068,
+        271,
+        248069,
+        271
+      ],
+      "no_minus_yes": -0.485652924,
+      "capital_No_minus_no": 0.691923141,
+      "text": "Yes",
+      "finish": "eos"
+    },
+    "joinhandle-detach": {
+      "scores": {
+        "yes": {
+          "logit": 16.926319122,
+          "logprob": -3.668840371
+        },
+        "no": {
+          "logit": 18.954639435,
+          "logprob": -1.640520058
+        },
+        "Yes": {
+          "logit": 17.792919159,
+          "logprob": -2.802240334
+        },
+        "No": {
+          "logit": 20.238836288,
+          "logprob": -0.356323205
+        }
+      },
+      "prompt_ids": [
+        248045,
+        846,
+        198,
+        20810,
+        24304,
+        264,
+        15988,
+        6781,
+        8848,
+        449,
+        2582,
+        50763,
+        239784,
+        3274,
+        30,
+        17308,
+        440,
+        1132,
+        9542,
+        466,
+        874,
+        13,
+        248046,
+        198,
+        248045,
+        74455,
+        198,
+        248068,
+        271,
+        248069,
+        271
+      ],
+      "no_minus_yes": 2.028320312,
+      "capital_No_minus_no": 1.284196854,
+      "text": "No.",
+      "finish": "eos"
+    }
+  },
+  "stock": [
+    {
+      "case": "r10",
+      "profile": "checkpoint-dtypes",
+      "prompt": "Can a Rust future be cancelled by dropping it before completion? Reply with only yes or no.",
+      "rendered": "<|im_start|>user\nCan a Rust future be cancelled by dropping it before completion? Reply with only yes or no.<|im_end|>\n<|im_start|>assistant\n<think>\n\n</think>\n\n",
+      "prompt_ids": [
+        248045,
+        846,
+        198,
+        6503,
+        264,
+        32671,
+        3725,
+        381,
+        24863,
+        539,
+        24304,
+        424,
+        1518,
+        9463,
+        30,
+        17308,
+        440,
+        1132,
+        9542,
+        466,
+        874,
+        13,
+        248046,
+        198,
+        248045,
+        74455,
+        198,
+        248068,
+        271,
+        248069,
+        271
+      ],
+      "scores": {
+        "yes": {
+          "token": 9405,
+          "logit": 19.0,
+          "logprob": -1.9424552917480469
+        },
+        "no": {
+          "token": 2083,
+          "logit": 19.125,
+          "logprob": -1.8174552917480469
+        },
+        "Yes": {
+          "token": 9175,
+          "logit": 19.5,
+          "logprob": -1.4424552917480469
+        },
+        "No": {
+          "token": 2665,
+          "logit": 20.125,
+          "logprob": -0.8174552917480469
+        }
+      },
+      "no_minus_yes": 0.125,
+      "capital_No_minus_no": 1.0,
+      "generated": [
+        2665,
+        248046
+      ],
+      "text": "No",
+      "raw_text": "No<|im_end|>",
+      "cache": [
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "KVCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.bfloat16"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "KVCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.bfloat16"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "KVCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.bfloat16"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "KVCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.bfloat16"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "KVCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.bfloat16"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "KVCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.bfloat16"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "KVCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.bfloat16"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "KVCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.bfloat16"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "KVCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.bfloat16"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "KVCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.bfloat16"
+          ]
+        }
+      ],
+      "speculation": false,
+      "prefix_reuse": false,
+      "kv_quantization": false
+    },
+    {
+      "case": "rust-borrow",
+      "profile": "checkpoint-dtypes",
+      "prompt": "Does Rust allow two simultaneous mutable references to the same value in safe code? Reply with only yes or no.",
+      "rendered": "<|im_start|>user\nDoes Rust allow two simultaneous mutable references to the same value in safe code? Reply with only yes or no.<|im_end|>\n<|im_start|>assistant\n<think>\n\n</think>\n\n",
+      "prompt_ids": [
+        248045,
+        846,
+        198,
+        20810,
+        32671,
+        2070,
+        1330,
+        55606,
+        24983,
+        14619,
+        310,
+        279,
+        1788,
+        869,
+        303,
+        5902,
+        1970,
+        30,
+        17308,
+        440,
+        1132,
+        9542,
+        466,
+        874,
+        13,
+        248046,
+        198,
+        248045,
+        74455,
+        198,
+        248068,
+        271,
+        248069,
+        271
+      ],
+      "scores": {
+        "yes": {
+          "token": 9405,
+          "logit": 13.3125,
+          "logprob": -8.420623779296875
+        },
+        "no": {
+          "token": 2083,
+          "logit": 20.5,
+          "logprob": -1.233123779296875
+        },
+        "Yes": {
+          "token": 9175,
+          "logit": 14.125,
+          "logprob": -7.608123779296875
+        },
+        "No": {
+          "token": 2665,
+          "logit": 21.375,
+          "logprob": -0.358123779296875
+        }
+      },
+      "no_minus_yes": 7.1875,
+      "capital_No_minus_no": 0.875,
+      "generated": [
+        2665,
+        13,
+        248046
+      ],
+      "text": "No.",
+      "raw_text": "No.<|im_end|>",
+      "cache": [
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "KVCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.bfloat16"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "KVCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.bfloat16"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "KVCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.bfloat16"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "KVCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.bfloat16"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "KVCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.bfloat16"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "KVCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.bfloat16"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "KVCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.bfloat16"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "KVCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.bfloat16"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "KVCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.bfloat16"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "KVCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.bfloat16"
+          ]
+        }
+      ],
+      "speculation": false,
+      "prefix_reuse": false,
+      "kv_quantization": false
+    },
+    {
+      "case": "r10",
+      "profile": "f32-parameters",
+      "prompt": "Can a Rust future be cancelled by dropping it before completion? Reply with only yes or no.",
+      "rendered": "<|im_start|>user\nCan a Rust future be cancelled by dropping it before completion? Reply with only yes or no.<|im_end|>\n<|im_start|>assistant\n<think>\n\n</think>\n\n",
+      "prompt_ids": [
+        248045,
+        846,
+        198,
+        6503,
+        264,
+        32671,
+        3725,
+        381,
+        24863,
+        539,
+        24304,
+        424,
+        1518,
+        9463,
+        30,
+        17308,
+        440,
+        1132,
+        9542,
+        466,
+        874,
+        13,
+        248046,
+        198,
+        248045,
+        74455,
+        198,
+        248068,
+        271,
+        248069,
+        271
+      ],
+      "scores": {
+        "yes": {
+          "token": 9405,
+          "logit": 18.94106101989746,
+          "logprob": -2.0560569763183594
+        },
+        "no": {
+          "token": 2083,
+          "logit": 19.02308464050293,
+          "logprob": -1.9740333557128906
+        },
+        "Yes": {
+          "token": 9175,
+          "logit": 19.62337875366211,
+          "logprob": -1.373739242553711
+        },
+        "No": {
+          "token": 2665,
+          "logit": 20.23089599609375,
+          "logprob": -0.7662220001220703
+        }
+      },
+      "no_minus_yes": 0.08202362060546875,
+      "capital_No_minus_no": 1.2078113555908203,
+      "generated": [
+        2665,
+        248046
+      ],
+      "text": "No",
+      "raw_text": "No<|im_end|>",
+      "cache": [
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "KVCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "KVCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "KVCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "KVCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "KVCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "KVCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "KVCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "KVCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "KVCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "KVCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        }
+      ],
+      "speculation": false,
+      "prefix_reuse": false,
+      "kv_quantization": false
+    },
+    {
+      "case": "rust-borrow",
+      "profile": "f32-parameters",
+      "prompt": "Does Rust allow two simultaneous mutable references to the same value in safe code? Reply with only yes or no.",
+      "rendered": "<|im_start|>user\nDoes Rust allow two simultaneous mutable references to the same value in safe code? Reply with only yes or no.<|im_end|>\n<|im_start|>assistant\n<think>\n\n</think>\n\n",
+      "prompt_ids": [
+        248045,
+        846,
+        198,
+        20810,
+        32671,
+        2070,
+        1330,
+        55606,
+        24983,
+        14619,
+        310,
+        279,
+        1788,
+        869,
+        303,
+        5902,
+        1970,
+        30,
+        17308,
+        440,
+        1132,
+        9542,
+        466,
+        874,
+        13,
+        248046,
+        198,
+        248045,
+        74455,
+        198,
+        248068,
+        271,
+        248069,
+        271
+      ],
+      "scores": {
+        "yes": {
+          "token": 9405,
+          "logit": 13.319860458374023,
+          "logprob": -8.249561309814453
+        },
+        "no": {
+          "token": 2083,
+          "logit": 20.40817642211914,
+          "logprob": -1.161245346069336
+        },
+        "Yes": {
+          "token": 9175,
+          "logit": 14.093950271606445,
+          "logprob": -7.475471496582031
+        },
+        "No": {
+          "token": 2665,
+          "logit": 21.17696189880371,
+          "logprob": -0.3924598693847656
+        }
+      },
+      "no_minus_yes": 7.088315963745117,
+      "capital_No_minus_no": 0.7687854766845703,
+      "generated": [
+        2665,
+        13,
+        248046
+      ],
+      "text": "No.",
+      "raw_text": "No.<|im_end|>",
+      "cache": [
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "KVCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "KVCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "KVCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "KVCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "KVCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "KVCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "KVCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "KVCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "KVCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "KVCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        }
+      ],
+      "speculation": false,
+      "prefix_reuse": false,
+      "kv_quantization": false
+    }
+  ],
+  "stock_interpretation": [
+    {
+      "case": "poll-after-drop",
+      "profile": "checkpoint-dtypes",
+      "prompt": "When a Rust future is dropped, is that same future ever polled again? Reply with only yes or no.",
+      "rendered": "<|im_start|>user\nWhen a Rust future is dropped, is that same future ever polled again? Reply with only yes or no.<|im_end|>\n<|im_start|>assistant\n<think>\n\n</think>\n\n",
+      "prompt_ids": [
+        248045,
+        846,
+        198,
+        4350,
+        264,
+        32671,
+        3725,
+        369,
+        11878,
+        11,
+        369,
+        421,
+        1788,
+        3725,
+        3397,
+        80737,
+        1495,
+        30,
+        17308,
+        440,
+        1132,
+        9542,
+        466,
+        874,
+        13,
+        248046,
+        198,
+        248045,
+        74455,
+        198,
+        248068,
+        271,
+        248069,
+        271
+      ],
+      "scores": {
+        "yes": {
+          "token": 9405,
+          "logit": 18.375,
+          "logprob": -2.9962615966796875
+        },
+        "no": {
+          "token": 2083,
+          "logit": 19.875,
+          "logprob": -1.4962615966796875
+        },
+        "Yes": {
+          "token": 9175,
+          "logit": 19.125,
+          "logprob": -2.2462615966796875
+        },
+        "No": {
+          "token": 2665,
+          "logit": 20.875,
+          "logprob": -0.4962615966796875
+        }
+      },
+      "no_minus_yes": 1.5,
+      "capital_No_minus_no": 1.0,
+      "generated": [
+        2665,
+        13,
+        248046
+      ],
+      "text": "No.",
+      "raw_text": "No.<|im_end|>",
+      "cache": [
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "KVCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.bfloat16"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "KVCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.bfloat16"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "KVCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.bfloat16"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "KVCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.bfloat16"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "KVCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.bfloat16"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "KVCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.bfloat16"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "KVCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.bfloat16"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "KVCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.bfloat16"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "KVCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.bfloat16"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "KVCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.bfloat16"
+          ]
+        }
+      ],
+      "speculation": false,
+      "prefix_reuse": false,
+      "kv_quantization": false
+    },
+    {
+      "case": "owned-fields-drop",
+      "profile": "checkpoint-dtypes",
+      "prompt": "When an owned Rust future is dropped, do the Drop implementations of its initialized owned fields run? Reply with only yes or no.",
+      "rendered": "<|im_start|>user\nWhen an owned Rust future is dropped, do the Drop implementations of its initialized owned fields run? Reply with only yes or no.<|im_end|>\n<|im_start|>assistant\n<think>\n\n</think>\n\n",
+      "prompt_ids": [
+        248045,
+        846,
+        198,
+        4350,
+        449,
+        12567,
+        32671,
+        3725,
+        369,
+        11878,
+        11,
+        635,
+        279,
+        15272,
+        37066,
+        314,
+        1141,
+        16761,
+        12567,
+        4881,
+        1542,
+        30,
+        17308,
+        440,
+        1132,
+        9542,
+        466,
+        874,
+        13,
+        248046,
+        198,
+        248045,
+        74455,
+        198,
+        248068,
+        271,
+        248069,
+        271
+      ],
+      "scores": {
+        "yes": {
+          "token": 9405,
+          "logit": 20.0,
+          "logprob": -0.8064231872558594
+        },
+        "no": {
+          "token": 2083,
+          "logit": 18.5,
+          "logprob": -2.3064231872558594
+        },
+        "Yes": {
+          "token": 9175,
+          "logit": 19.75,
+          "logprob": -1.0564231872558594
+        },
+        "No": {
+          "token": 2665,
+          "logit": 18.375,
+          "logprob": -2.4314231872558594
+        }
+      },
+      "no_minus_yes": -1.5,
+      "capital_No_minus_no": -0.125,
+      "generated": [
+        9405,
+        248046
+      ],
+      "text": "yes",
+      "raw_text": "yes<|im_end|>",
+      "cache": [
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "KVCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.bfloat16"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "KVCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.bfloat16"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "KVCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.bfloat16"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "KVCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.bfloat16"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "KVCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.bfloat16"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "KVCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.bfloat16"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "KVCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.bfloat16"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "KVCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.bfloat16"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "KVCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.bfloat16"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "KVCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.bfloat16"
+          ]
+        }
+      ],
+      "speculation": false,
+      "prefix_reuse": false,
+      "kv_quantization": false
+    },
+    {
+      "case": "async-drop-cleanup",
+      "profile": "checkpoint-dtypes",
+      "prompt": "Can dropping a Rust future await asynchronous cleanup? Reply with only yes or no.",
+      "rendered": "<|im_start|>user\nCan dropping a Rust future await asynchronous cleanup? Reply with only yes or no.<|im_end|>\n<|im_start|>assistant\n<think>\n\n</think>\n\n",
+      "prompt_ids": [
+        248045,
+        846,
+        198,
+        6503,
+        24304,
+        264,
+        32671,
+        3725,
+        2454,
+        37715,
+        20635,
+        30,
+        17308,
+        440,
+        1132,
+        9542,
+        466,
+        874,
+        13,
+        248046,
+        198,
+        248045,
+        74455,
+        198,
+        248068,
+        271,
+        248069,
+        271
+      ],
+      "scores": {
+        "yes": {
+          "token": 9405,
+          "logit": 19.125,
+          "logprob": -1.4338951110839844
+        },
+        "no": {
+          "token": 2083,
+          "logit": 18.75,
+          "logprob": -1.8088951110839844
+        },
+        "Yes": {
+          "token": 9175,
+          "logit": 19.25,
+          "logprob": -1.3088951110839844
+        },
+        "No": {
+          "token": 2665,
+          "logit": 19.375,
+          "logprob": -1.1838951110839844
+        }
+      },
+      "no_minus_yes": -0.375,
+      "capital_No_minus_no": 0.625,
+      "generated": [
+        2665,
+        13,
+        248046
+      ],
+      "text": "No.",
+      "raw_text": "No.<|im_end|>",
+      "cache": [
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "KVCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.bfloat16"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "KVCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.bfloat16"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "KVCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.bfloat16"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "KVCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.bfloat16"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "KVCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.bfloat16"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "KVCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.bfloat16"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "KVCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.bfloat16"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "KVCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.bfloat16"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "KVCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.bfloat16"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "KVCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.bfloat16"
+          ]
+        }
+      ],
+      "speculation": false,
+      "prefix_reuse": false,
+      "kv_quantization": false
+    },
+    {
+      "case": "joinhandle-detach",
+      "profile": "checkpoint-dtypes",
+      "prompt": "Does dropping a JoinHandle cancel an already spawned Tokio task? Reply with only yes or no.",
+      "rendered": "<|im_start|>user\nDoes dropping a JoinHandle cancel an already spawned Tokio task? Reply with only yes or no.<|im_end|>\n<|im_start|>assistant\n<think>\n\n</think>\n\n",
+      "prompt_ids": [
+        248045,
+        846,
+        198,
+        20810,
+        24304,
+        264,
+        15988,
+        6781,
+        8848,
+        449,
+        2582,
+        50763,
+        239784,
+        3274,
+        30,
+        17308,
+        440,
+        1132,
+        9542,
+        466,
+        874,
+        13,
+        248046,
+        198,
+        248045,
+        74455,
+        198,
+        248068,
+        271,
+        248069,
+        271
+      ],
+      "scores": {
+        "yes": {
+          "token": 9405,
+          "logit": 16.625,
+          "logprob": -3.946653366088867
+        },
+        "no": {
+          "token": 2083,
+          "logit": 18.875,
+          "logprob": -1.6966533660888672
+        },
+        "Yes": {
+          "token": 9175,
+          "logit": 17.625,
+          "logprob": -2.946653366088867
+        },
+        "No": {
+          "token": 2665,
+          "logit": 20.25,
+          "logprob": -0.3216533660888672
+        }
+      },
+      "no_minus_yes": 2.25,
+      "capital_No_minus_no": 1.375,
+      "generated": [
+        2665,
+        13,
+        248046
+      ],
+      "text": "No.",
+      "raw_text": "No.<|im_end|>",
+      "cache": [
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "KVCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.bfloat16"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "KVCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.bfloat16"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "KVCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.bfloat16"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "KVCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.bfloat16"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "KVCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.bfloat16"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "KVCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.bfloat16"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "KVCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.bfloat16"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "KVCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.bfloat16"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "KVCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.bfloat16"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "KVCache",
+          "dtypes": [
+            "mlx.core.bfloat16",
+            "mlx.core.bfloat16"
+          ]
+        }
+      ],
+      "speculation": false,
+      "prefix_reuse": false,
+      "kv_quantization": false
+    },
+    {
+      "case": "poll-after-drop",
+      "profile": "f32-parameters",
+      "prompt": "When a Rust future is dropped, is that same future ever polled again? Reply with only yes or no.",
+      "rendered": "<|im_start|>user\nWhen a Rust future is dropped, is that same future ever polled again? Reply with only yes or no.<|im_end|>\n<|im_start|>assistant\n<think>\n\n</think>\n\n",
+      "prompt_ids": [
+        248045,
+        846,
+        198,
+        4350,
+        264,
+        32671,
+        3725,
+        369,
+        11878,
+        11,
+        369,
+        421,
+        1788,
+        3725,
+        3397,
+        80737,
+        1495,
+        30,
+        17308,
+        440,
+        1132,
+        9542,
+        466,
+        874,
+        13,
+        248046,
+        198,
+        248045,
+        74455,
+        198,
+        248068,
+        271,
+        248069,
+        271
+      ],
+      "scores": {
+        "yes": {
+          "token": 9405,
+          "logit": 18.182680130004883,
+          "logprob": -3.2293148040771484
+        },
+        "no": {
+          "token": 2083,
+          "logit": 19.88276481628418,
+          "logprob": -1.5292301177978516
+        },
+        "Yes": {
+          "token": 9175,
+          "logit": 19.01736068725586,
+          "logprob": -2.394634246826172
+        },
+        "No": {
+          "token": 2665,
+          "logit": 20.967498779296875,
+          "logprob": -0.44449615478515625
+        }
+      },
+      "no_minus_yes": 1.7000846862792969,
+      "capital_No_minus_no": 1.0847339630126953,
+      "generated": [
+        2665,
+        13,
+        248046
+      ],
+      "text": "No.",
+      "raw_text": "No.<|im_end|>",
+      "cache": [
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "KVCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "KVCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "KVCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "KVCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "KVCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "KVCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "KVCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "KVCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "KVCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "KVCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        }
+      ],
+      "speculation": false,
+      "prefix_reuse": false,
+      "kv_quantization": false
+    },
+    {
+      "case": "owned-fields-drop",
+      "profile": "f32-parameters",
+      "prompt": "When an owned Rust future is dropped, do the Drop implementations of its initialized owned fields run? Reply with only yes or no.",
+      "rendered": "<|im_start|>user\nWhen an owned Rust future is dropped, do the Drop implementations of its initialized owned fields run? Reply with only yes or no.<|im_end|>\n<|im_start|>assistant\n<think>\n\n</think>\n\n",
+      "prompt_ids": [
+        248045,
+        846,
+        198,
+        4350,
+        449,
+        12567,
+        32671,
+        3725,
+        369,
+        11878,
+        11,
+        635,
+        279,
+        15272,
+        37066,
+        314,
+        1141,
+        16761,
+        12567,
+        4881,
+        1542,
+        30,
+        17308,
+        440,
+        1132,
+        9542,
+        466,
+        874,
+        13,
+        248046,
+        198,
+        248045,
+        74455,
+        198,
+        248068,
+        271,
+        248069,
+        271
+      ],
+      "scores": {
+        "yes": {
+          "token": 9405,
+          "logit": 20.056339263916016,
+          "logprob": -0.7876529693603516
+        },
+        "no": {
+          "token": 2083,
+          "logit": 18.634368896484375,
+          "logprob": -2.209623336791992
+        },
+        "Yes": {
+          "token": 9175,
+          "logit": 19.738414764404297,
+          "logprob": -1.1055774688720703
+        },
+        "No": {
+          "token": 2665,
+          "logit": 18.405757904052734,
+          "logprob": -2.438234329223633
+        }
+      },
+      "no_minus_yes": -1.4219703674316406,
+      "capital_No_minus_no": -0.22861099243164062,
+      "generated": [
+        9405,
+        248046
+      ],
+      "text": "yes",
+      "raw_text": "yes<|im_end|>",
+      "cache": [
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "KVCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "KVCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "KVCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "KVCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "KVCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "KVCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "KVCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "KVCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "KVCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "KVCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        }
+      ],
+      "speculation": false,
+      "prefix_reuse": false,
+      "kv_quantization": false
+    },
+    {
+      "case": "async-drop-cleanup",
+      "profile": "f32-parameters",
+      "prompt": "Can dropping a Rust future await asynchronous cleanup? Reply with only yes or no.",
+      "rendered": "<|im_start|>user\nCan dropping a Rust future await asynchronous cleanup? Reply with only yes or no.<|im_end|>\n<|im_start|>assistant\n<think>\n\n</think>\n\n",
+      "prompt_ids": [
+        248045,
+        846,
+        198,
+        6503,
+        24304,
+        264,
+        32671,
+        3725,
+        2454,
+        37715,
+        20635,
+        30,
+        17308,
+        440,
+        1132,
+        9542,
+        466,
+        874,
+        13,
+        248046,
+        198,
+        248045,
+        74455,
+        198,
+        248068,
+        271,
+        248069,
+        271
+      ],
+      "scores": {
+        "yes": {
+          "token": 9405,
+          "logit": 19.180946350097656,
+          "logprob": -1.4333744049072266
+        },
+        "no": {
+          "token": 2083,
+          "logit": 18.698932647705078,
+          "logprob": -1.9153881072998047
+        },
+        "Yes": {
+          "token": 9175,
+          "logit": 19.416275024414062,
+          "logprob": -1.1980457305908203
+        },
+        "No": {
+          "token": 2665,
+          "logit": 19.386844635009766,
+          "logprob": -1.2274761199951172
+        }
+      },
+      "no_minus_yes": -0.4820137023925781,
+      "capital_No_minus_no": 0.6879119873046875,
+      "generated": [
+        9175,
+        248046
+      ],
+      "text": "Yes",
+      "raw_text": "Yes<|im_end|>",
+      "cache": [
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "KVCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "KVCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "KVCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "KVCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "KVCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "KVCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "KVCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "KVCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "KVCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "KVCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        }
+      ],
+      "speculation": false,
+      "prefix_reuse": false,
+      "kv_quantization": false
+    },
+    {
+      "case": "joinhandle-detach",
+      "profile": "f32-parameters",
+      "prompt": "Does dropping a JoinHandle cancel an already spawned Tokio task? Reply with only yes or no.",
+      "rendered": "<|im_start|>user\nDoes dropping a JoinHandle cancel an already spawned Tokio task? Reply with only yes or no.<|im_end|>\n<|im_start|>assistant\n<think>\n\n</think>\n\n",
+      "prompt_ids": [
+        248045,
+        846,
+        198,
+        20810,
+        24304,
+        264,
+        15988,
+        6781,
+        8848,
+        449,
+        2582,
+        50763,
+        239784,
+        3274,
+        30,
+        17308,
+        440,
+        1132,
+        9542,
+        466,
+        874,
+        13,
+        248046,
+        198,
+        248045,
+        74455,
+        198,
+        248068,
+        271,
+        248069,
+        271
+      ],
+      "scores": {
+        "yes": {
+          "token": 9405,
+          "logit": 16.884361267089844,
+          "logprob": -3.6450939178466797
+        },
+        "no": {
+          "token": 2083,
+          "logit": 18.853748321533203,
+          "logprob": -1.6757068634033203
+        },
+        "Yes": {
+          "token": 9175,
+          "logit": 17.74834632873535,
+          "logprob": -2.781108856201172
+        },
+        "No": {
+          "token": 2665,
+          "logit": 20.17535400390625,
+          "logprob": -0.35410118103027344
+        }
+      },
+      "no_minus_yes": 1.9693870544433594,
+      "capital_No_minus_no": 1.3216056823730469,
+      "generated": [
+        2665,
+        13,
+        248046
+      ],
+      "text": "No.",
+      "raw_text": "No.<|im_end|>",
+      "cache": [
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "KVCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "KVCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "KVCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "KVCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "KVCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "KVCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "KVCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "KVCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "KVCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "ArraysCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        },
+        {
+          "class": "KVCache",
+          "dtypes": [
+            "mlx.core.float32",
+            "mlx.core.float32"
+          ]
+        }
+      ],
+      "speculation": false,
+      "prefix_reuse": false,
+      "kv_quantization": false
+    }
+  ],
+  "embedding_margin_delta": {
+    "r10": -0.0004520419999999997,
+    "rust-borrow": -0.00045585700000039253
+  },
+  "prompt_tokenization_parity": true,
+  "original_fixtures_modified": false,
+  "server_python_dependency_added": false,
+  "full_model_qualified": false,
+  "interpretation": "Both original misses reproduced in stock; thin cancellation margin. Core drop semantics agree. Async-cleanup follow-up is precision-sensitive. This supports model/profile effects for these items, not all-route graph equivalence."
+}

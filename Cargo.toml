@@ -27,3 +27,7 @@ tokenizers = { version = "0.23.2", default-features = false, features = ["fancy-
 
 [build-dependencies]
 cc = "1"
+
+[[example]]
+name = "native_discriminators"
+required-features = ["native-mlx"]

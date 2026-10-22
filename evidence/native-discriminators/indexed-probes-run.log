@@ -1,0 +1,9 @@
+[transformers] The tokenizer you are loading from '/tmp/rust-server-combined-indexed-stock-view' with an incorrect regex pattern: https://huggingface.co/mistralai/Mistral-Small-3.1-24B-Instruct-2503/discussions/84#69121093e8b480e709447d5e. This will lead to incorrect tokenization. You should set the `fix_mistral_regex=True` flag when loading this tokenizer to fix this issue.
+STOCK poll-after-drop checkpoint-dtypes No. 1.5
+STOCK owned-fields-drop checkpoint-dtypes yes -1.5
+STOCK async-drop-cleanup checkpoint-dtypes No. -0.375
+STOCK joinhandle-detach checkpoint-dtypes No. 2.25
+STOCK poll-after-drop f32-parameters No. 1.7000846862792969
+STOCK owned-fields-drop f32-parameters yes -1.4219703674316406
+STOCK async-drop-cleanup f32-parameters Yes -0.4820137023925781
+STOCK joinhandle-detach f32-parameters No. 1.9693870544433594

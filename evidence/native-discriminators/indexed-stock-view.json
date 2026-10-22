@@ -1,0 +1,79 @@
+{
+  "view": "/tmp/rust-server-combined-indexed-stock-view",
+  "files": [
+    {
+      "name": "model-00001-of-00004.safetensors",
+      "target": "/Users/stewartbarteau/models/fused/Qwen3.6-MoE-Combined/model-00001-of-00004.safetensors",
+      "device": 16777233,
+      "inode": 52998465,
+      "size": 5343699404,
+      "mtime_ns": 1792687645101432363
+    },
+    {
+      "name": "model-00002-of-00004.safetensors",
+      "target": "/Users/stewartbarteau/models/fused/Qwen3.6-MoE-Combined/model-00002-of-00004.safetensors",
+      "device": 16777233,
+      "inode": 52998924,
+      "size": 5368472723,
+      "mtime_ns": 1792687646359570855
+    },
+    {
+      "name": "model-00003-of-00004.safetensors",
+      "target": "/Users/stewartbarteau/models/fused/Qwen3.6-MoE-Combined/model-00003-of-00004.safetensors",
+      "device": 16777233,
+      "inode": 52998927,
+      "size": 5368324201,
+      "mtime_ns": 1792687647599375869
+    },
+    {
+      "name": "model-00004-of-00004.safetensors",
+      "target": "/Users/stewartbarteau/models/fused/Qwen3.6-MoE-Combined/model-00004-of-00004.safetensors",
+      "device": 16777233,
+      "inode": 52998930,
+      "size": 3428527593,
+      "mtime_ns": 1792687648275611596
+    },
+    {
+      "name": "config.json",
+      "target": "/Users/stewartbarteau/models/fused/Qwen3.6-MoE-Combined/config.json",
+      "device": 16777233,
+      "inode": 52998932,
+      "size": 25424,
+      "mtime_ns": 1792687648278031999
+    },
+    {
+      "name": "tokenizer.json",
+      "target": "/Users/stewartbarteau/models/fused/Qwen3.6-MoE-Combined/tokenizer.json",
+      "device": 16777233,
+      "inode": 52998937,
+      "size": 19989339,
+      "mtime_ns": 1792687648338260322
+    },
+    {
+      "name": "tokenizer_config.json",
+      "target": "/Users/stewartbarteau/models/fused/Qwen3.6-MoE-Combined/tokenizer_config.json",
+      "device": 16777233,
+      "inode": 52998934,
+      "size": 380,
+      "mtime_ns": 1792687648278565204
+    },
+    {
+      "name": "chat_template.jinja",
+      "target": "/Users/stewartbarteau/models/fused/Qwen3.6-MoE-Combined/chat_template.jinja",
+      "device": 16777233,
+      "inode": 52998933,
+      "size": 8057,
+      "mtime_ns": 1792687648278427663
+    },
+    {
+      "name": "model.safetensors.index.json",
+      "target": "/Users/stewartbarteau/models/fused/Qwen3.6-MoE-Combined/model.safetensors.index.json",
+      "device": 16777233,
+      "inode": 52998931,
+      "size": 187263,
+      "mtime_ns": 1792687648277444419
+    }
+  ],
+  "excluded_sidecar": "model-mtp.safetensors",
+  "main_weight_values_modified": false
+}
