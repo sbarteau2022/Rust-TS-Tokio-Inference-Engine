@@ -1,0 +1,9 @@
+User-selected model: /Users/stewartbarteau/models/fused/Qwen3.6-MoE-Combined
+User designation: Opus/Cyber fine-tuned model.
+Observed files: four weight shards plus model-mtp.safetensors; config, index, tokenizer and template.
+Observed configuration: qwen3_5_moe, 40 layers, hidden 2048, 256 experts / 8 selected; mixed affine quantization with per-module overrides.
+MODEL.md describes upstream Opus lineage and historical measurements; it is not independent proof of the current fusion procedure or current serving performance.
+Native tensor smoke and matrix benchmarks use synthetic tensors and are not checkpoint/model generation tests.
+Native full-Qwen forward, tokenizer, persistent parameters and hybrid state are not implemented. No model generation smoke was run under the native backend.
+The retained OptiQ A/B artifacts remain historical and are not relabeled as this checkpoint.
+Legacy reproduction profiles now point at the user's selected model; no legacy/Python model was launched.

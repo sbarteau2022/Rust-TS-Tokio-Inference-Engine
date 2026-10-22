@@ -3,4 +3,7 @@
 /.venv/
 /artifacts/
 *.gputrace
+/vendor/mlx/
 __pycache__/
+*.py[cod]
+.DS_Store

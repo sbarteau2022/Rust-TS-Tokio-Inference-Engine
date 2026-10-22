@@ -1,0 +1,14 @@
+Scope: native parameter/projection and operator foundation; full model generation NOT QUALIFIED.
+Main target: /Users/stewartbarteau/models/fused/Qwen3.6-MoE-Combined
+Artifact identity: 509cc92543203798f2db08b6fb6cbb38a80942fc0437ae81a3ef9ff27720915b
+Main parameter count: 1757. Logical payload bytes: 19508787456.
+Actual Q4/group64 in_proj_a and Q8/group64 router: two exact repeat evaluations each; drain accounting zero.
+Default Rust suite: 102 passed. debug-validation: 102 passed. no-default-features: 81 passed.
+TypeScript: 5 passed; TypeScript 7.1 and tsrs gates passed.
+Clippy all targets/all features (-D warnings), formatting, full independent integer oracle/Metal resources/signposts/GPU capture judge: passed.
+Bridge ASan/UBSan: exit 0, 1000 negative-descriptor cycles + recurrent multi-output/invalid kernel/invalid weight-store checks.
+ASan detect_leaks=0; prebuilt upstream MLX uninstrumented. No leak freedom or upstream memory-safety claim.
+Adversarial review: self-review; no independent reviewer or production approval.
+No model token throughput or generation quality established. Existing tensor macro benchmark is historical to its recorded binary.
+No Python runtime/model worker or JSON transport. Local standard checkpoint metadata parsed in Rust.
+No existing server replaced. Proposed production sampling rates inactive.

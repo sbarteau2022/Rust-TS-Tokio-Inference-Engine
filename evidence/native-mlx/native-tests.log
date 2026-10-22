@@ -1,0 +1,43 @@
+   Compiling rust-server v0.1.0 (/Users/stewartbarteau/Desktop/RUST SERVER)
+warning: rust-server@0.1.0: In file included from native/mlx_bridge.cpp:2:
+warning: rust-server@0.1.0: In file included from /Users/stewartbarteau/Desktop/RUST SERVER/vendor/mlx/include/mlx/mlx.h:5:
+warning: rust-server@0.1.0: In file included from /Users/stewartbarteau/Desktop/RUST SERVER/vendor/mlx/include/mlx/array.h:11:
+warning: rust-server@0.1.0: /Users/stewartbarteau/Desktop/RUST SERVER/vendor/mlx/include/mlx/allocator.h:50:36: warning: unused parameter 'ptr' [-Wunused-parameter]
+warning: rust-server@0.1.0:    50 |   virtual Buffer make_buffer(void* ptr, size_t size) {
+warning: rust-server@0.1.0:       |                                    ^
+warning: rust-server@0.1.0: /Users/stewartbarteau/Desktop/RUST SERVER/vendor/mlx/include/mlx/allocator.h:50:48: warning: unused parameter 'size' [-Wunused-parameter]
+warning: rust-server@0.1.0:    50 |   virtual Buffer make_buffer(void* ptr, size_t size) {
+warning: rust-server@0.1.0:       |                                                ^
+warning: rust-server@0.1.0: /Users/stewartbarteau/Desktop/RUST SERVER/vendor/mlx/include/mlx/allocator.h:53:31: warning: unused parameter 'buffer' [-Wunused-parameter]
+warning: rust-server@0.1.0:    53 |   virtual void release(Buffer buffer) {}
+warning: rust-server@0.1.0:       |                               ^
+warning: rust-server@0.1.0: In file included from native/mlx_bridge.cpp:2:
+warning: rust-server@0.1.0: In file included from /Users/stewartbarteau/Desktop/RUST SERVER/vendor/mlx/include/mlx/mlx.h:5:
+warning: rust-server@0.1.0: In file included from /Users/stewartbarteau/Desktop/RUST SERVER/vendor/mlx/include/mlx/array.h:13:
+warning: rust-server@0.1.0: In file included from /Users/stewartbarteau/Desktop/RUST SERVER/vendor/mlx/include/mlx/dtype.h:9:
+warning: rust-server@0.1.0: In file included from /Users/stewartbarteau/Desktop/RUST SERVER/vendor/mlx/include/mlx/types/complex.h:5:
+warning: rust-server@0.1.0: In file included from /Users/stewartbarteau/Desktop/RUST SERVER/vendor/mlx/include/mlx/types/half_types.h:32:
+warning: rust-server@0.1.0: /Users/stewartbarteau/Desktop/RUST SERVER/vendor/mlx/include/mlx/types/bf16.h:29:3: warning: definition of implicit copy assignment operator for '_MLX_BFloat16' is deprecated because it has a user-declared copy constructor [-Wdeprecated-copy]
+warning: rust-server@0.1.0:    29 |   _MLX_BFloat16(_MLX_BFloat16 const&) = default;
+warning: rust-server@0.1.0:       |   ^
+warning: rust-server@0.1.0: /Users/stewartbarteau/Desktop/RUST SERVER/vendor/mlx/include/mlx/types/bf16.h:38:19: note: in implicit copy assignment operator for 'mlx::core::_MLX_BFloat16' first required here
+warning: rust-server@0.1.0:    38 |     return (*this = _MLX_BFloat16(x));
+warning: rust-server@0.1.0:       |                   ^
+warning: rust-server@0.1.0: 4 warnings generated.
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.89s
+warning: the following packages contain code that will be rejected by a future version of Rust: block v0.1.6
+note: to see what the problems were, use the option `--future-incompat-report`, or run `cargo report future-incompatibilities --id 1`
+     Running tests/native_mlx.rs (target/debug/deps/native_mlx-033bcb1459c0a7f2)
+
+running 8 tests
+test graph_validation_rejects_adversarial_shapes_types_and_caps ... ok
+test atomic_resource_ledger_rolls_back_overflow_and_pressure_across_threads ... ok
+test joint_native_budget_rejects_without_poisoning_then_drains_on_shutdown ... ok
+test raw_integer_buffers_preserve_bits_without_float_conversion ... ok
+test caller_cancellation_cannot_skip_native_work_and_nonfinite_result_closes_admission ... ok
+test packed_q4_and_rms_match_independent_scalar_oracles ... ok
+test native_dense_graphs_match_independent_oracle_on_cpu_and_gpu ... ok
+test native_pressure_4500_completions_bound_three_and_reconcile_windows ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.32s
+

@@ -1,0 +1,195 @@
+rust-server v0.1.0 (/Users/stewartbarteau/Desktop/RUST SERVER)
+├── anyhow feature "default"
+│   ├── anyhow v1.0.104
+│   └── anyhow feature "std"
+│       └── anyhow v1.0.104
+├── block feature "default"
+│   └── block v0.1.6
+├── flatbuffers feature "default"
+│   ├── flatbuffers v25.12.19
+│   │   └── bitflags feature "default"
+│   │       └── bitflags v2.13.2
+│   │   [build-dependencies]
+│   │   └── rustc_version feature "default"
+│   │       └── rustc_version v0.4.1
+│   │           └── semver feature "default"
+│   │               ├── semver v1.0.28
+│   │               └── semver feature "std"
+│   │                   └── semver v1.0.28
+│   └── flatbuffers feature "std"
+│       └── flatbuffers v25.12.19 (*)
+├── metal feature "default"
+│   ├── metal v0.33.0
+│   │   ├── core-graphics-types v0.2.0
+│   │   │   ├── core-foundation v0.10.1
+│   │   │   │   ├── core-foundation-sys v0.8.7
+│   │   │   │   └── libc feature "default"
+│   │   │   │       ├── libc v0.2.191
+│   │   │   │       └── libc feature "std"
+│   │   │   │           └── libc v0.2.191
+│   │   │   ├── bitflags feature "default" (*)
+│   │   │   └── libc feature "default" (*)
+│   │   ├── block feature "default" (*)
+│   │   ├── bitflags feature "default" (*)
+│   │   ├── foreign-types feature "default"
+│   │   │   ├── foreign-types v0.5.0
+│   │   │   │   ├── foreign-types-macros feature "default"
+│   │   │   │   │   └── foreign-types-macros v0.2.4 (proc-macro)
+│   │   │   │   │       ├── proc-macro2 feature "default"
+│   │   │   │   │       │   ├── proc-macro2 v1.0.107
+│   │   │   │   │       │   │   └── unicode-ident feature "default"
+│   │   │   │   │       │   │       └── unicode-ident v1.0.27
+│   │   │   │   │       │   └── proc-macro2 feature "proc-macro"
+│   │   │   │   │       │       └── proc-macro2 v1.0.107 (*)
+│   │   │   │   │       ├── quote feature "default"
+│   │   │   │   │       │   ├── quote v1.0.47
+│   │   │   │   │       │   │   └── proc-macro2 v1.0.107 (*)
+│   │   │   │   │       │   └── quote feature "proc-macro"
+│   │   │   │   │       │       ├── quote v1.0.47 (*)
+│   │   │   │   │       │       └── proc-macro2 feature "proc-macro" (*)
+│   │   │   │   │       ├── syn feature "default"
+│   │   │   │   │       │   ├── syn v3.0.9
+│   │   │   │   │       │   │   ├── proc-macro2 v1.0.107 (*)
+│   │   │   │   │       │   │   ├── quote v1.0.47 (*)
+│   │   │   │   │       │   │   └── unicode-ident feature "default" (*)
+│   │   │   │   │       │   ├── syn feature "clone-impls"
+│   │   │   │   │       │   │   └── syn v3.0.9 (*)
+│   │   │   │   │       │   ├── syn feature "derive"
+│   │   │   │   │       │   │   └── syn v3.0.9 (*)
+│   │   │   │   │       │   ├── syn feature "parsing"
+│   │   │   │   │       │   │   └── syn v3.0.9 (*)
+│   │   │   │   │       │   ├── syn feature "printing"
+│   │   │   │   │       │   │   └── syn v3.0.9 (*)
+│   │   │   │   │       │   └── syn feature "proc-macro"
+│   │   │   │   │       │       ├── syn v3.0.9 (*)
+│   │   │   │   │       │       ├── proc-macro2 feature "proc-macro" (*)
+│   │   │   │   │       │       └── quote feature "proc-macro" (*)
+│   │   │   │   │       └── syn feature "full"
+│   │   │   │   │           └── syn v3.0.9 (*)
+│   │   │   │   └── foreign-types-shared feature "default"
+│   │   │   │       └── foreign-types-shared v0.3.1
+│   │   │   └── foreign-types feature "std"
+│   │   │       ├── foreign-types v0.5.0 (*)
+│   │   │       └── foreign-types-macros feature "std"
+│   │   │           └── foreign-types-macros v0.2.4 (proc-macro) (*)
+│   │   ├── log feature "default"
+│   │   │   └── log v0.4.34
+│   │   ├── objc feature "default"
+│   │   │   └── objc v0.2.7
+│   │   │       └── malloc_buf feature "default"
+│   │   │           └── malloc_buf v0.0.6
+│   │   │               └── libc feature "default" (*)
+│   │   └── paste feature "default"
+│   │       └── paste v1.0.15 (proc-macro)
+│   └── metal feature "link"
+│       ├── metal v0.33.0 (*)
+│       └── core-graphics-types feature "link"
+│           ├── core-graphics-types v0.2.0 (*)
+│           └── core-foundation feature "link"
+│               ├── core-foundation v0.10.1 (*)
+│               └── core-foundation-sys feature "link"
+│                   └── core-foundation-sys v0.8.7
+├── objc feature "default" (*)
+├── serde feature "default"
+│   ├── serde v1.0.229
+│   │   ├── serde_core feature "result"
+│   │   │   └── serde_core v1.0.229
+│   │   └── serde_derive feature "default"
+│   │       └── serde_derive v1.0.229 (proc-macro)
+│   │           ├── proc-macro2 feature "proc-macro" (*)
+│   │           ├── quote feature "proc-macro" (*)
+│   │           ├── syn feature "clone-impls" (*)
+│   │           ├── syn feature "derive" (*)
+│   │           ├── syn feature "parsing" (*)
+│   │           ├── syn feature "printing" (*)
+│   │           └── syn feature "proc-macro" (*)
+│   └── serde feature "std"
+│       ├── serde v1.0.229 (*)
+│       └── serde_core feature "std"
+│           └── serde_core v1.0.229
+├── serde feature "derive"
+│   ├── serde v1.0.229 (*)
+│   └── serde feature "serde_derive"
+│       └── serde v1.0.229 (*)
+├── serde_json feature "default"
+│   ├── serde_json v1.0.154
+│   │   ├── memchr v2.8.3
+│   │   ├── serde_core v1.0.229
+│   │   ├── itoa feature "default"
+│   │   │   └── itoa v1.0.18
+│   │   └── zmij feature "default"
+│   │       └── zmij v1.0.23
+│   └── serde_json feature "std"
+│       ├── serde_json v1.0.154 (*)
+│       ├── serde_core feature "std" (*)
+│       └── memchr feature "std"
+│           ├── memchr v2.8.3
+│           └── memchr feature "alloc"
+│               └── memchr v2.8.3
+├── sha2 feature "default"
+│   ├── sha2 v0.10.9
+│   │   ├── cfg-if feature "default"
+│   │   │   └── cfg-if v1.0.5
+│   │   ├── cpufeatures feature "default"
+│   │   │   └── cpufeatures v0.2.17
+│   │   │       └── libc v0.2.191
+│   │   └── digest feature "default"
+│   │       ├── digest v0.10.7
+│   │       │   ├── block-buffer feature "default"
+│   │       │   │   └── block-buffer v0.10.4
+│   │       │   │       └── generic-array feature "default"
+│   │       │   │           └── generic-array v0.14.7
+│   │       │   │               └── typenum feature "default"
+│   │       │   │                   └── typenum v1.20.1
+│   │       │   │               [build-dependencies]
+│   │       │   │               └── version_check feature "default"
+│   │       │   │                   └── version_check v0.9.5
+│   │       │   └── crypto-common feature "default"
+│   │       │       └── crypto-common v0.1.7
+│   │       │           ├── generic-array feature "default" (*)
+│   │       │           ├── generic-array feature "more_lengths"
+│   │       │           │   └── generic-array v0.14.7 (*)
+│   │       │           └── typenum feature "default" (*)
+│   │       └── digest feature "core-api"
+│   │           ├── digest v0.10.7 (*)
+│   │           └── digest feature "block-buffer"
+│   │               └── digest v0.10.7 (*)
+│   └── sha2 feature "std"
+│       ├── sha2 v0.10.9 (*)
+│       └── digest feature "std"
+│           ├── digest v0.10.7 (*)
+│           ├── digest feature "alloc"
+│           │   └── digest v0.10.7 (*)
+│           └── crypto-common feature "std"
+│               └── crypto-common v0.1.7 (*)
+├── tokio feature "default"
+│   └── tokio v1.54.1
+│       ├── pin-project-lite feature "default"
+│       │   └── pin-project-lite v0.2.17
+│       └── tokio-macros feature "default"
+│           └── tokio-macros v2.7.2 (proc-macro)
+│               ├── proc-macro2 feature "default" (*)
+│               ├── quote feature "default" (*)
+│               ├── syn feature "default" (*)
+│               └── syn feature "full" (*)
+├── tokio feature "macros"
+│   ├── tokio v1.54.1 (*)
+│   └── tokio feature "tokio-macros"
+│       └── tokio v1.54.1 (*)
+├── tokio feature "rt-multi-thread"
+│   ├── tokio v1.54.1 (*)
+│   └── tokio feature "rt"
+│       └── tokio v1.54.1 (*)
+├── tokio feature "sync"
+│   └── tokio v1.54.1 (*)
+└── tokio feature "time"
+    └── tokio v1.54.1 (*)
+[build-dependencies]
+└── cc feature "default"
+    └── cc v1.9.0
+        ├── find-msvc-tools feature "default"
+        │   └── find-msvc-tools v0.1.15
+        └── shlex feature "default"
+            ├── shlex v2.0.1
+            └── shlex feature "std"
+                └── shlex v2.0.1

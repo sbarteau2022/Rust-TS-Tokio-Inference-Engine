@@ -2,26 +2,26 @@
 title: "Implementation file map and evidence index"
 document_type: "implementation"
 version: "1.0.0"
-date: "2026-10-22T16:24:31Z"
+date: "2026-10-22T18:57:37Z"
 implementation_date: null
 author: "Codex for Stewart Barteau"
 reviewers: []
 status: "draft"
 related_files:
   - path: ".gitignore"
-    lines: "1-5"
+    lines: "1-9"
     role: "config"
   - path: "Cargo.lock"
     lines: "1-452"
     role: "config"
   - path: "Cargo.toml"
-    lines: "1-26"
+    lines: "1-28"
     role: "config"
   - path: "backend/rapid_worker.py"
     lines: "1-165"
     role: "primary"
   - path: "build.rs"
-    lines: "1-8"
+    lines: "1-54"
     role: "primary"
   - path: "fixtures/atan2.amvk"
     lines: null
@@ -34,6 +34,9 @@ related_files:
     role: "test"
   - path: "fixtures/elementwise.amvk"
     lines: null
+    role: "test"
+  - path: "fixtures/native-model.path"
+    lines: "1-1"
     role: "test"
   - path: "fixtures/qwen-prompts-long.json"
     lines: "1-4"
@@ -78,8 +81,14 @@ related_files:
     lines: "1-35"
     role: "test"
   - path: "judges/run.py"
-    lines: "1-203"
+    lines: "1-202"
     role: "test"
+  - path: "native/mlx_bridge.cpp"
+    lines: "1-165"
+    role: "primary"
+  - path: "native/mlx_bridge.h"
+    lines: "1-46"
+    role: "primary"
   - path: "native/telemetry.cpp"
     lines: "1-23"
     role: "primary"
@@ -132,13 +141,16 @@ related_files:
     lines: "1-81"
     role: "primary"
   - path: "src/main.rs"
-    lines: "1-402"
+    lines: "1-415"
     role: "primary"
   - path: "src/runtime.rs"
     lines: "1-366"
     role: "primary"
   - path: "src/sampled.rs"
     lines: "1-193"
+    role: "primary"
+  - path: "src/serving/completion_ledger.rs"
+    lines: "1-100"
     role: "primary"
   - path: "src/serving/config.rs"
     lines: "1-51"
@@ -147,13 +159,25 @@ related_files:
     lines: "1-280"
     role: "primary"
   - path: "src/serving/mod.rs"
-    lines: "1-73"
+    lines: "1-81"
+    role: "primary"
+  - path: "src/serving/native_mlx.rs"
+    lines: "1-925"
+    role: "primary"
+  - path: "src/serving/native_ops.rs"
+    lines: "1-273"
+    role: "primary"
+  - path: "src/serving/native_state.rs"
+    lines: "1-194"
     role: "primary"
   - path: "src/serving/rapid.rs"
     lines: "1-265"
     role: "primary"
   - path: "src/serving/scheduler.rs"
     lines: "1-563"
+    role: "primary"
+  - path: "src/serving/weights.rs"
+    lines: "1-395"
     role: "primary"
   - path: "src/telemetry.rs"
     lines: "1-26"
@@ -182,11 +206,17 @@ related_files:
   - path: "tests/grid.rs"
     lines: "1-41"
     role: "test"
+  - path: "tests/native_execution.rs"
+    lines: "1-486"
+    role: "test"
+  - path: "tests/native_mlx.rs"
+    lines: "1-297"
+    role: "test"
   - path: "tests/production_pipeline.rs"
     lines: "1-315"
     role: "test"
   - path: "tests/rapid_rpc.rs"
-    lines: "1-75"
+    lines: "1-76"
     role: "test"
   - path: "tests/resources.rs"
     lines: "1-341"
@@ -249,15 +279,16 @@ Exact text line references for this local implementation. Binary fixtures have n
 
 | File | Exact lines | Role |
 | --- | --- | --- |
-| `.gitignore` | 1–5 | config |
+| `.gitignore` | 1–9 | config |
 | `Cargo.lock` | 1–452 | config |
-| `Cargo.toml` | 1–26 | config |
+| `Cargo.toml` | 1–28 | config |
 | `backend/rapid_worker.py` | 1–165 | primary |
-| `build.rs` | 1–8 | primary |
+| `build.rs` | 1–54 | primary |
 | `fixtures/atan2.amvk` | Binary / no text lines | test |
 | `fixtures/cache-config-bench.json` | 1–13 | test |
 | `fixtures/cos.amvk` | Binary / no text lines | test |
 | `fixtures/elementwise.amvk` | Binary / no text lines | test |
+| `fixtures/native-model.path` | 1–1 | test |
 | `fixtures/qwen-prompts-long.json` | 1–4 | test |
 | `fixtures/qwen-prompts.json` | 1–6 | test |
 | `fixtures/qwen-serving-long.json` | 1–21 | test |
@@ -272,7 +303,9 @@ Exact text line references for this local implementation. Binary fixtures have n
 | `judges/macro.py` | 1–14 | test |
 | `judges/model_ab.py` | 1–93 | test |
 | `judges/resources.py` | 1–35 | test |
-| `judges/run.py` | 1–203 | test |
+| `judges/run.py` | 1–202 | test |
+| `native/mlx_bridge.cpp` | 1–165 | primary |
+| `native/mlx_bridge.h` | 1–46 | primary |
 | `native/telemetry.cpp` | 1–23 | primary |
 | `package-lock.json` | 1–1072 | config |
 | `package.json` | 1–21 | config |
@@ -290,14 +323,19 @@ Exact text line references for this local implementation. Binary fixtures have n
 | `src/ir.rs` | 1–646 | primary |
 | `src/lib.rs` | 1–30 | primary |
 | `src/macro_bench.rs` | 1–81 | primary |
-| `src/main.rs` | 1–402 | primary |
+| `src/main.rs` | 1–415 | primary |
 | `src/runtime.rs` | 1–366 | primary |
 | `src/sampled.rs` | 1–193 | primary |
+| `src/serving/completion_ledger.rs` | 1–100 | primary |
 | `src/serving/config.rs` | 1–51 | primary |
 | `src/serving/kv.rs` | 1–280 | primary |
-| `src/serving/mod.rs` | 1–73 | primary |
+| `src/serving/mod.rs` | 1–81 | primary |
+| `src/serving/native_mlx.rs` | 1–925 | primary |
+| `src/serving/native_ops.rs` | 1–273 | primary |
+| `src/serving/native_state.rs` | 1–194 | primary |
 | `src/serving/rapid.rs` | 1–265 | primary |
 | `src/serving/scheduler.rs` | 1–563 | primary |
+| `src/serving/weights.rs` | 1–395 | primary |
 | `src/telemetry.rs` | 1–26 | primary |
 | `src/trace_generated.rs` | 1–1523 | primary |
 | `src/wire.rs` | 1–124 | primary |
@@ -307,8 +345,10 @@ Exact text line references for this local implementation. Binary fixtures have n
 | `tests/cordic.rs` | 1–264 | test |
 | `tests/fixed_point.rs` | 1–146 | test |
 | `tests/grid.rs` | 1–41 | test |
+| `tests/native_execution.rs` | 1–486 | test |
+| `tests/native_mlx.rs` | 1–297 | test |
 | `tests/production_pipeline.rs` | 1–315 | test |
-| `tests/rapid_rpc.rs` | 1–75 | test |
+| `tests/rapid_rpc.rs` | 1–76 | test |
 | `tests/resources.rs` | 1–341 | test |
 | `tests/serving.rs` | 1–426 | test |
 | `ts/generated/trace.ts` | 1–5 | primary |
@@ -326,26 +366,28 @@ Exact text line references for this local implementation. Binary fixtures have n
 | `ts/trace.test.ts` | 1–45 | test |
 | `ts/trace.ts` | 1–73 | primary |
 | `tsconfig.json` | 1–1 | config |
-| `README.md` | 1–447 | primary |
-| `docs/ACCELERATOR_ROADMAP.md` | 1–294 | primary |
-| `docs/ADVERSARIAL_REVIEW.md` | 1–300 | primary |
-| `docs/ASYNC_COMPLETION.md` | 1–327 | primary |
-| `docs/DESIGN.md` | 1–281 | primary |
-| `docs/FILE_MAP.md` | 1–356 | primary |
-| `docs/FIXED_POINT.md` | 1–351 | primary |
-| `docs/Failures.md` | 1–279 | primary |
-| `docs/GRID_THROUGHPUT.md` | 1–310 | primary |
-| `docs/MODEL_ADVERSARIAL_REVIEW.md` | 1–292 | primary |
-| `docs/MODEL_INTEGRATION.md` | 1–395 | primary |
-| `docs/NEXT_STEPS.md` | 1–321 | primary |
-| `docs/PRODUCTION_PIPELINE.md` | 1–311 | primary |
-| `docs/RESOURCE_BACKEND_DESIGN.md` | 1–291 | primary |
-| `docs/RESOURCE_IMPLEMENTATION.md` | 1–348 | primary |
-| `docs/SAMPLING_POLICY_STATUS.md` | 1–272 | primary |
-| `docs/SERVING_ARCHITECTURE.md` | 1–379 | primary |
-| `docs/SOURCE_SPEC.md` | 1–467 | primary |
-| `docs/SPEC15_IMPLEMENTATION.md` | 1–304 | primary |
-| `docs/SPEC15_SOURCE.md` | 1–504 | primary |
+| `README.md` | 1–515 | primary |
+| `docs/ACCELERATOR_ROADMAP.md` | 1–324 | primary |
+| `docs/ADVERSARIAL_REVIEW.md` | 1–330 | primary |
+| `docs/ASYNC_COMPLETION.md` | 1–357 | primary |
+| `docs/DESIGN.md` | 1–311 | primary |
+| `docs/FILE_MAP.md` | 1–398 | primary |
+| `docs/FIXED_POINT.md` | 1–381 | primary |
+| `docs/Failures.md` | 1–309 | primary |
+| `docs/GRID_THROUGHPUT.md` | 1–340 | primary |
+| `docs/MODEL_ADVERSARIAL_REVIEW.md` | 1–322 | primary |
+| `docs/MODEL_INTEGRATION.md` | 1–429 | primary |
+| `docs/NATIVE_MLX_BACKEND.md` | 1–394 | primary |
+| `docs/NATIVE_WEIGHTS_EXECUTION.md` | 1–334 | primary |
+| `docs/NEXT_STEPS.md` | 1–372 | primary |
+| `docs/PRODUCTION_PIPELINE.md` | 1–341 | primary |
+| `docs/RESOURCE_BACKEND_DESIGN.md` | 1–321 | primary |
+| `docs/RESOURCE_IMPLEMENTATION.md` | 1–378 | primary |
+| `docs/SAMPLING_POLICY_STATUS.md` | 1–302 | primary |
+| `docs/SERVING_ARCHITECTURE.md` | 1–409 | primary |
+| `docs/SOURCE_SPEC.md` | 1–497 | primary |
+| `docs/SPEC15_IMPLEMENTATION.md` | 1–334 | primary |
+| `docs/SPEC15_SOURCE.md` | 1–534 | primary |
 
 # Evidence
 

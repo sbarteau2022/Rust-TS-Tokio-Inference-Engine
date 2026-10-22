@@ -9,19 +9,19 @@ reviewers: []
 status: "draft"
 related_files:
   - path: ".gitignore"
-    lines: "1-5"
+    lines: "1-9"
     role: "config"
   - path: "Cargo.lock"
     lines: "1-452"
     role: "config"
   - path: "Cargo.toml"
-    lines: "1-26"
+    lines: "1-28"
     role: "config"
   - path: "backend/rapid_worker.py"
     lines: "1-165"
     role: "primary"
   - path: "build.rs"
-    lines: "1-8"
+    lines: "1-54"
     role: "primary"
   - path: "fixtures/atan2.amvk"
     lines: null
@@ -34,6 +34,9 @@ related_files:
     role: "test"
   - path: "fixtures/elementwise.amvk"
     lines: null
+    role: "test"
+  - path: "fixtures/native-model.path"
+    lines: "1-1"
     role: "test"
   - path: "fixtures/qwen-prompts-long.json"
     lines: "1-4"
@@ -78,8 +81,14 @@ related_files:
     lines: "1-35"
     role: "test"
   - path: "judges/run.py"
-    lines: "1-203"
+    lines: "1-202"
     role: "test"
+  - path: "native/mlx_bridge.cpp"
+    lines: "1-165"
+    role: "primary"
+  - path: "native/mlx_bridge.h"
+    lines: "1-46"
+    role: "primary"
   - path: "native/telemetry.cpp"
     lines: "1-23"
     role: "primary"
@@ -132,13 +141,16 @@ related_files:
     lines: "1-81"
     role: "primary"
   - path: "src/main.rs"
-    lines: "1-402"
+    lines: "1-415"
     role: "primary"
   - path: "src/runtime.rs"
     lines: "1-366"
     role: "primary"
   - path: "src/sampled.rs"
     lines: "1-193"
+    role: "primary"
+  - path: "src/serving/completion_ledger.rs"
+    lines: "1-100"
     role: "primary"
   - path: "src/serving/config.rs"
     lines: "1-51"
@@ -147,13 +159,25 @@ related_files:
     lines: "1-280"
     role: "primary"
   - path: "src/serving/mod.rs"
-    lines: "1-73"
+    lines: "1-81"
+    role: "primary"
+  - path: "src/serving/native_mlx.rs"
+    lines: "1-925"
+    role: "primary"
+  - path: "src/serving/native_ops.rs"
+    lines: "1-273"
+    role: "primary"
+  - path: "src/serving/native_state.rs"
+    lines: "1-194"
     role: "primary"
   - path: "src/serving/rapid.rs"
     lines: "1-265"
     role: "primary"
   - path: "src/serving/scheduler.rs"
     lines: "1-563"
+    role: "primary"
+  - path: "src/serving/weights.rs"
+    lines: "1-395"
     role: "primary"
   - path: "src/telemetry.rs"
     lines: "1-26"
@@ -182,11 +206,17 @@ related_files:
   - path: "tests/grid.rs"
     lines: "1-41"
     role: "test"
+  - path: "tests/native_execution.rs"
+    lines: "1-486"
+    role: "test"
+  - path: "tests/native_mlx.rs"
+    lines: "1-297"
+    role: "test"
   - path: "tests/production_pipeline.rs"
     lines: "1-315"
     role: "test"
   - path: "tests/rapid_rpc.rs"
-    lines: "1-75"
+    lines: "1-76"
     role: "test"
   - path: "tests/resources.rs"
     lines: "1-341"
@@ -319,3 +349,24 @@ The MLX baseline model path is now implemented; see [MODEL_INTEGRATION.md](MODEL
 ## Fabel/Cyber correction and next-round order
 
 First identify and fingerprint the intended fine-tuned checkpoint or complete adapter; the retained OptiQ A/B had no Fable adapter. The inspected Fable smoke/nativeprobe trees have configuration but no adapter safetensors. Next verify actual fine-tune loading, repeat regular/TurboQuant comparisons with domain quality gates, and then qualify genuine tensor batching. Details and failure boundaries are in [MODEL_INTEGRATION.md](MODEL_INTEGRATION.md#checkpoint-correction--fabelcyber-qualification-pending).
+
+## Current direction — native Rust first, fused Opus/Cyber target
+
+The selected checkpoint is `/Users/stewartbarteau/models/fused/Qwen3.6-MoE-Combined`; no further model-path clarification is needed. Native Rust-owned MLX tensor execution and joint completion-ledger admission replace the external worker as the default foundation. See [NATIVE_MLX_BACKEND.md](NATIVE_MLX_BACKEND.md) for the Rapid/oMLX/SGLang pattern and its implementation.
+
+Next: persistent native weight handles and immutable fingerprinted manifests; mixed 4/8-bit and optional MTP quantization support; Qwen attention, gated-delta recurrence and MoE routing; exact-boundary recurrent and token-sliceable KV contracts; then genuine tensor batching, generation congruence/domain quality and regular/TurboQuant A/B on this fused checkpoint. Integrate each with completion-owned reservations. Native tensor/matrix results are not evidence that the model is ready. The proposed production sampling policy remains inactive.
+
+## Model scope ruling — 2026-10-22
+
+Implement the native workhorse path for Qwen3.6 Combined MoE first. Abliterated Qwen3.8 27B is the only other model integration target. No other checkpoint or model family is currently in scope. Keep `/Users/stewartbarteau/models/fused/Qwen3.6-MoE-Combined` as the workhorse smoke target; bind the exact Qwen3.8 abliteration artifact before its own integration or qualification. This narrows the target set without changing the native-first roadmap or claiming either full model path is complete.
+
+
+## After persistent native weights and recurrent tensor batches
+
+Persistent checkpoint ownership, exact mixed affine quantization, attention/recurrent/router/expert operator interfaces and completion-committed recurrent row batching are implemented. This advances the native operator foundation; earlier full-model work remains unqualified.
+
+1. Compose Combined's complete hybrid layers: embeddings, convolution history, normalized gated recurrence, attention projection gates/RoPE/KV, sparse/shared MoE, residuals, final norm and output head. Match the checkpoint's norm sanitization convention explicitly.
+2. Bind native tokenization and template semantics to the fingerprinted workhorse artifacts. No remote code, Python worker, replacement model or JSON transport.
+3. Extend row transactions to attention KV plus convolution/recurrent state as one model step. Prove prefill/decode equivalence, batch permutation/isolation and cancellation at every completion boundary before optimizing CPU snapshots into persistent device state.
+4. Wire model steps into bounded scheduling and regular/TurboQuant KV interfaces; test admission saturation, retraction, restart, prefix boundaries and concurrent isolation. An adapter interface alone is not codec execution proof.
+5. Qualify held-out Opus/Cyber tasks and long-context continuation against an explicitly identified native baseline. Report TTFT, token latency, aggregate tokens/s, memory and quality by concurrency with exact model/kernel/quantization identities. Operator/projection throughput is not model-token throughput. Enable neither production sampling proposals nor a production-ready label without the separate gates.

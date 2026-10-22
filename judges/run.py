@@ -172,12 +172,11 @@ def main():
     assert chain["output"]["metrics"]["max_abs_error"] is None
     assert chain["output"]["metrics"]["validation_ms"]==0
     assert chain["flight"]["limit"]==3 and chain["flight"]["completed"]==chain["flight"]["submitted"]==1
-    run([sys.executable,"-m","py_compile","backend/rapid_worker.py","judges/model_ab.py"],"serving-python-compile.log")
-    for flags in [["--unknown","1"],["--max-in-flight","4"],["--kv-codec","regular","--kv-codec","regular"],["--prefill-chunk-tokens","0"],["--probe-directory"]]:
-        rejected=subprocess.run([binary,"model-run","fixtures/qwen-serving.json","fixtures/qwen-prompts.json","1",*flags],cwd=ROOT,env=ENV,capture_output=True,timeout=10)
-        assert rejected.returncode!=0, flags
-    run([binary,"config","check","--config","fixtures/qwen-serving.json"],"serving-config.json")
-    assert load("serving-config.json")["valid"] and not load("serving-config.json")["production_qualified"]
+    # Native backend has no interpreter/JSON transport. Legacy adapter is opt-in only.
+    run([binary,"native-mlx"],"native-mlx-smoke.txt")
+    for command in [["model-run","fixtures/qwen-serving.json","fixtures/qwen-prompts.json","1"],["config","check","--config","fixtures/qwen-serving.json"],["native-mlx","--unknown"]]:
+        rejected=subprocess.run([binary,*command],cwd=ROOT,env=ENV,capture_output=True,timeout=10)
+        assert rejected.returncode!=0, command
     run([binary,"cache-judge","fixtures/cache-config-bench.json"],"cache-judge.json")
     cache=load("cache-judge.json")
     assert cache["pass"] and cache["production_qualified"] is False
@@ -195,7 +194,7 @@ def main():
     source += [ROOT / p for p in ["Cargo.toml", "Cargo.lock", "build.rs", "package.json", "package-lock.json", "tsconfig.json", "run.sh", "requirements-bench.txt"]]
     hashes = {str(p.relative_to(ROOT)): hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted(source)}
     (EVIDENCE / "source-sha256.json").write_text(json.dumps(hashes, indent=2))
-    (EVIDENCE / "judge-summary.json").write_text(json.dumps({"pass": True, "arithmetic_contract": "q1_31_i32_v3", "cordic_functions": ["sin","cos","atan2","tanh"], "async_completion_limits": [2,3], "default_in_flight": 3, "sample_interval":1000, "sampling_policy":"DETERMINISTIC-MODE", "production_sampling_claims":False, "spec15_cache_control":"opaque payload adapter; nonproduction", "model_serving_foundation":"bounded iteration scheduler, typed host codecs, explicit Rapid MLX bridge; real-model evidence separate", "chain_max_stages":16, "validation_policy":"production sampled; full CPU reference test/debug-validation feature", "resource_backend_stages": [1,2], "steps": list(range(6)), "native_capture": str(capture_path), "source_manifest": "source-sha256.json", "unix_time": time.time()}, indent=2))
+    (EVIDENCE / "judge-summary.json").write_text(json.dumps({"pass": True, "arithmetic_contract": "q1_31_i32_v3", "cordic_functions": ["sin","cos","atan2","tanh"], "async_completion_limits": [2,3], "default_in_flight": 3, "sample_interval":1000, "sampling_policy":"DETERMINISTIC-MODE", "production_sampling_claims":False, "spec15_cache_control":"opaque payload adapter; nonproduction", "model_serving_foundation":"native Rust MLX tensor executor with joint completion ledger; full Qwen forward pending; Python adapter disabled by default", "chain_max_stages":16, "validation_policy":"production sampled; full CPU reference test/debug-validation feature", "resource_backend_stages": [1,2], "steps": list(range(6)), "native_capture": str(capture_path), "source_manifest": "source-sha256.json", "unix_time": time.time()}, indent=2))
     print("PASS: steps 0–5, persistent resources, six kernel families including CORDIC, adversarial suites, compiler gates, CLI, native signposts and GPU capture")
 
 

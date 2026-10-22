@@ -1,3 +1,4 @@
+#![cfg(feature = "legacy-python")]
 use anyhow::Result;
 use rust_server::serving::{
     rapid::{RapidBackend, RapidConfig},

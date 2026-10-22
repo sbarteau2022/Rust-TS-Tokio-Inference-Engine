@@ -1,27 +1,54 @@
-   Compiling rust-server v0.1.0 (/Users/stewartbarteau/Desktop/RUST SERVER)
-    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.53s
+   Compiling rust-server v0.1.0 (/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine)
+warning: rust-server@0.1.0: In file included from native/mlx_bridge.cpp:2:
+warning: rust-server@0.1.0: In file included from /Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/vendor/mlx/include/mlx/mlx.h:5:
+warning: rust-server@0.1.0: In file included from /Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/vendor/mlx/include/mlx/array.h:11:
+warning: rust-server@0.1.0: /Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/vendor/mlx/include/mlx/allocator.h:50:36: warning: unused parameter 'ptr' [-Wunused-parameter]
+warning: rust-server@0.1.0:    50 |   virtual Buffer make_buffer(void* ptr, size_t size) {
+warning: rust-server@0.1.0:       |                                    ^
+warning: rust-server@0.1.0: /Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/vendor/mlx/include/mlx/allocator.h:50:48: warning: unused parameter 'size' [-Wunused-parameter]
+warning: rust-server@0.1.0:    50 |   virtual Buffer make_buffer(void* ptr, size_t size) {
+warning: rust-server@0.1.0:       |                                                ^
+warning: rust-server@0.1.0: /Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/vendor/mlx/include/mlx/allocator.h:53:31: warning: unused parameter 'buffer' [-Wunused-parameter]
+warning: rust-server@0.1.0:    53 |   virtual void release(Buffer buffer) {}
+warning: rust-server@0.1.0:       |                               ^
+warning: rust-server@0.1.0: In file included from native/mlx_bridge.cpp:2:
+warning: rust-server@0.1.0: In file included from /Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/vendor/mlx/include/mlx/mlx.h:5:
+warning: rust-server@0.1.0: In file included from /Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/vendor/mlx/include/mlx/array.h:13:
+warning: rust-server@0.1.0: In file included from /Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/vendor/mlx/include/mlx/dtype.h:9:
+warning: rust-server@0.1.0: In file included from /Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/vendor/mlx/include/mlx/types/complex.h:5:
+warning: rust-server@0.1.0: In file included from /Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/vendor/mlx/include/mlx/types/half_types.h:32:
+warning: rust-server@0.1.0: /Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/vendor/mlx/include/mlx/types/bf16.h:29:3: warning: definition of implicit copy assignment operator for '_MLX_BFloat16' is deprecated because it has a user-declared copy constructor [-Wdeprecated-copy]
+warning: rust-server@0.1.0:    29 |   _MLX_BFloat16(_MLX_BFloat16 const&) = default;
+warning: rust-server@0.1.0:       |   ^
+warning: rust-server@0.1.0: /Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/vendor/mlx/include/mlx/types/bf16.h:38:19: note: in implicit copy assignment operator for 'mlx::core::_MLX_BFloat16' first required here
+warning: rust-server@0.1.0:    38 |     return (*this = _MLX_BFloat16(x));
+warning: rust-server@0.1.0:       |                   ^
+warning: rust-server@0.1.0: 4 warnings generated.
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 4.07s
 warning: the following packages contain code that will be rejected by a future version of Rust: block v0.1.6
 note: to see what the problems were, use the option `--future-incompat-report`, or run `cargo report future-incompatibilities --id 1`
-     Running unittests src/lib.rs (target/debug/deps/rust_server-ebc35794f6210818)
+     Running unittests src/lib.rs (target/debug/deps/rust_server-12c4b686165bc5a5)
 background Q1.31 validation failed: result length mismatch
 background Q1.31 validation failed: result length mismatch
-     Running unittests src/main.rs (target/debug/deps/rust_server-9bb180cd71480066)
-     Running tests/adversarial.rs (target/debug/deps/adversarial-ba22e8c7419a96cb)
-     Running tests/async_completion.rs (target/debug/deps/async_completion-28cac3d5f1e830f8)
-     Running tests/cache_control.rs (target/debug/deps/cache_control-1b6e00e9def9f577)
+     Running unittests src/main.rs (target/debug/deps/rust_server-155b0303e4795307)
+     Running tests/adversarial.rs (target/debug/deps/adversarial-b8379a390649d736)
+     Running tests/async_completion.rs (target/debug/deps/async_completion-3e595e55c692ee42)
+     Running tests/cache_control.rs (target/debug/deps/cache_control-3ca7bd7417d168a5)
 
-thread 'prefix_inflight_is_deduplicated_and_producer_errors_release_reservations' (23402245) panicked at tests/cache_control.rs:211:26:
+thread 'prefix_inflight_is_deduplicated_and_producer_errors_release_reservations' (23658082) panicked at tests/cache_control.rs:211:26:
 injected producer panic
 note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
-     Running tests/cordic.rs (target/debug/deps/cordic-957c1c21e108bee5)
-     Running tests/fixed_point.rs (target/debug/deps/fixed_point-7a7bb605c36548eb)
-     Running tests/grid.rs (target/debug/deps/grid-cc1c07494d6dbf93)
-     Running tests/production_pipeline.rs (target/debug/deps/production_pipeline-5b75992be12d0b79)
-     Running tests/rapid_rpc.rs (target/debug/deps/rapid_rpc-7a17d8c591f60f1d)
-     Running tests/resources.rs (target/debug/deps/resources-17d112751f2c8572)
-     Running tests/serving.rs (target/debug/deps/serving-157674b85d3facaf)
+     Running tests/cordic.rs (target/debug/deps/cordic-70d53c3ef8dd6396)
+     Running tests/fixed_point.rs (target/debug/deps/fixed_point-507b0c5154c711a4)
+     Running tests/grid.rs (target/debug/deps/grid-b7f1d5e3b823a2ee)
+     Running tests/native_execution.rs (target/debug/deps/native_execution-3be43e891f2dd71e)
+     Running tests/native_mlx.rs (target/debug/deps/native_mlx-e936cd0861e93578)
+     Running tests/production_pipeline.rs (target/debug/deps/production_pipeline-8139dfdecfa8511e)
+     Running tests/rapid_rpc.rs (target/debug/deps/rapid_rpc-6bd26a55cc6fa009)
+     Running tests/resources.rs (target/debug/deps/resources-89ec4e45fca1a3d3)
+     Running tests/serving.rs (target/debug/deps/serving-9e3831c30e7b7a54)
 
-thread 'panicked_backend_closes_admission_and_reports_unfinished_work' (23402627) panicked at tests/serving.rs:217:27:
+thread 'panicked_backend_closes_admission_and_reports_unfinished_work' (23658692) panicked at tests/serving.rs:217:27:
 injected model backend panic
 note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
    Doc-tests rust_server

@@ -1,0 +1,334 @@
+---
+title: "Persistent native weights and Qwen operator execution"
+document_type: "architecture"
+version: "1.0.0"
+date: "2026-10-22T00:00:00Z"
+implementation_date: null
+author: "Codex for Stewart Barteau"
+reviewers: []
+status: "draft"
+related_files:
+  - path: ".gitignore"
+    lines: "1-9"
+    role: "config"
+  - path: "Cargo.lock"
+    lines: "1-452"
+    role: "config"
+  - path: "Cargo.toml"
+    lines: "1-28"
+    role: "config"
+  - path: "backend/rapid_worker.py"
+    lines: "1-165"
+    role: "primary"
+  - path: "build.rs"
+    lines: "1-54"
+    role: "primary"
+  - path: "fixtures/atan2.amvk"
+    lines: null
+    role: "test"
+  - path: "fixtures/cache-config-bench.json"
+    lines: "1-13"
+    role: "test"
+  - path: "fixtures/cos.amvk"
+    lines: null
+    role: "test"
+  - path: "fixtures/elementwise.amvk"
+    lines: null
+    role: "test"
+  - path: "fixtures/native-model.path"
+    lines: "1-1"
+    role: "test"
+  - path: "fixtures/qwen-prompts-long.json"
+    lines: "1-4"
+    role: "test"
+  - path: "fixtures/qwen-prompts.json"
+    lines: "1-6"
+    role: "test"
+  - path: "fixtures/qwen-serving-long.json"
+    lines: "1-21"
+    role: "test"
+  - path: "fixtures/qwen-serving.json"
+    lines: "1-21"
+    role: "test"
+  - path: "fixtures/rectangular.amvk"
+    lines: null
+    role: "test"
+  - path: "fixtures/sin.amvk"
+    lines: null
+    role: "test"
+  - path: "fixtures/square.amvk"
+    lines: null
+    role: "test"
+  - path: "fixtures/tanh.amvk"
+    lines: null
+    role: "test"
+  - path: "judges/benchmark.py"
+    lines: "1-51"
+    role: "test"
+  - path: "judges/cordic.py"
+    lines: "1-30"
+    role: "test"
+  - path: "judges/generate_cordic.py"
+    lines: "1-44"
+    role: "test"
+  - path: "judges/macro.py"
+    lines: "1-14"
+    role: "test"
+  - path: "judges/model_ab.py"
+    lines: "1-93"
+    role: "test"
+  - path: "judges/resources.py"
+    lines: "1-35"
+    role: "test"
+  - path: "judges/run.py"
+    lines: "1-202"
+    role: "test"
+  - path: "native/mlx_bridge.cpp"
+    lines: "1-165"
+    role: "primary"
+  - path: "native/mlx_bridge.h"
+    lines: "1-46"
+    role: "primary"
+  - path: "native/telemetry.cpp"
+    lines: "1-23"
+    role: "primary"
+  - path: "package-lock.json"
+    lines: "1-1072"
+    role: "config"
+  - path: "package.json"
+    lines: "1-21"
+    role: "config"
+  - path: "requirements-bench.txt"
+    lines: "1-2"
+    role: "config"
+  - path: "run.sh"
+    lines: "1-5"
+    role: "primary"
+  - path: "schema/trace.fbs"
+    lines: "1-12"
+    role: "primary"
+  - path: "src/backend.rs"
+    lines: "1-614"
+    role: "primary"
+  - path: "src/cache/mod.rs"
+    lines: "1-1068"
+    role: "primary"
+  - path: "src/chain.rs"
+    lines: "1-50"
+    role: "primary"
+  - path: "src/completion.rs"
+    lines: "1-218"
+    role: "primary"
+  - path: "src/cordic.rs"
+    lines: "1-204"
+    role: "primary"
+  - path: "src/cordic_tables.rs"
+    lines: "1-102"
+    role: "primary"
+  - path: "src/execute.rs"
+    lines: "1-122"
+    role: "primary"
+  - path: "src/gpu.rs"
+    lines: "1-440"
+    role: "primary"
+  - path: "src/ir.rs"
+    lines: "1-646"
+    role: "primary"
+  - path: "src/lib.rs"
+    lines: "1-30"
+    role: "primary"
+  - path: "src/macro_bench.rs"
+    lines: "1-81"
+    role: "primary"
+  - path: "src/main.rs"
+    lines: "1-415"
+    role: "primary"
+  - path: "src/runtime.rs"
+    lines: "1-366"
+    role: "primary"
+  - path: "src/sampled.rs"
+    lines: "1-193"
+    role: "primary"
+  - path: "src/serving/completion_ledger.rs"
+    lines: "1-100"
+    role: "primary"
+  - path: "src/serving/config.rs"
+    lines: "1-51"
+    role: "primary"
+  - path: "src/serving/kv.rs"
+    lines: "1-280"
+    role: "primary"
+  - path: "src/serving/mod.rs"
+    lines: "1-81"
+    role: "primary"
+  - path: "src/serving/native_mlx.rs"
+    lines: "1-925"
+    role: "primary"
+  - path: "src/serving/native_ops.rs"
+    lines: "1-273"
+    role: "primary"
+  - path: "src/serving/native_state.rs"
+    lines: "1-194"
+    role: "primary"
+  - path: "src/serving/rapid.rs"
+    lines: "1-265"
+    role: "primary"
+  - path: "src/serving/scheduler.rs"
+    lines: "1-563"
+    role: "primary"
+  - path: "src/serving/weights.rs"
+    lines: "1-395"
+    role: "primary"
+  - path: "src/telemetry.rs"
+    lines: "1-26"
+    role: "primary"
+  - path: "src/trace_generated.rs"
+    lines: "1-1523"
+    role: "primary"
+  - path: "src/wire.rs"
+    lines: "1-124"
+    role: "primary"
+  - path: "tests/adversarial.rs"
+    lines: "1-456"
+    role: "test"
+  - path: "tests/async_completion.rs"
+    lines: "1-192"
+    role: "test"
+  - path: "tests/cache_control.rs"
+    lines: "1-419"
+    role: "test"
+  - path: "tests/cordic.rs"
+    lines: "1-264"
+    role: "test"
+  - path: "tests/fixed_point.rs"
+    lines: "1-146"
+    role: "test"
+  - path: "tests/grid.rs"
+    lines: "1-41"
+    role: "test"
+  - path: "tests/native_execution.rs"
+    lines: "1-486"
+    role: "test"
+  - path: "tests/native_mlx.rs"
+    lines: "1-297"
+    role: "test"
+  - path: "tests/production_pipeline.rs"
+    lines: "1-315"
+    role: "test"
+  - path: "tests/rapid_rpc.rs"
+    lines: "1-76"
+    role: "test"
+  - path: "tests/resources.rs"
+    lines: "1-341"
+    role: "test"
+  - path: "tests/serving.rs"
+    lines: "1-426"
+    role: "test"
+  - path: "ts/generated/trace.ts"
+    lines: "1-5"
+    role: "primary"
+  - path: "ts/generated/wire/add.ts"
+    lines: "1-68"
+    role: "primary"
+  - path: "ts/generated/wire/cordic.ts"
+    lines: "1-78"
+    role: "primary"
+  - path: "ts/generated/wire/dot.ts"
+    lines: "1-68"
+    role: "primary"
+  - path: "ts/generated/wire/load.ts"
+    lines: "1-81"
+    role: "primary"
+  - path: "ts/generated/wire/op.ts"
+    lines: "1-61"
+    role: "primary"
+  - path: "ts/generated/wire/operation.ts"
+    lines: "1-54"
+    role: "primary"
+  - path: "ts/generated/wire/relu.ts"
+    lines: "1-58"
+    role: "primary"
+  - path: "ts/generated/wire/store.ts"
+    lines: "1-61"
+    role: "primary"
+  - path: "ts/generated/wire/trace.ts"
+    lines: "1-91"
+    role: "primary"
+  - path: "ts/generated/wire.ts"
+    lines: "1-13"
+    role: "primary"
+  - path: "ts/smoke.ts"
+    lines: "1-1"
+    role: "primary"
+  - path: "ts/trace.test.ts"
+    lines: "1-45"
+    role: "test"
+  - path: "ts/trace.ts"
+    lines: "1-73"
+    role: "primary"
+  - path: "tsconfig.json"
+    lines: "1-1"
+    role: "config"
+related_issues: []
+related_documents: ["NATIVE_MLX_BACKEND.md", "NEXT_STEPS.md", "../README.md"]
+tags: [rust, mlx, weights, quantization, qwen]
+---
+# Executive Summary
+
+Native model execution needs immutable parameters that survive individual tensor graphs. Rust will validate and fingerprint the workhorse checkpoint, retain a native parameter store on its executor thread, and bind every parameter reference to that executor and checkpoint identity. Per-module quantization is explicit; a module cannot silently use a global Q4 default when its weights require a different bit width.
+
+# Design before implementation
+
+The selected workhorse is /Users/stewartbarteau/models/fused/Qwen3.6-MoE-Combined. Abliterated Qwen3.8 27B is the only other permitted integration target; its exact artifact is not yet bound. No model substitution or Python fallback is allowed.
+
+Read standard checkpoint metadata (config/index and safetensors headers) locally in Rust, with byte/rank/dtype/offset/shard limits and content fingerprints. These on-disk formats contain JSON by specification; they are not a JSON backend, request protocol or transport. Runtime calls and tensor submissions remain typed in-process Rust/C ABI. Do not execute tokenizer templates or remote code. Hash all model artifacts; check size/mtime across fingerprint/load. This is not an atomic snapshot against a malicious writer restoring timestamps.
+
+A native weight store belongs to one dedicated executor thread and one checkpoint. Loading is explicit and the main logical parameter payload is capped at 32 GiB per backend; no global cross-backend resident-memory broker is provided. The store retains lazy native arrays across graphs and is destroyed only after accepted work drains. Loading does not imply all parameters have been evaluated/resident in GPU memory. Count logical parameter payload bytes separately from graph transient/staging budgets; count a shared parameter once. Reject cross-executor references, repeated model loads and mismatched shapes/quantization before dispatch. Native exceptions latch admission closed and release the failed store. No model hot swap in this increment.
+
+Mixed affine quantized multiplication must cover supported bit widths independently, with packed width K*bits/32 and group-wise scales/biases. Quantization overrides are looked up by exact module path, including routers and lm_head. Optional MTP support is explicit; a sidecar's presence never proves it executes.
+
+Operator work follows parameter lifetime: full-attention RoPE/GQA, gated-delta recurrent update with FP32 state and exact sequence boundaries, and top-k expert routing with per-module quantization. Each needs independent scalar/analytic oracles and state-continuation equivalence before full-model composition. A correct projection/operator smoke is not a generation or model-quality pass. Tensor batching must preserve per-sequence attention and recurrent state through row insertion/removal and cancellation.
+
+# Validation and pressure gates
+
+Malformed metadata, traversal, duplicate tensors, invalid offsets, unsupported quantization and checkpoint mutation must fail before model admission. Test persistent reuse, wrong-owner references, cancellation and drain. Dense versus independently decoded affine quantization is compared for every supported bit width/group. Model projection smoke uses only the selected checkpoint and reports exact parameter identity and quantization. Full Qwen generation remains unqualified until all operators, tokenizer, state routing, scheduler and held-out model tests are composed and pass.
+
+# Engineering grounding
+
+Ground operator semantics in the installed MLX 0.32.4 C++ headers and MLX-LM 0.31.3 qwen3_5/qwen3_next/gated_delta implementations as source references, without invoking Python. Retain source hashes and distinguish these engineering references from an independently qualified model baseline. Native MLX may use floating activations; the custom Q1.31 Metal path remains integer-only.
+
+# Rollout and next steps
+
+Local native execution only; no existing service replacement. Implement persistent weights and mixed quantization first, then operator/state equivalence, model composition, state-safe batches and held-out qualification. Production sampling proposals remain inactive. No independent review or production approval is claimed.
+
+# Changelog
+
+1.0.0 — 2026-10-22 — Persistent parameter ownership and native operator design recorded before code.
+
+# State transaction design (before implementation)
+
+A bounded recurrent-state bank binds to one backend owner. Each sequence has a fixed shape and CPU-owned FP32 snapshot. Batch reservation rejects duplicate IDs, busy or missing rows and excess capacity before changing any row; reservation makes all selected rows busy. Compute uses immutable copies in caller-requested row order. Concatenate recurrent output and next state into one typed terminal tensor, evaluate once, then validate lengths/finiteness and atomically replace every reserved row. Dropped futures, native errors and invalid results release reservations without committing. Cancellation may leave an accepted graph running; it cannot mutate bank state because the executor owns independent tensor copies. This establishes state-safe recurrent tensor batching; it does not yet establish attention KV batching or a full-model scheduler. CPU snapshot staging is a correctness baseline, not a zero-copy GPU-state optimization.
+
+# Implementation and observed checkpoint result
+
+Implemented in src/serving/weights.rs, native_mlx.rs, native_ops.rs, native_state.rs and native/mlx_bridge.{h,cpp}. ModelWeights exposes read-only metadata; its owner token cannot be forged through the safe public interface. Persistent parameter descriptors are checked against actual native shapes/dtypes. Every parameter-bearing graph verifies artifact size/mtime/file-set before and after evaluation; a mismatch rejects the result and closes admission. This catches ordinary concurrent mutation, not an adversary rewriting bytes while restoring all observed metadata.
+
+The selected Combined checkpoint's artifact identity is `509cc92543203798f2db08b6fb6cbb38a80942fc0437ae81a3ef9ff27720915b` (domain-separated sorted filename/size/content fingerprint). Native inventory: 1,757 main parameters, 19,508,787,456 logical payload bytes. The executor loaded its main shards once, then executed layer-0 linear_attn.in_proj_a with affine Q4/group64 and mlp.gate with affine Q8/group64 twice each. Each pair matched exactly and shutdown returned parameter bytes/leases to zero. This checks actual mixed-module loading and reuse. It does not independently establish checkpoint logits, text quality, all expert weights, full layers, GPU residency or generation. The separately fingerprinted MTP sidecar is present and unexecuted.
+
+The reference gated-delta path uses standard MLX operators with FP32 state; it does not assume undocumented semantics of the SDK's exposed fused gated-delta symbol. The per-step graph/workspace cap intentionally limits this reference to 128 steps and can reject large full-checkpoint shapes earlier. RecurrentBank batches 1–3 sequences with a 128 MiB configured state ceiling, uses CPU-owned snapshots and commits after the combined output/state tensor returns. It does not implement paged attention KV, convolution history or device-resident full-model state. Top-k ties inherit the pinned SDK's argpartition behavior; no cross-device stable tie-order guarantee is claimed.
+
+# Adversarial review and remaining risk
+
+Self-review (not independent review) identified and corrected: metadata parsed before stamp capture; duplicate nested keys silently accepted; attention workspace/product overflow; unsafe external expert indices; publicly mutable cloned model metadata; state partial commits; and checkpoint mutation after lazy parameter-store creation. Guards now reject these paths or prevent mutation through the public owner API. Tests exercise traversal, unsupported quantization, nested duplicate keys, added artifacts, wrong owners, invalid row lengths, duplicate rows, busy row removal, invalid commits, cancellation, row reordering and out-of-range experts.
+
+Mixed affine widths use independent scalar decoding of nonconstant packed values for every supported bit width/group on GPU; constant-field CPU/GPU cases supplement these. Attention/RoPE have analytic CPU/GPU oracles. Gated recurrence has analytic multi-output checks, chunk/full-sequence equivalence and 100 permuted three-row updates against independent scalar state. Existing 4,500-graph saturation/cancellation and ledger contention pressure remain in the regression suite. These finite tests are evidence, not a proof of all inputs or performance at full-model scale.
+
+The C++ bridge sanitizer judge covers 1,000 original invalid-descriptor cycles plus recurrent multi-output evaluation/join, unsupported/missing kernel arguments and invalid weight-store loading. Address/undefined sanitizers instrument this bridge/harness; the prebuilt upstream MLX library is uninstrumented and leak detection is disabled. No upstream memory-safety or leak-freedom claim follows.
+
+# Qualification still required
+
+Model qualification is explicitly NOT achieved. Native tokenizer/template semantics, full hybrid layer composition (including convolution history, q/k normalization and attention gating), checkpoint norm sanitization, all sparse/shared experts, attention KV state, model-step scheduling and held-out generation gates remain required. Regular/TurboQuant interfaces must be connected to actual native attention execution before codec comparisons count. The workhorse projection smoke must never be reported as an Opus/Cyber generation A/B. No existing server was replaced and proposed production sampling rates remain inactive.
+
+# Regression evidence for this increment
+
+The final full judge passed 102 default Rust tests, 102 with debug-validation, five TypeScript tests, TypeScript 7.1/tsrs, all-target/all-feature Clippy with warnings denied, formatting, independent integer/Metal resource checks, signposts and GPU capture. The separate no-default-features suite passed 81 tests. The bridge sanitizer process exited zero. Evidence is indexed under evidence/native-mlx/persistent-qualification.txt with matching source, executable and artifact fingerprints. The operator test log and selected checkpoint projection log are retained separately; no prior tensor macro number is attributed to this changed source/binary. Ordinary regression compilation still reports the previously documented block 0.1.6 future-compatibility warning.

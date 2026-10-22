@@ -12,6 +12,18 @@ use std::{path::Path, time::Instant};
 async fn main() -> Result<()> {
     let args: Vec<_> = std::env::args().collect();
     match args.get(1).map(String::as_str) {
+        #[cfg(feature = "native-mlx")]
+        Some("native-mlx") => {
+            match args.get(2).map(String::as_str) {
+                None => rust_server::serving::native_mlx::smoke().await?,
+                Some("weights") if args.len()==3 => rust_server::serving::native_mlx::checkpoint_smoke().await?,
+                Some("bench") if args.len()==3 => rust_server::serving::native_mlx::benchmark().await?,
+                _ => bail!("native-mlx [bench|weights]; no JSON/configuration arguments"),
+            }
+        }
+        #[cfg(not(feature = "legacy-python"))]
+        Some("model-run" | "config") => bail!("Python model adapter disabled; use native-mlx. Historical adapter requires explicit legacy-python feature"),
+        #[cfg(feature = "legacy-python")]
         Some("model-run") => {
             ensure!(args.len()>=5,"model-run CONFIG.json PROMPTS.json MAX_NEW [--kv-codec MODE] [--max-in-flight 2|3] [--prefill-chunk-tokens N] [--max-batch-tokens N] [--probe-directory PATH]");
             let mut config: rust_server::serving::rapid::RapidConfig =
@@ -83,6 +95,7 @@ async fn main() -> Result<()> {
                 )?
             );
         }
+        #[cfg(feature = "legacy-python")]
         Some("config") => {
             ensure!(
                 args.len() == 5

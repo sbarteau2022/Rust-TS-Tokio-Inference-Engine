@@ -1,0 +1,9 @@
+Canonical checkout: /Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine
+Remote: https://github.com/sbarteau2022/Rust-TS-Tokio-Inference-Engine.git
+Migration base on main: a438b47
+Original standalone checkpoint: 36515fc, retained locally on codex/standalone-checkpoint.
+Original standalone Git metadata retained under .git/standalone-history.git (local only).
+Old Desktop/RUST SERVER path is a compatibility symlink to canonical checkout.
+Source fingerprints verified before migration; full judge rerun at canonical location passed.
+Dependencies, local MLX SDK, model weights, build outputs, captures and interpreter caches remain untracked.
+Full model generation remains unqualified. Existing qualification limits are preserved.

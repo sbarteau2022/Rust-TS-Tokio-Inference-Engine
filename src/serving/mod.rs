@@ -1,4 +1,5 @@
 //! Experimental model-facing control plane. No implicit model or production qualification.
+pub mod completion_ledger;
 pub mod config;
 pub mod kv;
 pub mod scheduler;
@@ -70,4 +71,11 @@ impl Drop for Charge {
     }
 }
 
+#[cfg(feature = "native-mlx")]
+pub mod native_mlx;
+#[cfg(feature = "native-mlx")]
+pub mod native_state;
+#[cfg(feature = "legacy-python")]
 pub mod rapid;
+#[cfg(feature = "native-mlx")]
+pub mod weights;

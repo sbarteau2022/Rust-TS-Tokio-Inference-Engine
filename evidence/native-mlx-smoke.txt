@@ -1,0 +1,2 @@
+Native Rust MLX 0.32.4 | GPU | Python: disabled | JSON transport: none
+Tensor smoke passed: F32([4.0, 4.0, 10.0, 8.0]); completed=1 failed=0 in_flight=0; Qwen model: not implemented

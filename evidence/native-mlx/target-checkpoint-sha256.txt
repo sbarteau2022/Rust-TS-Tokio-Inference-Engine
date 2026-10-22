@@ -1,0 +1,12 @@
+bdf6159e346919d9ace467da26bb8b67734af0f1d23a0564136d354f94cce7a8  /Users/stewartbarteau/models/fused/Qwen3.6-MoE-Combined/MODEL.md
+748c964f9b7e5f2c3770ce013bbc0153be7c54311d9692c343b6188eefe77ac6  /Users/stewartbarteau/models/fused/Qwen3.6-MoE-Combined/README.md
+55d4931433fe502b794226ee7f4d206a6bdd436ac9f80eb7d8ebb4c639f9ea0c  /Users/stewartbarteau/models/fused/Qwen3.6-MoE-Combined/chat_template.jinja
+f10e27901b51cbee6c1d91e66a04fdd8fd3a86db02621e117d5bcc33b68f283e  /Users/stewartbarteau/models/fused/Qwen3.6-MoE-Combined/config.json
+b9bfd13788da9e65fa9e7d5f436b89e4d25b9cc10fdc958dd61ee6b60d37cb9d  /Users/stewartbarteau/models/fused/Qwen3.6-MoE-Combined/model-00001-of-00004.safetensors
+fd930505f30014da6e6f1b3fe08ec69050c46a2bb5a5154010fda183ad9212ef  /Users/stewartbarteau/models/fused/Qwen3.6-MoE-Combined/model-00002-of-00004.safetensors
+fb31d89560b48cfae24ed034b5f9a9b4096c816e73124a0976aeef897b4bcf37  /Users/stewartbarteau/models/fused/Qwen3.6-MoE-Combined/model-00003-of-00004.safetensors
+c2104cb58e02ade1754e71ea133d9fcf27930f3ad71e67a06d6ff69b1ddc063b  /Users/stewartbarteau/models/fused/Qwen3.6-MoE-Combined/model-00004-of-00004.safetensors
+5e73b5d07a55db699de850c65ec6620faee2c160884a010c6847c442077c7c5e  /Users/stewartbarteau/models/fused/Qwen3.6-MoE-Combined/model-mtp.safetensors
+c118f13c0dcb729e4ca2e3d653ab193067551eb1a6410badb5192eb426104f36  /Users/stewartbarteau/models/fused/Qwen3.6-MoE-Combined/model.safetensors.index.json
+a5cd9732badce41de57e6efce8302930ded1c1188c5f81feb2bd6c24c4a1941f  /Users/stewartbarteau/models/fused/Qwen3.6-MoE-Combined/tokenizer.json
+855e12b09163ab7d3671f9295e4ce520a9fe97e983907946c763cb5bd2e34de9  /Users/stewartbarteau/models/fused/Qwen3.6-MoE-Combined/tokenizer_config.json

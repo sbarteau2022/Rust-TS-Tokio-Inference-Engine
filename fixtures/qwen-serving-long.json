@@ -1,7 +1,7 @@
 {
   "version": 1,
   "python": "/Users/stewartbarteau/.local/share/uv/tools/rapid-mlx/bin/python",
-  "model": "/Users/stewartbarteau/models/Qwen3.6-35B-A3B-OptiQ-4bit",
+  "model": "/Users/stewartbarteau/models/fused/Qwen3.6-MoE-Combined",
   "codec": "regular",
   "sequence_bytes": 134217728,
   "workspace_bytes": 134217728,

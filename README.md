@@ -1,7 +1,7 @@
 ---
 title: "Rust Server — Apple native kernel compiler and runtime"
 document_type: "implementation"
-version: "1.8.0"
+version: "1.10.0"
 date: "2026-10-22T03:53:10Z"
 implementation_date: null
 author: "Codex for Stewart Barteau"
@@ -9,19 +9,19 @@ reviewers: []
 status: "draft"
 related_files:
   - path: ".gitignore"
-    lines: "1-5"
+    lines: "1-9"
     role: "config"
   - path: "Cargo.lock"
     lines: "1-452"
     role: "config"
   - path: "Cargo.toml"
-    lines: "1-26"
+    lines: "1-28"
     role: "config"
   - path: "backend/rapid_worker.py"
     lines: "1-165"
     role: "primary"
   - path: "build.rs"
-    lines: "1-8"
+    lines: "1-54"
     role: "primary"
   - path: "fixtures/atan2.amvk"
     lines: null
@@ -34,6 +34,9 @@ related_files:
     role: "test"
   - path: "fixtures/elementwise.amvk"
     lines: null
+    role: "test"
+  - path: "fixtures/native-model.path"
+    lines: "1-1"
     role: "test"
   - path: "fixtures/qwen-prompts-long.json"
     lines: "1-4"
@@ -78,8 +81,14 @@ related_files:
     lines: "1-35"
     role: "test"
   - path: "judges/run.py"
-    lines: "1-203"
+    lines: "1-202"
     role: "test"
+  - path: "native/mlx_bridge.cpp"
+    lines: "1-165"
+    role: "primary"
+  - path: "native/mlx_bridge.h"
+    lines: "1-46"
+    role: "primary"
   - path: "native/telemetry.cpp"
     lines: "1-23"
     role: "primary"
@@ -132,13 +141,16 @@ related_files:
     lines: "1-81"
     role: "primary"
   - path: "src/main.rs"
-    lines: "1-402"
+    lines: "1-415"
     role: "primary"
   - path: "src/runtime.rs"
     lines: "1-366"
     role: "primary"
   - path: "src/sampled.rs"
     lines: "1-193"
+    role: "primary"
+  - path: "src/serving/completion_ledger.rs"
+    lines: "1-100"
     role: "primary"
   - path: "src/serving/config.rs"
     lines: "1-51"
@@ -147,13 +159,25 @@ related_files:
     lines: "1-280"
     role: "primary"
   - path: "src/serving/mod.rs"
-    lines: "1-73"
+    lines: "1-81"
+    role: "primary"
+  - path: "src/serving/native_mlx.rs"
+    lines: "1-925"
+    role: "primary"
+  - path: "src/serving/native_ops.rs"
+    lines: "1-273"
+    role: "primary"
+  - path: "src/serving/native_state.rs"
+    lines: "1-194"
     role: "primary"
   - path: "src/serving/rapid.rs"
     lines: "1-265"
     role: "primary"
   - path: "src/serving/scheduler.rs"
     lines: "1-563"
+    role: "primary"
+  - path: "src/serving/weights.rs"
+    lines: "1-395"
     role: "primary"
   - path: "src/telemetry.rs"
     lines: "1-26"
@@ -182,11 +206,17 @@ related_files:
   - path: "tests/grid.rs"
     lines: "1-41"
     role: "test"
+  - path: "tests/native_execution.rs"
+    lines: "1-486"
+    role: "test"
+  - path: "tests/native_mlx.rs"
+    lines: "1-297"
+    role: "test"
   - path: "tests/production_pipeline.rs"
     lines: "1-315"
     role: "test"
   - path: "tests/rapid_rpc.rs"
-    lines: "1-75"
+    lines: "1-76"
     role: "test"
   - path: "tests/resources.rs"
     lines: "1-341"
@@ -247,7 +277,7 @@ tags: [rust, tokio, metal, typescript-7.1, tsrs, flatbuffers]
 
 ## Executive Summary
 
-A TypeScript trace reaches pure integer Metal kernels through Rust, shared buffers and Tokio receipts. An experimental real Qwen3.6-35B-A3B path now adds Rust token scheduling and selectable regular/Rapid TurboQuant prefix KV through an explicitly approved MLX numerical baseline. This advances the Apple-native serving goal; production model quality, tensor batching, full integer model execution and AMX/ANE remain unqualified. See [current model integration](docs/MODEL_INTEGRATION.md).
+A TypeScript trace reaches pure integer Metal kernels through Rust, shared buffers and Tokio receipts. The default build now also has an in-process Rust-owned MLX tensor executor with a compiled C++ bridge, typed graphs and completion-owned resource admission; it uses no Python worker or JSON transport. The earlier external model adapter is disabled by default. Full native Qwen generation, tensor batching and AMX/ANE remain unqualified; see [native backend design and framework synthesis](docs/NATIVE_MLX_BACKEND.md).
 
 ## Problem Statement
 
@@ -271,7 +301,7 @@ CORDIC uses 48 circular iterations and hyperbolic iterations 1–47 with repeate
 
 ## Build and use
 
-Run from `/Users/stewartbarteau/Desktop/RUST SERVER`:
+Run from `/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine`:
 
 ```sh
 # package.json, ts/trace.ts and src/main.rs — build and execute raw integer inputs.
@@ -372,6 +402,8 @@ Known dependency limitation: `block 0.1.6` is flagged future-incompatible by Car
 
 ## Changelog
 
+1.10.0 — 2026-10-22 — Persistent native weights, mixed affine quantization, attention/recurrent/MoE tensor operators and transactional recurrent batching; full model generation remains unqualified.
+
 1.8.0 — 2026-10-22 — Real Qwen/Rapid integration, bounded token scheduling, typed KV, regular/TurboQuant diagnostic A/B, 83-test Rust gates and explicit production limits.
 
 | Version | Date | Author | Change |
@@ -429,9 +461,9 @@ Historical Spec 15-stage verification: **67 Rust tests passed in each normal/deb
 
 [Serving architecture](docs/SERVING_ARCHITECTURE.md) specifies proposed tuning commands, an iteration scheduler, regular/TurboQuant KV interfaces, pressure and quality gates, and the ordered route to Apple-native model serving. The broader commands remain proposed; `model-run` and `config check|print` now implement a documented subset. The experimental model path below supersedes the earlier first-model milestone. Sampling draft values remain inactive.
 
-## Real Qwen model integration — experimental
+## Historical external Qwen model integration — legacy feature only
 
-Qwen3.6-35B-A3B-OptiQ-4bit now runs through the bounded Rust iteration scheduler and a private Rapid/MLX worker. Its 10 attention layers support regular KV or opt-in Rapid TurboQuant V4/K8V4 prefix storage; 30 recurrent layers retain separate native state. Decode consumes the stored state, and release acknowledgement precedes completion. This is a real-model CLI path, with a separately labeled floating-activation baseline; custom Metal kernels remain integer-only.
+The retained OptiQ A/B used the bounded Rust iteration scheduler and a private Rapid/MLX worker. This path now requires the explicit `legacy-python` feature and is excluded from default builds; commands below are historical interface examples. Current reproduction profiles target Stewart's selected fused Opus/Cyber checkpoint, so rerunning them would be a new experiment. These historical results do not qualify that fused checkpoint. Custom Metal kernels remain integer-only.
 
 ```sh
 # src/main.rs — explicit local profile and bounded prompts; regular KV remains default.
@@ -444,4 +476,40 @@ See [implementation, tuning flags and evidence](docs/MODEL_INTEGRATION.md) and [
 
 Next: broader quality/SLO qualification, tensor-batched hybrid decode, completion-safe recurrent/prefix reuse, packed attention and serving transports. Earlier roadmap sections describe stage history; they do not supersede this implementation's explicit limits.
 
-The retained A/B loaded the OptiQ checkpoint without a Fable adapter. It does not qualify the intended Fabel/Cyber fine-tune; see [checkpoint correction and next-round gates](docs/MODEL_INTEGRATION.md#checkpoint-correction--fabelcyber-qualification-pending). Exact fine-tuned weights must be identified before rerunning model qualification.
+The retained A/B loaded the OptiQ checkpoint without a Fable adapter. It does not qualify the selected fused checkpoint; see [checkpoint correction and next-round gates](docs/MODEL_INTEGRATION.md#checkpoint-correction--fabelcyber-qualification-pending). Stewart subsequently identified the intended workhorse as `/Users/stewartbarteau/models/fused/Qwen3.6-MoE-Combined`.
+
+## Native Rust MLX backend — current delivery
+
+`Rust typed graph → bounded admission → native executor thread → C ABI → MLX C++ → Metal → CPU-owned typed receipt`. Default admission is three graphs. A joint completion ledger reserves host staging bytes, logical tensor bytes and graph nodes atomically; cancellation does not return those reservations before native completion. The backend supports dense F32 multiplication, affine Q4 multiplication, RMS normalization and raw I32/U32 elementwise buffers. This is a tensor backend; a complete Qwen model forward pass is not implemented.
+
+```sh
+# build.rs — native headers and libraries must be present; no Python build discovery.
+MLX_ROOT=/absolute/path/to/native/mlx/sdk cargo build --release --locked
+# src/main.rs — built-in typed tensor checks and macro throughput; no JSON arguments.
+./target/release/rust-server native-mlx
+./target/release/rust-server native-mlx bench
+```
+
+The locally staged SDK is `vendor/mlx` (ignored); `MLX_ROOT` overrides it. It contains native headers, `libmlx.dylib`, `libjaccl.dylib` and `mlx.metallib`. No Python extension is linked. The original SDK was copied from the installed MLX 0.32.4 distribution; this is reuse of the native SDK, not a rewrite of MLX's C++/Metal implementation in Rust.
+
+Current model scope is limited to two targets: **Qwen3.6 Combined MoE is the workhorse**, at `/Users/stewartbarteau/models/fused/Qwen3.6-MoE-Combined`; **abliterated Qwen3.8 27B is the only other integration target**. Workhorse model smoke tests use the fused checkpoint recorded in `fixtures/native-model.path`; Qwen3.8 qualification must identify its exact abliteration artifact separately. No additional model integrations are in scope. Current tensor tests and matrix benchmarks are synthetic and make no model-generation claims. [Design, comparison, limitations and next steps](docs/NATIVE_MLX_BACKEND.md).
+
+1.9.0 — 2026-10-22 — Native Rust-owned MLX tensor executor and joint completion ledger; default Python adapter disabled; framework synthesis, 89-test Rust gates and selected fused checkpoint recorded. Qwen forward remains next-stage work.
+
+
+## Persistent native weights and operator execution
+
+The next native increment retains one immutable checkpoint store per executor across tensor graphs. Rust fingerprints checkpoint artifacts, rejects malformed metadata and cross-owner parameters, and uses exact per-module affine quantization (2/3/4/5/6/8 bits; groups 32/64/128). The selected Combined MoE checkpoint is the workhorse; no model substitution is permitted. Local standard checkpoint metadata is parsed in Rust; runtime tensors cross an in-process C ABI with no Python worker or JSON transport.
+
+```sh
+# src/main.rs — selected checkpoint fingerprint and persistent projection smoke only.
+cargo run --release --locked -- native-mlx weights
+```
+
+Native operators cover RoPE, causal GQA attention, FP32 gated-delta recurrence, top-k routing, gathered quantized experts and weighted reduction. RecurrentBank provides bounded per-sequence CPU snapshots, exclusive row reservations, completion-only atomic commits and cancellation rollback. These are operator/tensor building blocks: full Qwen layer composition, tokenizer, attention KV ownership, model-serving scheduling and generation qualification remain pending. MTP presence is reported separately from execution. Logical parameter payload accounting is not a physical GPU residency measurement.
+
+See [design and qualification gates](docs/NATIVE_WEIGHTS_EXECUTION.md). Existing custom Metal kernels remain integer-only Q1.31. Proposed production sampling rates remain inactive.
+
+## Git checkpoint
+
+The canonical project lives at `/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine` in the existing [GitHub repository](https://github.com/sbarteau2022/Rust-TS-Tokio-Inference-Engine). The former Desktop `RUST SERVER` path is a compatibility symlink to this checkout. The initial standalone commit is retained locally on `codex/standalone-checkpoint`; delivery continues on the existing repository history. Source, documentation, fixtures and retained verification evidence are tracked. Build outputs, installed dependencies, the local MLX SDK, GPU captures and interpreter caches are excluded. Model weights remain outside this repository. A Git checkpoint does not promote full-model generation or production readiness; the qualification limits above still apply. The existing `origin` remote is retained; model weights and the local MLX SDK are not uploaded.
