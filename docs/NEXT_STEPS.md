@@ -2,7 +2,7 @@
 title: "Next stages toward an Apple native inference server"
 document_type: "architecture"
 version: "1.0.0"
-date: "2026-10-22T20:21:00Z"
+date: "2026-10-22T20:55:55Z"
 implementation_date: null
 author: "Codex for Stewart Barteau"
 reviewers: []
@@ -21,7 +21,7 @@ related_files:
     lines: "1-165"
     role: "primary"
   - path: "build.rs"
-    lines: "1-56"
+    lines: "1-58"
     role: "primary"
   - path: "fixtures/atan2.amvk"
     lines: null
@@ -86,11 +86,14 @@ related_files:
   - path: "judges/model_ab.py"
     lines: "1-93"
     role: "test"
+  - path: "judges/projection_reference.cpp"
+    lines: "1-45"
+    role: "test"
   - path: "judges/resources.py"
     lines: "1-35"
     role: "test"
   - path: "judges/run.py"
-    lines: "1-202"
+    lines: "1-204"
     role: "test"
   - path: "native/attention_reference.h"
     lines: "1-21"
@@ -101,8 +104,14 @@ related_files:
   - path: "native/mlx_bridge.h"
     lines: "1-60"
     role: "primary"
+  - path: "native/projection_probe.inc"
+    lines: "1-19"
+    role: "primary"
+  - path: "native/projection_reference.h"
+    lines: "1-27"
+    role: "primary"
   - path: "native/qwen_model.inc"
-    lines: "1-133"
+    lines: "1-151"
     role: "primary"
   - path: "native/telemetry.cpp"
     lines: "1-23"
@@ -156,7 +165,7 @@ related_files:
     lines: "1-81"
     role: "primary"
   - path: "src/main.rs"
-    lines: "1-435"
+    lines: "1-441"
     role: "primary"
   - path: "src/runtime.rs"
     lines: "1-366"
@@ -177,10 +186,10 @@ related_files:
     lines: "1-280"
     role: "primary"
   - path: "src/serving/mod.rs"
-    lines: "1-93"
+    lines: "1-96"
     role: "primary"
   - path: "src/serving/model_ir.rs"
-    lines: "1-182"
+    lines: "1-221"
     role: "primary"
   - path: "src/serving/native_boundary.rs"
     lines: "1-193"
@@ -198,7 +207,10 @@ related_files:
     lines: "1-273"
     role: "primary"
   - path: "src/serving/native_qwen.rs"
-    lines: "1-656"
+    lines: "1-662"
+    role: "primary"
+  - path: "src/serving/native_reference.rs"
+    lines: "1-77"
     role: "primary"
   - path: "src/serving/native_state.rs"
     lines: "1-194"
@@ -207,7 +219,7 @@ related_files:
     lines: "1-123"
     role: "primary"
   - path: "src/serving/qwen_tests.rs"
-    lines: "1-528"
+    lines: "1-538"
     role: "primary"
   - path: "src/serving/rapid.rs"
     lines: "1-265"
@@ -322,7 +334,7 @@ tags: [rust, metal, prototype]
 The typed native decoder and lexical I/O boundary are implemented. The constrained 20-case smoke passes; the original raw 16-case profile remains 15/16. Earlier stage tables below are historical and do not describe current completion status.
 
 1. Context drift is corrected by the FP32 attention reduction reference: logit NRMSE 0.000000379 / state 0.000000336 at context 512, with trace controls and an independent scalar attention oracle. Preserve the failed fused/matmul/short-context experiments and unchanged fixtures. Resolve remaining semantic qualification failures without changing expected answers; operator-level attention evidence does not qualify the full model.
-2. Obtain an independently implemented exact-checkpoint native reference for logits/tokenization, then broaden domain and actual scheduler cancellation/restart qualification. A CPU rerun of our equations is insufficient. No independent full-model reference is currently established.
+2. Sampled independent projection checks now pass (871 CPU / 871 GPU probes, including both decision-head channels); r10 still chooses `no` on both backends. Implement independent checkpoint-byte ingestion and scalar GDN/recurrent, normalization and RoPE checks next, then full-logit/tokenization parity. Sampled channels and a CPU rerun of the same model equations do not establish a full-model oracle. Preserve r10 and its expected answer; do not fit a correction to the held-out fixture. Broaden domain and actual scheduler cancellation/restart qualification after fidelity is established.
 3. Move state to completion-owned device handles; prove snapshot/fork/rollback parity before genuine tensor batching and scheduler performance qualification.
 4. Integrate native paged regular/TurboQuant attention with hybrid prefix-state boundaries and measured quality/memory/SLO gates.
 5. Evaluate a custom drafting head only with exact target verification and atomic hybrid-state rollback. Native MTP and proposed production sampling stay disabled; ANE/AMX execution stays capability-gated until measured.

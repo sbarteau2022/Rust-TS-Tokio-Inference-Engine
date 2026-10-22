@@ -2,9 +2,10 @@
 #include <cmath>
 #include <cstdio>
 #include "attention_reference.h"
+#include "projection_reference.h"
 namespace {
 struct Qwen {
- Weights& weights;rs_qwen_config c;mx::Stream s;bool shift=false;
+ Weights& weights;rs_qwen_config c;mx::Stream s;bool shift=false,reference=false;std::vector<int32_t> head_channels;
  Qwen(Weights& w,rs_qwen_config cfg,bool gpu):weights(w),c(cfg),s(mx::default_stream(mx::Device(gpu?mx::Device::gpu:mx::Device::cpu))){
   for(const auto& [key,value]:w.arrays)if(key.find("mtp.")!=std::string::npos || (key.ends_with("conv1d.weight")&&value.shape(-1)!=1))shift=true;
  }
@@ -12,8 +13,22 @@ struct Qwen {
  std::pair<int,int> quant(const std::string& p){auto it=weights.quant.find(p);return it==weights.quant.end()?std::pair<int,int>{c.group,c.bits}:it->second;}
  mx::array silu(const mx::array& x){return mx::multiply(x,mx::sigmoid(x,s),s);}
  mx::array norm(const mx::array& x,const std::string& key,bool offset=true){auto weight=mx::astype(w(key),x.dtype(),s);if(shift&&offset)weight=mx::add(weight,mx::array(1.f),s);return mx::fast::rms_norm(x,weight,c.epsilon,s);}
- mx::array linear(const mx::array& x,const std::string& p){auto [g,b]=quant(p);return mx::quantized_matmul(x,w(p+".weight"),w(p+".scales"),w(p+".biases"),true,g,b,"affine",s);}
- mx::array expert(const mx::array& x,const mx::array& idx,const std::string& p){auto [g,b]=quant(p);return mx::gather_qmm(x,w(p+".weight"),w(p+".scales"),w(p+".biases"),{},idx,true,g,b,"affine",{},false,s);}
+#include "projection_probe.inc"
+ mx::array linear(const mx::array& x,const std::string& p){auto [g,b]=quant(p);auto y=mx::quantized_matmul(x,w(p+".weight"),w(p+".scales"),w(p+".biases"),true,g,b,"affine",s);if(reference)check_projection(x,y,w(p+".weight"),w(p+".scales"),w(p+".biases"),g,b,p);return y;}
+ mx::array expert(const mx::array& x,const mx::array& idx,const std::string& p){
+  auto [g,b]=quant(p);auto y=mx::gather_qmm(x,w(p+".weight"),w(p+".scales"),w(p+".biases"),{},idx,true,g,b,"affine",{},false,s);
+  if(reference){
+   auto chosen=mx::contiguous(mx::astype(idx,mx::int32,s),false,s);mx::eval(chosen);mx::synchronize(s);
+   std::vector<int> probe_rows={0};if(idx.shape(0)>1)probe_rows.push_back(idx.shape(0)-1);
+   for(int row:probe_rows)for(int slot:{0,idx.shape(-1)-1}){
+    int expert_id=chosen.data<int32_t>()[row*idx.shape(-1)+slot],source=x.shape(1)==1?0:slot;
+    auto input=mx::slice(x,{row,source,0,0},{row+1,source+1,1,x.shape(-1)},s);
+    auto output=mx::slice(y,{row,slot,0,0},{row+1,slot+1,1,y.shape(-1)},s);
+    check_projection(input,output,mx::take(w(p+".weight"),expert_id,0,s),mx::take(w(p+".scales"),expert_id,0,s),mx::take(w(p+".biases"),expert_id,0,s),g,b,p+"/row="+std::to_string(row)+"/expert="+std::to_string(expert_id)+"/slot="+std::to_string(slot));
+   }
+  }
+  return y;
+ }
  mx::array moe(const mx::array& x,const std::string& p){
   auto flat=mx::reshape(x,{-1,c.hidden},s);auto gates=mx::softmax(linear(flat,p+".gate"),-1,true,s);
   auto idx=mx::argpartition(gates,-c.top,-1,s);idx=mx::slice(idx,{0,c.experts-c.top},{flat.shape(0),c.experts},s);
@@ -95,7 +110,7 @@ extern "C" int rs_qwen_quant(void* store,const char* module,int group,int bits,c
  if(!store||!module||!(group==32||group==64||group==128)||!(bits==2||bits==3||bits==4||bits==5||bits==6||bits==8))throw std::invalid_argument("invalid model quantization");
  static_cast<Weights*>(store)->quant[std::string(module)]={group,bits};
 });}
-extern "C" int rs_qwen_forward(void* store,int gpu,const rs_qwen_config* config,const rs_qwen_layer* layers,size_t layer_count,const uint32_t* tokens,size_t count,size_t offset,const float* old_state,size_t old_count,float* new_state,size_t new_count,float* logits,size_t logits_count,float* trace,size_t trace_count,char* error,size_t capacity){return checked(error,capacity,[&]{
+extern "C" int rs_qwen_forward(void* store,int gpu,const rs_qwen_config* config,const rs_qwen_layer* layers,size_t layer_count,const uint32_t* tokens,size_t count,size_t offset,const float* old_state,size_t old_count,float* new_state,size_t new_count,float* logits,size_t logits_count,int projection_checks,const uint32_t* projection_outputs,size_t projection_output_count,float* trace,size_t trace_count,char* error,size_t capacity){return checked(error,capacity,[&]{
  if(!store||!config||!layers||!tokens||!new_state||!logits)throw std::invalid_argument("invalid model descriptor");auto c=*config;
  if(c.hidden<=0||c.hidden>8192||c.layers<=0||c.layers>64||c.vocab<=0||c.vocab>300000||c.interval<=0||c.layers%c.interval||c.context<=0||c.context>512||c.chunk<=0||c.chunk>8||count==0||count>size_t(c.chunk)||offset>size_t(c.context)||offset+count>size_t(c.context)||logits_count!=size_t(c.vocab))throw std::invalid_argument("model geometry/capacity");
  if(layer_count!=size_t(c.layers))throw std::invalid_argument("IR layer count");
@@ -106,7 +121,10 @@ extern "C" int rs_qwen_forward(void* store,int gpu,const rs_qwen_config* config,
  if(new_count>32*1024*1024)throw std::invalid_argument("model state byte cap");
  for(size_t i=0;i<count;++i)if(tokens[i]>=uint32_t(c.vocab))throw std::invalid_argument("token outside vocabulary");
  if(trace_count && (!trace||trace_count!=size_t(c.layers)*5*count*c.hidden||trace_count>64*5*8*8192))throw std::invalid_argument("trace capacity");
- Qwen m(*static_cast<Weights*>(store),c,gpu!=0);auto s=m.s;
+ if(projection_checks<0||projection_checks>1||(projection_checks&&!trace_count))throw std::invalid_argument("projection diagnostic mode");
+ if(projection_output_count>8||(projection_output_count&&(!projection_outputs||!projection_checks)))throw std::invalid_argument("projection output capacity");
+ for(size_t i=0;i<projection_output_count;++i){if(projection_outputs[i]>=uint32_t(c.vocab))throw std::invalid_argument("projection output vocabulary");for(size_t j=0;j<i;++j)if(projection_outputs[i]==projection_outputs[j])throw std::invalid_argument("duplicate projection output");}
+ Qwen m(*static_cast<Weights*>(store),c,gpu!=0);m.reference=projection_checks!=0;for(size_t i=0;i<projection_output_count;++i)m.head_channels.push_back(int32_t(projection_outputs[i]));auto s=m.s;
  try{
  auto ids=mx::array(tokens,{int(count)},mx::uint32);std::string embed="language_model.model.embed_tokens";auto [group,bits]=m.quant(embed);
  auto x=mx::reshape(mx::dequantize(mx::take(m.w(embed+".weight"),ids,0,s),mx::take(m.w(embed+".scales"),ids,0,s),mx::take(m.w(embed+".biases"),ids,0,s),group,bits,"affine",{},c.activation_precision?std::optional<mx::Dtype>{mx::float32}:std::nullopt,s),{1,int(count),c.hidden},s);

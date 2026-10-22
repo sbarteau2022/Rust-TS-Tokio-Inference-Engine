@@ -1,0 +1,74 @@
+{
+  "regression_pass": true,
+  "model_identity": "509cc92543203798f2db08b6fb6cbb38a80942fc0437ae81a3ef9ff27720915b",
+  "projection_oracle": "independent scalar FP64 affine dequantization and dot product on CPU-owned MLX-supplied operands",
+  "projection_limit_nrmse": 0.0001,
+  "results": {
+    "gpu": {
+      "sampled_probes": 871,
+      "maximum_nrmse": 7.75145078e-07,
+      "observed_bits": [
+        4,
+        8
+      ],
+      "observed_groups": [
+        64
+      ],
+      "choice": "no",
+      "expected": "yes",
+      "no_minus_yes": 0.108324051,
+      "checked_unchecked_nrmse": 0.0
+    },
+    "cpu": {
+      "sampled_probes": 871,
+      "maximum_nrmse": 6.89049815e-07,
+      "observed_bits": [
+        4,
+        8
+      ],
+      "observed_groups": [
+        64
+      ],
+      "choice": "no",
+      "expected": "yes",
+      "no_minus_yes": 0.13328743,
+      "checked_unchecked_nrmse": 0.0
+    }
+  },
+  "coverage": "eight channels per ordinary projection; first/last tail-token expert slots 0 and 7; exact yes/no final-head channels",
+  "synthetic_packing_checks": 55,
+  "synthetic_bits": [
+    2,
+    3,
+    4,
+    5,
+    6,
+    8
+  ],
+  "synthetic_groups": [
+    32,
+    64,
+    128
+  ],
+  "malformed_ffi_checks": 12000,
+  "sanitizers": [
+    "ASan",
+    "UBSan"
+  ],
+  "prebuilt_mlx_instrumented": false,
+  "leak_detection": false,
+  "extended_domain": "23/24",
+  "context_512_continuation": true,
+  "overflow_isolation_drain": true,
+  "production_projection_checks_enabled": false,
+  "cpu_is_independent_full_model": false,
+  "independent_checkpoint_ingestion": false,
+  "full_model_qualified": false,
+  "throughput_claim": false,
+  "regression_tests": {
+    "default_rust": 114,
+    "debug_rust": 114,
+    "minimal_rust": 87,
+    "typescript": 5
+  }
+}

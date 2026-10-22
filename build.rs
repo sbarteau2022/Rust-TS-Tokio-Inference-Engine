@@ -1,4 +1,6 @@
 fn main() {
+    println!("cargo:rerun-if-changed=native/projection_reference.h");
+    println!("cargo:rerun-if-changed=native/projection_probe.inc");
     println!("cargo:rerun-if-changed=native/attention_reference.h");
     println!("cargo:rerun-if-changed=native/telemetry.cpp");
     cc::Build::new()

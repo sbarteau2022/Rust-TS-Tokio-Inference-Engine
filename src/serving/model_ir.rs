@@ -15,6 +15,8 @@ impl TokenPosition {
 #[derive(Clone, Debug)]
 pub struct ModelStepIr {
     trace: bool,
+    projection_checks: bool,
+    projection_outputs: Box<[u32]>,
     kind: StepKind,
     position: TokenPosition,
     vocabulary: u32,
@@ -45,6 +47,8 @@ impl ModelStepIr {
         );
         Ok(Self {
             trace: false,
+            projection_checks: false,
+            projection_outputs: Box::new([]),
             kind,
             position: TokenPosition(position),
             vocabulary,
@@ -54,6 +58,32 @@ impl ModelStepIr {
     pub fn with_trace(mut self) -> Self {
         self.trace = true;
         self
+    }
+    pub fn with_projection_checks(mut self) -> Self {
+        self.trace = true;
+        self.projection_checks = true;
+        self
+    }
+    pub fn with_projection_outputs(mut self, outputs: Vec<u32>) -> Result<Self> {
+        ensure!(
+            !outputs.is_empty()
+                && outputs.len() <= 8
+                && outputs.iter().all(|id| *id < self.vocabulary),
+            "projection output bounds"
+        );
+        let unique: std::collections::BTreeSet<_> = outputs.iter().collect();
+        ensure!(
+            unique.len() == outputs.len(),
+            "duplicate projection outputs"
+        );
+        self.projection_outputs = outputs.into_boxed_slice();
+        Ok(self.with_projection_checks())
+    }
+    pub(super) fn projection_outputs(&self) -> &[u32] {
+        &self.projection_outputs
+    }
+    pub fn projection_checks(&self) -> bool {
+        self.projection_checks
     }
     pub fn trace_enabled(&self) -> bool {
         self.trace
@@ -150,6 +180,15 @@ mod tests {
         let step = ModelStepIr::compile(StepKind::Decode, 511, vec![99], 100)?;
         assert_eq!(step.position().get(), 511);
         assert_eq!(step.ffi_ids(), &[99]);
+        assert!(!step.projection_checks());
+        assert!(step.projection_outputs().is_empty());
+        for invalid in [vec![], vec![1; 9], vec![100], vec![1, 1]] {
+            assert!(step.clone().with_projection_outputs(invalid).is_err());
+        }
+        let checked = step.clone().with_projection_outputs(vec![0, 99])?;
+        assert!(checked.trace_enabled() && checked.projection_checks());
+        assert_eq!(checked.projection_outputs(), &[0, 99]);
+
         for (kind, pos, tokens, vocab) in [
             (StepKind::Decode, 0, vec![1, 2], 100),
             (StepKind::Prefill, 512, vec![1], 100),

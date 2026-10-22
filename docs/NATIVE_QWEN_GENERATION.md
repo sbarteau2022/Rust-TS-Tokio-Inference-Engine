@@ -1,8 +1,8 @@
 ---
 title: "Native Qwen hybrid generation and qualification"
 document_type: "architecture"
-version: "1.4.0"
-date: "2026-10-22T20:21:00Z"
+version: "1.5.0"
+date: "2026-10-22T20:55:55Z"
 implementation_date: null
 author: "Codex for Stewart Barteau"
 reviewers: []
@@ -21,7 +21,7 @@ related_files:
     lines: "1-165"
     role: "primary"
   - path: "build.rs"
-    lines: "1-56"
+    lines: "1-58"
     role: "primary"
   - path: "fixtures/atan2.amvk"
     lines: null
@@ -86,11 +86,14 @@ related_files:
   - path: "judges/model_ab.py"
     lines: "1-93"
     role: "test"
+  - path: "judges/projection_reference.cpp"
+    lines: "1-45"
+    role: "test"
   - path: "judges/resources.py"
     lines: "1-35"
     role: "test"
   - path: "judges/run.py"
-    lines: "1-202"
+    lines: "1-204"
     role: "test"
   - path: "native/attention_reference.h"
     lines: "1-21"
@@ -101,8 +104,14 @@ related_files:
   - path: "native/mlx_bridge.h"
     lines: "1-60"
     role: "primary"
+  - path: "native/projection_probe.inc"
+    lines: "1-19"
+    role: "primary"
+  - path: "native/projection_reference.h"
+    lines: "1-27"
+    role: "primary"
   - path: "native/qwen_model.inc"
-    lines: "1-133"
+    lines: "1-151"
     role: "primary"
   - path: "native/telemetry.cpp"
     lines: "1-23"
@@ -156,7 +165,7 @@ related_files:
     lines: "1-81"
     role: "primary"
   - path: "src/main.rs"
-    lines: "1-435"
+    lines: "1-441"
     role: "primary"
   - path: "src/runtime.rs"
     lines: "1-366"
@@ -177,10 +186,10 @@ related_files:
     lines: "1-280"
     role: "primary"
   - path: "src/serving/mod.rs"
-    lines: "1-93"
+    lines: "1-96"
     role: "primary"
   - path: "src/serving/model_ir.rs"
-    lines: "1-182"
+    lines: "1-221"
     role: "primary"
   - path: "src/serving/native_boundary.rs"
     lines: "1-193"
@@ -198,7 +207,10 @@ related_files:
     lines: "1-273"
     role: "primary"
   - path: "src/serving/native_qwen.rs"
-    lines: "1-656"
+    lines: "1-662"
+    role: "primary"
+  - path: "src/serving/native_reference.rs"
+    lines: "1-77"
     role: "primary"
   - path: "src/serving/native_state.rs"
     lines: "1-194"
@@ -207,7 +219,7 @@ related_files:
     lines: "1-123"
     role: "primary"
   - path: "src/serving/qwen_tests.rs"
-    lines: "1-528"
+    lines: "1-538"
     role: "primary"
   - path: "src/serving/rapid.rs"
     lines: "1-265"
@@ -530,3 +542,100 @@ minimal Rust tests, five TS tests, Clippy and compiler/Metal gates. This is an
 implementation adversarial review, not independent external sign-off. Prebuilt
 MLX is uninstrumented and its internal command buffers/physical workspace remain
 outside Rust's hard caps. Failed intermediate experiments remain visible.
+
+### Projection reference and remaining semantic failure — design first
+
+Add a separately opted-in projection-check flag to validated model-step IR and
+its private C ABI. Ordinary execution and existing trace mode keep it disabled.
+The diagnostic checks eight evenly spaced output channels across all token rows
+of each ordinary affine projection; for gathered experts it checks two routed
+slots of the first token, selecting the matching input, expert and output slice.
+Packed rows and scale/bias values are copied to CPU-owned FP32 snapshots. An
+independent scalar implementation extracts little-endian packed bits across byte
+boundaries, applies scale*q+bias in FP64 and accumulates FP64 dot products. It
+must support 2/3/4/5/6/8-bit affine packing and groups 32/64/128, reject malformed
+or nonfinite inputs, and pass independent bit-by-bit packing and analytic tests.
+It does not call MLX dequantization, matmul or gather kernels. Diagnostic sample
+NRMSE limit is 1e-4; samples do not establish unsampled-channel correctness.
+
+`native-reference` reuses the unchanged r10 fixture. It compares ordinary,
+projection-checked and single-token execution from the same pre-tail state,
+reports exact yes/no token logits and the target's legal choice, and preserves a
+semantic failure. Optional `--device cpu` repeats the same equations on CPU as a
+backend control, explicitly not an independent full-model oracle. Expected
+answers never enter the forward pass. Checks materialize extra graph nodes, so
+checked/untraced state and logits must agree within 1e-6 NRMSE before interpreting
+them. CPU copies are bounded by selected channels; no full dense expert matrix
+is materialized. Existing logical temporary reservation covers these snapshots;
+physical workspace remains outside that guarantee. Full-model qualification
+still requires independent nonprojection operators and checkpoint tokenization.
+
+Focused final-head extension: the text-boundary diagnostic supplies the exact
+candidate token IDs as a bounded, unique typed list (1–8 IDs, each < vocabulary).
+The final LM-head oracle checks those channels instead of the evenly spaced
+sample. The C ABI rejects invalid lists before reading the weight store. This
+checks the two decision logits against independent FP64 dot products on the
+actual hidden state, while avoiding token/text logic in core execution. It still
+does not validate how that hidden state was produced by nonprojection operators.
+
+Expert coverage refinement before final qualification: probe both the first and
+last token of a multi-token tail, at routed slots 0 and last. A one-token tail
+uses that token once. This directly includes the failing decision's last-token
+expert operands while remaining a sample (two of eight routes, eight output
+channels). Ordinary projections already include every tail token row.
+
+
+### Measured projection and semantic findings
+
+The final diagnostic checks 871 sampled projections per backend, including
+ordinary projection rows, first/last tail-token expert slots 0 and 7, and the
+exact decision-head channels (yes=9405, no=2083). On this checkpoint run only
+4/8-bit modules with group 64 were observed; other widths/groups have synthetic
+packing evidence only. GPU maximum sampled NRMSE is 7.75145078e-7; CPU maximum
+is 6.89049815e-7, both below the preregistered 1e-4 limit. Checked/untraced state
+and logits are identical. Tail chunk/single maximum NRMSE is 5.73e-7 GPU and
+6.10e-7 CPU. This compares seven tail tokens from each backend's own position-24
+state, not the full prompt executed entirely token by token.
+
+GPU yes/no logits are 19.005685806 / 19.114009857 (no margin 0.108324051).
+CPU gives 19.075370789 / 19.208658218 (no margin 0.133287430). Both choose the
+unchanged wrong answer. The focused final-head absolute errors versus scalar
+FP64 are at most 5.36432584e-7 GPU and 1.70389918e-6 CPU. Thus sampled affine
+projection arithmetic does not explain the observed decision, given the actual
+hidden states. The two backends' logits differ; identical choices do not imply
+bitwise determinism or an independent full-model reference.
+
+The diagnostic deliberately exits 1 for the unresolved semantic gate. Neither
+expected answers nor final-head probe IDs bias forward logits. Production calls
+leave projection checks disabled. Independent checkpoint parsing, unsampled
+expert/channel arithmetic and nonprojection operators remain outside this proof.
+Next, independently check checkpoint bytes and recurrent/GDN, normalization and
+RoPE equations before concluding whether the remaining error belongs to the
+implementation or to the fine-tuned model. No held-out prompt/answer alteration,
+answer forcing, training on the fixture or production throughput promotion occurs.
+
+### Projection adversarial review and qualification
+
+The default production path keeps checks and trace disabled. The private ABI
+validates diagnostic mode, trace capacity and candidate channel bounds/uniqueness
+before accessing the weight store. Rust owns the immutable IR and CPU snapshots;
+existing completion leases remain held through native completion. The focused
+candidate list contains both answers and does not mask or alter model logits.
+
+The full judge now builds/runs 55 scalar projection cases under ASan/UBSan on
+independently packed test values. They cover every supported width/group pair,
+word-crossing extraction, affine biases, negative values and malformed/nonfinite
+refusals. A separate sanitizer harness checks 12,000 invalid IR/trace/projection
+wire descriptors against a poison weight-store pointer and unchanged output
+sentinels. Native synthetic checks exercise sampled ordinary/expert projections
+and trace equivalence. Four malformed CLI forms reject before loading a model.
+Prebuilt MLX itself is uninstrumented; no leak-detection claim is made.
+
+Regression passes 114 default / 114 debug-validation / 87 minimal Rust tests,
+five TS tests, TS 7.1/tsrs, Clippy, formatting and existing integer Metal/compiler
+judges. The context-512 diagnostic is unchanged at logit NRMSE 3.79e-7 / state
+3.36e-7. The extended model gate remains 23/24 and exits 1; continuation, overflow,
+three-fork isolation and drain pass. Diagnostic CPU and GPU commands deliberately
+exit 1 for r10. Regression success does not override these model failures.
+Evidence is bound under `evidence/native-reference/summary.json` and its manifest.
+This is an implementation adversarial review, not independent external approval.

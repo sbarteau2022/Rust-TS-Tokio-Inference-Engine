@@ -1,0 +1,4 @@
+native-reference --device other: rejected before model load
+native-reference --device: rejected before model load
+native-reference extra: rejected before model load
+native-reference --device gpu extra: rejected before model load

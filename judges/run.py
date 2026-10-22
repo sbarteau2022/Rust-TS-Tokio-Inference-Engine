@@ -54,6 +54,8 @@ def main():
         assert len(generated) == len(list((ROOT / "ts/generated").rglob("*.ts")))
         for path in generated:
             assert path.read_bytes() == (ROOT / "ts/generated" / path.relative_to(tmp / "ts")).read_bytes()
+    run(["c++", "-std=c++20", "-fsanitize=address,undefined", "-fno-omit-frame-pointer", "-Inative", "judges/projection_reference.cpp", "-o", "artifacts/projection-reference-judge"], "projection-reference-build.log")
+    run(["artifacts/projection-reference-judge"], "projection-reference-tests.log")
     run(["cargo", "build", "--locked"], "step0-cargo.log")
     run(["npx", "--no-install", "tsrs", "-p", "tsconfig.json"], "step0-tsrs.log")
     run(["npx", "--no-install", "tsc", "--noEmit", "-p", "tsconfig.json"], "step0-ts71.log")

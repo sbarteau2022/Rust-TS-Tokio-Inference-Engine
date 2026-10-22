@@ -244,7 +244,8 @@ async fn complete_hybrid_cpu_gpu_and_chunked_state_equivalence() -> Result<()> {
     let traced = gpu
         .execute(
             &gpu.empty_state(),
-            ModelStepIr::compile(StepKind::Prefill, 0, tokens.clone(), 64)?.with_trace(),
+            ModelStepIr::compile(StepKind::Prefill, 0, tokens.clone(), 64)?
+                .with_projection_checks(),
         )
         .await?;
     assert_eq!(traced.trace.len(), 4 * 5 * tokens.len() * 32);
@@ -460,6 +461,9 @@ async fn malformed_ir_and_native_layer_program_reject_before_publication() -> Re
                 state.len(),
                 logits.as_mut_ptr(),
                 logits.len(),
+                0,
+                std::ptr::null(),
+                0,
                 std::ptr::null_mut(),
                 0,
                 e.as_mut_ptr(),
@@ -490,6 +494,9 @@ async fn malformed_ir_and_native_layer_program_reject_before_publication() -> Re
                 state.len(),
                 logits.as_mut_ptr(),
                 logits.len(),
+                0,
+                std::ptr::null(),
+                0,
                 pointer,
                 length,
                 error.as_mut_ptr(),
@@ -516,6 +523,9 @@ async fn malformed_ir_and_native_layer_program_reject_before_publication() -> Re
             state.len(),
             logits.as_mut_ptr(),
             logits.len(),
+            0,
+            std::ptr::null(),
+            0,
             std::ptr::null_mut(),
             0,
             e.as_mut_ptr(),

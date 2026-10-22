@@ -13,6 +13,12 @@ async fn main() -> Result<()> {
     let args: Vec<_> = std::env::args().collect();
     match args.get(1).map(String::as_str) {
         #[cfg(feature = "native-mlx")]
+        Some("native-reference") => {
+            ensure!(args.len()==2 || (args.len()==4 && args[2]=="--device" && ["cpu","gpu"].contains(&args[3].as_str())),"native-reference [--device cpu|gpu]");
+            let device=if args.get(3).is_some_and(|value|value=="cpu") { rust_server::serving::native_mlx::Device::Cpu } else { rust_server::serving::native_mlx::Device::Gpu };
+            rust_server::serving::native_reference::run(device).await?;
+        }
+        #[cfg(feature = "native-mlx")]
         Some("native-diagnose") => {ensure!(args.len()==2,"native-diagnose takes no arguments");rust_server::serving::native_diagnose::run().await?;}
         #[cfg(feature = "native-mlx")]
         Some("native-qualify") => {

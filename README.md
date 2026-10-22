@@ -1,8 +1,8 @@
 ---
 title: "Rust Server — Apple native kernel compiler and runtime"
 document_type: "implementation"
-version: "1.15.0"
-date: "2026-10-22T20:21:00Z"
+version: "1.16.0"
+date: "2026-10-22T20:55:55Z"
 implementation_date: null
 author: "Codex for Stewart Barteau"
 reviewers: []
@@ -21,7 +21,7 @@ related_files:
     lines: "1-165"
     role: "primary"
   - path: "build.rs"
-    lines: "1-56"
+    lines: "1-58"
     role: "primary"
   - path: "fixtures/atan2.amvk"
     lines: null
@@ -86,11 +86,14 @@ related_files:
   - path: "judges/model_ab.py"
     lines: "1-93"
     role: "test"
+  - path: "judges/projection_reference.cpp"
+    lines: "1-45"
+    role: "test"
   - path: "judges/resources.py"
     lines: "1-35"
     role: "test"
   - path: "judges/run.py"
-    lines: "1-202"
+    lines: "1-204"
     role: "test"
   - path: "native/attention_reference.h"
     lines: "1-21"
@@ -101,8 +104,14 @@ related_files:
   - path: "native/mlx_bridge.h"
     lines: "1-60"
     role: "primary"
+  - path: "native/projection_probe.inc"
+    lines: "1-19"
+    role: "primary"
+  - path: "native/projection_reference.h"
+    lines: "1-27"
+    role: "primary"
   - path: "native/qwen_model.inc"
-    lines: "1-133"
+    lines: "1-151"
     role: "primary"
   - path: "native/telemetry.cpp"
     lines: "1-23"
@@ -156,7 +165,7 @@ related_files:
     lines: "1-81"
     role: "primary"
   - path: "src/main.rs"
-    lines: "1-435"
+    lines: "1-441"
     role: "primary"
   - path: "src/runtime.rs"
     lines: "1-366"
@@ -177,10 +186,10 @@ related_files:
     lines: "1-280"
     role: "primary"
   - path: "src/serving/mod.rs"
-    lines: "1-93"
+    lines: "1-96"
     role: "primary"
   - path: "src/serving/model_ir.rs"
-    lines: "1-182"
+    lines: "1-221"
     role: "primary"
   - path: "src/serving/native_boundary.rs"
     lines: "1-193"
@@ -198,7 +207,10 @@ related_files:
     lines: "1-273"
     role: "primary"
   - path: "src/serving/native_qwen.rs"
-    lines: "1-656"
+    lines: "1-662"
+    role: "primary"
+  - path: "src/serving/native_reference.rs"
+    lines: "1-77"
     role: "primary"
   - path: "src/serving/native_state.rs"
     lines: "1-194"
@@ -207,7 +219,7 @@ related_files:
     lines: "1-123"
     role: "primary"
   - path: "src/serving/qwen_tests.rs"
-    lines: "1-528"
+    lines: "1-538"
     role: "primary"
   - path: "src/serving/rapid.rs"
     lines: "1-265"
@@ -631,3 +643,41 @@ Full-model qualification stays blocked. Regression: 114 default / 114 debug /
 harnesses pass. Next: independently validate exact-checkpoint projections and
 full-model logits, then resolve semantic qualification before optimizing attention,
 device-resident state, batching or a drafting head.
+
+
+## Independent sampled projection reference
+
+`cargo run --release --locked -- native-reference` checks the unchanged r10
+cancellation case with an independent scalar FP64 affine-dequantization/dot
+product oracle. `--device cpu` repeats the diagnostic as a backend control.
+The command exits nonzero while that semantic gate fails; it does not repair an
+answer or replace the normal constrained-generation scheduler.
+
+Each backend passes **871 projection probes** over ordinary projection rows,
+sampled routed expert outputs at the first/last tail tokens, and both exact
+`yes`/`no` LM-head channels. Maximum sampled NRMSE: GPU **7.75e-7**, CPU
+**6.89e-7**, against a fixed 1e-4 limit. Checked and unchecked execution match.
+Observed checkpoint projections here are 4/8-bit, group 64; a separate 55-case
+sanitized harness covers 2/3/4/5/6/8-bit packing and groups 32/64/128.
+
+The failure remains: GPU favors `no` by **0.108324** logits; CPU by **0.133287**.
+The two final-head scalar checks have maximum absolute errors below 1.71e-6,
+well below those margins. This rules out the sampled projection arithmetic as
+the immediate cause, given the supplied hidden states. It does not establish
+correctness of unsampled channels, checkpoint parsing, recurrent equations or
+the complete model. Full-model qualification remains blocked. Production calls
+perform no projection probes; custom integer Metal kernels are unchanged.
+
+Next: independent checkpoint-byte ingestion and scalar recurrent/normalization/
+RoPE checks to establish full-logit fidelity before attributing the remaining
+failure to model quality or optimizing state, batching and drafting.
+See [design and findings](docs/NATIVE_QWEN_GENERATION.md).
+
+1.16.0 — 2026-10-22 — Opt-in sampled FP64 projection oracle, focused output-head
+checks, CPU/GPU semantic diagnostics and adversarial interface qualification.
+
+Verification for 1.16.0: **114 default / 114 debug / 87 minimal Rust tests**, five
+TS tests, 55 sanitized scalar cases, 12,000 malformed FFI cases, Clippy and the
+existing Metal/compiler gates pass. Context-512 parity remains unchanged. The
+rerun extended gate remains **23/24**, with continuation, overflow, isolation and
+drain passing. [Recorded results](evidence/native-reference/summary.json).

@@ -91,3 +91,6 @@ pub mod native_tokenizer;
 pub mod rapid;
 #[cfg(feature = "native-mlx")]
 pub mod weights;
+
+#[cfg(feature = "native-mlx")]
+pub mod native_reference;

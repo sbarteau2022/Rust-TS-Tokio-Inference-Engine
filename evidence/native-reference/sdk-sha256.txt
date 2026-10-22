@@ -1,0 +1,4 @@
+7890e84a96e3121c8c1c2f351e41e46ba4d92e7b7bc6275fc2b38c2773891032  vendor/mlx/lib/libjaccl.dylib
+d8c9393d584e781393c3effccfccd8ba85ad0c70264edaf9f897dca9875375c6  vendor/mlx/lib/libmlx.dylib
+c6d7a3facb83568f6e4cb2cf4a8c736ee29302571a48343cb9a3a4d1cd3e3893  vendor/mlx/lib/mlx.metallib
+aa9bc89918174150c2346bdbc85572fcff6585902e9d04e719d6f334f973abf0  vendor/mlx/include/mlx/version.h
