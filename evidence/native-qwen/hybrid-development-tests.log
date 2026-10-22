@@ -35,4 +35,3 @@ test serving::native_qwen::tests::scheduler_rows_atomic_duplicate_stale_and_canc
 test serving::native_qwen::tests::context_bound_and_scheduler_drain_with_three_requests ... ok
 
 test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 11 filtered out; finished in 1.69s
-
