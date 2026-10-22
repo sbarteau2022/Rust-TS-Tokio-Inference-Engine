@@ -1,7 +1,7 @@
 ---
 title: "Rust Server — Apple native kernel compiler and runtime"
 document_type: "implementation"
-version: "1.10.0"
+version: "1.11.0"
 date: "2026-10-22T03:53:10Z"
 implementation_date: null
 author: "Codex for Stewart Barteau"
@@ -12,16 +12,16 @@ related_files:
     lines: "1-9"
     role: "config"
   - path: "Cargo.lock"
-    lines: "1-452"
+    lines: "1-1015"
     role: "config"
   - path: "Cargo.toml"
-    lines: "1-28"
+    lines: "1-29"
     role: "config"
   - path: "backend/rapid_worker.py"
     lines: "1-165"
     role: "primary"
   - path: "build.rs"
-    lines: "1-54"
+    lines: "1-55"
     role: "primary"
   - path: "fixtures/atan2.amvk"
     lines: null
@@ -34,6 +34,9 @@ related_files:
     role: "test"
   - path: "fixtures/elementwise.amvk"
     lines: null
+    role: "test"
+  - path: "fixtures/native-heldout.tsv"
+    lines: "1-16"
     role: "test"
   - path: "fixtures/native-model.path"
     lines: "1-1"
@@ -84,10 +87,13 @@ related_files:
     lines: "1-202"
     role: "test"
   - path: "native/mlx_bridge.cpp"
-    lines: "1-165"
+    lines: "1-167"
     role: "primary"
   - path: "native/mlx_bridge.h"
-    lines: "1-46"
+    lines: "1-59"
+    role: "primary"
+  - path: "native/qwen_model.inc"
+    lines: "1-104"
     role: "primary"
   - path: "native/telemetry.cpp"
     lines: "1-23"
@@ -141,7 +147,7 @@ related_files:
     lines: "1-81"
     role: "primary"
   - path: "src/main.rs"
-    lines: "1-415"
+    lines: "1-432"
     role: "primary"
   - path: "src/runtime.rs"
     lines: "1-366"
@@ -159,7 +165,7 @@ related_files:
     lines: "1-280"
     role: "primary"
   - path: "src/serving/mod.rs"
-    lines: "1-81"
+    lines: "1-85"
     role: "primary"
   - path: "src/serving/native_mlx.rs"
     lines: "1-925"
@@ -167,14 +173,23 @@ related_files:
   - path: "src/serving/native_ops.rs"
     lines: "1-273"
     role: "primary"
+  - path: "src/serving/native_qwen.rs"
+    lines: "1-730"
+    role: "primary"
   - path: "src/serving/native_state.rs"
     lines: "1-194"
+    role: "primary"
+  - path: "src/serving/native_tokenizer.rs"
+    lines: "1-107"
+    role: "primary"
+  - path: "src/serving/qwen_tests.rs"
+    lines: "1-377"
     role: "primary"
   - path: "src/serving/rapid.rs"
     lines: "1-265"
     role: "primary"
   - path: "src/serving/scheduler.rs"
-    lines: "1-563"
+    lines: "1-570"
     role: "primary"
   - path: "src/serving/weights.rs"
     lines: "1-395"
@@ -480,7 +495,7 @@ The retained A/B loaded the OptiQ checkpoint without a Fable adapter. It does no
 
 ## Native Rust MLX backend — current delivery
 
-`Rust typed graph → bounded admission → native executor thread → C ABI → MLX C++ → Metal → CPU-owned typed receipt`. Default admission is three graphs. A joint completion ledger reserves host staging bytes, logical tensor bytes and graph nodes atomically; cancellation does not return those reservations before native completion. The backend supports dense F32 multiplication, affine Q4 multiplication, RMS normalization and raw I32/U32 elementwise buffers. This is a tensor backend; a complete Qwen model forward pass is not implemented.
+`Rust typed graph → bounded admission → native executor thread → C ABI → MLX C++ → Metal → CPU-owned typed receipt`. Default admission is three graphs. A joint completion ledger reserves host staging bytes, logical tensor bytes and graph nodes atomically; cancellation does not return those reservations before native completion. The backend supports dense F32 multiplication, affine Q4 multiplication, RMS normalization and raw I32/U32 elementwise buffers. This tensor interface remains separate from the complete hybrid generation executor described below.
 
 ```sh
 # build.rs — native headers and libraries must be present; no Python build discovery.
@@ -506,10 +521,29 @@ The next native increment retains one immutable checkpoint store per executor ac
 cargo run --release --locked -- native-mlx weights
 ```
 
-Native operators cover RoPE, causal GQA attention, FP32 gated-delta recurrence, top-k routing, gathered quantized experts and weighted reduction. RecurrentBank provides bounded per-sequence CPU snapshots, exclusive row reservations, completion-only atomic commits and cancellation rollback. These are operator/tensor building blocks: full Qwen layer composition, tokenizer, attention KV ownership, model-serving scheduling and generation qualification remain pending. MTP presence is reported separately from execution. Logical parameter payload accounting is not a physical GPU residency measurement.
+Native operators cover RoPE, causal GQA attention, FP32 gated-delta recurrence, top-k routing, gathered quantized experts and weighted reduction. RecurrentBank provides bounded per-sequence CPU snapshots, exclusive row reservations, completion-only atomic commits and cancellation rollback. These operator/tensor building blocks now support the separate full-model executor below. Strict generation qualification remains failed. MTP presence is reported separately from execution. Logical parameter payload accounting is not a physical GPU residency measurement.
 
 See [design and qualification gates](docs/NATIVE_WEIGHTS_EXECUTION.md). Existing custom Metal kernels remain integer-only Q1.31. Proposed production sampling rates remain inactive.
 
 ## Git checkpoint
 
 The canonical project lives at `/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine` in the existing [GitHub repository](https://github.com/sbarteau2022/Rust-TS-Tokio-Inference-Engine). The former Desktop `RUST SERVER` path is a compatibility symlink to this checkout. The initial standalone commit is retained locally on `codex/standalone-checkpoint`; delivery continues on the existing repository history. Source, documentation, fixtures and retained verification evidence are tracked. Build outputs, installed dependencies, the local MLX SDK, GPU captures and interpreter caches are excluded. Model weights remain outside this repository. A Git checkpoint does not promote full-model generation or production readiness; the qualification limits above still apply. The existing `origin` remote is retained; model weights and the local MLX SDK are not uploaded.
+
+## Complete native hybrid generation — qualification blocked
+
+Combined now executes all 40 hybrid layers, including convolution/GDN recurrence, full attention with regular KV, sparse/shared MoE, embeddings and output head. Rust tokenization binds the checkpoint template hash; single-turn text with thinking disabled is supported. The bounded scheduler owns unified immutable KV/convolution/recurrent snapshots and drains its native worker on shutdown. There is no Python worker or JSON runtime transport.
+
+```sh
+# src/main.rs — selected Combined checkpoint only; native reference defaults to FP32.
+cargo run --release --locked -- native-generate "Reply with exactly: READY" 8 --activation f32 --device gpu
+# Fixed qualification suite; a failed gate intentionally exits nonzero.
+cargo run --release --locked -- native-qualify
+```
+
+FP32 passes the preregistered chunk-versus-token continuation bound; BF16 failed it and its evidence is retained. The fixed held-out suite scores **15/16**, with one strict formatting failure (`No.` versus `no`); CPU reproduces that response. Expectations were not relaxed. **Full-model qualification remains blocked.** See [design, evidence and remaining gates](docs/NATIVE_QWEN_GENERATION.md).
+
+Limits: context 512, chunks eight, three resident sequences/admitted native operations; serial row execution, CPU-owned state snapshots, regular KV only. MLX internal command-buffer counts and physical workspace are not hard-capped by Rust's logical reservations. No TurboQuant attention, MTP, vision, ANE, AMX acceleration or production throughput claim is established. Existing custom Metal kernels remain integer-only; this model reference explicitly uses floating activations.
+
+1.11.0 — 2026-10-22 — Complete native Combined hybrid decoder, native tokenizer, unified state and scheduler integration; retain failed strict held-out qualification.
+
+Custom drafting-head candidate: evaluate a checkpoint-bound hidden-state head with exact target verification and atomic KV/convolution/recurrent rollback; native MTP remains disabled. The design and unresolved intermediate-state requirement are in [the generation design](docs/NATIVE_QWEN_GENERATION.md). No custom head is implemented or qualified yet.

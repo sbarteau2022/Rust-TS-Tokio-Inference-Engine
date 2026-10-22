@@ -13,6 +13,23 @@ async fn main() -> Result<()> {
     let args: Vec<_> = std::env::args().collect();
     match args.get(1).map(String::as_str) {
         #[cfg(feature = "native-mlx")]
+        Some("native-qualify") => {
+            ensure!(args.len()==2,"native-qualify takes no arguments");
+            rust_server::serving::native_qwen::qualify_cli().await?;
+        }
+        #[cfg(feature = "native-mlx")]
+        Some("native-generate") => {
+            use rust_server::serving::{native_qwen::ActivationPrecision,native_mlx::Device};
+            ensure!(args.len()>=4 && (args.len()-4)%2==0,"native-generate PROMPT MAX_NEW [--activation f32|bf16] [--device gpu|cpu]; selected Combined model, regular KV only");
+            let mut precision=ActivationPrecision::F32;let mut device=Device::Gpu;let mut seen=std::collections::BTreeSet::new();
+            for pair in args[4..].as_chunks::<2>().0 {ensure!(seen.insert(pair[0].as_str()),"duplicate generation flag");match pair[0].as_str(){
+                "--activation"=>precision=match pair[1].as_str(){"f32"=>ActivationPrecision::F32,"bf16"=>ActivationPrecision::Bf16,_=>bail!("activation must be f32 or bf16")},
+                "--device"=>device=match pair[1].as_str(){"gpu"=>Device::Gpu,"cpu"=>Device::Cpu,_=>bail!("device must be gpu or cpu")},
+                _=>bail!("unsupported generation flag")
+            }}
+            rust_server::serving::native_qwen::generate_cli(&args[2],args[3].parse()?,precision,device).await?;
+        }
+        #[cfg(feature = "native-mlx")]
         Some("native-mlx") => {
             match args.get(2).map(String::as_str) {
                 None => rust_server::serving::native_mlx::smoke().await?,

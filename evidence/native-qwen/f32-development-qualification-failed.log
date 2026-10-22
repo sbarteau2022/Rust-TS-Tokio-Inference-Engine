@@ -1,0 +1,50 @@
+   Compiling rust-server v0.1.0 (/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine)
+warning: rust-server@0.1.0: In file included from native/mlx_bridge.cpp:2:
+warning: rust-server@0.1.0: In file included from /Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/vendor/mlx/include/mlx/mlx.h:5:
+warning: rust-server@0.1.0: In file included from /Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/vendor/mlx/include/mlx/array.h:11:
+warning: rust-server@0.1.0: /Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/vendor/mlx/include/mlx/allocator.h:50:36: warning: unused parameter 'ptr' [-Wunused-parameter]
+warning: rust-server@0.1.0:    50 |   virtual Buffer make_buffer(void* ptr, size_t size) {
+warning: rust-server@0.1.0:       |                                    ^
+warning: rust-server@0.1.0: /Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/vendor/mlx/include/mlx/allocator.h:50:48: warning: unused parameter 'size' [-Wunused-parameter]
+warning: rust-server@0.1.0:    50 |   virtual Buffer make_buffer(void* ptr, size_t size) {
+warning: rust-server@0.1.0:       |                                                ^
+warning: rust-server@0.1.0: /Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/vendor/mlx/include/mlx/allocator.h:53:31: warning: unused parameter 'buffer' [-Wunused-parameter]
+warning: rust-server@0.1.0:    53 |   virtual void release(Buffer buffer) {}
+warning: rust-server@0.1.0:       |                               ^
+warning: rust-server@0.1.0: In file included from native/mlx_bridge.cpp:2:
+warning: rust-server@0.1.0: In file included from /Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/vendor/mlx/include/mlx/mlx.h:5:
+warning: rust-server@0.1.0: In file included from /Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/vendor/mlx/include/mlx/array.h:13:
+warning: rust-server@0.1.0: In file included from /Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/vendor/mlx/include/mlx/dtype.h:9:
+warning: rust-server@0.1.0: In file included from /Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/vendor/mlx/include/mlx/types/complex.h:5:
+warning: rust-server@0.1.0: In file included from /Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/vendor/mlx/include/mlx/types/half_types.h:32:
+warning: rust-server@0.1.0: /Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/vendor/mlx/include/mlx/types/bf16.h:29:3: warning: definition of implicit copy assignment operator for '_MLX_BFloat16' is deprecated because it has a user-declared copy constructor [-Wdeprecated-copy]
+warning: rust-server@0.1.0:    29 |   _MLX_BFloat16(_MLX_BFloat16 const&) = default;
+warning: rust-server@0.1.0:       |   ^
+warning: rust-server@0.1.0: /Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/vendor/mlx/include/mlx/types/bf16.h:38:19: note: in implicit copy assignment operator for 'mlx::core::_MLX_BFloat16' first required here
+warning: rust-server@0.1.0:    38 |     return (*this = _MLX_BFloat16(x));
+warning: rust-server@0.1.0:       |                   ^
+warning: rust-server@0.1.0: 4 warnings generated.
+    Finished `release` profile [optimized] target(s) in 5.36s
+warning: the following packages contain code that will be rejected by a future version of Rust: block v0.1.6
+note: to see what the problems were, use the option `--future-incompat-report`, or run `cargo report future-incompatibilities --id 1`
+     Running `target/release/rust-server native-qualify`
+QUALIFICATION identity=509cc92543203798f2db08b6fb6cbb38a80942fc0437ae81a3ef9ff27720915b SDK=0.32.4 profile=native-f32/fp32-state regular-kv context=512 chunk=8
+CONTINUATION pass=true top1_chunk=5388 top1_single=5388 logit_nrmse=0.00048852 logit_max_abs=0.00557899 state_nrmse=0.00019037 state_max_abs=0.00701213
+HELDOUT id=add pass=true finish=eos expected="42" actual="42"
+HELDOUT id=multiply pass=true finish=eos expected="63" actual="63"
+HELDOUT id=subtract pass=true finish=eos expected="31" actual="31"
+HELDOUT id=power pass=true finish=eos expected="1024" actual="1024"
+HELDOUT id=rust-binding pass=true finish=eos expected="let" actual="let"
+HELDOUT id=rust-success pass=true finish=eos expected="Ok" actual="Ok"
+HELDOUT id=rust-owner pass=true finish=eos expected="B" actual="B"
+HELDOUT id=rust-borrow pass=false finish=eos expected="no" actual="No."
+HELDOUT id=https pass=true finish=eos expected="443" actual="443"
+HELDOUT id=ssh pass=true finish=eos expected="22" actual="22"
+HELDOUT id=dns pass=true finish=eos expected="53" actual="53"
+HELDOUT id=hash pass=true finish=eos expected="256" actual="256"
+HELDOUT id=sql pass=true finish=eos expected="A" actual="A"
+HELDOUT id=privilege pass=true finish=eos expected="B" actual="B"
+HELDOUT id=reverse pass=true finish=eos expected="latem" actual="latem"
+HELDOUT id=instruction pass=true finish=eos expected="copper" actual="copper"
+SUMMARY heldout=15/16 continuation=true drain=true scope=limited-smoke production_qualified=false
+Error: native qualification gate failed; retain report and do not promote

@@ -23,6 +23,7 @@ fn main() {
         );
         println!("cargo:rerun-if-changed=native/mlx_bridge.cpp");
         println!("cargo:rerun-if-changed=native/mlx_bridge.h");
+        println!("cargo:rerun-if-changed=native/qwen_model.inc");
         for item in [
             "include",
             "lib/libmlx.dylib",

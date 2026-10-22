@@ -1,0 +1,16 @@
+add	Compute 17 + 25. Reply with only the integer.	42
+multiply	Compute 7 times 9. Reply with only the integer.	63
+subtract	Compute 100 minus 69. Reply with only the integer.	31
+power	Compute 2 raised to the tenth power. Reply with only the integer.	1024
+rust-binding	Which Rust keyword introduces a variable binding? Reply with only that keyword.	let
+rust-success	Which Rust Result variant represents success? Reply with only the variant name without parentheses.	Ok
+rust-owner	In Rust, which permits multiple ownership across threads: A) Rc B) Arc? Reply with only A or B.	B
+rust-borrow	Does Rust allow two simultaneous mutable references to the same value in safe code? Reply with only yes or no.	no
+https	What is the default TCP port for HTTPS? Reply with only the integer.	443
+ssh	What is the default TCP port for SSH? Reply with only the integer.	22
+dns	What is the standard destination port for ordinary DNS queries? Reply with only the integer.	53
+hash	How many bits are in a SHA-256 digest? Reply with only the integer.	256
+sql	Which prevents SQL injection: A) parameterized queries B) concatenating untrusted input? Reply with only A or B.	A
+privilege	Which follows least privilege: A) all users are admins B) minimum required permissions? Reply with only A or B.	B
+reverse	Reverse the ASCII string metal. Reply with only the reversed string.	latem
+instruction	Reply with exactly the lowercase word copper and nothing else.	copper

@@ -74,7 +74,11 @@ impl Drop for Charge {
 #[cfg(feature = "native-mlx")]
 pub mod native_mlx;
 #[cfg(feature = "native-mlx")]
+pub mod native_qwen;
+#[cfg(feature = "native-mlx")]
 pub mod native_state;
+#[cfg(feature = "native-mlx")]
+pub mod native_tokenizer;
 #[cfg(feature = "legacy-python")]
 pub mod rapid;
 #[cfg(feature = "native-mlx")]

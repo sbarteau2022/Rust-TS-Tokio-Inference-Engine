@@ -91,7 +91,7 @@ extern "C" int rs_mlx_finish(void* graph, uint32_t output, void* data, size_t el
 }
 extern "C" void rs_mlx_cleanup() { try { mx::clear_streams(); } catch (...) {} }
 namespace {
-struct Weights { std::unordered_map<std::string,mx::array> arrays; };
+struct Weights { std::unordered_map<std::string,mx::array> arrays; std::unordered_map<std::string,std::pair<int,int>> quant; };
 }
 extern "C" void* rs_mlx_weights_create(char* error, size_t capacity) {
   try { return new Weights; } catch (const std::exception& e) {report(error,capacity,e.what());} catch (...) {report(error,capacity,"weight store creation failed");} return nullptr;
@@ -163,3 +163,5 @@ extern "C" int rs_mlx_kernel(void* graph,int op,const uint32_t* inputs,size_t co
   g.nodes.insert(g.nodes.end(),outputs.begin(),outputs.end());
  });
 }
+
+#include "qwen_model.inc"

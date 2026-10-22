@@ -44,3 +44,16 @@ int rs_mlx_kernel(void* graph, int op, const uint32_t* inputs, size_t count,
 #ifdef __cplusplus
 }
 #endif
+#ifdef __cplusplus
+extern "C" {
+#endif
+typedef struct {
+ int32_t hidden,layers,vocab,q_heads,kv_heads,head_dim,key_heads,value_heads,key_dim,value_dim,conv,interval,experts,top,intermediate,shared,group,bits,context,chunk,rope_dims,activation_precision;
+ float epsilon,theta;
+} rs_qwen_config;
+int rs_qwen_quant(void* store,const char* module,int group,int bits,char* error,size_t capacity);
+int rs_qwen_forward(void* store,int gpu,const rs_qwen_config* config,const uint32_t* tokens,size_t count,size_t offset,
+ const float* old_state,size_t old_count,float* new_state,size_t new_count,float* logits,size_t logits_count,char* error,size_t capacity);
+#ifdef __cplusplus
+}
+#endif

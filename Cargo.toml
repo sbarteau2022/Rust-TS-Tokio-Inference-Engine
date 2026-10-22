@@ -9,7 +9,7 @@ edition = "2021"
 
 [features]
 default = ["native-mlx"]
-native-mlx = []
+native-mlx = ["dep:tokenizers"]
 legacy-python = ["tokio/process", "tokio/io-util"]
 debug-validation = []
 
@@ -23,6 +23,7 @@ serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 tokio = { version = "1", features = ["rt-multi-thread", "macros", "sync", "time"] }
 sha2 = "0.10.9"
+tokenizers = { version = "0.23.2", default-features = false, features = ["fancy-regex"], optional = true }
 
 [build-dependencies]
 cc = "1"

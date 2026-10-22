@@ -65,6 +65,10 @@ pub trait ModelBackend: Send + 'static {
     fn step(&mut self, batch: Vec<StepInput>) -> BackendFuture<'_>;
     /// Discard per-sequence recurrent/temporary state; called after step completion.
     fn release(&mut self, sequence: u64) -> ReleaseFuture<'_>;
+    /// Drain executor-owned work and release native parameter stores on orderly shutdown.
+    fn shutdown(&mut self) -> ReleaseFuture<'_> {
+        Box::pin(async { Ok(()) })
+    }
 }
 #[derive(Debug)]
 pub struct StepInput {
@@ -559,5 +563,8 @@ async fn run<B: ModelBackend>(
         }
         drop(workspace);
         tokio::task::yield_now().await;
+    }
+    if backend.shutdown().await.is_err() {
+        c.poisoned.store(true, Ordering::Release);
     }
 }

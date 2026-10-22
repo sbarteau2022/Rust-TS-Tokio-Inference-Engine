@@ -16,7 +16,7 @@
   "sampling_policy": "DETERMINISTIC-MODE",
   "production_sampling_claims": false,
   "spec15_cache_control": "opaque payload adapter; nonproduction",
-  "model_serving_foundation": "native Rust MLX tensor executor with joint completion ledger; full Qwen forward pending; Python adapter disabled by default",
+  "model_serving_foundation": "native Rust MLX tensor executor with joint completion ledger; native hybrid forward implemented; strict held-out model gate failed; Python adapter disabled by default",
   "chain_max_stages": 16,
   "validation_policy": "production sampled; full CPU reference test/debug-validation feature",
   "resource_backend_stages": [
@@ -31,7 +31,7 @@
     4,
     5
   ],
-  "native_capture": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/artifacts/judge-1792695431320582000.gputrace",
+  "native_capture": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/artifacts/judge-1792697373966447000.gputrace",
   "source_manifest": "source-sha256.json",
-  "unix_time": 1792695431.621894
+  "unix_time": 1792697374.155326
 }

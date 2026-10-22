@@ -1,0 +1,26 @@
+{
+  "regression_pass": true,
+  "rust_tests": {
+    "default": 106,
+    "debug_validation": 106,
+    "no_default": 81
+  },
+  "typescript_tests": 5,
+  "typescript": "7.1",
+  "model_gate_pass": false,
+  "production_qualified": false,
+  "model_identity": "509cc92543203798f2db08b6fb6cbb38a80942fc0437ae81a3ef9ff27720915b",
+  "sdk": "0.32.4",
+  "activation_precision": "f32",
+  "heldout": {
+    "passed": 15,
+    "total": 16,
+    "failed_case": "rust-borrow",
+    "expected": "no",
+    "actual": "No."
+  },
+  "continuation_pass": true,
+  "scheduler_drain": true,
+  "sanitizers": "instrumented bridge and existing private ABI harness; prebuilt MLX uninstrumented; full hybrid tested by Rust CPU/GPU tests, not sanitizer harness",
+  "production_sampling": "inactive proposed policy"
+}

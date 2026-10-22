@@ -103,7 +103,7 @@ impl<'de> Deserialize<'de> for StrictValue {
         d.deserialize_any(V)
     }
 }
-fn strict(data: &[u8]) -> Result<Value> {
+pub(crate) fn strict(data: &[u8]) -> Result<Value> {
     Ok(serde_json::from_slice::<StrictValue>(data)?.0)
 }
 struct UniqueMap(BTreeMap<String, Value>);
@@ -131,7 +131,7 @@ impl<'de> Deserialize<'de> for UniqueMap {
         d.deserialize_map(MapVisitor)
     }
 }
-fn bounded(path: &Path, limit: u64) -> Result<Vec<u8>> {
+pub(crate) fn bounded(path: &Path, limit: u64) -> Result<Vec<u8>> {
     ensure!(
         fs::symlink_metadata(path)?.is_file(),
         "metadata must be a regular local file"

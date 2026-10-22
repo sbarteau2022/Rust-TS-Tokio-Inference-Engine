@@ -12,16 +12,16 @@ related_files:
     lines: "1-9"
     role: "config"
   - path: "Cargo.lock"
-    lines: "1-452"
+    lines: "1-1015"
     role: "config"
   - path: "Cargo.toml"
-    lines: "1-28"
+    lines: "1-29"
     role: "config"
   - path: "backend/rapid_worker.py"
     lines: "1-165"
     role: "primary"
   - path: "build.rs"
-    lines: "1-54"
+    lines: "1-55"
     role: "primary"
   - path: "fixtures/atan2.amvk"
     lines: null
@@ -34,6 +34,9 @@ related_files:
     role: "test"
   - path: "fixtures/elementwise.amvk"
     lines: null
+    role: "test"
+  - path: "fixtures/native-heldout.tsv"
+    lines: "1-16"
     role: "test"
   - path: "fixtures/native-model.path"
     lines: "1-1"
@@ -84,10 +87,13 @@ related_files:
     lines: "1-202"
     role: "test"
   - path: "native/mlx_bridge.cpp"
-    lines: "1-165"
+    lines: "1-167"
     role: "primary"
   - path: "native/mlx_bridge.h"
-    lines: "1-46"
+    lines: "1-59"
+    role: "primary"
+  - path: "native/qwen_model.inc"
+    lines: "1-104"
     role: "primary"
   - path: "native/telemetry.cpp"
     lines: "1-23"
@@ -141,7 +147,7 @@ related_files:
     lines: "1-81"
     role: "primary"
   - path: "src/main.rs"
-    lines: "1-415"
+    lines: "1-432"
     role: "primary"
   - path: "src/runtime.rs"
     lines: "1-366"
@@ -159,7 +165,7 @@ related_files:
     lines: "1-280"
     role: "primary"
   - path: "src/serving/mod.rs"
-    lines: "1-81"
+    lines: "1-85"
     role: "primary"
   - path: "src/serving/native_mlx.rs"
     lines: "1-925"
@@ -167,14 +173,23 @@ related_files:
   - path: "src/serving/native_ops.rs"
     lines: "1-273"
     role: "primary"
+  - path: "src/serving/native_qwen.rs"
+    lines: "1-730"
+    role: "primary"
   - path: "src/serving/native_state.rs"
     lines: "1-194"
+    role: "primary"
+  - path: "src/serving/native_tokenizer.rs"
+    lines: "1-107"
+    role: "primary"
+  - path: "src/serving/qwen_tests.rs"
+    lines: "1-377"
     role: "primary"
   - path: "src/serving/rapid.rs"
     lines: "1-265"
     role: "primary"
   - path: "src/serving/scheduler.rs"
-    lines: "1-563"
+    lines: "1-570"
     role: "primary"
   - path: "src/serving/weights.rs"
     lines: "1-395"
@@ -370,3 +385,15 @@ Persistent checkpoint ownership, exact mixed affine quantization, attention/recu
 3. Extend row transactions to attention KV plus convolution/recurrent state as one model step. Prove prefill/decode equivalence, batch permutation/isolation and cancellation at every completion boundary before optimizing CPU snapshots into persistent device state.
 4. Wire model steps into bounded scheduling and regular/TurboQuant KV interfaces; test admission saturation, retraction, restart, prefix boundaries and concurrent isolation. An adapter interface alone is not codec execution proof.
 5. Qualify held-out Opus/Cyber tasks and long-context continuation against an explicitly identified native baseline. Report TTFT, token latency, aggregate tokens/s, memory and quality by concurrency with exact model/kernel/quantization identities. Operator/projection throughput is not model-token throughput. Enable neither production sampling proposals nor a production-ready label without the separate gates.
+
+## After complete native hybrid generation
+
+The former layer/tokenizer/unified-state milestones are now implemented for Combined; see [NATIVE_QWEN_GENERATION.md](NATIVE_QWEN_GENERATION.md). Strict held-out qualification remains failed at 15/16. Regular native KV works; the historical external TurboQuant adapter does not qualify native compressed attention.
+
+1. Establish independent reference logits/tokenization for this exact checkpoint and explicit activation profile. Investigate strict format compliance with a separately designed decoding contract; preserve the original failed suite unchanged.
+2. Qualify held-out Rust/Cyber tasks and actual long-context/concurrent workloads, including cancellations and restart. Record identities, precision, TTFT, token latency, memory and throughput together; expand beyond the 16-item smoke.
+3. Replace CPU snapshots with completion-owned device state, then implement actual tensor batching without losing atomic row publication or cancellation isolation.
+4. Integrate native paged regular KV and TurboQuant attention codecs with unified recurrent/convolution prefix boundaries. Require numerical/quality A/B and reclamation pressure tests before enabling codecs.
+5. Only after quality and resource gates, promote serving transports, tune dispatch/workspace policies and benchmark Apple accelerator capabilities. Keep unsupported ANE/AMX paths capability-gated and sampling proposals inactive.
+
+Custom drafting-head candidate: evaluate a checkpoint-bound hidden-state head with exact target verification and atomic KV/convolution/recurrent rollback; native MTP remains disabled. The design and unresolved intermediate-state requirement are in [NATIVE_QWEN_GENERATION.md](NATIVE_QWEN_GENERATION.md). No custom head is implemented or qualified yet.

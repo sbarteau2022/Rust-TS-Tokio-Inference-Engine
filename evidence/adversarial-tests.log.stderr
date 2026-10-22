@@ -24,31 +24,31 @@ warning: rust-server@0.1.0:    38 |     return (*this = _MLX_BFloat16(x));
 warning: rust-server@0.1.0:       |                   ^
 warning: rust-server@0.1.0: 4 warnings generated.
    Compiling rust-server v0.1.0 (/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine)
-    Finished `test` profile [unoptimized + debuginfo] target(s) in 2.47s
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.31s
 warning: the following packages contain code that will be rejected by a future version of Rust: block v0.1.6
 note: to see what the problems were, use the option `--future-incompat-report`, or run `cargo report future-incompatibilities --id 1`
-     Running unittests src/lib.rs (target/debug/deps/rust_server-ad2cfa084ee7b2fb)
+     Running unittests src/lib.rs (target/debug/deps/rust_server-4df23d4033c5aec1)
 background Q1.31 validation failed: result length mismatch
 background Q1.31 validation failed: result length mismatch
-     Running unittests src/main.rs (target/debug/deps/rust_server-381222ea38246205)
-     Running tests/adversarial.rs (target/debug/deps/adversarial-6f85489b855a27c5)
-     Running tests/async_completion.rs (target/debug/deps/async_completion-0568a03fbe8f3902)
-     Running tests/cache_control.rs (target/debug/deps/cache_control-4dc5cb5e9ab7fa66)
+     Running unittests src/main.rs (target/debug/deps/rust_server-d6a1db3ce11ae82a)
+     Running tests/adversarial.rs (target/debug/deps/adversarial-d11ef729f27f5c14)
+     Running tests/async_completion.rs (target/debug/deps/async_completion-c5582de9a8887724)
+     Running tests/cache_control.rs (target/debug/deps/cache_control-6d22d00ddf45bfd9)
 
-thread 'prefix_inflight_is_deduplicated_and_producer_errors_release_reservations' (23655048) panicked at tests/cache_control.rs:211:26:
+thread 'prefix_inflight_is_deduplicated_and_producer_errors_release_reservations' (23693951) panicked at tests/cache_control.rs:211:26:
 injected producer panic
 note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
-     Running tests/cordic.rs (target/debug/deps/cordic-d08fd905ddf2d3fb)
-     Running tests/fixed_point.rs (target/debug/deps/fixed_point-1efdc285dfd08ea1)
-     Running tests/grid.rs (target/debug/deps/grid-bb4a201be4962d89)
-     Running tests/native_execution.rs (target/debug/deps/native_execution-6ab1804e4cb5f809)
-     Running tests/native_mlx.rs (target/debug/deps/native_mlx-033bcb1459c0a7f2)
-     Running tests/production_pipeline.rs (target/debug/deps/production_pipeline-9bc6120335d7b6ae)
-     Running tests/rapid_rpc.rs (target/debug/deps/rapid_rpc-3402263a3bc11ada)
-     Running tests/resources.rs (target/debug/deps/resources-a323ef5c8418f6f6)
-     Running tests/serving.rs (target/debug/deps/serving-b0caaa18e8073670)
+     Running tests/cordic.rs (target/debug/deps/cordic-85cba7ab766a7ddd)
+     Running tests/fixed_point.rs (target/debug/deps/fixed_point-cd859f5ed5c5ecfc)
+     Running tests/grid.rs (target/debug/deps/grid-c359b10a81005b7e)
+     Running tests/native_execution.rs (target/debug/deps/native_execution-7df0c21fe475e2c3)
+     Running tests/native_mlx.rs (target/debug/deps/native_mlx-b803664b6eefd13a)
+     Running tests/production_pipeline.rs (target/debug/deps/production_pipeline-bf90ce07a69f790f)
+     Running tests/rapid_rpc.rs (target/debug/deps/rapid_rpc-cfbd05cf4ff5db49)
+     Running tests/resources.rs (target/debug/deps/resources-524c52de26d4179d)
+     Running tests/serving.rs (target/debug/deps/serving-e5c9b9f6fe8a55e6)
 
-thread 'panicked_backend_closes_admission_and_reports_unfinished_work' (23655399) panicked at tests/serving.rs:217:27:
+thread 'panicked_backend_closes_admission_and_reports_unfinished_work' (23694340) panicked at tests/serving.rs:217:27:
 injected model backend panic
 note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
    Doc-tests rust_server

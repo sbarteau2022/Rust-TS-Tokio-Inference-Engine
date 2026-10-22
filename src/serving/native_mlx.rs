@@ -634,9 +634,9 @@ unsafe extern "C" {
         capacity: usize,
     ) -> i32;
 }
-struct NativeWeights(*mut c_void);
+pub(super) struct NativeWeights(pub(super) *mut c_void);
 impl NativeWeights {
-    fn open(manifest: &Manifest) -> Result<Self> {
+    pub(super) fn open(manifest: &Manifest) -> Result<Self> {
         manifest.verify_stamps()?;
         let mut error = [0 as c_char; 1024];
         let pointer = unsafe { rs_mlx_weights_create(error.as_mut_ptr(), error.len()) };
@@ -802,7 +802,7 @@ pub async fn smoke() -> Result<()> {
         "Native Rust MLX {} | GPU | Python: disabled | JSON transport: none",
         version()
     );
-    println!("Tensor smoke passed: {:?}; completed={} failed={} in_flight={}; Qwen model: not implemented",result.data,stats.completed,stats.failed,stats.in_flight);
+    println!("Tensor smoke passed: {:?}; completed={} failed={} in_flight={}; Qwen qualification: run native-qualify",result.data,stats.completed,stats.failed,stats.in_flight);
     Ok(())
 }
 
