@@ -1,7 +1,7 @@
 ---
 title: "Rust Server — Apple native kernel compiler and runtime"
 document_type: "implementation"
-version: "1.11.0"
+version: "1.13.0"
 date: "2026-10-22T03:53:10Z"
 implementation_date: null
 author: "Codex for Stewart Barteau"
@@ -34,6 +34,9 @@ related_files:
     role: "test"
   - path: "fixtures/elementwise.amvk"
     lines: null
+    role: "test"
+  - path: "fixtures/native-choice-heldout.tsv"
+    lines: "1-4"
     role: "test"
   - path: "fixtures/native-heldout.tsv"
     lines: "1-16"
@@ -90,10 +93,10 @@ related_files:
     lines: "1-167"
     role: "primary"
   - path: "native/mlx_bridge.h"
-    lines: "1-59"
+    lines: "1-60"
     role: "primary"
   - path: "native/qwen_model.inc"
-    lines: "1-104"
+    lines: "1-106"
     role: "primary"
   - path: "native/telemetry.cpp"
     lines: "1-23"
@@ -147,13 +150,16 @@ related_files:
     lines: "1-81"
     role: "primary"
   - path: "src/main.rs"
-    lines: "1-432"
+    lines: "1-433"
     role: "primary"
   - path: "src/runtime.rs"
     lines: "1-366"
     role: "primary"
   - path: "src/sampled.rs"
     lines: "1-193"
+    role: "primary"
+  - path: "src/serving/choices.rs"
+    lines: "1-123"
     role: "primary"
   - path: "src/serving/completion_ledger.rs"
     lines: "1-100"
@@ -165,7 +171,13 @@ related_files:
     lines: "1-280"
     role: "primary"
   - path: "src/serving/mod.rs"
-    lines: "1-85"
+    lines: "1-89"
+    role: "primary"
+  - path: "src/serving/model_ir.rs"
+    lines: "1-173"
+    role: "primary"
+  - path: "src/serving/native_boundary.rs"
+    lines: "1-193"
     role: "primary"
   - path: "src/serving/native_mlx.rs"
     lines: "1-925"
@@ -174,22 +186,22 @@ related_files:
     lines: "1-273"
     role: "primary"
   - path: "src/serving/native_qwen.rs"
-    lines: "1-730"
+    lines: "1-636"
     role: "primary"
   - path: "src/serving/native_state.rs"
     lines: "1-194"
     role: "primary"
   - path: "src/serving/native_tokenizer.rs"
-    lines: "1-107"
+    lines: "1-123"
     role: "primary"
   - path: "src/serving/qwen_tests.rs"
-    lines: "1-377"
+    lines: "1-483"
     role: "primary"
   - path: "src/serving/rapid.rs"
     lines: "1-265"
     role: "primary"
   - path: "src/serving/scheduler.rs"
-    lines: "1-570"
+    lines: "1-632"
     role: "primary"
   - path: "src/serving/weights.rs"
     lines: "1-395"
@@ -226,6 +238,9 @@ related_files:
     role: "test"
   - path: "tests/native_mlx.rs"
     lines: "1-297"
+    role: "test"
+  - path: "tests/output_choices.rs"
+    lines: "1-110"
     role: "test"
   - path: "tests/production_pipeline.rs"
     lines: "1-315"
@@ -547,3 +562,19 @@ Limits: context 512, chunks eight, three resident sequences/admitted native oper
 1.11.0 — 2026-10-22 — Complete native Combined hybrid decoder, native tokenizer, unified state and scheduler integration; retain failed strict held-out qualification.
 
 Custom drafting-head candidate: evaluate a checkpoint-bound hidden-state head with exact target verification and atomic KV/convolution/recurrent rollback; native MTP remains disabled. The design and unresolved intermediate-state requirement are in [the generation design](docs/NATIVE_QWEN_GENERATION.md). No custom head is implemented or qualified yet.
+
+## Exact output choices — explicit decoding contract
+
+Use `native-generate "QUESTION" 8 --choices yes,no` to require a canonical choice and EOS. Both answers remain available; target logits choose among legal next tokens. Choices are bounded, checked before admission, isolated per request and fingerprinted in receipts. Unsupported backends reject them. This controls generation itself; it does not lowercase or strip punctuation after generation.
+
+`native-qualify` retains the original unconstrained 16-case gate. `native-qualify --contracts` is a separate profile: the unchanged borrowing case declares both yes/no choices, and four additional balanced yes/no cases check both semantic answers. The original failure is retained; constrained compliance is not evidence of improved unrestricted instruction following. See [design and results](docs/NATIVE_QWEN_GENERATION.md).
+
+## Typed native model IR; tokenization at I/O
+
+The native boundary module owns chat rendering, Rust tokenization, detokenization and CLI qualification. Core model execution receives validated prefill/decode IR and unified state; no inner text/tokenizer round trips occur. Rust compiles an immutable indexed hybrid layer program which the C ABI validates and executes. Combined's trained token IDs and numerical equations are preserved. This is typed execution/control IR, not an MLIR dialect, a byte-based replacement vocabulary or a demonstrated symplectic model.
+
+The pre-IR constrained model smoke passed 20/20 while the raw profile remained 15/16. Those findings and their source/binary bindings are retained under evidence/native-choices. Post-IR regression and model results are recorded separately under evidence/native-ir. See [boundary design, invariants and findings](docs/NATIVE_QWEN_GENERATION.md).
+
+1.13.0 — 2026-10-22 — Explicit per-request output choices; separate raw/constrained qualification; typed native model-step/layer IR and lexical I/O boundary.
+
+Post-IR result: **20/20 constrained smoke**, with continuation and drain passing; reported outputs/metrics match the pre-IR run. Regression passed 113 default / 113 debug / 87 minimal-feature Rust tests, five TS tests and the existing compiler/Metal gates. The original unconstrained profile remains 15/16; broader model quality remains unqualified. [Recorded findings](evidence/native-ir/summary.json).

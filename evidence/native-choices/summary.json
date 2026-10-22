@@ -1,0 +1,14 @@
+{
+  "phase": "pre-typed-IR",
+  "rust_tests": {
+    "default": 110,
+    "debug_validation": 110,
+    "no_default": 85
+  },
+  "constrained_heldout": "20/20",
+  "raw_heldout": "15/16",
+  "continuation_pass": true,
+  "drain": true,
+  "production_qualified": false,
+  "original_fixture_sha256": "c9a69b744d3ccb2daa6aa0b6e9051ca8ffa3fba1e65a114b292621462f76fa26"
+}

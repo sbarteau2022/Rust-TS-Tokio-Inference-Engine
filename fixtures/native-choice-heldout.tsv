@@ -1,0 +1,4 @@
+choice-immutable	Can two immutable Rust references to the same value coexist? Reply with only yes or no.	yes
+choice-capital	Is Paris the capital of Germany? Reply with only yes or no.	no
+choice-arithmetic	Is 9 greater than 4? Reply with only yes or no.	yes
+choice-port	Is 22 the default TCP port for HTTPS? Reply with only yes or no.	no

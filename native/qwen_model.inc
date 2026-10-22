@@ -72,9 +72,11 @@ extern "C" int rs_qwen_quant(void* store,const char* module,int group,int bits,c
  if(!store||!module||!(group==32||group==64||group==128)||!(bits==2||bits==3||bits==4||bits==5||bits==6||bits==8))throw std::invalid_argument("invalid model quantization");
  static_cast<Weights*>(store)->quant[std::string(module)]={group,bits};
 });}
-extern "C" int rs_qwen_forward(void* store,int gpu,const rs_qwen_config* config,const uint32_t* tokens,size_t count,size_t offset,const float* old_state,size_t old_count,float* new_state,size_t new_count,float* logits,size_t logits_count,char* error,size_t capacity){return checked(error,capacity,[&]{
- if(!store||!config||!tokens||!new_state||!logits)throw std::invalid_argument("invalid model descriptor");auto c=*config;
+extern "C" int rs_qwen_forward(void* store,int gpu,const rs_qwen_config* config,const rs_qwen_layer* layers,size_t layer_count,const uint32_t* tokens,size_t count,size_t offset,const float* old_state,size_t old_count,float* new_state,size_t new_count,float* logits,size_t logits_count,char* error,size_t capacity){return checked(error,capacity,[&]{
+ if(!store||!config||!layers||!tokens||!new_state||!logits)throw std::invalid_argument("invalid model descriptor");auto c=*config;
  if(c.hidden<=0||c.hidden>8192||c.layers<=0||c.layers>64||c.vocab<=0||c.vocab>300000||c.interval<=0||c.layers%c.interval||c.context<=0||c.context>512||c.chunk<=0||c.chunk>8||count==0||count>size_t(c.chunk)||offset>size_t(c.context)||offset+count>size_t(c.context)||logits_count!=size_t(c.vocab))throw std::invalid_argument("model geometry/capacity");
+ if(layer_count!=size_t(c.layers))throw std::invalid_argument("IR layer count");
+ for(size_t i=0;i<layer_count;++i)if(layers[i].index!=i||layers[i].mixer>1||layers[i].mixer!=uint32_t((i+1)%c.interval==0))throw std::invalid_argument("IR layer program");
  for(auto d:{c.q_heads,c.kv_heads,c.head_dim,c.key_heads,c.value_heads,c.key_dim,c.value_dim,c.conv,c.experts,c.top,c.intermediate,c.shared})if(d<=0||d>8192)throw std::invalid_argument("model dimension bounds");
  if(c.activation_precision<0||c.activation_precision>1||c.q_heads%c.kv_heads||c.value_heads%c.key_heads||c.conv<2||c.top>c.experts||c.rope_dims<=0||c.rope_dims>c.head_dim||c.rope_dims%2||!std::isfinite(c.epsilon)||c.epsilon<=0||!std::isfinite(c.theta)||c.theta<=1)throw std::invalid_argument("model geometry mismatch");
  if(new_count!=qwen_state_count(c,offset+count)||(offset?old_count!=qwen_state_count(c,offset)||!old_state:old_count!=0))throw std::invalid_argument("model state length");
@@ -89,7 +91,7 @@ extern "C" int rs_qwen_forward(void* store,int gpu,const rs_qwen_config* config,
  for(int layer=0;layer<c.layers;++layer){
   std::string prefix="language_model.model.layers."+std::to_string(layer);std::vector<mx::array> next;
   auto h=m.norm(x,prefix+".input_layernorm.weight");mx::array r=h;
-  if((layer+1)%c.interval){int cd=2*c.key_heads*c.key_dim+c.value_heads*c.value_dim;auto conv=state({1,c.conv-1,cd},x.dtype());auto recurrent=state({1,c.value_heads,c.value_dim,c.key_dim},mx::float32);r=m.recurrent(h,prefix+".linear_attn",conv,recurrent,next);}
+  if(layers[layer].mixer==0){int cd=2*c.key_heads*c.key_dim+c.value_heads*c.value_dim;auto conv=state({1,c.conv-1,cd},x.dtype());auto recurrent=state({1,c.value_heads,c.value_dim,c.key_dim},mx::float32);r=m.recurrent(h,prefix+".linear_attn",conv,recurrent,next);}
   else{auto k=state({1,c.kv_heads,int(offset),c.head_dim},x.dtype());auto v=state({1,c.kv_heads,int(offset),c.head_dim},x.dtype());r=m.attention(h,prefix+".self_attn",int(offset),k,v,next);}
   auto residual=mx::add(x,r,s);x=mx::add(residual,m.moe(m.norm(residual,prefix+".post_attention_layernorm.weight"),prefix+".mlp"),s);
   std::vector<mx::array> evaluated={x};for(auto& a:next)evaluated.push_back(mx::contiguous(mx::astype(a,mx::float32,s),false,s));

@@ -51,8 +51,9 @@ typedef struct {
  int32_t hidden,layers,vocab,q_heads,kv_heads,head_dim,key_heads,value_heads,key_dim,value_dim,conv,interval,experts,top,intermediate,shared,group,bits,context,chunk,rope_dims,activation_precision;
  float epsilon,theta;
 } rs_qwen_config;
+typedef struct {uint32_t index,mixer;} rs_qwen_layer;
 int rs_qwen_quant(void* store,const char* module,int group,int bits,char* error,size_t capacity);
-int rs_qwen_forward(void* store,int gpu,const rs_qwen_config* config,const uint32_t* tokens,size_t count,size_t offset,
+int rs_qwen_forward(void* store,int gpu,const rs_qwen_config* config,const rs_qwen_layer* layers,size_t layer_count,const uint32_t* tokens,size_t count,size_t offset,
  const float* old_state,size_t old_count,float* new_state,size_t new_count,float* logits,size_t logits_count,char* error,size_t capacity);
 #ifdef __cplusplus
 }

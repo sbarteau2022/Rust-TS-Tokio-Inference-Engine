@@ -1,0 +1,4 @@
+Pre-IR model smoke: native-qualify --contracts, FP32 activation / FP32 recurrent state, selected Combined identity 509cc92543203798f2db08b6fb6cbb38a80942fc0437ae81a3ef9ff27720915b, MLX 0.32.4.
+PASS: 20/20 strict responses with EOS, continuation passes, scheduler drains, exit 0. The original 16 fixture rows are unchanged; only rust-borrow has an explicit yes/no token-path contract. Four additional yes/no questions pass with both answer directions represented. Both choices remain legal; expected answers are not inputs to selection.
+Original unconstrained result remains 15/16 with No. versus no. This is a separately labeled constrained-output profile, not improved unrestricted instruction following or production qualification.
+Pre-IR executable/source fingerprints are in binary-sha256.txt and source-sha256.json. Typed-IR implementation begins after this report and must receive separate source/binary and model-smoke evidence.

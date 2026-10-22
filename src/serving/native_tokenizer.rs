@@ -53,6 +53,22 @@ impl NativeTokenizer {
         ensure!(ids.len() <= 512, "tokenizer token cap");
         Ok(ids)
     }
+    pub fn encode_choice(&self, text: &str) -> Result<Vec<u32>> {
+        ensure!(
+            !text.is_empty()
+                && text.len() <= 1024
+                && !text.contains("<|")
+                && !text.contains("<think>")
+                && !text.contains("</think>"),
+            "invalid output choice text"
+        );
+        let ids = self.encode(text)?;
+        ensure!(
+            self.decode(&ids)? == text,
+            "output choice must round-trip exactly"
+        );
+        Ok(ids)
+    }
     pub fn decode(&self, ids: &[u32]) -> Result<String> {
         ensure!(ids.len() <= 512, "decode token cap");
         self.manifest.verify_stamps()?;

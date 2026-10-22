@@ -1,0 +1,25 @@
+{
+  "phase": "post-typed-IR",
+  "regression_pass": true,
+  "rust_tests": {
+    "default": 113,
+    "debug_validation": 113,
+    "no_default": 87
+  },
+  "typescript_tests": 5,
+  "typescript": "7.1",
+  "constrained_heldout": "20/20",
+  "pre_post_model_reports_identical": true,
+  "continuation_pass": true,
+  "drain": true,
+  "production_qualified": false,
+  "raw_profile": "pre-IR same-generation-contract 15/16; original failure retained",
+  "sanitizer_rejected_descriptors": 5000,
+  "sanitizer_scope": "typed IR wire rejection in instrumented bridge/harness only; upstream MLX uninstrumented; full hybrid CPU/GPU tests separate",
+  "model_identity": "509cc92543203798f2db08b6fb6cbb38a80942fc0437ae81a3ef9ff27720915b",
+  "choices_cli_smoke": {
+    "answer": "no",
+    "eos": true,
+    "contract_fingerprint": "38530787a615166fb03bb840a5aeb22916f9cbe2a58347ce45f45b65c619f0d6"
+  }
+}

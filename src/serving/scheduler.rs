@@ -1,7 +1,9 @@
 //! Bounded fair iteration scheduler. Backend futures must finish native work before returning.
 use super::{
+    choices::Choices,
     config::Config,
     kv::{Codec, Frame},
+    model_ir::StepKind,
     ByteBudget, Charge,
 };
 use anyhow::{ensure, Result};
@@ -60,6 +62,9 @@ pub struct BackendInfo {
 }
 pub trait ModelBackend: Send + 'static {
     fn info(&self) -> BackendInfo;
+    fn supports_choices(&self) -> bool {
+        false
+    }
     /// History is immutable. State is committed by the host only after complete batch validation.
     /// The backend must retain native resources through completion, even if this future is dropped.
     fn step(&mut self, batch: Vec<StepInput>) -> BackendFuture<'_>;
@@ -72,11 +77,13 @@ pub trait ModelBackend: Send + 'static {
 }
 #[derive(Debug)]
 pub struct StepInput {
+    pub kind: StepKind,
     pub sequence: u64,
     pub position: usize,
     pub tokens: Vec<u32>,
     pub prompt_complete: bool,
     pub history: Vec<Arc<Frame>>,
+    pub allowed_tokens: Option<Vec<u32>>,
 }
 #[derive(Debug)]
 pub struct KvValues {
@@ -96,6 +103,7 @@ pub struct Generation {
     pub model_identity: String,
     pub codec_fingerprint: [u8; 32],
     pub config_fingerprint: String,
+    pub output_contract_fingerprint: Option<String>,
     pub tokens: Vec<u32>,
     pub iterations: usize,
     pub experimental_codec: bool,
@@ -122,6 +130,7 @@ pub struct Stats {
     pub admission_closed: bool,
 }
 struct Envelope {
+    choices: Option<Choices>,
     id: u64,
     prompt: Vec<u32>,
     max_new: usize,
@@ -162,6 +171,7 @@ pub struct Engine {
     tx: Option<mpsc::Sender<Envelope>>,
     task: Option<tokio::task::JoinHandle<()>>,
     config: Config,
+    supports_choices: bool,
     info: BackendInfo,
     next_id: AtomicU64,
     counters: Arc<Counters>,
@@ -175,6 +185,7 @@ impl Engine {
     ) -> Result<Self> {
         let storage = storage.into();
         config.validate()?;
+        let supports_choices = backend.supports_choices();
         let info = backend.info();
         ensure!(
             !info.identity.is_empty() && info.identity.len() <= 1024,
@@ -221,6 +232,7 @@ impl Engine {
             tx: Some(tx),
             task: Some(task),
             config,
+            supports_choices,
             info,
             next_id: AtomicU64::new(1),
             counters,
@@ -228,6 +240,32 @@ impl Engine {
         })
     }
     pub fn submit(&self, prompt: Vec<u32>, max_new: usize) -> Result<Request> {
+        self.submit_inner(prompt, max_new, None)
+    }
+    pub fn submit_choices(
+        &self,
+        prompt: Vec<u32>,
+        max_new: usize,
+        paths: Vec<Vec<u32>>,
+    ) -> Result<Request> {
+        ensure!(
+            self.supports_choices,
+            "backend does not support output choices"
+        );
+        let choices = Choices::new(
+            paths,
+            self.info.vocabulary_size,
+            &self.info.eos_tokens,
+            max_new,
+        )?;
+        self.submit_inner(prompt, max_new, Some(choices))
+    }
+    fn submit_inner(
+        &self,
+        prompt: Vec<u32>,
+        max_new: usize,
+        choices: Option<Choices>,
+    ) -> Result<Request> {
         ensure!(
             !self.counters.poisoned.load(Ordering::Acquire),
             "model admission closed after backend failure"
@@ -257,6 +295,7 @@ impl Engine {
             .as_ref()
             .ok_or_else(|| anyhow::anyhow!("scheduler closed"))?
             .try_send(Envelope {
+                choices,
                 id,
                 prompt,
                 max_new,
@@ -420,11 +459,21 @@ async fn run<B: ModelBackend>(
             };
             let prompt_complete = !prefill || s.prefilled + count == s.envelope.prompt.len();
             batch.push(StepInput {
+                kind: if prefill {
+                    StepKind::Prefill
+                } else {
+                    StepKind::Decode
+                },
                 sequence: s.envelope.id,
                 position: s.consumed,
                 tokens,
                 prompt_complete,
                 history: s.history.clone(),
+                allowed_tokens: s
+                    .envelope
+                    .choices
+                    .as_ref()
+                    .map(|c| c.allowed(&s.generated, &info.eos_tokens)),
             });
             pending.push(Pending {
                 sequence: s,
@@ -480,6 +529,14 @@ async fn run<B: ModelBackend>(
                         && o.next_token.is_none_or(|t| t < info.vocabulary_size),
                     "backend token contract"
                 );
+                if let (Some(choices), Some(token)) = (&p.sequence.envelope.choices, o.next_token) {
+                    ensure!(
+                        choices
+                            .allowed(&p.sequence.generated, &info.eos_tokens)
+                            .contains(&token),
+                        "backend output-choice violation"
+                    );
+                }
             }
             Ok(by_id)
         });
@@ -533,6 +590,11 @@ async fn run<B: ModelBackend>(
                                     model_identity: info.identity.clone(),
                                     codec_fingerprint: storage.fingerprint(),
                                     config_fingerprint: config_hash.clone(),
+                                    output_contract_fingerprint: s
+                                        .envelope
+                                        .choices
+                                        .as_ref()
+                                        .map(|c| c.fingerprint().to_owned()),
                                     tokens: s.generated.clone(),
                                     iterations: s.iterations,
                                     experimental_codec: storage.experimental(),

@@ -1,7 +1,7 @@
 ---
 title: "Native Qwen hybrid generation and qualification"
 document_type: "architecture"
-version: "1.0.0"
+version: "1.2.0"
 date: "2026-10-22T20:00:00Z"
 implementation_date: null
 author: "Codex for Stewart Barteau"
@@ -34,6 +34,9 @@ related_files:
     role: "test"
   - path: "fixtures/elementwise.amvk"
     lines: null
+    role: "test"
+  - path: "fixtures/native-choice-heldout.tsv"
+    lines: "1-4"
     role: "test"
   - path: "fixtures/native-heldout.tsv"
     lines: "1-16"
@@ -90,10 +93,10 @@ related_files:
     lines: "1-167"
     role: "primary"
   - path: "native/mlx_bridge.h"
-    lines: "1-59"
+    lines: "1-60"
     role: "primary"
   - path: "native/qwen_model.inc"
-    lines: "1-104"
+    lines: "1-106"
     role: "primary"
   - path: "native/telemetry.cpp"
     lines: "1-23"
@@ -147,13 +150,16 @@ related_files:
     lines: "1-81"
     role: "primary"
   - path: "src/main.rs"
-    lines: "1-432"
+    lines: "1-433"
     role: "primary"
   - path: "src/runtime.rs"
     lines: "1-366"
     role: "primary"
   - path: "src/sampled.rs"
     lines: "1-193"
+    role: "primary"
+  - path: "src/serving/choices.rs"
+    lines: "1-123"
     role: "primary"
   - path: "src/serving/completion_ledger.rs"
     lines: "1-100"
@@ -165,7 +171,13 @@ related_files:
     lines: "1-280"
     role: "primary"
   - path: "src/serving/mod.rs"
-    lines: "1-85"
+    lines: "1-89"
+    role: "primary"
+  - path: "src/serving/model_ir.rs"
+    lines: "1-173"
+    role: "primary"
+  - path: "src/serving/native_boundary.rs"
+    lines: "1-193"
     role: "primary"
   - path: "src/serving/native_mlx.rs"
     lines: "1-925"
@@ -174,22 +186,22 @@ related_files:
     lines: "1-273"
     role: "primary"
   - path: "src/serving/native_qwen.rs"
-    lines: "1-730"
+    lines: "1-636"
     role: "primary"
   - path: "src/serving/native_state.rs"
     lines: "1-194"
     role: "primary"
   - path: "src/serving/native_tokenizer.rs"
-    lines: "1-107"
+    lines: "1-123"
     role: "primary"
   - path: "src/serving/qwen_tests.rs"
-    lines: "1-377"
+    lines: "1-483"
     role: "primary"
   - path: "src/serving/rapid.rs"
     lines: "1-265"
     role: "primary"
   - path: "src/serving/scheduler.rs"
-    lines: "1-570"
+    lines: "1-632"
     role: "primary"
   - path: "src/serving/weights.rs"
     lines: "1-395"
@@ -226,6 +238,9 @@ related_files:
     role: "test"
   - path: "tests/native_mlx.rs"
     lines: "1-297"
+    role: "test"
+  - path: "tests/output_choices.rs"
+    lines: "1-110"
     role: "test"
   - path: "tests/production_pipeline.rs"
     lines: "1-315"
@@ -367,3 +382,40 @@ Stewart raised replacing native MTP with a custom drafting head. Keep native MTP
 A draft may propose tokens; the target model verifies them. For the initial greedy contract, accept only the longest prefix identical to target greedy tokens, emit the target correction on mismatch, and discard speculative state beyond the accepted boundary. KV, convolution and recurrence must fork/commit/rollback as one unit. The current executor returns only terminal state, so correct accepted-prefix recovery needs bounded intermediate snapshots or target replay; terminal-state truncation is invalid for recurrent layers. Stochastic sampling would require a separately designed exact acceptance/correction algorithm, not greedy prefix acceptance.
 
 Judge the head against target-only execution on output congruence, accepted tokens per second, verification latency, state-copy/replay cost and peak memory. Acceptance rate alone cannot establish a speedup. Require mismatch-at-first/middle/last-token, all-rejected, EOS, cancellation and three-sequence pressure tests before enabling speculation. Qualify target semantics first; speculation must not obscure the existing failed strict formatting gate.
+
+# Output choice contract — design before implementation
+
+The raw strict gate failed on formatting (`No.` rather than `no`), reproduced on CPU and GPU. Preserve the original prompt/expected fixture and unconstrained result. Add explicit per-request finite token-path choices, supplied by callers rather than inferred from expected answers. Both `yes` and `no` remain legal for the borrowing question. Select the maximum finite logit among legal next tokens at every decode step, then require EOS at a terminal path; never rewrite completed text.
+
+The scheduler validates bounded choices before admission, rejects unsupported backends, carries a legal-token mask into model steps and independently checks returned tokens before publishing receipts. Require sufficient generation budget for the longest choice plus EOS. Bind a versioned contract fingerprint into receipts. Bounds: 16 choices, 64 tokens per choice, no embedded EOS, duplicates rejected. Canonical tokenizer paths define the supported language; alternate tokenizations are not included. Default unconstrained behavior remains unchanged.
+
+Expose `native-generate ... --choices yes,no` and separate `native-qualify --contracts` evidence. The constrained qualification applies the explicit yes/no contract only where declared; the raw gate remains a separate failing profile. Tests must include shared prefixes, terminal prefixes, ties, invalid tokens/EOS/duplicates/budgets, backend contract violations, sequence isolation/cancellation, and both semantic answers. No production or unrestricted model-quality promotion follows from constrained format compliance.
+
+# Choice-profile findings recorded before typed IR
+
+The pre-IR Combined smoke passed 20/20 strict answers with EOS, continuation and scheduler drain; exit zero. The original 16 prompt/expected rows are unchanged. Only rust-borrow declares both yes/no token paths; four additional balanced semantic cases also pass. See evidence/native-choices/findings.txt and contract-qualification.log, bound to the pre-IR source/binary. This is a constrained-profile pass; unrestricted instruction following and production quality remain unqualified.
+
+# Typed internal IR and strict lexical boundary — design before implementation
+
+Move CLI/chat/tokenization/detokenization and qualification orchestration into native_boundary.rs. The model executor and scheduler adapter must not import NativeTokenizer or operate on text. Preserve trained model token identities; no byte/carrier substitution and no learned symplectic/MLIR claim.
+
+Introduce validated native_ir.rs types for token spans, token position, prefill/decode operations and the immutable hybrid layer program. Rust compiles every layer into an indexed typed mixer instruction (gated-delta or full attention); the C ABI validates and executes that program instead of independently inferring its branch from layer number. Existing MoE/residual/norm equations remain unchanged. Enqueue model-step IR with its unified state and carry the immutable program through the native worker. Decode operations contain exactly one token; bounds and IR/state positions must agree before admission. The FFI alone lowers validated spans to raw uint32 buffers and layer descriptors.
+
+The IR is an execution/control representation, not a replacement model vocabulary or an MLIR compiler dialect. Require unchanged actual Combined continuation/output under the same contract profile, full hybrid CPU/GPU tests, malformed/stale/mismatched IR rejection, and a structural guard against tokenizer dependencies in core runtime modules. Keep raw and constrained quality evidence separate, retain pre-IR evidence, and benchmark overhead before claiming speed gains.
+
+# Typed-IR implementation, validation and remaining limits
+
+Implemented model_ir.rs with private validated token spans, explicit prefill/decode kinds and positions, and an immutable indexed hybrid mixer program. The native worker now queues model-step IR plus its unified snapshot; only forward lowers it to raw ABI descriptors. The C++ executor validates layer count, order and tags and executes the typed mixer program. native_boundary.rs exclusively owns the native model path's chat/tokenization/detokenization and qualification orchestration. Core runtime dependency guards reject lexical imports. Existing separate legacy adapters are not newly qualified or converted by this change.
+
+Final regression passed 113 default Rust tests, 113 debug-validation tests, 87 no-default-feature tests, five TypeScript tests, TypeScript 7.1/tsrs, all-target/all-feature Clippy, formatting and the existing integer Metal/resource/signpost/GPU-capture judges. The typed-IR bridge sanitizer harness rejected 5,000 malformed descriptors before store reads or output writes. Address/undefined instrumentation covers the bridge/harness, not upstream MLX; leak detection was disabled. Full valid hybrid execution has separate CPU/GPU/continuation tests rather than a full-model sanitizer claim.
+
+The post-IR Combined constrained smoke again passed 20/20 with EOS, continuation and scheduler drain. Its full reported continuation metrics and all answers match the pre-IR report exactly. Evidence/source/binary bindings are under evidence/native-ir. The original unconstrained pre-IR rerun remains 15/16 and is retained under evidence/native-choices. The choice profile does not fix unrestricted punctuation behavior. Neither typed IR nor reversible text transport proves universal floating-point determinism or a throughput gain.
+
+Adversarial review covered contract budget/EOS/vocabulary bounds, shared and terminal prefixes, stable ties, unsupported/lying backends, per-sequence masks and cancellation, malformed/foreign/stale state, decode width, IR position/vocabulary mismatch, invalid native layer counts/order/tags and successful work after rejected descriptors. Review is an engineering self-review; independent reviewers are still absent.
+
+Next: independent exact-checkpoint reference logits and broader held-out domain/long-context qualification, persistent device state and genuine tensor batching, then measured native regular/TurboQuant attention and an independently gated drafting head. The typed IR creates an explicit integration point; it does not provide symplectic MLIR semantics or train a new inner representation.
+
+1.1.0 — 2026-10-22 — Explicit output choices; separately qualified constrained profile and preserved raw failure.
+1.2.0 — 2026-10-22 — Typed internal model-step/layer IR, lexical boundary isolation and unchanged post-IR constrained model smoke.
+
+The final CLI smoke `native-generate "Does Rust allow two simultaneous mutable references to the same value in safe code? Reply with only yes or no." 8 --choices yes,no` emits exactly `no` then EOS, with contract fingerprint 38530787a615166fb03bb840a5aeb22916f9cbe2a58347ce45f45b65c619f0d6. Both yes/no choices were legal. This single smoke is not a throughput benchmark.

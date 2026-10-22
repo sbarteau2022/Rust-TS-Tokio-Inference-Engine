@@ -265,11 +265,13 @@ async fn scheduler_rows_atomic_duplicate_stale_and_cancellation() -> Result<()> 
     let executor = fixture.open(Device::Gpu)?;
     let mut backend = ScheduledQwen::new(executor, vec![]);
     let input = |sequence, position, tokens| StepInput {
+        kind: StepKind::Prefill,
         sequence,
         position,
         tokens,
         prompt_complete: true,
         history: vec![],
+        allowed_tokens: None,
     };
     let out = backend
         .step(vec![input(1, 0, vec![2, 3]), input(2, 0, vec![5, 7])])
@@ -309,6 +311,18 @@ async fn scheduler_rows_atomic_duplicate_stale_and_cancellation() -> Result<()> 
             &backend.states.get(&1).unwrap().values
         ));
     }
+    let mut left = input(1, backend.states[&1].position(), vec![13]);
+    left.allowed_tokens = Some(vec![21]);
+    let mut right = input(2, backend.states[&2].position(), vec![14]);
+    right.allowed_tokens = Some(vec![22]);
+    let masked = backend.step(vec![left, right]).await?;
+    assert_eq!(masked[0].next_token, Some(21));
+    assert_eq!(masked[1].next_token, Some(22));
+    let old = backend.states[&1].clone();
+    let mut bad = input(1, old.position(), vec![15]);
+    bad.allowed_tokens = Some(vec![]);
+    assert!(backend.step(vec![bad]).await.is_err());
+    assert!(Arc::ptr_eq(&old.values, &backend.states[&1].values));
     backend.release(1).await?;
     assert!(!backend.states.contains_key(&1));
     backend.shutdown().await?;
@@ -333,11 +347,13 @@ async fn context_bound_and_scheduler_drain_with_three_requests() -> Result<()> {
     let mut adapter = ScheduledQwen::new(executor, vec![]);
     let storage = adapter.storage();
     let input = |sequence| StepInput {
+        kind: StepKind::Prefill,
         sequence,
         position: 0,
         tokens: vec![2],
         prompt_complete: true,
         history: vec![],
+        allowed_tokens: None,
     };
     adapter.step(vec![input(1), input(2), input(3)]).await?;
     assert!(adapter.step(vec![input(4)]).await.is_err());
@@ -373,5 +389,95 @@ async fn context_bound_and_scheduler_drain_with_three_requests() -> Result<()> {
     assert_eq!(stats.cancelled, 1);
     assert_eq!(stats.memory_used, 0);
     assert!(!stats.admission_closed);
+    Ok(())
+}
+
+#[tokio::test]
+async fn malformed_ir_and_native_layer_program_reject_before_publication() -> Result<()> {
+    use super::super::model_ir::ModelStepIr;
+    let fixture = Fixture::new()?;
+    let executor = fixture.open(Device::Cpu)?;
+    let empty = executor.empty_state();
+    for ir in [
+        ModelStepIr::compile(StepKind::Decode, 1, vec![1], 64)?,
+        ModelStepIr::compile(StepKind::Decode, 0, vec![1], 63)?,
+    ] {
+        assert!(executor.execute(&empty, ir).await.is_err());
+    }
+    assert_eq!(executor.resources().leases, 0);
+    assert_eq!(executor.program().layers().len(), 4);
+    assert_eq!(executor.shutdown().await?.leases, 0);
+    let weights = NativeWeights::open(&fixture.manifest)?;
+    #[repr(C)]
+    #[derive(Clone, Copy)]
+    struct WireLayer {
+        index: u32,
+        mixer: u32,
+    }
+    let good: Vec<_> = (0..4)
+        .map(|i| WireLayer {
+            index: i,
+            mixer: u32::from(i == 3),
+        })
+        .collect();
+    let mut state = vec![0.; fixture.c.state_len(1)];
+    let mut logits = vec![0.; 64];
+    let tokens = [1u32];
+    for fault in 0..4 {
+        let mut layers = good.clone();
+        let mut count = 4;
+        match fault {
+            0 => count = 3,
+            1 => layers[0].index = 1,
+            2 => layers[0].mixer = 2,
+            _ => layers[0].mixer = 1,
+        }
+        let mut e = [0 as c_char; 1024];
+        let status = unsafe {
+            rs_qwen_forward(
+                weights.0,
+                0,
+                &fixture.c,
+                layers.as_ptr().cast(),
+                count,
+                tokens.as_ptr(),
+                1,
+                0,
+                std::ptr::null(),
+                0,
+                state.as_mut_ptr(),
+                state.len(),
+                logits.as_mut_ptr(),
+                logits.len(),
+                e.as_mut_ptr(),
+                e.len(),
+            )
+        };
+        assert_ne!(status, 0);
+        assert!(state.iter().all(|v| *v == 0.));
+    }
+    let mut e = [0 as c_char; 1024];
+    let status = unsafe {
+        rs_qwen_forward(
+            weights.0,
+            0,
+            &fixture.c,
+            good.as_ptr().cast(),
+            4,
+            tokens.as_ptr(),
+            1,
+            0,
+            std::ptr::null(),
+            0,
+            state.as_mut_ptr(),
+            state.len(),
+            logits.as_mut_ptr(),
+            logits.len(),
+            e.as_mut_ptr(),
+            e.len(),
+        )
+    };
+    native_status(status, &e)?;
+    assert!(logits.iter().all(|v| v.is_finite()));
     Ok(())
 }

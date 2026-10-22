@@ -1,7 +1,9 @@
 //! Experimental model-facing control plane. No implicit model or production qualification.
+pub mod choices;
 pub mod completion_ledger;
 pub mod config;
 pub mod kv;
+pub mod model_ir;
 pub mod scheduler;
 
 use anyhow::{ensure, Result};
@@ -71,6 +73,8 @@ impl Drop for Charge {
     }
 }
 
+#[cfg(feature = "native-mlx")]
+pub mod native_boundary;
 #[cfg(feature = "native-mlx")]
 pub mod native_mlx;
 #[cfg(feature = "native-mlx")]

@@ -1,6 +1,7 @@
 //! Native complete hybrid text decoder. This reference prioritizes state correctness over copies.
 use super::{
     completion_ledger::{Footprint, Lease, Ledger},
+    model_ir::{HybridProgram, LayerIr, ModelStepIr, StepKind},
     native_mlx::{Device, NativeWeights},
     scheduler::{
         BackendFuture, BackendInfo, ModelBackend, ReleaseFuture, StepInput, StepOutput, Storage,
@@ -159,6 +160,9 @@ pub struct ModelState {
     values: Arc<Vec<f32>>,
 }
 impl ModelState {
+    pub(super) fn snapshot_values(&self) -> &[f32] {
+        &self.values
+    }
     pub fn position(&self) -> usize {
         self.offset
     }
@@ -181,7 +185,7 @@ impl ModelStep {
     }
 }
 struct Command {
-    tokens: Vec<u32>,
+    ir: ModelStepIr,
     state: ModelState,
     reply: oneshot::Sender<Result<ModelStep>>,
     _permit: OwnedSemaphorePermit,
@@ -196,6 +200,7 @@ pub struct QwenExecutor {
     owner: u64,
     manifest: Arc<Manifest>,
     architecture: Architecture,
+    program: Arc<HybridProgram>,
 }
 impl QwenExecutor {
     pub async fn open(device: Device) -> Result<Self> {
@@ -219,6 +224,11 @@ impl QwenExecutor {
             architecture.state_len(architecture.context as usize) * 4 <= 128 * 1024 * 1024,
             "model state cap"
         );
+        let program = Arc::new(HybridProgram::compile(
+            architecture.layers as usize,
+            architecture.interval as usize,
+        )?);
+        let worker_program = program.clone();
         static NEXT: AtomicU64 = AtomicU64::new(1);
         let owner = NEXT.fetch_add(1, Ordering::Relaxed);
         let ledger = Ledger::new(Footprint {
@@ -273,8 +283,8 @@ impl QwenExecutor {
                             &model,
                             architecture,
                             device,
-                            owner,
-                            &command.tokens,
+                            &worker_program,
+                            &command.ir,
                             &command.state,
                         )
                     };
@@ -310,6 +320,7 @@ impl QwenExecutor {
             owner,
             manifest,
             architecture,
+            program,
         })
     }
     pub fn manifest(&self) -> &Manifest {
@@ -323,6 +334,18 @@ impl QwenExecutor {
         }
     }
     pub async fn step(&self, state: &ModelState, tokens: Vec<u32>) -> Result<ModelStep> {
+        let ir = ModelStepIr::compile(
+            StepKind::Prefill,
+            state.position(),
+            tokens,
+            self.architecture.vocab as u32,
+        )?;
+        self.execute(state, ir).await
+    }
+    pub fn program(&self) -> &HybridProgram {
+        &self.program
+    }
+    pub async fn execute(&self, state: &ModelState, ir: ModelStepIr) -> Result<ModelStep> {
         ensure!(
             !self.closed.load(Ordering::Acquire),
             "model admission closed"
@@ -338,18 +361,18 @@ impl QwenExecutor {
             "state shape mismatch"
         );
         ensure!(
-            !tokens.is_empty()
-                && tokens.len() <= c.chunk as usize
-                && state.offset + tokens.len() <= c.context as usize
-                && tokens.iter().all(|t| *t < c.vocab as u32),
-            "model token/context limits"
+            ir.position().get() == state.offset
+                && ir.vocabulary() == c.vocab as u32
+                && ir.len() <= c.chunk as usize
+                && state.offset + ir.len() <= c.context as usize,
+            "IR/state geometry mismatch"
         );
         let permit = self
             .permit
             .clone()
             .try_acquire_owned()
             .context("model in-flight limit reached")?;
-        let next = c.state_len(state.offset + tokens.len()) * 4;
+        let next = c.state_len(state.offset + ir.len()) * 4;
         let lease = self.ledger.reserve(Footprint {
             host_bytes: state.bytes() + next + c.vocab as usize * 4,
             tensor_bytes: state.bytes() + next + 256 * 1024 * 1024,
@@ -360,7 +383,7 @@ impl QwenExecutor {
             .as_ref()
             .context("model stopped")?
             .try_send(Command {
-                tokens,
+                ir,
                 state: state.clone(),
                 reply,
                 _permit: permit,
@@ -409,11 +432,12 @@ fn forward(
     manifest: &Manifest,
     c: Architecture,
     device: Device,
-    owner: u64,
-    tokens: &[u32],
+    program: &HybridProgram,
+    ir: &ModelStepIr,
     state: &ModelState,
 ) -> Result<ModelStep> {
     manifest.verify_stamps()?;
+    let tokens = ir.ffi_ids();
     let offset = state.offset + tokens.len();
     let mut values = vec![0f32; c.state_len(offset)];
     let mut logits = vec![0f32; c.vocab as usize];
@@ -424,6 +448,8 @@ fn forward(
                 weights.0,
                 i32::from(device == Device::Gpu),
                 &c,
+                program.layers().as_ptr(),
+                program.layers().len(),
                 tokens.as_ptr(),
                 tokens.len(),
                 state.offset,
@@ -446,7 +472,7 @@ fn forward(
     );
     Ok(ModelStep {
         state: ModelState {
-            owner,
+            owner: state.owner,
             offset,
             values: Arc::new(values),
         },
@@ -466,6 +492,8 @@ unsafe extern "C" {
         store: *mut c_void,
         gpu: i32,
         config: *const Architecture,
+        layers: *const LayerIr,
+        layer_count: usize,
         tokens: *const u32,
         count: usize,
         offset: usize,
@@ -507,6 +535,9 @@ impl ScheduledQwen {
     }
 }
 impl ModelBackend for ScheduledQwen {
+    fn supports_choices(&self) -> bool {
+        true
+    }
     fn info(&self) -> BackendInfo {
         BackendInfo {
             identity: format!(
@@ -531,6 +562,16 @@ impl ModelBackend for ScheduledQwen {
                 .count();
             ensure!(self.states.len() + new_count <= 3, "resident sequence cap");
             for item in &batch {
+                if let Some(ids) = &item.allowed_tokens {
+                    ensure!(
+                        !ids.is_empty()
+                            && ids.len() <= 32
+                            && ids
+                                .iter()
+                                .all(|t| *t < self.executor.architecture.vocab as u32),
+                        "invalid legal token mask"
+                    );
+                }
                 ensure!(
                     seen.insert(item.sequence) && item.history.is_empty(),
                     "duplicate row or external KV unsupported"
@@ -548,9 +589,18 @@ impl ModelBackend for ScheduledQwen {
                     .get(&item.sequence)
                     .cloned()
                     .unwrap_or_else(|| self.executor.empty_state());
-                let result = self.executor.step(&old, item.tokens).await?;
+                let ir = ModelStepIr::compile(
+                    item.kind,
+                    item.position,
+                    item.tokens,
+                    self.executor.architecture.vocab as u32,
+                )?;
+                let result = self.executor.execute(&old, ir).await?;
                 let token = if item.prompt_complete {
-                    Some(result.greedy_token())
+                    Some(super::choices::select(
+                        &result.logits,
+                        item.allowed_tokens.as_deref(),
+                    )?)
                 } else {
                     None
                 };
@@ -581,150 +631,6 @@ impl ModelBackend for ScheduledQwen {
         })
     }
 }
-/// Local generation through the same fair scheduler used by serving requests.
-pub async fn generate_cli(
-    prompt: &str,
-    max_new: usize,
-    precision: ActivationPrecision,
-    device: Device,
-) -> Result<()> {
-    use super::{config::Config, native_tokenizer::NativeTokenizer, scheduler::Engine};
-    ensure!((1..=128).contains(&max_new), "generation limit 1..128");
-    let started = std::time::Instant::now();
-    let executor = QwenExecutor::open_with_precision(device, precision).await?;
-    let tokenizer = NativeTokenizer::load(executor.manifest())?;
-    let ids = tokenizer.chat(None, prompt)?;
-    println!("NATIVE-QWEN identity={} device={device:?} mode={precision:?}-activations/fp32-recurrence kv=regular max_in_flight=3 context=512 chunk=8 prompt_tokens={} load_ms={:.3}",executor.manifest.identity,ids.len(),started.elapsed().as_secs_f64()*1000.);
-    let adapter = ScheduledQwen::new(executor, tokenizer.eos());
-    let storage = adapter.storage();
-    let config = Config {
-        version: 1,
-        max_queued: 3,
-        max_sequences: 3,
-        max_batch_tokens: 24,
-        prefill_chunk_tokens: 8,
-        max_context_tokens: 512,
-        max_new_tokens: 128,
-        model_memory_bytes: 1024 * 1024 * 1024,
-        max_in_flight: 3,
-    };
-    let engine = Engine::new(config, storage, adapter)?;
-    let begin = std::time::Instant::now();
-    let result = engine.submit(ids, max_new)?.result().await?;
-    println!("{}", tokenizer.decode(&result.tokens)?);
-    println!(
-        "NATIVE-QWEN generated={} elapsed_ms={:.3} finish={} tokens={:?} held_out_qualified=false",
-        result.tokens.len(),
-        begin.elapsed().as_secs_f64() * 1000.,
-        result.finish_reason,
-        result.tokens
-    );
-    let stats = engine.shutdown().await?;
-    ensure!(
-        stats.memory_used == 0 && !stats.admission_closed,
-        "scheduler did not drain cleanly"
-    );
-    Ok(())
-}
-
 #[cfg(test)]
 #[path = "qwen_tests.rs"]
 mod tests;
-fn drift(a: &[f32], b: &[f32]) -> Result<(f64, f64)> {
-    ensure!(a.len() == b.len() && !a.is_empty(), "drift shapes");
-    let mut error = 0f64;
-    let mut magnitude = 0f64;
-    let mut max = 0f64;
-    for (a, b) in a.iter().zip(b) {
-        let d = *a as f64 - *b as f64;
-        error += d * d;
-        magnitude += (*a as f64) * (*a as f64);
-        max = max.max(d.abs());
-    }
-    Ok(((error / magnitude.max(1e-30)).sqrt(), max))
-}
-/// Fixed local qualification fixtures; output is a plain text report, never a runtime JSON protocol.
-pub async fn qualify_cli() -> Result<()> {
-    use super::{config::Config, native_tokenizer::NativeTokenizer, scheduler::Engine};
-    let executor = QwenExecutor::open(Device::Gpu).await?;
-    let tokenizer = NativeTokenizer::load(executor.manifest())?;
-    println!("QUALIFICATION identity={} SDK={} profile=native-f32/fp32-state regular-kv context=512 chunk=8",executor.manifest.identity,super::native_mlx::version());
-    let mut prefix =
-        tokenizer.encode("The quick brown fox jumps over the lazy dog and continues walking.")?;
-    prefix.truncate(8);
-    ensure!(prefix.len() == 8, "continuation fixture too short");
-    let full = executor
-        .step(&executor.empty_state(), prefix.clone())
-        .await?;
-    let mut sequential = executor.empty_state();
-    let mut last = None;
-    for token in prefix {
-        let result = executor.step(&sequential, vec![token]).await?;
-        sequential = result.state.clone();
-        last = Some(result);
-    }
-    let single = last.unwrap();
-    let (logit_rmse, logit_max) = drift(&full.logits, &single.logits)?;
-    let (state_rmse, state_max) = drift(&full.state.values, &single.state.values)?;
-    let continuation =
-        full.greedy_token() == single.greedy_token() && logit_rmse <= 0.01 && state_rmse <= 0.01;
-    println!("CONTINUATION pass={continuation} top1_chunk={} top1_single={} logit_nrmse={logit_rmse:.8} logit_max_abs={logit_max:.8} state_nrmse={state_rmse:.8} state_max_abs={state_max:.8}",full.greedy_token(),single.greedy_token());
-    drop(full);
-    drop(single);
-    drop(sequential);
-    let backend = ScheduledQwen::new(executor, tokenizer.eos());
-    let storage = backend.storage();
-    let config = Config {
-        version: 1,
-        max_queued: 3,
-        max_sequences: 3,
-        max_batch_tokens: 24,
-        prefill_chunk_tokens: 8,
-        max_context_tokens: 512,
-        max_new_tokens: 32,
-        model_memory_bytes: 1024 * 1024 * 1024,
-        max_in_flight: 3,
-    };
-    let engine = Engine::new(config, storage, backend)?;
-    let cases = include_str!("../../fixtures/native-heldout.tsv")
-        .lines()
-        .map(|line| {
-            let parts: Vec<_> = line.split('\t').collect();
-            ensure!(parts.len() == 3, "heldout row");
-            Ok((parts[0], parts[1], parts[2]))
-        })
-        .collect::<Result<Vec<_>>>()?;
-    let mut passed = 0;
-    let mut total = 0;
-    for chunk in cases.chunks(3) {
-        let mut pending = Vec::new();
-        for (id, prompt, expected) in chunk {
-            pending.push((
-                *id,
-                *expected,
-                engine.submit(tokenizer.chat(None, prompt)?, 32)?,
-            ));
-        }
-        for (id, expected, request) in pending {
-            let result = request.result().await?;
-            let text = tokenizer.decode(&result.tokens)?;
-            let pass = text.trim() == expected && result.finish_reason == "eos";
-            total += 1;
-            if pass {
-                passed += 1;
-            }
-            println!(
-                "HELDOUT id={id} pass={pass} finish={} expected={expected:?} actual={text:?}",
-                result.finish_reason
-            );
-        }
-    }
-    let stats = engine.shutdown().await?;
-    let drain = stats.memory_used == 0 && !stats.admission_closed;
-    println!("SUMMARY heldout={passed}/{total} continuation={continuation} drain={drain} scope=limited-smoke production_qualified=false");
-    ensure!(
-        continuation && passed == total && drain,
-        "native qualification gate failed; retain report and do not promote"
-    );
-    Ok(())
-}
