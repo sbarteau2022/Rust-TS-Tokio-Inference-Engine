@@ -1,0 +1,16 @@
+{
+  "default_rust_tests": 118,
+  "debug_rust_tests": 118,
+  "minimal_rust_tests": 87,
+  "margin_example_tests": 2,
+  "suite_example_tests": 2,
+  "layer_parser_tests": 2,
+  "attention_operator_tests": 2,
+  "reference_contract_tests": 7,
+  "typescript_tests": 5,
+  "full_judges_pass": true,
+  "native_arithmetic_changed": false,
+  "native_device_state_implemented": false,
+  "model_quality_promoted": false,
+  "actual_combined_smoke": "READY + EOS [44061,248046]"
+}

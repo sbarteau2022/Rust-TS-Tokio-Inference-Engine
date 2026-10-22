@@ -1,0 +1,37 @@
+{
+  "pass": true,
+  "arithmetic_contract": "q1_31_i32_v3",
+  "cordic_functions": [
+    "sin",
+    "cos",
+    "atan2",
+    "tanh"
+  ],
+  "async_completion_limits": [
+    2,
+    3
+  ],
+  "default_in_flight": 3,
+  "sample_interval": 1000,
+  "sampling_policy": "DETERMINISTIC-MODE",
+  "production_sampling_claims": false,
+  "spec15_cache_control": "opaque payload adapter; nonproduction",
+  "model_serving_foundation": "native Rust MLX tensor executor with joint completion ledger; native hybrid forward implemented; strict held-out model gate failed; Python adapter disabled by default",
+  "chain_max_stages": 16,
+  "validation_policy": "production sampled; full CPU reference test/debug-validation feature",
+  "resource_backend_stages": [
+    1,
+    2
+  ],
+  "steps": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "native_capture": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/artifacts/judge-1792713351104498000.gputrace",
+  "source_manifest": "source-sha256.json",
+  "unix_time": 1792713351.3480582
+}

@@ -2,7 +2,7 @@
 title: "Implementation file map and evidence index"
 document_type: "implementation"
 version: "1.0.0"
-date: "2026-10-22T23:30:15Z"
+date: "2026-10-22T23:59:42Z"
 implementation_date: null
 author: "Codex for Stewart Barteau"
 reviewers: []
@@ -80,6 +80,12 @@ related_files:
   - path: "fixtures/tanh.amvk"
     lines: null
     role: "test"
+  - path: "judges/attention_identical_inputs.py"
+    lines: "1-72"
+    role: "test"
+  - path: "judges/attention_profile.py"
+    lines: "1-44"
+    role: "test"
   - path: "judges/benchmark.py"
     lines: "1-51"
     role: "test"
@@ -88,6 +94,9 @@ related_files:
     role: "test"
   - path: "judges/generate_cordic.py"
     lines: "1-44"
+    role: "test"
+  - path: "judges/layer_reference.py"
+    lines: "1-185"
     role: "test"
   - path: "judges/macro.py"
     lines: "1-14"
@@ -105,10 +114,16 @@ related_files:
     lines: "1-35"
     role: "test"
   - path: "judges/run.py"
-    lines: "1-209"
+    lines: "1-211"
     role: "test"
   - path: "judges/suite_reference.py"
-    lines: "1-243"
+    lines: "1-248"
+    role: "test"
+  - path: "judges/test_attention_profile.py"
+    lines: "1-51"
+    role: "test"
+  - path: "judges/test_layer_reference.py"
+    lines: "1-56"
     role: "test"
   - path: "judges/test_suite_reference.py"
     lines: "1-107"
@@ -189,7 +204,7 @@ related_files:
     lines: "1-81"
     role: "primary"
   - path: "src/main.rs"
-    lines: "1-447"
+    lines: "1-449"
     role: "primary"
   - path: "src/runtime.rs"
     lines: "1-366"
@@ -210,7 +225,7 @@ related_files:
     lines: "1-280"
     role: "primary"
   - path: "src/serving/mod.rs"
-    lines: "1-99"
+    lines: "1-102"
     role: "primary"
   - path: "src/serving/model_ir.rs"
     lines: "1-244"
@@ -226,6 +241,9 @@ related_files:
     role: "primary"
   - path: "src/serving/native_ingestion.rs"
     lines: "1-272"
+    role: "primary"
+  - path: "src/serving/native_layer_reference.rs"
+    lines: "1-93"
     role: "primary"
   - path: "src/serving/native_mlx.rs"
     lines: "1-925"
@@ -384,16 +402,21 @@ Exact text line references for this local implementation. Binary fixtures have n
 | `fixtures/sin.amvk` | Binary / no text lines | test |
 | `fixtures/square.amvk` | Binary / no text lines | test |
 | `fixtures/tanh.amvk` | Binary / no text lines | test |
+| `judges/attention_identical_inputs.py` | 1–72 | test |
+| `judges/attention_profile.py` | 1–44 | test |
 | `judges/benchmark.py` | 1–51 | test |
 | `judges/cordic.py` | 1–30 | test |
 | `judges/generate_cordic.py` | 1–44 | test |
+| `judges/layer_reference.py` | 1–185 | test |
 | `judges/macro.py` | 1–14 | test |
 | `judges/model_ab.py` | 1–93 | test |
 | `judges/operator_reference.cpp` | 1–29 | test |
 | `judges/projection_reference.cpp` | 1–53 | test |
 | `judges/resources.py` | 1–35 | test |
-| `judges/run.py` | 1–209 | test |
-| `judges/suite_reference.py` | 1–243 | test |
+| `judges/run.py` | 1–211 | test |
+| `judges/suite_reference.py` | 1–248 | test |
+| `judges/test_attention_profile.py` | 1–51 | test |
+| `judges/test_layer_reference.py` | 1–56 | test |
 | `judges/test_suite_reference.py` | 1–107 | test |
 | `native/attention_reference.h` | 1–21 | primary |
 | `native/mlx_bridge.cpp` | 1–178 | primary |
@@ -420,19 +443,20 @@ Exact text line references for this local implementation. Binary fixtures have n
 | `src/ir.rs` | 1–646 | primary |
 | `src/lib.rs` | 1–30 | primary |
 | `src/macro_bench.rs` | 1–81 | primary |
-| `src/main.rs` | 1–447 | primary |
+| `src/main.rs` | 1–449 | primary |
 | `src/runtime.rs` | 1–366 | primary |
 | `src/sampled.rs` | 1–193 | primary |
 | `src/serving/choices.rs` | 1–123 | primary |
 | `src/serving/completion_ledger.rs` | 1–100 | primary |
 | `src/serving/config.rs` | 1–51 | primary |
 | `src/serving/kv.rs` | 1–280 | primary |
-| `src/serving/mod.rs` | 1–99 | primary |
+| `src/serving/mod.rs` | 1–102 | primary |
 | `src/serving/model_ir.rs` | 1–244 | primary |
 | `src/serving/native_boundary.rs` | 1–193 | primary |
 | `src/serving/native_diagnose.rs` | 1–104 | primary |
 | `src/serving/native_extended.rs` | 1–214 | primary |
 | `src/serving/native_ingestion.rs` | 1–272 | primary |
+| `src/serving/native_layer_reference.rs` | 1–93 | primary |
 | `src/serving/native_mlx.rs` | 1–925 | primary |
 | `src/serving/native_ops.rs` | 1–273 | primary |
 | `src/serving/native_qwen.rs` | 1–662 | primary |
@@ -474,31 +498,33 @@ Exact text line references for this local implementation. Binary fixtures have n
 | `ts/trace.test.ts` | 1–45 | test |
 | `ts/trace.ts` | 1–73 | primary |
 | `tsconfig.json` | 1–1 | config |
-| `README.md` | 1–820 | primary |
-| `docs/ACCELERATOR_ROADMAP.md` | 1–405 | primary |
-| `docs/ADVERSARIAL_REVIEW.md` | 1–484 | primary |
-| `docs/ASYNC_COMPLETION.md` | 1–438 | primary |
-| `docs/DESIGN.md` | 1–392 | primary |
-| `docs/FILE_MAP.md` | 1–509 | primary |
-| `docs/FIXED_POINT.md` | 1–462 | primary |
-| `docs/Failures.md` | 1–390 | primary |
-| `docs/GRID_THROUGHPUT.md` | 1–421 | primary |
-| `docs/MODEL_ADVERSARIAL_REVIEW.md` | 1–403 | primary |
-| `docs/MODEL_INTEGRATION.md` | 1–510 | primary |
-| `docs/NATIVE_DISCRIMINATORS.md` | 1–449 | primary |
-| `docs/NATIVE_MLX_BACKEND.md` | 1–475 | primary |
-| `docs/NATIVE_QWEN_GENERATION.md` | 1–758 | primary |
-| `docs/NATIVE_SUITE_REFERENCE.md` | 1–489 | primary |
-| `docs/NATIVE_WEIGHTS_EXECUTION.md` | 1–415 | primary |
-| `docs/NEXT_STEPS.md` | 1–542 | primary |
-| `docs/PRODUCTION_PIPELINE.md` | 1–422 | primary |
-| `docs/RESOURCE_BACKEND_DESIGN.md` | 1–402 | primary |
-| `docs/RESOURCE_IMPLEMENTATION.md` | 1–459 | primary |
-| `docs/SAMPLING_POLICY_STATUS.md` | 1–383 | primary |
-| `docs/SERVING_ARCHITECTURE.md` | 1–490 | primary |
-| `docs/SOURCE_SPEC.md` | 1–578 | primary |
-| `docs/SPEC15_IMPLEMENTATION.md` | 1–415 | primary |
-| `docs/SPEC15_SOURCE.md` | 1–615 | primary |
+| `README.md` | 1–862 | primary |
+| `docs/ACCELERATOR_ROADMAP.md` | 1–423 | primary |
+| `docs/ADVERSARIAL_REVIEW.md` | 1–534 | primary |
+| `docs/ASYNC_COMPLETION.md` | 1–456 | primary |
+| `docs/DESIGN.md` | 1–410 | primary |
+| `docs/DEVICE_STATE_OWNERSHIP.md` | 1–520 | primary |
+| `docs/FILE_MAP.md` | 1–535 | primary |
+| `docs/FIXED_POINT.md` | 1–480 | primary |
+| `docs/Failures.md` | 1–408 | primary |
+| `docs/GRID_THROUGHPUT.md` | 1–439 | primary |
+| `docs/MODEL_ADVERSARIAL_REVIEW.md` | 1–421 | primary |
+| `docs/MODEL_INTEGRATION.md` | 1–528 | primary |
+| `docs/NATIVE_DISCRIMINATORS.md` | 1–467 | primary |
+| `docs/NATIVE_LAYER_REFERENCE.md` | 1–555 | primary |
+| `docs/NATIVE_MLX_BACKEND.md` | 1–493 | primary |
+| `docs/NATIVE_QWEN_GENERATION.md` | 1–776 | primary |
+| `docs/NATIVE_SUITE_REFERENCE.md` | 1–507 | primary |
+| `docs/NATIVE_WEIGHTS_EXECUTION.md` | 1–433 | primary |
+| `docs/NEXT_STEPS.md` | 1–584 | primary |
+| `docs/PRODUCTION_PIPELINE.md` | 1–440 | primary |
+| `docs/RESOURCE_BACKEND_DESIGN.md` | 1–420 | primary |
+| `docs/RESOURCE_IMPLEMENTATION.md` | 1–477 | primary |
+| `docs/SAMPLING_POLICY_STATUS.md` | 1–401 | primary |
+| `docs/SERVING_ARCHITECTURE.md` | 1–508 | primary |
+| `docs/SOURCE_SPEC.md` | 1–596 | primary |
+| `docs/SPEC15_IMPLEMENTATION.md` | 1–433 | primary |
+| `docs/SPEC15_SOURCE.md` | 1–633 | primary |
 
 # Evidence
 

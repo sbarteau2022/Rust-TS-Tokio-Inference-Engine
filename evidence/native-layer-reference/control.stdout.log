@@ -1,0 +1,9 @@
+LAYER-PAIR s10 0 None logits {'nrmse': 4.897407971548386e-07, 'max_abs': 5.125999450683594e-06}
+LAYER-PAIR s10 8 None logits {'nrmse': 4.4546738110293685e-07, 'max_abs': 5.7220458984375e-06}
+LAYER-PAIR s10 16 None logits {'nrmse': 5.03945177711872e-07, 'max_abs': 7.62939453125e-06}
+LAYER-PAIR s10 24 None logits {'nrmse': 8.602483569450797e-07, 'max_abs': 8.463859558105469e-06}
+LAYER-PAIR r11 0 None logits {'nrmse': 4.3674910026291787e-07, 'max_abs': 5.602836608886719e-06}
+LAYER-PAIR r11 8 None logits {'nrmse': 4.708557669282724e-07, 'max_abs': 5.0067901611328125e-06}
+LAYER-PAIR r11 16 None logits {'nrmse': 4.038950297219915e-07, 'max_abs': 7.152557373046875e-06}
+LAYER-PAIR r11 24 None logits {'nrmse': 8.034700386099641e-07, 'max_abs': 9.059906005859375e-06}
+LAYER-PAIR r11 32 None logits {'nrmse': 6.609776156510948e-07, 'max_abs': 7.62939453125e-06}

@@ -1,0 +1,9 @@
+LAYER-PAIR s10 0 {'layer': 3, 'stage': 'mixer', 'nrmse': 0.0004640393578295785, 'max_abs': 0.00019644200801849365} logits {'nrmse': 0.007932607755884686, 'max_abs': 0.08026409149169922}
+LAYER-PAIR s10 8 {'layer': 3, 'stage': 'mixer', 'nrmse': 0.0009545020291147305, 'max_abs': 0.000130578875541687} logits {'nrmse': 0.0007033011317673848, 'max_abs': 0.013047218322753906}
+LAYER-PAIR s10 16 {'layer': 3, 'stage': 'mixer', 'nrmse': 0.0010249409205118404, 'max_abs': 0.0003320276737213135} logits {'nrmse': 0.06293883374284608, 'max_abs': 0.8162431716918945}
+LAYER-PAIR s10 24 {'layer': 3, 'stage': 'mixer', 'nrmse': 0.0009292768536524048, 'max_abs': 0.0001499950885772705} logits {'nrmse': 0.06536765297056261, 'max_abs': 0.7536278963088989}
+LAYER-PAIR r11 0 {'layer': 3, 'stage': 'mixer', 'nrmse': 0.0004542987249292294, 'max_abs': 0.00017833709716796875} logits {'nrmse': 0.0003346349439124313, 'max_abs': 0.0044231414794921875}
+LAYER-PAIR r11 8 {'layer': 3, 'stage': 'mixer', 'nrmse': 0.0010248343542622643, 'max_abs': 0.00035643577575683594} logits {'nrmse': 0.0005709154691989527, 'max_abs': 0.004990696907043457}
+LAYER-PAIR r11 16 {'layer': 3, 'stage': 'mixer', 'nrmse': 0.0009159521533312457, 'max_abs': 0.00011417269706726074} logits {'nrmse': 0.0004033762386298642, 'max_abs': 0.006615877151489258}
+LAYER-PAIR r11 24 {'layer': 3, 'stage': 'mixer', 'nrmse': 0.0009745241358121493, 'max_abs': 0.00019276142120361328} logits {'nrmse': 0.04115429453723909, 'max_abs': 0.45058727264404297}
+LAYER-PAIR r11 32 {'layer': 4, 'stage': 'mixer', 'nrmse': 0.0002727071323562546, 'max_abs': 1.0099261999130249e-05} logits {'nrmse': 0.06041033448554873, 'max_abs': 0.61533522605896}

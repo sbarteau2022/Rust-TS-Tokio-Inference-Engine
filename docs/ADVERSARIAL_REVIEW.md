@@ -2,7 +2,7 @@
 title: "Adversarial review of the native kernel prototype"
 document_type: "research"
 version: "1.0.0"
-date: "2026-10-22T23:29:35Z"
+date: "2026-10-22T23:59:13Z"
 implementation_date: null
 author: "Codex for Stewart Barteau"
 reviewers: []
@@ -80,6 +80,12 @@ related_files:
   - path: "fixtures/tanh.amvk"
     lines: null
     role: "test"
+  - path: "judges/attention_identical_inputs.py"
+    lines: "1-72"
+    role: "test"
+  - path: "judges/attention_profile.py"
+    lines: "1-44"
+    role: "test"
   - path: "judges/benchmark.py"
     lines: "1-51"
     role: "test"
@@ -88,6 +94,9 @@ related_files:
     role: "test"
   - path: "judges/generate_cordic.py"
     lines: "1-44"
+    role: "test"
+  - path: "judges/layer_reference.py"
+    lines: "1-185"
     role: "test"
   - path: "judges/macro.py"
     lines: "1-14"
@@ -105,10 +114,16 @@ related_files:
     lines: "1-35"
     role: "test"
   - path: "judges/run.py"
-    lines: "1-209"
+    lines: "1-211"
     role: "test"
   - path: "judges/suite_reference.py"
-    lines: "1-243"
+    lines: "1-248"
+    role: "test"
+  - path: "judges/test_attention_profile.py"
+    lines: "1-51"
+    role: "test"
+  - path: "judges/test_layer_reference.py"
+    lines: "1-56"
     role: "test"
   - path: "judges/test_suite_reference.py"
     lines: "1-107"
@@ -189,7 +204,7 @@ related_files:
     lines: "1-81"
     role: "primary"
   - path: "src/main.rs"
-    lines: "1-447"
+    lines: "1-449"
     role: "primary"
   - path: "src/runtime.rs"
     lines: "1-366"
@@ -210,7 +225,7 @@ related_files:
     lines: "1-280"
     role: "primary"
   - path: "src/serving/mod.rs"
-    lines: "1-99"
+    lines: "1-102"
     role: "primary"
   - path: "src/serving/model_ir.rs"
     lines: "1-244"
@@ -226,6 +241,9 @@ related_files:
     role: "primary"
   - path: "src/serving/native_ingestion.rs"
     lines: "1-272"
+    role: "primary"
+  - path: "src/serving/native_layer_reference.rs"
+    lines: "1-93"
     role: "primary"
   - path: "src/serving/native_mlx.rs"
     lines: "1-925"
@@ -482,3 +500,35 @@ cases (up to 6.54% NRMSE); no bitwise/numerical graph-equivalence or production
 qualification claim is supported. Layerwise drift localization is the next gate.
 GPU/CPU state resources, physical command-buffer limits, fault isolation, long
 context, tensor batching and sustained load are not covered by this offline run.
+
+# Layer/state localization review — 2026-10-22
+
+Self-review only. The opt-in native capture reuses checked typed IR, existing
+trace ABI and immutable snapshot state; no pointer or mutable state is exposed.
+Wrong CLI arity and existing output directories reject before weights open.
+Capture checks finite values, hashes, bounded shapes and drain. Source arithmetic
+and default native execution remain unchanged, confirmed by 60 bitwise-identical
+first vectors and generated trajectories relative to the preceding checkpoint.
+
+Stock observations delegate to original module bodies; installed sources remain
+RECORD-verified. Both original/observed controls are bitwise equal. Comparisons
+slice KV to logical position and verify every cache array's shape/F32 dtype;
+malformed/incomplete/out-of-order reports and geometry are rejected. Independent
+cached causal/GQA tests expose off-by-one visibility and wrong head grouping.
+Operator controls reject unsupported masks/scale/sinks/quantization/non-F32 input.
+MLX-specific tests also run in the external stock environment, without weights.
+
+The first bitwise difference is not hidden: recurrent reductions already differ
+slightly in layer 0. The first material >1e-4 marker is layer-3 full attention.
+Same-input projected K/V and recomposition controls are exact; an independent
+FP64 oracle favors native explicit attention. A separately labeled SDPA-only
+stock control closes the observed full-graph drift. The ordinary stock baseline
+is preserved, and no low-level internal-dtype claim is inferred from these errors.
+No replacement of the more accurate native operator or new throughput claim is
+justified. Known quality misses remain failed; shared libraries and finite test
+coverage do not establish universal equivalence or cross-hardware determinism.
+
+The next device-state document is explicitly a design, with no implemented native
+session ABI or zero-copy capability claimed. It requires worker-only destruction,
+immutable branches, resident lifetime accounting and failure/cancelled-publication
+retirement before enabling serving. Physical command-buffer bounds remain separate.

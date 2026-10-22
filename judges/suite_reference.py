@@ -142,6 +142,7 @@ def main():
     parser.add_argument('--scratch', type=Path, required=True)
     parser.add_argument('--view', type=Path, required=True)
     parser.add_argument('--out', type=Path, required=True)
+    parser.add_argument('--attention-profile', choices=['stock', 'explicit-fp32-control'], default='stock')
     args = parser.parse_args()
     records = native_records(args.scratch)
     view = verify_view(args.view)
@@ -159,6 +160,10 @@ def main():
     model, tokenizer = load(str(args.view), tokenizer_config={'trust_remote_code': False})
     model.set_dtype(mx.float32)
     mx.eval(model.parameters())
+    if args.attention_profile == 'explicit-fp32-control':
+        from mlx_lm.models import qwen3_next
+        from attention_profile import explicit_fp32
+        qwen3_next.scaled_dot_product_attention = explicit_fp32
     # set_dtype's floating predicate must preserve packed weights.
     require(any(v.dtype == mx.uint32 for _, v in tree_flatten(model.parameters())), 'packed weights absent')
     results = []
@@ -206,7 +211,7 @@ def main():
             tokens = tokenizer.encode(word, add_special_tokens=False)
             if len(tokens) == 1:
                 candidate[word] = dict(token=tokens[0], native=float(np.frombuffer(data, dtype='<f4')[tokens[0]]), stock=float(first[tokens[0]]))
-        result = dict(case=case, profile='stock-f32-parameters', generated=generated, text=text, finish=finish,
+        result = dict(case=case, profile='stock-f32-parameters' if args.attention_profile == 'stock' else 'precision-aligned-f32-control', generated=generated, text=text, finish=finish,
                       quality_pass=finish == 'eos' and text.strip() == case['expected'],
                       exact_match=generated == native['generated'] and text == native['text'] and finish == native['finish'],
                       native_generated=native['generated'], native_text=native['text'], native_finish=native['finish'],
@@ -228,7 +233,7 @@ def main():
         summary[suite] = dict(cases=len(selected), exact=sum(r['exact_match'] for r in selected),
                               stock_quality=sum(r['quality_pass'] for r in selected), native_quality=sum(r['native_quality_pass'] for r in selected))
     (args.out / 'summary.json').write_text(json.dumps(summary, indent=2) + '\n')
-    provenance = dict(model=IDENTITY, executable=sys.executable, python=sys.version,
+    provenance = dict(model=IDENTITY, attention_profile=args.attention_profile, executable=sys.executable, python=sys.version,
                       mlx=importlib.metadata.version('mlx'), mlx_lm=importlib.metadata.version('mlx-lm'),
                       package_sources=sources, view=view, forbidden_modules=blocked, seconds=time.time() - started,
                       profile='F32 floating parameters; packed integer weights unchanged',

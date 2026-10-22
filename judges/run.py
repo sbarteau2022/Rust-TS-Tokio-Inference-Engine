@@ -42,6 +42,8 @@ def main():
         versions[name] = subprocess.check_output(command, cwd=ROOT, env=ENV, text=True).strip()
     assert "7.1." in versions["typescript"] and "ts7.1" in json.loads((ROOT / "node_modules/tsrs/package.json").read_text())["version"]
     (EVIDENCE / "toolchain.json").write_text(json.dumps(versions, indent=2))
+    run([sys.executable,"judges/test_attention_profile.py"],"attention-profile-tests.log")
+    run([sys.executable,"judges/test_layer_reference.py"],"layer-reference-tests.log")
     run([sys.executable,"judges/test_suite_reference.py"],"suite-reference-tests.log")
     run(["cargo", "test", "--locked", "--example", "native_discriminators"], "native-discriminator-tests.log")
     run(["cargo", "test", "--locked", "--example", "native_suite_reference"], "native-suite-tests.log")
@@ -181,7 +183,7 @@ def main():
     assert chain["flight"]["limit"]==3 and chain["flight"]["completed"]==chain["flight"]["submitted"]==1
     # Native backend has no interpreter/JSON transport. Legacy adapter is opt-in only.
     run([binary,"native-mlx"],"native-mlx-smoke.txt")
-    for command in [["model-run","fixtures/qwen-serving.json","fixtures/qwen-prompts.json","1"],["config","check","--config","fixtures/qwen-serving.json"],["native-mlx","--unknown"]]:
+    for command in [["model-run","fixtures/qwen-serving.json","fixtures/qwen-prompts.json","1"],["config","check","--config","fixtures/qwen-serving.json"],["native-mlx","--unknown"],["native-layer-reference"],["native-layer-reference","fixtures"],["native-layer-reference","unused","extra"]]:
         rejected=subprocess.run([binary,*command],cwd=ROOT,env=ENV,capture_output=True,timeout=10)
         assert rejected.returncode!=0, command
     run([binary,"cache-judge","fixtures/cache-config-bench.json"],"cache-judge.json")

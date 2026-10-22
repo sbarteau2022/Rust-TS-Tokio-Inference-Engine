@@ -1,8 +1,8 @@
 ---
 title: "Rust Server — Apple native kernel compiler and runtime"
 document_type: "implementation"
-version: "1.19.0"
-date: "2026-10-22T23:29:35Z"
+version: "1.20.0"
+date: "2026-10-22T23:59:13Z"
 implementation_date: null
 author: "Codex for Stewart Barteau"
 reviewers: []
@@ -80,6 +80,12 @@ related_files:
   - path: "fixtures/tanh.amvk"
     lines: null
     role: "test"
+  - path: "judges/attention_identical_inputs.py"
+    lines: "1-72"
+    role: "test"
+  - path: "judges/attention_profile.py"
+    lines: "1-44"
+    role: "test"
   - path: "judges/benchmark.py"
     lines: "1-51"
     role: "test"
@@ -88,6 +94,9 @@ related_files:
     role: "test"
   - path: "judges/generate_cordic.py"
     lines: "1-44"
+    role: "test"
+  - path: "judges/layer_reference.py"
+    lines: "1-185"
     role: "test"
   - path: "judges/macro.py"
     lines: "1-14"
@@ -105,10 +114,16 @@ related_files:
     lines: "1-35"
     role: "test"
   - path: "judges/run.py"
-    lines: "1-209"
+    lines: "1-211"
     role: "test"
   - path: "judges/suite_reference.py"
-    lines: "1-243"
+    lines: "1-248"
+    role: "test"
+  - path: "judges/test_attention_profile.py"
+    lines: "1-51"
+    role: "test"
+  - path: "judges/test_layer_reference.py"
+    lines: "1-56"
     role: "test"
   - path: "judges/test_suite_reference.py"
     lines: "1-107"
@@ -189,7 +204,7 @@ related_files:
     lines: "1-81"
     role: "primary"
   - path: "src/main.rs"
-    lines: "1-447"
+    lines: "1-449"
     role: "primary"
   - path: "src/runtime.rs"
     lines: "1-366"
@@ -210,7 +225,7 @@ related_files:
     lines: "1-280"
     role: "primary"
   - path: "src/serving/mod.rs"
-    lines: "1-99"
+    lines: "1-102"
     role: "primary"
   - path: "src/serving/model_ir.rs"
     lines: "1-244"
@@ -226,6 +241,9 @@ related_files:
     role: "primary"
   - path: "src/serving/native_ingestion.rs"
     lines: "1-272"
+    role: "primary"
+  - path: "src/serving/native_layer_reference.rs"
+    lines: "1-93"
     role: "primary"
   - path: "src/serving/native_mlx.rs"
     lines: "1-925"
@@ -818,3 +836,27 @@ quality. The EOS correction leaves all observed outputs/first logits unchanged.
 First-answer logit NRMSE still reaches **0.06537** (6.54%); this is not numerical
 graph equivalence. Next is layerwise drift localization before wider fidelity or
 production claims. [Results and limitations](docs/NATIVE_SUITE_REFERENCE.md).
+
+
+## Native/stock layer and state localization
+
+The opt-in `native-layer-reference NEW_SCRATCH_DIRECTORY` diagnostic captures the
+unchanged s10/r11 prompts, per-layer stages, unified state and logits at each
+eight-token prefill boundary. It compares traced and ordinary native execution;
+stock observation delegates to unchanged stock module bodies and checks its own
+fresh-cache untouched control. This remains an offline experiment with no server
+transport/default change. [Design and reproducible scope](docs/NATIVE_LAYER_REFERENCE.md).
+
+1.20.0 — 2026-10-22 — Native/stock layer-state divergence localization and observer controls.
+
+The layer/state experiment localizes the material drift to stock fused SDPA at
+the first full-attention layer. On identical operands, the current native FP32
+attention is closer to an independent FP64 oracle. An explicitly labeled stock
+SDPA-only FP32 control matches all 60 native trajectories and reduces maximum
+first-answer logit NRMSE from **0.06537 to 8.76e-7**. Native arithmetic is retained;
+this is numerical-profile localization, not unchanged-stock numerical equality
+or full-model quality promotion. Both known quality misses remain.
+
+The next [device-state ownership contract](docs/DEVICE_STATE_OWNERSHIP.md) is now
+designed, including immutable handles, worker reclamation, resident budgets and
+cancellation/branch/teardown gates. Device-state serving is not implemented yet.

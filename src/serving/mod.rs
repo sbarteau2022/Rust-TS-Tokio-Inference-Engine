@@ -97,3 +97,6 @@ pub mod native_reference;
 
 #[cfg(feature = "native-mlx")]
 pub mod native_ingestion;
+
+#[cfg(feature = "native-mlx")]
+pub mod native_layer_reference;

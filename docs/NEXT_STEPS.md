@@ -2,7 +2,7 @@
 title: "Next stages toward an Apple native inference server"
 document_type: "architecture"
 version: "1.0.0"
-date: "2026-10-22T23:29:35Z"
+date: "2026-10-22T23:59:13Z"
 implementation_date: null
 author: "Codex for Stewart Barteau"
 reviewers: []
@@ -80,6 +80,12 @@ related_files:
   - path: "fixtures/tanh.amvk"
     lines: null
     role: "test"
+  - path: "judges/attention_identical_inputs.py"
+    lines: "1-72"
+    role: "test"
+  - path: "judges/attention_profile.py"
+    lines: "1-44"
+    role: "test"
   - path: "judges/benchmark.py"
     lines: "1-51"
     role: "test"
@@ -88,6 +94,9 @@ related_files:
     role: "test"
   - path: "judges/generate_cordic.py"
     lines: "1-44"
+    role: "test"
+  - path: "judges/layer_reference.py"
+    lines: "1-185"
     role: "test"
   - path: "judges/macro.py"
     lines: "1-14"
@@ -105,10 +114,16 @@ related_files:
     lines: "1-35"
     role: "test"
   - path: "judges/run.py"
-    lines: "1-209"
+    lines: "1-211"
     role: "test"
   - path: "judges/suite_reference.py"
-    lines: "1-243"
+    lines: "1-248"
+    role: "test"
+  - path: "judges/test_attention_profile.py"
+    lines: "1-51"
+    role: "test"
+  - path: "judges/test_layer_reference.py"
+    lines: "1-56"
     role: "test"
   - path: "judges/test_suite_reference.py"
     lines: "1-107"
@@ -189,7 +204,7 @@ related_files:
     lines: "1-81"
     role: "primary"
   - path: "src/main.rs"
-    lines: "1-447"
+    lines: "1-449"
     role: "primary"
   - path: "src/runtime.rs"
     lines: "1-366"
@@ -210,7 +225,7 @@ related_files:
     lines: "1-280"
     role: "primary"
   - path: "src/serving/mod.rs"
-    lines: "1-99"
+    lines: "1-102"
     role: "primary"
   - path: "src/serving/model_ir.rs"
     lines: "1-244"
@@ -226,6 +241,9 @@ related_files:
     role: "primary"
   - path: "src/serving/native_ingestion.rs"
     lines: "1-272"
+    role: "primary"
+  - path: "src/serving/native_layer_reference.rs"
+    lines: "1-93"
     role: "primary"
   - path: "src/serving/native_mlx.rs"
     lines: "1-925"
@@ -540,3 +558,27 @@ against the snapshot reference before enabling actual tensor batching.
 then measure concurrent TTFT, tail latency, throughput and memory together.
 MTP/custom drafting, physical MLX command-buffer bounds, AMX/ANE and production
 sampling proposals remain separately gated. No new production claim is made.
+
+## After first-divergence localization and causal control
+
+Layer 3 full attention introduces the first >1e-4 material stage drift against
+stock; earlier differences are small reductions. On identical Q/K/V, explicit
+native FP32 attention is much closer to independent FP64 than stock SDPA. Changing
+only stock's attention function to that profile closes full-graph drift and yields
+60/60 exact trajectories with maximum first-answer logit NRMSE 8.76e-7. Preserve
+the ordinary stock baseline separately. Retain native arithmetic; no model miss
+or production gate is waived by this experiment.
+
+1. Implement the checked native session/state table in DEVICE_STATE_OWNERSHIP.md,
+including stale/foreign IDs, atomic publication, memory/slot limits and cleanup.
+Keep the CPU snapshot ABI/reference intact and keep serving defaults unchanged
+until the lifetime and native ABI pressure tests pass.
+2. Wire Rust immutable StateRef lifetimes and worker-only reclamation. Test dropped
+futures, full queues, branches, shutdown with live references and fault retirement;
+then run the preregistered snapshot/device model A/B and copy-byte measurements.
+3. Only after those pass enable scheduler device state with a new backend
+fingerprint. Measure sustained TTFT/tail latency/throughput/memory before tensor
+batching, paged regular KV and separately qualified TurboQuant attention.
+4. Address remaining model behavior through fresh held-out bounded-profile
+experiments, preserving the existing 15/16 raw and 23/24 domain failures. MTP,
+AMX/ANE, physical MLX command-buffer caps and proposed sampling remain gated.

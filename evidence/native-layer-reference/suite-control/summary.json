@@ -1,0 +1,20 @@
+{
+  "raw": {
+    "cases": 16,
+    "exact": 16,
+    "stock_quality": 15,
+    "native_quality": 15
+  },
+  "contract": {
+    "cases": 20,
+    "exact": 20,
+    "stock_quality": 20,
+    "native_quality": 20
+  },
+  "domain": {
+    "cases": 24,
+    "exact": 24,
+    "stock_quality": 23,
+    "native_quality": 23
+  }
+}
