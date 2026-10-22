@@ -102,6 +102,24 @@ impl Fixture {
             c.hidden,
             None,
         );
+        // Real Combined embedding affine parameters are BF16. Their arithmetic
+        // must widen before dequantization, not merely cast the result to F32.
+        for suffix in ["scales", "biases"] {
+            let tensor = tensors
+                .get_mut(&format!("language_model.model.embed_tokens.{suffix}"))
+                .expect("fixture embedding affine parameters");
+            tensor.1 = "BF16";
+            tensor.2 = tensor
+                .2
+                .as_chunks::<4>()
+                .0
+                .iter()
+                .flat_map(|value| {
+                    let bits = u32::from_le_bytes(*value);
+                    ((bits >> 16) as u16).to_le_bytes()
+                })
+                .collect();
+        }
         linear(
             &mut tensors,
             "language_model.lm_head",
@@ -245,13 +263,23 @@ async fn complete_hybrid_cpu_gpu_and_chunked_state_equivalence() -> Result<()> {
         .execute(
             &gpu.empty_state(),
             ModelStepIr::compile(StepKind::Prefill, 0, tokens.clone(), 64)?
-                .with_projection_checks(),
+                .with_projection_checks()
+                .with_operator_checks(),
         )
         .await?;
     assert_eq!(traced.trace.len(), 4 * 5 * tokens.len() * 32);
     assert!(traced.trace.iter().all(|v| v.is_finite()));
     near(&b.logits, &traced.logits);
     near(&b.state.values, &traced.state.values);
+    let full_checked = gpu
+        .execute(
+            &gpu.empty_state(),
+            ModelStepIr::compile(StepKind::Prefill, 0, tokens.clone(), 64)?.with_full_reference(),
+        )
+        .await?;
+    near(&b.logits, &full_checked.logits);
+    near(&b.state.values, &full_checked.state.values);
+
     near(&a.logits, &b.logits);
     near(&a.state.values, &b.state.values);
     let first = gpu.step(&gpu.empty_state(), tokens[..2].to_vec()).await?;

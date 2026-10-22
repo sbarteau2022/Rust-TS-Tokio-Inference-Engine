@@ -2,7 +2,7 @@
 title: "Adversarial review of the native kernel prototype"
 document_type: "research"
 version: "1.0.0"
-date: "2026-10-22T03:50:40Z"
+date: "2026-10-22T23:03:00Z"
 implementation_date: null
 author: "Codex for Stewart Barteau"
 reviewers: []
@@ -21,7 +21,7 @@ related_files:
     lines: "1-165"
     role: "primary"
   - path: "build.rs"
-    lines: "1-58"
+    lines: "1-60"
     role: "primary"
   - path: "fixtures/atan2.amvk"
     lines: null
@@ -86,32 +86,41 @@ related_files:
   - path: "judges/model_ab.py"
     lines: "1-93"
     role: "test"
+  - path: "judges/operator_reference.cpp"
+    lines: "1-29"
+    role: "test"
   - path: "judges/projection_reference.cpp"
-    lines: "1-45"
+    lines: "1-53"
     role: "test"
   - path: "judges/resources.py"
     lines: "1-35"
     role: "test"
   - path: "judges/run.py"
-    lines: "1-204"
+    lines: "1-206"
     role: "test"
   - path: "native/attention_reference.h"
     lines: "1-21"
     role: "primary"
   - path: "native/mlx_bridge.cpp"
-    lines: "1-167"
+    lines: "1-178"
     role: "primary"
   - path: "native/mlx_bridge.h"
-    lines: "1-60"
+    lines: "1-67"
+    role: "primary"
+  - path: "native/operator_probe.inc"
+    lines: "1-28"
+    role: "primary"
+  - path: "native/operator_reference.h"
+    lines: "1-58"
     role: "primary"
   - path: "native/projection_probe.inc"
-    lines: "1-19"
+    lines: "1-22"
     role: "primary"
   - path: "native/projection_reference.h"
-    lines: "1-27"
+    lines: "1-30"
     role: "primary"
   - path: "native/qwen_model.inc"
-    lines: "1-151"
+    lines: "1-160"
     role: "primary"
   - path: "native/telemetry.cpp"
     lines: "1-23"
@@ -165,7 +174,7 @@ related_files:
     lines: "1-81"
     role: "primary"
   - path: "src/main.rs"
-    lines: "1-441"
+    lines: "1-447"
     role: "primary"
   - path: "src/runtime.rs"
     lines: "1-366"
@@ -186,10 +195,10 @@ related_files:
     lines: "1-280"
     role: "primary"
   - path: "src/serving/mod.rs"
-    lines: "1-96"
+    lines: "1-99"
     role: "primary"
   - path: "src/serving/model_ir.rs"
-    lines: "1-221"
+    lines: "1-244"
     role: "primary"
   - path: "src/serving/native_boundary.rs"
     lines: "1-193"
@@ -199,6 +208,9 @@ related_files:
     role: "primary"
   - path: "src/serving/native_extended.rs"
     lines: "1-214"
+    role: "primary"
+  - path: "src/serving/native_ingestion.rs"
+    lines: "1-272"
     role: "primary"
   - path: "src/serving/native_mlx.rs"
     lines: "1-925"
@@ -210,7 +222,7 @@ related_files:
     lines: "1-662"
     role: "primary"
   - path: "src/serving/native_reference.rs"
-    lines: "1-77"
+    lines: "1-100"
     role: "primary"
   - path: "src/serving/native_state.rs"
     lines: "1-194"
@@ -219,7 +231,7 @@ related_files:
     lines: "1-123"
     role: "primary"
   - path: "src/serving/qwen_tests.rs"
-    lines: "1-538"
+    lines: "1-566"
     role: "primary"
   - path: "src/serving/rapid.rs"
     lines: "1-265"
@@ -382,3 +394,25 @@ Performed during this build; no independently timed review duration.
 # Persistent-resource and second-family follow-up review
 
 Reviewed the full backend/arena/cache implementation without subagents. Added 12 Rust tests (two backend units and ten resource/integration tests) plus the TypeScript second-family test. Cases include cache identity/source-byte pressure/LRU, independent kernel entry points, tight actual-allocation budgets, page-granularity admission, complete input overwrite/output re-poisoning, failed-capture/math cleanup, compile failure, mixed-family receipts and accurate capability reporting. Found and corrected three lifecycle/measurement risks: missing autorelease scopes, heap-vs-direct reservation mismatch, and a retained backend overlapping the recreated benchmark's allocation phase. Initial reservation failure evidence is preserved. Reference CPU map lookups were hoisted without changing accumulation order or tolerance. Remaining risks include native process/GPU failure isolation, opaque pipeline/driver memory, conservative reservations and lack of model-serving/thermal qualification. No independent audit or human review approval is claimed.
+
+
+# Native operator and ingestion review — 2026-10-22
+
+Self-review only; no independent reviewer or signoff is claimed. Explicit CLI
+checks remain off the hot path. The private diagnostic bitmask rejects unknown
+bits, full coverage without both oracle modes, missing trace capacity, duplicate
+or out-of-range output channels and malformed layer programs before store use.
+Raw-byte export validates shape/dtype/range and caps each transfer at 4 MiB;
+checkpoint stamps are checked before and after verification. Scalar projection
+tiles cap output channels at 256 and join all eight possible workers before
+return. RoPE bounds avoid overflowing offset+tokens on hostile descriptors.
+
+A real failure was uncovered by extending coverage to embedding lookup: BF16
+affine arithmetic survived a requested FP32 output. The correction casts affine
+parameters before arithmetic. The BF16 synthetic fixture and reverting-cast
+negative control demonstrate that the regression detects this defect. Full
+scalar coverage uses observed native operands and cannot prove a separately
+composed graph. Stable semantic failure remains a failed gate, never rewritten
+as a passing quality claim. Native process/GPU fault isolation, physical MLX
+command-buffer cap, tensor batching and sustained serving SLO qualification
+remain limitations despite the logical three-lease admission bound.

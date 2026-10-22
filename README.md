@@ -1,8 +1,8 @@
 ---
 title: "Rust Server — Apple native kernel compiler and runtime"
 document_type: "implementation"
-version: "1.16.0"
-date: "2026-10-22T20:55:55Z"
+version: "1.17.0"
+date: "2026-10-22T22:53:08Z"
 implementation_date: null
 author: "Codex for Stewart Barteau"
 reviewers: []
@@ -21,7 +21,7 @@ related_files:
     lines: "1-165"
     role: "primary"
   - path: "build.rs"
-    lines: "1-58"
+    lines: "1-60"
     role: "primary"
   - path: "fixtures/atan2.amvk"
     lines: null
@@ -86,32 +86,41 @@ related_files:
   - path: "judges/model_ab.py"
     lines: "1-93"
     role: "test"
+  - path: "judges/operator_reference.cpp"
+    lines: "1-29"
+    role: "test"
   - path: "judges/projection_reference.cpp"
-    lines: "1-45"
+    lines: "1-53"
     role: "test"
   - path: "judges/resources.py"
     lines: "1-35"
     role: "test"
   - path: "judges/run.py"
-    lines: "1-204"
+    lines: "1-206"
     role: "test"
   - path: "native/attention_reference.h"
     lines: "1-21"
     role: "primary"
   - path: "native/mlx_bridge.cpp"
-    lines: "1-167"
+    lines: "1-178"
     role: "primary"
   - path: "native/mlx_bridge.h"
-    lines: "1-60"
+    lines: "1-67"
+    role: "primary"
+  - path: "native/operator_probe.inc"
+    lines: "1-28"
+    role: "primary"
+  - path: "native/operator_reference.h"
+    lines: "1-58"
     role: "primary"
   - path: "native/projection_probe.inc"
-    lines: "1-19"
+    lines: "1-22"
     role: "primary"
   - path: "native/projection_reference.h"
-    lines: "1-27"
+    lines: "1-30"
     role: "primary"
   - path: "native/qwen_model.inc"
-    lines: "1-151"
+    lines: "1-160"
     role: "primary"
   - path: "native/telemetry.cpp"
     lines: "1-23"
@@ -165,7 +174,7 @@ related_files:
     lines: "1-81"
     role: "primary"
   - path: "src/main.rs"
-    lines: "1-441"
+    lines: "1-447"
     role: "primary"
   - path: "src/runtime.rs"
     lines: "1-366"
@@ -186,10 +195,10 @@ related_files:
     lines: "1-280"
     role: "primary"
   - path: "src/serving/mod.rs"
-    lines: "1-96"
+    lines: "1-99"
     role: "primary"
   - path: "src/serving/model_ir.rs"
-    lines: "1-221"
+    lines: "1-244"
     role: "primary"
   - path: "src/serving/native_boundary.rs"
     lines: "1-193"
@@ -199,6 +208,9 @@ related_files:
     role: "primary"
   - path: "src/serving/native_extended.rs"
     lines: "1-214"
+    role: "primary"
+  - path: "src/serving/native_ingestion.rs"
+    lines: "1-272"
     role: "primary"
   - path: "src/serving/native_mlx.rs"
     lines: "1-925"
@@ -210,7 +222,7 @@ related_files:
     lines: "1-662"
     role: "primary"
   - path: "src/serving/native_reference.rs"
-    lines: "1-77"
+    lines: "1-100"
     role: "primary"
   - path: "src/serving/native_state.rs"
     lines: "1-194"
@@ -219,7 +231,7 @@ related_files:
     lines: "1-123"
     role: "primary"
   - path: "src/serving/qwen_tests.rs"
-    lines: "1-538"
+    lines: "1-566"
     role: "primary"
   - path: "src/serving/rapid.rs"
     lines: "1-265"
@@ -681,3 +693,39 @@ TS tests, 55 sanitized scalar cases, 12,000 malformed FFI cases, Clippy and the
 existing Metal/compiler gates pass. Context-512 parity remains unchanged. The
 rerun extended gate remains **23/24**, with continuation, overflow, isolation and
 drain passing. [Recorded results](evidence/native-reference/summary.json).
+
+
+## Independent ingestion and complete operator diagnostics
+
+`native-ingestion` compares every native-loaded tensor byte, shape and dtype
+against checkpoint shard payloads. Combined passes **1,757 tensors / 19,508,787,456
+bytes**. `native-reference --full` checks all projection channels (including every
+active expert and the complete vocabulary head) and all prefill chunks of frozen
+r10. Scalar FP64 checks cover embeddings, RMS, RoPE, convolution, recurrence,
+attention, router/top-k, activations, gating, mixtures and residual additions.
+These checks observe native operands; they are **not an independent model graph**.
+They run only in explicit diagnostics, never on the serving hot path.
+
+The expanded check exposed a real embedding defect: BF16 affine scales/biases
+were rounded before the requested FP32 result. The FP32 profile now widens
+scales/biases before dequantization. The failed real-model gate and a BF16 fixture
+negative control are retained. Removing the correction makes that regression
+fail. BF16 execution remains unqualified.
+
+Corrected full-prompt diagnostic: **133,880 projection tiles** (maximum NRMSE
+2.30e-6; limit 1e-4), **2,768 operator checks** (2.63e-7; limit 1e-5), and **40
+attention checks** (2.88e-7; limit 1e-5) pass. Checked/unchecked execution matches;
+chunk/single control error is 6.07e-7. The unchanged cancellation case still
+chooses `no` over `yes` by **0.107872** logits. Numerical correction does not
+establish semantic qualification. See [retained evidence](evidence/native-operators/EXPERIMENTS.md).
+
+1.17.0 — 2026-10-22 — Full ingestion audit, complete composed FP64 operator
+checks, bounded all-channel diagnostics and BF16 embedding arithmetic correction.
+
+
+Final-source regression for 1.17.0: **116 default / 116 debug / 87 minimal Rust
+tests**, five TS tests, 93 scalar projection/embedding cases, 43 scalar operator
+cases, 14,000 malformed FFI descriptors, Clippy and Metal/compiler gates pass.
+Combined emits `READY` then EOS. Unchanged model gates remain **20/20 contracted,
+15/16 raw, 23/24 extended**; context-512 continuation, overflow, isolation and
+drain pass. These are limited local results, not production qualification.

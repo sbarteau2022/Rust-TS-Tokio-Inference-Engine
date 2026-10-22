@@ -1,0 +1,21 @@
+{
+  "projection": {
+    "checks": 133880,
+    "maximum_nrmse": 2.29420587e-06,
+    "limit": 0.0001
+  },
+  "operator": {
+    "checks": 2768,
+    "maximum_nrmse": 2.62358289e-07,
+    "limit": 1e-05
+  },
+  "attention": {
+    "checks": 40,
+    "maximum_nrmse": 2.87192754e-07,
+    "limit": 1e-05
+  },
+  "controls": [
+    "REFERENCE-CONTROL checked_unchecked_nrmse=0.000000000 chunk_single_nrmse=0.000000607 tail_tokens=7",
+    "SEMANTIC case=r10 yes_id=9405 no_id=2083 yes_logit=19.005435944 no_logit=19.113307953 no_minus_yes=0.107872009 legal_choice=no expected=yes pass=false"
+  ]
+}

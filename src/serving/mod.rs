@@ -94,3 +94,6 @@ pub mod weights;
 
 #[cfg(feature = "native-mlx")]
 pub mod native_reference;
+
+#[cfg(feature = "native-mlx")]
+pub mod native_ingestion;

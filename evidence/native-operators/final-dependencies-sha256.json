@@ -1,0 +1,7 @@
+{
+  "vendor/mlx/lib/libmlx.dylib": "d8c9393d584e781393c3effccfccd8ba85ad0c70264edaf9f897dca9875375c6",
+  "vendor/mlx/lib/mlx.metallib": "c6d7a3facb83568f6e4cb2cf4a8c736ee29302571a48343cb9a3a4d1cd3e3893",
+  "vendor/mlx/include/mlx/version.h": "aa9bc89918174150c2346bdbc85572fcff6585902e9d04e719d6f334f973abf0",
+  "fixtures/native-model.path": "f9dc0f816def4718c0457b3640ba72d05baa92d8fc60f6444a0b91423da84bad",
+  "fixtures/native-domain-heldout.tsv": "822c09771bb98f39c424830341c4b8573472f5a858e8faea1ddc6f0a34c86813"
+}

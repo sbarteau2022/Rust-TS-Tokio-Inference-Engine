@@ -1,8 +1,8 @@
 ---
 title: "Native Qwen hybrid generation and qualification"
 document_type: "architecture"
-version: "1.5.0"
-date: "2026-10-22T20:55:55Z"
+version: "1.6.0"
+date: "2026-10-22T22:53:08Z"
 implementation_date: null
 author: "Codex for Stewart Barteau"
 reviewers: []
@@ -21,7 +21,7 @@ related_files:
     lines: "1-165"
     role: "primary"
   - path: "build.rs"
-    lines: "1-58"
+    lines: "1-60"
     role: "primary"
   - path: "fixtures/atan2.amvk"
     lines: null
@@ -86,32 +86,41 @@ related_files:
   - path: "judges/model_ab.py"
     lines: "1-93"
     role: "test"
+  - path: "judges/operator_reference.cpp"
+    lines: "1-29"
+    role: "test"
   - path: "judges/projection_reference.cpp"
-    lines: "1-45"
+    lines: "1-53"
     role: "test"
   - path: "judges/resources.py"
     lines: "1-35"
     role: "test"
   - path: "judges/run.py"
-    lines: "1-204"
+    lines: "1-206"
     role: "test"
   - path: "native/attention_reference.h"
     lines: "1-21"
     role: "primary"
   - path: "native/mlx_bridge.cpp"
-    lines: "1-167"
+    lines: "1-178"
     role: "primary"
   - path: "native/mlx_bridge.h"
-    lines: "1-60"
+    lines: "1-67"
+    role: "primary"
+  - path: "native/operator_probe.inc"
+    lines: "1-28"
+    role: "primary"
+  - path: "native/operator_reference.h"
+    lines: "1-58"
     role: "primary"
   - path: "native/projection_probe.inc"
-    lines: "1-19"
+    lines: "1-22"
     role: "primary"
   - path: "native/projection_reference.h"
-    lines: "1-27"
+    lines: "1-30"
     role: "primary"
   - path: "native/qwen_model.inc"
-    lines: "1-151"
+    lines: "1-160"
     role: "primary"
   - path: "native/telemetry.cpp"
     lines: "1-23"
@@ -165,7 +174,7 @@ related_files:
     lines: "1-81"
     role: "primary"
   - path: "src/main.rs"
-    lines: "1-441"
+    lines: "1-447"
     role: "primary"
   - path: "src/runtime.rs"
     lines: "1-366"
@@ -186,10 +195,10 @@ related_files:
     lines: "1-280"
     role: "primary"
   - path: "src/serving/mod.rs"
-    lines: "1-96"
+    lines: "1-99"
     role: "primary"
   - path: "src/serving/model_ir.rs"
-    lines: "1-221"
+    lines: "1-244"
     role: "primary"
   - path: "src/serving/native_boundary.rs"
     lines: "1-193"
@@ -199,6 +208,9 @@ related_files:
     role: "primary"
   - path: "src/serving/native_extended.rs"
     lines: "1-214"
+    role: "primary"
+  - path: "src/serving/native_ingestion.rs"
+    lines: "1-272"
     role: "primary"
   - path: "src/serving/native_mlx.rs"
     lines: "1-925"
@@ -210,7 +222,7 @@ related_files:
     lines: "1-662"
     role: "primary"
   - path: "src/serving/native_reference.rs"
-    lines: "1-77"
+    lines: "1-100"
     role: "primary"
   - path: "src/serving/native_state.rs"
     lines: "1-194"
@@ -219,7 +231,7 @@ related_files:
     lines: "1-123"
     role: "primary"
   - path: "src/serving/qwen_tests.rs"
-    lines: "1-538"
+    lines: "1-566"
     role: "primary"
   - path: "src/serving/rapid.rs"
     lines: "1-265"
@@ -639,3 +651,93 @@ three-fork isolation and drain pass. Diagnostic CPU and GPU commands deliberatel
 exit 1 for r10. Regression success does not override these model failures.
 Evidence is bound under `evidence/native-reference/summary.json` and its manifest.
 This is an implementation adversarial review, not independent external approval.
+
+### Readiness continuation — independent bytes and nonprojection operators
+
+Before another readiness claim, add a diagnostic that compares every native
+parameter byte, shape and dtype against Rust-read safetensors payloads using
+bounded 4 MiB chunks and cryptographic digests. This verifies MLX ingestion
+against separate Rust file parsing; it is not a second model implementation.
+Diagnostic exports stay private, validated and off the serving hot path.
+
+Extend checked model-step IR with a separate operator-check bit (bit 0 remains
+sampled projections; bit 1 requests independent nonprojection checks). Checks
+require bounded tracing; default flags remain zero. Implement scalar FP64 RMS
+normalization, SiLU, partial nontraditional RoPE, depthwise causal convolution
+and the complete gated-delta recurrence/state update from CPU-owned actual
+projected operands and incoming state. Each observed array is compared against
+an independently computed scalar result at a fixed 1e-5 NRMSE limit. No CPU
+reference result substitutes for a model output. Diagnostic materialization must
+still satisfy checked/untraced controls; errors release native leases normally.
+
+The remaining semantic fixture and its expected answer remain unchanged.
+Independent operator checks narrow possible implementation defects; their
+composition on supplied operands does not by itself establish independent
+full-model logits, nor does readiness follow from passing tensor checks.
+
+The full diagnostic will additionally offer explicit `--full` coverage: every
+ordinary projection output, every token's active routed experts, all final-head
+channels and every prefill chunk of the frozen prompt. This is intentionally an
+expensive CPU reference workload, never a serving configuration. Private flag
+bit 2 requires both projection and operator checking; invalid combinations reject.
+Projection work is tiled into at most 256 output channels; scalar FP64 tiles may
+use up to eight joined CPU threads. The same bit-extraction arithmetic remains
+independent of MLX matmul/dequantization. Diagnostics remain observational; native
+outputs are never replaced. Composed operator checks are distinguished from a
+separately implemented full model graph and do not erase semantic failures.
+
+Close the remaining composed-check gaps before interpreting the full run: compare
+all selected-token embedding dequantization values, complete routing softmax and
+selected weight normalization/top-k membership, routed mixture reduction, shared
+expert gating, attention output gating, recurrent output gating and decoder
+residual additions with independent scalar arithmetic. Native results remain
+observations; scalar values never substitute for outputs. Exact ties may select
+any top-k member at the cutoff, but duplicates or a selected value below an
+unselected value reject. Embedding decoding uses the same independently tested
+packed-bit interpretation as the scalar projection oracle.
+
+Embedding gate failure (preserved before correction): the first checked lookup
+has NRMSE 0.00132344712 and max absolute error 0.000244140625 versus exact affine
+FP64 decoding. Supplying only a float32 output dtype did not establish FP32
+scale/bias arithmetic. Test a correction that explicitly casts embedding scales
+and biases to FP32 before dequantization in the F32 activation profile. BF16
+remains separately labeled and unqualified. Preserve the failed embedding gate,
+then rerun all-channel checks and unchanged semantic suites; do not infer a
+semantic improvement merely from improved arithmetic.
+
+
+### Observed result — ingestion and composed scalar checks
+
+The independent raw-byte audit passes all 1,757 parameters and 19,508,787,456
+payload bytes; aggregate name/tensor SHA256 is
+`aa4f8c241b218a3c674a407d900808cef556d2abe035fd349f8adcba854975d4`.
+This validates byte ingestion, shape and dtype, not model configuration semantics.
+
+Explicit FP32 scale/bias casts correct the embedding discrepancy. A BF16-affine
+synthetic hybrid fixture now exercises this path; removing the casts makes the
+embedding oracle reject, while restoring them passes. Original real-model
+embedding failure: NRMSE 0.00132344712, max absolute error 0.000244140625.
+
+The corrected full run passes 133,880 projection tiles, 2,768 nonprojection checks
+and 40 attention checks across all 31 prompt tokens. Maximum respective NRMSE:
+2.29420587e-6 / 2.62358289e-7 / 2.87192754e-7. Projection limit is 1e-4;
+operator and attention limits are 1e-5. Checked/untraced error is zero;
+chunk/single error is 6.07e-7. Frozen r10 still fails: yes 19.005435944,
+no 19.113307953. No expected answer enters native arithmetic.
+
+Coverage is complete for the instrumented operations and active projections of
+this prompt, not all possible tokens, expert routes or contexts. Scalar checks
+consume actual native operands. A separately composed graph with independent
+state/config/tokenization and independently generated reference logits remains
+an open gate. Do not attribute the semantic failure conclusively to checkpoint
+quality, or claim production readiness, from these observations.
+
+
+Final-source unchanged suites retain 20/20 contracted, 15/16 raw and 23/24
+extended; the original format and cancellation failures remain. READY smoke
+returns [44061, 248046] with EOS through the native scheduler. Context-512
+continuation, overflow rejection, three-request isolation and drains pass.
+Regression: 116 default, 116 debug-validation, 87 minimal Rust tests; five TS,
+93 sanitized scalar projection/embedding and 43 operator cases; malformed FFI
+14,000; Clippy/format/compiler/Metal gates pass. Source, dynamic MLX dependencies,
+fixtures and final executable are fingerprinted with phase evidence.

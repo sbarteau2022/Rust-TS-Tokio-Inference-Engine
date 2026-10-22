@@ -165,3 +165,14 @@ extern "C" int rs_mlx_kernel(void* graph,int op,const uint32_t* inputs,size_t co
 }
 
 #include "qwen_model.inc"
+extern "C" int rs_mlx_weight_bytes(void* store,const char* name,const int32_t* shape,size_t rank,int dtype,size_t offset,uint8_t* output,size_t count,char* error,size_t capacity){
+ return checked(error,capacity,[&]{
+  if(!store||!name||!shape||rank==0||rank>4||dtype<0||dtype>4||!output||count==0||count>4*1024*1024)throw std::invalid_argument("weight byte export descriptor");
+  auto& value=static_cast<Weights*>(store)->arrays.at(name);
+  const mx::Dtype types[]={mx::float32,mx::int32,mx::uint32,mx::float16,mx::bfloat16};
+  if(value.ndim()!=rank||value.dtype()!=types[dtype]||offset>value.nbytes()||count>value.nbytes()-offset)throw std::invalid_argument("weight byte export bounds/type");
+  for(size_t i=0;i<rank;++i)if(shape[i]!=value.shape(i))throw std::invalid_argument("weight byte export shape");
+  auto cpu=mx::contiguous(value,false,mx::Device::cpu);mx::eval(cpu);mx::synchronize(mx::default_stream(mx::Device::cpu));
+  std::memcpy(output,cpu.data<uint8_t>()+offset,count);
+ });
+}

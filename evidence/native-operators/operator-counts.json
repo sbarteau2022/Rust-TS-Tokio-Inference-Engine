@@ -1,0 +1,17 @@
+{
+  "projection": {
+    "checks": 133880,
+    "maximum_nrmse": 2.07899577e-06,
+    "limit": 0.0001
+  },
+  "operator": {
+    "checks": 1644,
+    "maximum_nrmse": 2.67922797e-07,
+    "limit": 1e-05
+  },
+  "attention": {
+    "checks": 40,
+    "maximum_nrmse": 2.88937242e-07,
+    "limit": 1e-05
+  }
+}

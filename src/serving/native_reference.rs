@@ -9,7 +9,7 @@ use super::{
 use anyhow::{ensure, Context, Result};
 use sha2::{Digest, Sha256};
 
-pub async fn run(device: Device) -> Result<()> {
+pub async fn run(device: Device, full: bool) -> Result<()> {
     let line = include_str!("../../fixtures/native-domain-heldout.tsv")
         .lines()
         .find(|line| line.starts_with("r10\t"))
@@ -25,7 +25,7 @@ pub async fn run(device: Device) -> Result<()> {
         yes.len() == 1 && no.len() == 1 && yes != no,
         "single-token alternatives required"
     );
-    println!("REFERENCE identity={} device={device:?} case=r10 fixture_sha256={:x} prompt_tokens={} independent_full_model=false scope=sampled-projections", executor.manifest().identity, Sha256::digest(line.as_bytes()), ids.len());
+    println!("REFERENCE identity={} device={device:?} case=r10 fixture_sha256={:x} prompt_tokens={} independent_full_model=false full_coverage={full} scope=operator-checks", executor.manifest().identity, Sha256::digest(line.as_bytes()), ids.len());
     let split = (ids.len() - 1) / 8 * 8;
     let mut base = executor.empty_state();
     for tokens in ids[..split].chunks(8) {
@@ -33,13 +33,36 @@ pub async fn run(device: Device) -> Result<()> {
     }
     let tail = &ids[split..];
     let plain = executor.step(&base, tail.to_vec()).await?;
-    let checked = executor
-        .execute(
-            &base,
-            ModelStepIr::compile(StepKind::Prefill, split, tail.to_vec(), 248320)?
-                .with_projection_outputs(vec![yes[0], no[0]])?,
-        )
-        .await?;
+    let checked = if full {
+        let mut state = executor.empty_state();
+        let mut last = None;
+        for tokens in ids.chunks(8) {
+            let step = executor
+                .execute(
+                    &state,
+                    ModelStepIr::compile(
+                        StepKind::Prefill,
+                        state.position(),
+                        tokens.to_vec(),
+                        248320,
+                    )?
+                    .with_full_reference(),
+                )
+                .await?;
+            state = step.state.clone();
+            last = Some(step);
+        }
+        last.context("empty checked prompt")?
+    } else {
+        executor
+            .execute(
+                &base,
+                ModelStepIr::compile(StepKind::Prefill, split, tail.to_vec(), 248320)?
+                    .with_projection_outputs(vec![yes[0], no[0]])?
+                    .with_operator_checks(),
+            )
+            .await?
+    };
     let controls = relative(&plain.logits, &checked.logits)?.max(relative(
         plain.state.snapshot_values(),
         checked.state.snapshot_values(),

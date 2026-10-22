@@ -1,0 +1,66 @@
+[
+  {
+    "name": "final-smoke",
+    "command": [
+      "target/release/rust-server",
+      "native-generate",
+      "Reply with exactly: READY",
+      "8",
+      "--activation",
+      "f32",
+      "--device",
+      "gpu"
+    ],
+    "exit": 0,
+    "seconds": 37.241584062576294
+  },
+  {
+    "name": "final-contracts",
+    "command": [
+      "target/release/rust-server",
+      "native-qualify",
+      "--contracts"
+    ],
+    "exit": 0,
+    "seconds": 45.95683789253235
+  },
+  {
+    "name": "final-raw",
+    "command": [
+      "target/release/rust-server",
+      "native-qualify"
+    ],
+    "exit": 1,
+    "seconds": 44.86240005493164
+  },
+  {
+    "name": "final-extended",
+    "command": [
+      "target/release/rust-server",
+      "native-qualify",
+      "--extended"
+    ],
+    "exit": 1,
+    "seconds": 53.90733790397644
+  },
+  {
+    "name": "final-cpu-reference",
+    "command": [
+      "target/release/rust-server",
+      "native-reference",
+      "--device",
+      "cpu"
+    ],
+    "exit": 1,
+    "seconds": 50.711183071136475
+  },
+  {
+    "name": "final-ingestion",
+    "command": [
+      "target/release/rust-server",
+      "native-ingestion"
+    ],
+    "exit": 0,
+    "seconds": 68.21711683273315
+  }
+]

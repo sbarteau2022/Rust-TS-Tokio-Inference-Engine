@@ -2,7 +2,7 @@
 title: "Next stages toward an Apple native inference server"
 document_type: "architecture"
 version: "1.0.0"
-date: "2026-10-22T20:55:55Z"
+date: "2026-10-22T23:03:00Z"
 implementation_date: null
 author: "Codex for Stewart Barteau"
 reviewers: []
@@ -21,7 +21,7 @@ related_files:
     lines: "1-165"
     role: "primary"
   - path: "build.rs"
-    lines: "1-58"
+    lines: "1-60"
     role: "primary"
   - path: "fixtures/atan2.amvk"
     lines: null
@@ -86,32 +86,41 @@ related_files:
   - path: "judges/model_ab.py"
     lines: "1-93"
     role: "test"
+  - path: "judges/operator_reference.cpp"
+    lines: "1-29"
+    role: "test"
   - path: "judges/projection_reference.cpp"
-    lines: "1-45"
+    lines: "1-53"
     role: "test"
   - path: "judges/resources.py"
     lines: "1-35"
     role: "test"
   - path: "judges/run.py"
-    lines: "1-204"
+    lines: "1-206"
     role: "test"
   - path: "native/attention_reference.h"
     lines: "1-21"
     role: "primary"
   - path: "native/mlx_bridge.cpp"
-    lines: "1-167"
+    lines: "1-178"
     role: "primary"
   - path: "native/mlx_bridge.h"
-    lines: "1-60"
+    lines: "1-67"
+    role: "primary"
+  - path: "native/operator_probe.inc"
+    lines: "1-28"
+    role: "primary"
+  - path: "native/operator_reference.h"
+    lines: "1-58"
     role: "primary"
   - path: "native/projection_probe.inc"
-    lines: "1-19"
+    lines: "1-22"
     role: "primary"
   - path: "native/projection_reference.h"
-    lines: "1-27"
+    lines: "1-30"
     role: "primary"
   - path: "native/qwen_model.inc"
-    lines: "1-151"
+    lines: "1-160"
     role: "primary"
   - path: "native/telemetry.cpp"
     lines: "1-23"
@@ -165,7 +174,7 @@ related_files:
     lines: "1-81"
     role: "primary"
   - path: "src/main.rs"
-    lines: "1-441"
+    lines: "1-447"
     role: "primary"
   - path: "src/runtime.rs"
     lines: "1-366"
@@ -186,10 +195,10 @@ related_files:
     lines: "1-280"
     role: "primary"
   - path: "src/serving/mod.rs"
-    lines: "1-96"
+    lines: "1-99"
     role: "primary"
   - path: "src/serving/model_ir.rs"
-    lines: "1-221"
+    lines: "1-244"
     role: "primary"
   - path: "src/serving/native_boundary.rs"
     lines: "1-193"
@@ -199,6 +208,9 @@ related_files:
     role: "primary"
   - path: "src/serving/native_extended.rs"
     lines: "1-214"
+    role: "primary"
+  - path: "src/serving/native_ingestion.rs"
+    lines: "1-272"
     role: "primary"
   - path: "src/serving/native_mlx.rs"
     lines: "1-925"
@@ -210,7 +222,7 @@ related_files:
     lines: "1-662"
     role: "primary"
   - path: "src/serving/native_reference.rs"
-    lines: "1-77"
+    lines: "1-100"
     role: "primary"
   - path: "src/serving/native_state.rs"
     lines: "1-194"
@@ -219,7 +231,7 @@ related_files:
     lines: "1-123"
     role: "primary"
   - path: "src/serving/qwen_tests.rs"
-    lines: "1-538"
+    lines: "1-566"
     role: "primary"
   - path: "src/serving/rapid.rs"
     lines: "1-265"
@@ -452,3 +464,23 @@ Custom drafting-head candidate: evaluate a checkpoint-bound hidden-state head wi
 The original 16-item unconstrained suite remains an immutable diagnostic. A separate explicit choice profile constrains the borrowing question to canonical `yes`/`no` paths and adds four balanced semantic questions; both answers are always legal. This fixes the output-format contract without changing weights, prompts, expected answers or raw generation. Keep constrained compliance distinct from unrestricted instruction-following qualification. Expand independent reference and domain tests before promoting the full model.
 
 Monster's boundary-transducer approach is a candidate for typed internal interchange, not a drop-in replacement for Combined's trained token vocabulary. Preserve exact checkpoint tokenization at the model boundary until an independently qualified adapter/model exists. Reversible byte transport cannot correct a model's generated punctuation, and carrier IDs alone do not prove native symplectic IR execution or throughput.
+
+
+## After complete composed operator checks
+
+Independent native-loaded checkpoint-byte verification and scalar checks of
+convolution/recurrent normalization, routing, embedding, gating and all active
+projection outputs now run. They found and corrected BF16 embedding affine
+rounding inside the F32 profile. The frozen cancellation answer still fails;
+full-model qualification is not promoted.
+
+1. Establish a separately composed reference graph with independently owned
+state, configuration interpretation and boundary tokenization for Combined.
+The current scalar checks on native operands cannot replace this gate.
+2. Investigate generic decoding/template profiles only as separately labeled
+experiments; preserve the raw, contracted and extended fixtures and thresholds.
+Any reasoning profile needs bounded tokens, phase/cancellation state and fresh
+held-out cases; never special-case r10 or constrain away its wrong answer.
+3. After quality gates, advance completion-owned device state, actual tensor
+batching, paged regular KV and separately qualified TurboQuant attention. Keep
+MTP/drafting, ANE/AMX and proposed sampling rates gated by their own evidence.

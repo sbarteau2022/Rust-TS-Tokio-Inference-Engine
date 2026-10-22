@@ -58,3 +58,10 @@ int rs_qwen_forward(void* store,int gpu,const rs_qwen_config* config,const rs_qw
 #ifdef __cplusplus
 }
 #endif
+#ifdef __cplusplus
+extern "C" {
+#endif
+int rs_mlx_weight_bytes(void* store,const char* name,const int32_t* shape,size_t rank,int dtype,size_t offset,uint8_t* output,size_t count,char* error,size_t capacity);
+#ifdef __cplusplus
+}
+#endif

@@ -14,16 +14,23 @@ static void set_value(std::vector<uint32_t>& packed,size_t row,size_t width,size
 int main(){
  int checks=0;
  for(int bits:{2,3,4,5,6,8})for(int group:{32,64,128})for(size_t rows:{size_t(1),size_t(8)}){
-  size_t width=group*2,outputs=8;std::vector<float> x(rows*width),scale(outputs*2),bias(outputs*2);std::vector<uint32_t> packed(outputs*width*bits/32,0);std::vector<double> expected(rows*outputs,0.);
+  size_t width=group*2,outputs=8;std::vector<float> x(rows*width),scale(outputs*2),bias(outputs*2);std::vector<uint32_t> packed(outputs*width*bits/32,0);std::vector<double> expected(rows*outputs,0.),expected_weights(outputs*width);
   for(size_t i=0;i<x.size();++i)x[i]=(int(i%19)-9)*.125f;
   for(size_t i=0;i<scale.size();++i){scale[i]=(i%2?-.25f:.125f);bias[i]=float(int(i%7)-3)*.5f;}
   for(size_t out=0;out<outputs;++out)for(size_t col=0;col<width;++col){
    unsigned q=(col*17+out*3)&((1u<<bits)-1);set_value(packed,out,width,col,bits,q);
-   double weight=double(scale[out*2+col/group])*q+bias[out*2+col/group];
+   double weight=double(scale[out*2+col/group])*q+bias[out*2+col/group];expected_weights[out*width+col]=weight;
    for(size_t row=0;row<rows;++row)expected[row*outputs+out]+=double(x[row*width+col])*weight;
   }
   auto actual=projection_reference(x,packed,scale,bias,rows,outputs,width,group,bits);
-  assert(actual==expected);++checks;
+  assert(actual==expected);++checks;assert(embedding_reference(packed,scale,bias,outputs,width,group,bits)==expected_weights);++checks;
+ }
+ // Exercise the joined eight-worker branch with a full 256-channel tile.
+ {
+  size_t width=1024,outputs=256,rows=8;std::vector<float> x(rows*width,1),scale(outputs*8,1),bias(outputs*8,0);std::vector<uint32_t> packed(outputs*width*3/32,0);
+  for(size_t out=0;out<outputs;++out)for(size_t col=0;col<width;++col)set_value(packed,out,width,col,3,(col+out)%8);
+  auto result=projection_reference(x,packed,scale,bias,rows,outputs,width,128,3);
+  for(double value:result)assert(value==3584);++checks;
  }
  // Literal 3-bit byte stream: values 0,1,2,3,4,5,6,7 -> 88 c6 fa.
  std::vector<uint32_t> literal={0x00fac688,0,0};
@@ -32,6 +39,7 @@ int main(){
  const std::vector<float> x(32,1);const std::vector<uint32_t> packed(4,0);
  reject([&]{projection_reference(x,packed,{1},{0},0,1,32,32,4);});
  reject([&]{projection_reference(x,packed,{1},{0},1,9,32,32,4);});
+ reject([&]{projection_reference(x,packed,{1},{0},1,257,32,32,4);});
  reject([&]{projection_reference(x,packed,{1},{0},1,1,32769,32,4);});
  reject([&]{projection_reference(x,packed,{1},{0},1,1,32,0,4);});
  reject([&]{projection_reference(x,packed,{1},{0},1,1,32,32,7);});

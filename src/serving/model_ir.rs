@@ -16,6 +16,8 @@ impl TokenPosition {
 pub struct ModelStepIr {
     trace: bool,
     projection_checks: bool,
+    operator_checks: bool,
+    full_reference: bool,
     projection_outputs: Box<[u32]>,
     kind: StepKind,
     position: TokenPosition,
@@ -48,6 +50,8 @@ impl ModelStepIr {
         Ok(Self {
             trace: false,
             projection_checks: false,
+            operator_checks: false,
+            full_reference: false,
             projection_outputs: Box::new([]),
             kind,
             position: TokenPosition(position),
@@ -81,6 +85,21 @@ impl ModelStepIr {
     }
     pub(super) fn projection_outputs(&self) -> &[u32] {
         &self.projection_outputs
+    }
+    pub fn with_operator_checks(mut self) -> Self {
+        self.operator_checks = true;
+        self.trace = true;
+        self
+    }
+    pub fn with_full_reference(mut self) -> Self {
+        self.full_reference = true;
+        self.projection_checks = true;
+        self.with_operator_checks()
+    }
+    pub(super) fn diagnostic_flags(&self) -> i32 {
+        i32::from(self.projection_checks)
+            | (i32::from(self.operator_checks) << 1)
+            | (i32::from(self.full_reference) << 2)
     }
     pub fn projection_checks(&self) -> bool {
         self.projection_checks
@@ -187,6 +206,10 @@ mod tests {
         }
         let checked = step.clone().with_projection_outputs(vec![0, 99])?;
         assert!(checked.trace_enabled() && checked.projection_checks());
+        assert_eq!(checked.diagnostic_flags(), 1);
+        assert_eq!(step.clone().with_operator_checks().diagnostic_flags(), 2);
+        assert_eq!(step.clone().with_full_reference().diagnostic_flags(), 7);
+
         assert_eq!(checked.projection_outputs(), &[0, 99]);
 
         for (kind, pos, tokens, vocab) in [

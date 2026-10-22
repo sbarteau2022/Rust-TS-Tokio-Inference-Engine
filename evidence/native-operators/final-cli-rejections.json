@@ -1,0 +1,93 @@
+[
+  {
+    "args": [
+      "native-ingestion",
+      "extra"
+    ],
+    "exit": 1,
+    "error": "Error: native-ingestion takes no arguments",
+    "model_not_opened": true
+  },
+  {
+    "args": [
+      "native-reference",
+      "--full",
+      "--full"
+    ],
+    "exit": 1,
+    "error": "Error: duplicate --full",
+    "model_not_opened": true
+  },
+  {
+    "args": [
+      "native-reference",
+      "--device"
+    ],
+    "exit": 1,
+    "error": "Error: native-reference [--device cpu|gpu] [--full]",
+    "model_not_opened": true
+  },
+  {
+    "args": [
+      "native-reference",
+      "--device",
+      "ane"
+    ],
+    "exit": 1,
+    "error": "Error: native-reference [--device cpu|gpu] [--full]",
+    "model_not_opened": true
+  },
+  {
+    "args": [
+      "native-reference",
+      "--device",
+      "cpu",
+      "--device",
+      "gpu"
+    ],
+    "exit": 1,
+    "error": "Error: native-reference [--device cpu|gpu] [--full]",
+    "model_not_opened": true
+  },
+  {
+    "args": [
+      "native-reference",
+      "--unknown"
+    ],
+    "exit": 1,
+    "error": "Error: native-reference [--device cpu|gpu] [--full]",
+    "model_not_opened": true
+  },
+  {
+    "args": [
+      "native-reference",
+      "--full=1"
+    ],
+    "exit": 1,
+    "error": "Error: native-reference [--device cpu|gpu] [--full]",
+    "model_not_opened": true
+  },
+  {
+    "args": [
+      "native-reference",
+      "--device",
+      "cpu",
+      "extra"
+    ],
+    "exit": 1,
+    "error": "Error: native-reference [--device cpu|gpu] [--full]",
+    "model_not_opened": true
+  },
+  {
+    "args": [
+      "native-reference",
+      "--full",
+      "--device",
+      "cpu",
+      "--full"
+    ],
+    "exit": 1,
+    "error": "Error: duplicate --full",
+    "model_not_opened": true
+  }
+]

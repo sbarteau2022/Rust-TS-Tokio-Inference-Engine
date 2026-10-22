@@ -470,7 +470,7 @@ fn forward(
                 values.len(),
                 logits.as_mut_ptr(),
                 logits.len(),
-                i32::from(ir.projection_checks()),
+                ir.diagnostic_flags(),
                 ir.projection_outputs().as_ptr(),
                 ir.projection_outputs().len(),
                 trace.as_mut_ptr(),

@@ -13,10 +13,16 @@ async fn main() -> Result<()> {
     let args: Vec<_> = std::env::args().collect();
     match args.get(1).map(String::as_str) {
         #[cfg(feature = "native-mlx")]
+        Some("native-ingestion") => { ensure!(args.len()==2,"native-ingestion takes no arguments");rust_server::serving::native_ingestion::run().await?; }
+        #[cfg(feature = "native-mlx")]
         Some("native-reference") => {
-            ensure!(args.len()==2 || (args.len()==4 && args[2]=="--device" && ["cpu","gpu"].contains(&args[3].as_str())),"native-reference [--device cpu|gpu]");
-            let device=if args.get(3).is_some_and(|value|value=="cpu") { rust_server::serving::native_mlx::Device::Cpu } else { rust_server::serving::native_mlx::Device::Gpu };
-            rust_server::serving::native_reference::run(device).await?;
+            let mut device=rust_server::serving::native_mlx::Device::Gpu;let mut full=false;let mut index=2;let mut seen_device=false;
+            while index<args.len(){match args[index].as_str(){
+                "--full"=>{ensure!(!full,"duplicate --full");full=true;index+=1;},
+                "--device"=>{ensure!(!seen_device&&index+1<args.len(),"native-reference [--device cpu|gpu] [--full]");seen_device=true;device=match args[index+1].as_str(){"cpu"=>rust_server::serving::native_mlx::Device::Cpu,"gpu"=>rust_server::serving::native_mlx::Device::Gpu,_=>bail!("native-reference [--device cpu|gpu] [--full]")};index+=2;},
+                _=>bail!("native-reference [--device cpu|gpu] [--full]")
+            }}
+            rust_server::serving::native_reference::run(device,full).await?;
         }
         #[cfg(feature = "native-mlx")]
         Some("native-diagnose") => {ensure!(args.len()==2,"native-diagnose takes no arguments");rust_server::serving::native_diagnose::run().await?;}
