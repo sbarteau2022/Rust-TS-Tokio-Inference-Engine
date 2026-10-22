@@ -1,0 +1,185 @@
+{
+  "pass": true,
+  "results": {
+    "square": {
+      "shape_mkn": [
+        128,
+        128,
+        128
+      ],
+      "kernel": "gemm_bias_relu",
+      "variants": {
+        "persistent": {
+          "n": 50,
+          "caller_wall_median_ms": 1.3036455,
+          "prepare_median_ms": 0.013875,
+          "compile_median_ms": 0.0,
+          "dispatch_wall_median_ms": 0.19675000000000004,
+          "gpu_median_ms": 0.05247915396466851,
+          "validation_median_ms": 1.0885414999999998,
+          "device_allocated_min_bytes": 655360,
+          "device_allocated_max_bytes": 655360,
+          "final_resources": {
+            "buffer_allocations": 4,
+            "buffer_evictions": 0,
+            "buffer_reuses": 208,
+            "device_current_allocated_bytes": 655360,
+            "idle_bytes": 197120,
+            "peak_resident_bytes": 197120,
+            "pipeline_entries": 1,
+            "pipeline_evictions": 0,
+            "pipeline_hits": 52,
+            "pipeline_misses": 1,
+            "pipeline_source_bytes": 1237
+          }
+        },
+        "recreated": {
+          "n": 50,
+          "caller_wall_median_ms": 3.2849165,
+          "prepare_median_ms": 0.088229,
+          "compile_median_ms": 0.048563,
+          "dispatch_wall_median_ms": 1.6480834999999998,
+          "gpu_median_ms": 0.055750017054378986,
+          "validation_median_ms": 1.090396,
+          "device_allocated_min_bytes": 655360,
+          "device_allocated_max_bytes": 655360,
+          "final_resources": {
+            "buffer_allocations": 4,
+            "buffer_evictions": 0,
+            "buffer_reuses": 0,
+            "device_current_allocated_bytes": 655360,
+            "idle_bytes": 197120,
+            "peak_resident_bytes": 197120,
+            "pipeline_entries": 1,
+            "pipeline_evictions": 0,
+            "pipeline_hits": 0,
+            "pipeline_misses": 1,
+            "pipeline_source_bytes": 1237
+          }
+        }
+      },
+      "recreated_over_persistent_wall": 2.5197927657480506,
+      "scope": "same f32 inputs; correctness reference enabled in both; caller wall includes fresh backend construction in recreated case; persistent backend dropped before recreated phase; OS shader cache not flushed; first 3 samples are warmup; no serving-throughput claim"
+    },
+    "rectangular": {
+      "shape_mkn": [
+        73,
+        29,
+        91
+      ],
+      "kernel": "gemm_bias_relu",
+      "variants": {
+        "persistent": {
+          "n": 50,
+          "caller_wall_median_ms": 0.2735835,
+          "prepare_median_ms": 0.0039165,
+          "compile_median_ms": 0.0,
+          "dispatch_wall_median_ms": 0.16249999999999998,
+          "gpu_median_ms": 0.019124941900372505,
+          "validation_median_ms": 0.1051665,
+          "device_allocated_min_bytes": 491520,
+          "device_allocated_max_bytes": 491520,
+          "final_resources": {
+            "buffer_allocations": 4,
+            "buffer_evictions": 0,
+            "buffer_reuses": 208,
+            "device_current_allocated_bytes": 491520,
+            "idle_bytes": 52156,
+            "peak_resident_bytes": 52156,
+            "pipeline_entries": 1,
+            "pipeline_evictions": 0,
+            "pipeline_hits": 52,
+            "pipeline_misses": 1,
+            "pipeline_source_bytes": 1234
+          }
+        },
+        "recreated": {
+          "n": 50,
+          "caller_wall_median_ms": 1.908646,
+          "prepare_median_ms": 0.050812500000000003,
+          "compile_median_ms": 0.0346455,
+          "dispatch_wall_median_ms": 1.563187,
+          "gpu_median_ms": 0.02050003968179226,
+          "validation_median_ms": 0.105687,
+          "device_allocated_min_bytes": 491520,
+          "device_allocated_max_bytes": 491520,
+          "final_resources": {
+            "buffer_allocations": 4,
+            "buffer_evictions": 0,
+            "buffer_reuses": 0,
+            "device_current_allocated_bytes": 491520,
+            "idle_bytes": 52156,
+            "peak_resident_bytes": 52156,
+            "pipeline_entries": 1,
+            "pipeline_evictions": 0,
+            "pipeline_hits": 0,
+            "pipeline_misses": 1,
+            "pipeline_source_bytes": 1234
+          }
+        }
+      },
+      "recreated_over_persistent_wall": 6.976466051497989,
+      "scope": "same f32 inputs; correctness reference enabled in both; caller wall includes fresh backend construction in recreated case; persistent backend dropped before recreated phase; OS shader cache not flushed; first 3 samples are warmup; no serving-throughput claim"
+    },
+    "elementwise": {
+      "shape_mkn": [
+        73,
+        1,
+        91
+      ],
+      "kernel": "add_relu",
+      "variants": {
+        "persistent": {
+          "n": 50,
+          "caller_wall_median_ms": 0.169854,
+          "prepare_median_ms": 0.004083,
+          "compile_median_ms": 0.0,
+          "dispatch_wall_median_ms": 0.154062,
+          "gpu_median_ms": 0.007583294063806534,
+          "validation_median_ms": 0.0113955,
+          "device_allocated_min_bytes": 524288,
+          "device_allocated_max_bytes": 524288,
+          "final_resources": {
+            "buffer_allocations": 3,
+            "buffer_evictions": 0,
+            "buffer_reuses": 156,
+            "device_current_allocated_bytes": 524288,
+            "idle_bytes": 65900,
+            "peak_resident_bytes": 65900,
+            "pipeline_entries": 1,
+            "pipeline_evictions": 0,
+            "pipeline_hits": 52,
+            "pipeline_misses": 1,
+            "pipeline_source_bytes": 289
+          }
+        },
+        "recreated": {
+          "n": 50,
+          "caller_wall_median_ms": 1.6431665,
+          "prepare_median_ms": 0.0505415,
+          "compile_median_ms": 0.0320625,
+          "dispatch_wall_median_ms": 1.4134795,
+          "gpu_median_ms": 0.008562521543353796,
+          "validation_median_ms": 0.012584,
+          "device_allocated_min_bytes": 524288,
+          "device_allocated_max_bytes": 524288,
+          "final_resources": {
+            "buffer_allocations": 3,
+            "buffer_evictions": 0,
+            "buffer_reuses": 0,
+            "device_current_allocated_bytes": 524288,
+            "idle_bytes": 65900,
+            "peak_resident_bytes": 65900,
+            "pipeline_entries": 1,
+            "pipeline_evictions": 0,
+            "pipeline_hits": 0,
+            "pipeline_misses": 1,
+            "pipeline_source_bytes": 289
+          }
+        }
+      },
+      "recreated_over_persistent_wall": 9.673993547399531,
+      "scope": "same f32 inputs; correctness reference enabled in both; caller wall includes fresh backend construction in recreated case; persistent backend dropped before recreated phase; OS shader cache not flushed; first 3 samples are warmup; no serving-throughput claim"
+    }
+  }
+}

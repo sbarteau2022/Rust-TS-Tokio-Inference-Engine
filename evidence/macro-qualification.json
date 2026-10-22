@@ -1,0 +1,8 @@
+{
+  "classification": "BENCH-MODE",
+  "selection": "fixed deterministic cadence every 1000 successful receipts",
+  "production_sampling_claims": false,
+  "measured_binary_sha256": "d3bd85038931d81beb7426a50c356d87f2654029fb9eb1ec6a609fda52b77163",
+  "current_source_is_different": true,
+  "note": "Historical fixed-cadence measurements; no new cache or current-binary performance claim."
+}

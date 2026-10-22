@@ -1,0 +1,9 @@
+   Compiling rust-server v0.1.0 (/Users/stewartbarteau/Desktop/RUST SERVER)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.19s
+warning: the following packages contain code that will be rejected by a future version of Rust: block v0.1.6
+note: to see what the problems were, use the option `--future-incompat-report`, or run `cargo report future-incompatibilities --id 1`
+     Running unittests src/lib.rs (target/debug/deps/rust_server-df873c0bdcdaf26c)
+     Running unittests src/main.rs (target/debug/deps/rust_server-5e9ac7e701aabd2e)
+     Running tests/adversarial.rs (target/debug/deps/adversarial-ada7b9f42e6df626)
+     Running tests/resources.rs (target/debug/deps/resources-7dfae0310f6dea65)
+   Doc-tests rust_server

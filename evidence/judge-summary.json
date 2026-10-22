@@ -1,0 +1,37 @@
+{
+  "pass": true,
+  "arithmetic_contract": "q1_31_i32_v3",
+  "cordic_functions": [
+    "sin",
+    "cos",
+    "atan2",
+    "tanh"
+  ],
+  "async_completion_limits": [
+    2,
+    3
+  ],
+  "default_in_flight": 3,
+  "sample_interval": 1000,
+  "sampling_policy": "DETERMINISTIC-MODE",
+  "production_sampling_claims": false,
+  "spec15_cache_control": "opaque payload adapter; nonproduction",
+  "model_serving_foundation": "bounded iteration scheduler, typed host codecs, explicit Rapid MLX bridge; real-model evidence separate",
+  "chain_max_stages": 16,
+  "validation_policy": "production sampled; full CPU reference test/debug-validation feature",
+  "resource_backend_stages": [
+    1,
+    2
+  ],
+  "steps": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "native_capture": "/Users/stewartbarteau/Desktop/RUST SERVER/artifacts/judge-1792683697059724000.gputrace",
+  "source_manifest": "source-sha256.json",
+  "unix_time": 1792683697.267595
+}

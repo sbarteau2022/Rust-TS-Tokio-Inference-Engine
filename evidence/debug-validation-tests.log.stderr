@@ -1,0 +1,27 @@
+   Compiling rust-server v0.1.0 (/Users/stewartbarteau/Desktop/RUST SERVER)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.53s
+warning: the following packages contain code that will be rejected by a future version of Rust: block v0.1.6
+note: to see what the problems were, use the option `--future-incompat-report`, or run `cargo report future-incompatibilities --id 1`
+     Running unittests src/lib.rs (target/debug/deps/rust_server-ebc35794f6210818)
+background Q1.31 validation failed: result length mismatch
+background Q1.31 validation failed: result length mismatch
+     Running unittests src/main.rs (target/debug/deps/rust_server-9bb180cd71480066)
+     Running tests/adversarial.rs (target/debug/deps/adversarial-ba22e8c7419a96cb)
+     Running tests/async_completion.rs (target/debug/deps/async_completion-28cac3d5f1e830f8)
+     Running tests/cache_control.rs (target/debug/deps/cache_control-1b6e00e9def9f577)
+
+thread 'prefix_inflight_is_deduplicated_and_producer_errors_release_reservations' (23402245) panicked at tests/cache_control.rs:211:26:
+injected producer panic
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+     Running tests/cordic.rs (target/debug/deps/cordic-957c1c21e108bee5)
+     Running tests/fixed_point.rs (target/debug/deps/fixed_point-7a7bb605c36548eb)
+     Running tests/grid.rs (target/debug/deps/grid-cc1c07494d6dbf93)
+     Running tests/production_pipeline.rs (target/debug/deps/production_pipeline-5b75992be12d0b79)
+     Running tests/rapid_rpc.rs (target/debug/deps/rapid_rpc-7a17d8c591f60f1d)
+     Running tests/resources.rs (target/debug/deps/resources-17d112751f2c8572)
+     Running tests/serving.rs (target/debug/deps/serving-157674b85d3facaf)
+
+thread 'panicked_backend_closes_admission_and_reports_unfinished_work' (23402627) panicked at tests/serving.rs:217:27:
+injected model backend panic
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+   Doc-tests rust_server

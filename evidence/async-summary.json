@@ -1,0 +1,40 @@
+{
+  "pass": true,
+  "rust_tests_passed": 43,
+  "typescript_tests_passed": 5,
+  "default_in_flight": 2,
+  "allowed_in_flight": [
+    2,
+    3
+  ],
+  "runtime_flights": {
+    "2": {
+      "limit": 2,
+      "active": 0,
+      "peak": 2,
+      "acquired": 24,
+      "released": 24,
+      "submitted": 24,
+      "completed": 24,
+      "outstanding": 0,
+      "peak_outstanding": 2,
+      "completion_errors": 0
+    },
+    "3": {
+      "limit": 3,
+      "active": 0,
+      "peak": 3,
+      "acquired": 24,
+      "released": 24,
+      "submitted": 24,
+      "completed": 24,
+      "outstanding": 0,
+      "peak_outstanding": 3,
+      "completion_errors": 0
+    }
+  },
+  "native_held_command_test": "exactly 2 and 3 outstanding; canceled waiter retains permit/resources until native completion",
+  "error_testing": "safe bridge/completed-result injection; no deliberate driver fault",
+  "source_manifest": "source-sha256.json",
+  "throughput_claim": false
+}

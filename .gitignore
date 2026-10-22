@@ -1,0 +1,6 @@
+/target/
+/node_modules/
+/.venv/
+/artifacts/
+*.gputrace
+__pycache__/

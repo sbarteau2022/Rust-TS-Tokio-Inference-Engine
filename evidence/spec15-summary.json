@@ -1,0 +1,18 @@
+{
+  "pass": true,
+  "scope": "Spec 15 opaque byte cache controller and native completion ownership; not model KV inference",
+  "rust_tests_each_configuration": 67,
+  "configurations": [
+    "normal",
+    "debug-validation"
+  ],
+  "typescript_tests": 5,
+  "pressure_operations": 10000,
+  "rounding_oracle_cases": 10000,
+  "sampling": "DETERMINISTIC-MODE",
+  "dynamic_sampling_draft": "inactive by user ruling",
+  "production_qualified": false,
+  "evidence": "cache-judge.json",
+  "source_manifest": "source-sha256.json",
+  "unix_time": 1792650463.439041
+}

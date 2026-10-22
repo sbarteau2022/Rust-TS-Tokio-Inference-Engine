@@ -1,0 +1,17 @@
+[
+  {
+    "case": "malformed_trace",
+    "returncode": 1,
+    "stage": "decode"
+  },
+  {
+    "case": "missing_inputs",
+    "returncode": 1,
+    "stage": "inputs"
+  },
+  {
+    "case": "oversized_trace",
+    "returncode": 1,
+    "stage": null
+  }
+]

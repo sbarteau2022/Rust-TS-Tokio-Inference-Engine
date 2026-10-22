@@ -1,0 +1,300 @@
+---
+title: "Adversarial review of the native kernel prototype"
+document_type: "research"
+version: "1.0.0"
+date: "2026-10-22T03:50:40Z"
+implementation_date: null
+author: "Codex for Stewart Barteau"
+reviewers: []
+status: "draft"
+related_files:
+  - path: ".gitignore"
+    lines: "1-5"
+    role: "config"
+  - path: "Cargo.lock"
+    lines: "1-452"
+    role: "config"
+  - path: "Cargo.toml"
+    lines: "1-26"
+    role: "config"
+  - path: "backend/rapid_worker.py"
+    lines: "1-165"
+    role: "primary"
+  - path: "build.rs"
+    lines: "1-8"
+    role: "primary"
+  - path: "fixtures/atan2.amvk"
+    lines: null
+    role: "test"
+  - path: "fixtures/cache-config-bench.json"
+    lines: "1-13"
+    role: "test"
+  - path: "fixtures/cos.amvk"
+    lines: null
+    role: "test"
+  - path: "fixtures/elementwise.amvk"
+    lines: null
+    role: "test"
+  - path: "fixtures/qwen-prompts-long.json"
+    lines: "1-4"
+    role: "test"
+  - path: "fixtures/qwen-prompts.json"
+    lines: "1-6"
+    role: "test"
+  - path: "fixtures/qwen-serving-long.json"
+    lines: "1-21"
+    role: "test"
+  - path: "fixtures/qwen-serving.json"
+    lines: "1-21"
+    role: "test"
+  - path: "fixtures/rectangular.amvk"
+    lines: null
+    role: "test"
+  - path: "fixtures/sin.amvk"
+    lines: null
+    role: "test"
+  - path: "fixtures/square.amvk"
+    lines: null
+    role: "test"
+  - path: "fixtures/tanh.amvk"
+    lines: null
+    role: "test"
+  - path: "judges/benchmark.py"
+    lines: "1-51"
+    role: "test"
+  - path: "judges/cordic.py"
+    lines: "1-30"
+    role: "test"
+  - path: "judges/generate_cordic.py"
+    lines: "1-44"
+    role: "test"
+  - path: "judges/macro.py"
+    lines: "1-14"
+    role: "test"
+  - path: "judges/model_ab.py"
+    lines: "1-93"
+    role: "test"
+  - path: "judges/resources.py"
+    lines: "1-35"
+    role: "test"
+  - path: "judges/run.py"
+    lines: "1-203"
+    role: "test"
+  - path: "native/telemetry.cpp"
+    lines: "1-23"
+    role: "primary"
+  - path: "package-lock.json"
+    lines: "1-1072"
+    role: "config"
+  - path: "package.json"
+    lines: "1-21"
+    role: "config"
+  - path: "requirements-bench.txt"
+    lines: "1-2"
+    role: "config"
+  - path: "run.sh"
+    lines: "1-5"
+    role: "primary"
+  - path: "schema/trace.fbs"
+    lines: "1-12"
+    role: "primary"
+  - path: "src/backend.rs"
+    lines: "1-614"
+    role: "primary"
+  - path: "src/cache/mod.rs"
+    lines: "1-1068"
+    role: "primary"
+  - path: "src/chain.rs"
+    lines: "1-50"
+    role: "primary"
+  - path: "src/completion.rs"
+    lines: "1-218"
+    role: "primary"
+  - path: "src/cordic.rs"
+    lines: "1-204"
+    role: "primary"
+  - path: "src/cordic_tables.rs"
+    lines: "1-102"
+    role: "primary"
+  - path: "src/execute.rs"
+    lines: "1-122"
+    role: "primary"
+  - path: "src/gpu.rs"
+    lines: "1-440"
+    role: "primary"
+  - path: "src/ir.rs"
+    lines: "1-646"
+    role: "primary"
+  - path: "src/lib.rs"
+    lines: "1-30"
+    role: "primary"
+  - path: "src/macro_bench.rs"
+    lines: "1-81"
+    role: "primary"
+  - path: "src/main.rs"
+    lines: "1-402"
+    role: "primary"
+  - path: "src/runtime.rs"
+    lines: "1-366"
+    role: "primary"
+  - path: "src/sampled.rs"
+    lines: "1-193"
+    role: "primary"
+  - path: "src/serving/config.rs"
+    lines: "1-51"
+    role: "primary"
+  - path: "src/serving/kv.rs"
+    lines: "1-280"
+    role: "primary"
+  - path: "src/serving/mod.rs"
+    lines: "1-73"
+    role: "primary"
+  - path: "src/serving/rapid.rs"
+    lines: "1-265"
+    role: "primary"
+  - path: "src/serving/scheduler.rs"
+    lines: "1-563"
+    role: "primary"
+  - path: "src/telemetry.rs"
+    lines: "1-26"
+    role: "primary"
+  - path: "src/trace_generated.rs"
+    lines: "1-1523"
+    role: "primary"
+  - path: "src/wire.rs"
+    lines: "1-124"
+    role: "primary"
+  - path: "tests/adversarial.rs"
+    lines: "1-456"
+    role: "test"
+  - path: "tests/async_completion.rs"
+    lines: "1-192"
+    role: "test"
+  - path: "tests/cache_control.rs"
+    lines: "1-419"
+    role: "test"
+  - path: "tests/cordic.rs"
+    lines: "1-264"
+    role: "test"
+  - path: "tests/fixed_point.rs"
+    lines: "1-146"
+    role: "test"
+  - path: "tests/grid.rs"
+    lines: "1-41"
+    role: "test"
+  - path: "tests/production_pipeline.rs"
+    lines: "1-315"
+    role: "test"
+  - path: "tests/rapid_rpc.rs"
+    lines: "1-75"
+    role: "test"
+  - path: "tests/resources.rs"
+    lines: "1-341"
+    role: "test"
+  - path: "tests/serving.rs"
+    lines: "1-426"
+    role: "test"
+  - path: "ts/generated/trace.ts"
+    lines: "1-5"
+    role: "primary"
+  - path: "ts/generated/wire/add.ts"
+    lines: "1-68"
+    role: "primary"
+  - path: "ts/generated/wire/cordic.ts"
+    lines: "1-78"
+    role: "primary"
+  - path: "ts/generated/wire/dot.ts"
+    lines: "1-68"
+    role: "primary"
+  - path: "ts/generated/wire/load.ts"
+    lines: "1-81"
+    role: "primary"
+  - path: "ts/generated/wire/op.ts"
+    lines: "1-61"
+    role: "primary"
+  - path: "ts/generated/wire/operation.ts"
+    lines: "1-54"
+    role: "primary"
+  - path: "ts/generated/wire/relu.ts"
+    lines: "1-58"
+    role: "primary"
+  - path: "ts/generated/wire/store.ts"
+    lines: "1-61"
+    role: "primary"
+  - path: "ts/generated/wire/trace.ts"
+    lines: "1-91"
+    role: "primary"
+  - path: "ts/generated/wire.ts"
+    lines: "1-13"
+    role: "primary"
+  - path: "ts/smoke.ts"
+    lines: "1-1"
+    role: "primary"
+  - path: "ts/trace.test.ts"
+    lines: "1-45"
+    role: "test"
+  - path: "ts/trace.ts"
+    lines: "1-73"
+    role: "primary"
+  - path: "tsconfig.json"
+    lines: "1-1"
+    role: "config"
+related_issues: []
+related_documents: ["DESIGN.md", "../README.md"]
+tags: [rust, metal, prototype]
+---
+> Numerical update: float/matrix-kernel descriptions and measurements below refer to the original prototype. The active integer/shuffle contract is documented in [FIXED_POINT.md](FIXED_POINT.md) and README.md. The user confirmed Q1.31 storage; sin, cos, atan2 and tanh are now wired through the runtime. The runtime now has semaphore-capped 2/3-slot completion callbacks; see ASYNC_COMPLETION.md. Earlier single-worker descriptions below are historical.
+
+# Question investigated
+
+Can malformed traces, incorrect dependency edges, invalid bindings, overload, cancellation or nonfinite math produce silent success or unsafe GPU accesses?
+
+# Methodology
+
+Single-author manual review of the complete handwritten Rust, TypeScript, C++ bridge and judge code, followed by deterministic corruption, resource pressure and live GPU tests. This is not an independent security audit. No subagents or other reviewers were used. The documentation remains draft; no merge or external approval is claimed.
+
+# Findings and fixes
+
+| Finding | Resolution | Evidence |
+| --- | --- | --- |
+| An epilogue max could hide a NaN accumulator | Preserve nonfinite accumulators for explicit result rejection | `tampered_plan_and_nan_intermediate_fail_closed` |
+| Public plan fields could be altered after lowering | Revalidate dimensions, budget, input IDs, shapes, layout and names before emission/execution | Same test plus `residency_is_consumed_by_emitter` |
+| Debug operation projection materialized an owned wire-op list | Runtime now consumes verified borrowed FlatBuffers accessors directly into SSA | `borrowed_lowering_matches_debug_projection` |
+| Queue could otherwise grow without bound | try_send admission, 1–32 queued jobs and 4 MiB named input budget per admitted job | 100-request pressure and eight concurrent producers |
+| Runtime construction outside Tokio could panic | Return a named error when no Tokio handle exists | `constructor_without_tokio_is_an_error` |
+| CLI could read arbitrary-size input before enforcing budget | Bounded file readers, including a max+1 detection byte | CLI code and malformed-file checks |
+| Uninitialized output could disguise missing stores | Poison output bytes with nonfinite f32 bit patterns before dispatch | Tail and zero-output GPU tests |
+| Every-truncation-is-invalid test rejected harmless padding removal | Accepted truncations must decode to the identical graph | `malformed_wire_never_panics`, initial evidence retained |
+
+# Safety argument
+
+Only the exact load A/load B/load row bias/dot/add/relu/store dataflow can reach code generation. Names never enter shader source; only validated integer dimensions and fixed memory qualifiers do. Input lengths match those dimensions. A/B loads are guarded independently for row, column and K-tail, with zero fill. Every SIMD lane reaches all barriers; only final writes are conditional. One 32-thread SIMD group owns each output tile. Shared storage remains alive until synchronous command completion. Unsafe host writes require exclusive mutable access; opaque buffers prevent external dispatch through this wrapper. Output reads occur after Metal reports Completed.
+
+FlatBuffers root size, identifier, version, depth/table verification and operation budget precede typed field access. Unsupported unions or dataflow are refused. No CPU fallback masks Metal failures. Exact reference validation is intentionally expensive and included in job wall time.
+
+# Residual limits
+
+The public low-level Gpu compiler accepts source for internal testing; untrusted remote clients are not exposed. The high-level runtime accepts trace bytes only. This is a single supervised worker with serialized GPU jobs, not a concurrent GPU scheduler. Recoverable Rust panics are caught around job work, but allocator aborts, native process crashes, GPU hangs and device loss do not have process isolation or a hard execution deadline. Queue-full and pre-admission budget errors return immediately rather than producing admitted-job receipts. Cancellation drops the receiver; admitted GPU work safely drains. There is no model loader, authentication, HTTP, KV, persistent cache, production traffic, energy measurement or long-duration thermal qualification.
+
+Residency selection counts trace consumers plus the eight matrix-lane reuses per A/B tile. The emitter consumes and checks those decisions; this MVK always chooses threadgroup A/B staging. It is not a general graph optimizer. Accumulation uses SIMD matrix registers; the matrix-to-scalar epilogue uses a threadgroup scratch tile before bias/ReLU, all inside one dispatch. No intermediate is flushed into a separate device allocation.
+
+# Recommendation
+
+Proceed to a separately designed reusable backend interface and second kernel family. Keep production serving and model-level claims gated by their own parity, isolation and load tests.
+
+# Literature review
+
+No research-paper claims. Review evidence is local source and reproducible tests. Apple API reference: https://developer.apple.com/metal/Metal-Shading-Language-Specification.pdf .
+
+# Time invested
+
+Performed during this build; no independently timed review duration.
+
+# Changelog
+
+1.0.0 — 2026-10-21 — Codex — Manual review, findings, mitigations and remaining risks.
+
+
+# Persistent-resource and second-family follow-up review
+
+Reviewed the full backend/arena/cache implementation without subagents. Added 12 Rust tests (two backend units and ten resource/integration tests) plus the TypeScript second-family test. Cases include cache identity/source-byte pressure/LRU, independent kernel entry points, tight actual-allocation budgets, page-granularity admission, complete input overwrite/output re-poisoning, failed-capture/math cleanup, compile failure, mixed-family receipts and accurate capability reporting. Found and corrected three lifecycle/measurement risks: missing autorelease scopes, heap-vs-direct reservation mismatch, and a retained backend overlapping the recreated benchmark's allocation phase. Initial reservation failure evidence is preserved. Reference CPU map lookups were hoisted without changing accumulation order or tolerance. Remaining risks include native process/GPU failure isolation, opaque pipeline/driver memory, conservative reservations and lack of model-serving/thermal qualification. No independent audit or human review approval is claimed.

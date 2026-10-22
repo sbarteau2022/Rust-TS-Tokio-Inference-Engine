@@ -1,0 +1,304 @@
+---
+title: "Spec 15 — exact prefix blocks and plan-scoped cache control"
+document_type: "implementation"
+version: "1.0.0"
+date: "2026-10-22T06:27:43Z"
+implementation_date: null
+author: "Codex for Stewart Barteau"
+reviewers: []
+status: "draft"
+related_files:
+  - path: ".gitignore"
+    lines: "1-5"
+    role: "config"
+  - path: "Cargo.lock"
+    lines: "1-452"
+    role: "config"
+  - path: "Cargo.toml"
+    lines: "1-26"
+    role: "config"
+  - path: "backend/rapid_worker.py"
+    lines: "1-165"
+    role: "primary"
+  - path: "build.rs"
+    lines: "1-8"
+    role: "primary"
+  - path: "fixtures/atan2.amvk"
+    lines: null
+    role: "test"
+  - path: "fixtures/cache-config-bench.json"
+    lines: "1-13"
+    role: "test"
+  - path: "fixtures/cos.amvk"
+    lines: null
+    role: "test"
+  - path: "fixtures/elementwise.amvk"
+    lines: null
+    role: "test"
+  - path: "fixtures/qwen-prompts-long.json"
+    lines: "1-4"
+    role: "test"
+  - path: "fixtures/qwen-prompts.json"
+    lines: "1-6"
+    role: "test"
+  - path: "fixtures/qwen-serving-long.json"
+    lines: "1-21"
+    role: "test"
+  - path: "fixtures/qwen-serving.json"
+    lines: "1-21"
+    role: "test"
+  - path: "fixtures/rectangular.amvk"
+    lines: null
+    role: "test"
+  - path: "fixtures/sin.amvk"
+    lines: null
+    role: "test"
+  - path: "fixtures/square.amvk"
+    lines: null
+    role: "test"
+  - path: "fixtures/tanh.amvk"
+    lines: null
+    role: "test"
+  - path: "judges/benchmark.py"
+    lines: "1-51"
+    role: "test"
+  - path: "judges/cordic.py"
+    lines: "1-30"
+    role: "test"
+  - path: "judges/generate_cordic.py"
+    lines: "1-44"
+    role: "test"
+  - path: "judges/macro.py"
+    lines: "1-14"
+    role: "test"
+  - path: "judges/model_ab.py"
+    lines: "1-93"
+    role: "test"
+  - path: "judges/resources.py"
+    lines: "1-35"
+    role: "test"
+  - path: "judges/run.py"
+    lines: "1-203"
+    role: "test"
+  - path: "native/telemetry.cpp"
+    lines: "1-23"
+    role: "primary"
+  - path: "package-lock.json"
+    lines: "1-1072"
+    role: "config"
+  - path: "package.json"
+    lines: "1-21"
+    role: "config"
+  - path: "requirements-bench.txt"
+    lines: "1-2"
+    role: "config"
+  - path: "run.sh"
+    lines: "1-5"
+    role: "primary"
+  - path: "schema/trace.fbs"
+    lines: "1-12"
+    role: "primary"
+  - path: "src/backend.rs"
+    lines: "1-614"
+    role: "primary"
+  - path: "src/cache/mod.rs"
+    lines: "1-1068"
+    role: "primary"
+  - path: "src/chain.rs"
+    lines: "1-50"
+    role: "primary"
+  - path: "src/completion.rs"
+    lines: "1-218"
+    role: "primary"
+  - path: "src/cordic.rs"
+    lines: "1-204"
+    role: "primary"
+  - path: "src/cordic_tables.rs"
+    lines: "1-102"
+    role: "primary"
+  - path: "src/execute.rs"
+    lines: "1-122"
+    role: "primary"
+  - path: "src/gpu.rs"
+    lines: "1-440"
+    role: "primary"
+  - path: "src/ir.rs"
+    lines: "1-646"
+    role: "primary"
+  - path: "src/lib.rs"
+    lines: "1-30"
+    role: "primary"
+  - path: "src/macro_bench.rs"
+    lines: "1-81"
+    role: "primary"
+  - path: "src/main.rs"
+    lines: "1-402"
+    role: "primary"
+  - path: "src/runtime.rs"
+    lines: "1-366"
+    role: "primary"
+  - path: "src/sampled.rs"
+    lines: "1-193"
+    role: "primary"
+  - path: "src/serving/config.rs"
+    lines: "1-51"
+    role: "primary"
+  - path: "src/serving/kv.rs"
+    lines: "1-280"
+    role: "primary"
+  - path: "src/serving/mod.rs"
+    lines: "1-73"
+    role: "primary"
+  - path: "src/serving/rapid.rs"
+    lines: "1-265"
+    role: "primary"
+  - path: "src/serving/scheduler.rs"
+    lines: "1-563"
+    role: "primary"
+  - path: "src/telemetry.rs"
+    lines: "1-26"
+    role: "primary"
+  - path: "src/trace_generated.rs"
+    lines: "1-1523"
+    role: "primary"
+  - path: "src/wire.rs"
+    lines: "1-124"
+    role: "primary"
+  - path: "tests/adversarial.rs"
+    lines: "1-456"
+    role: "test"
+  - path: "tests/async_completion.rs"
+    lines: "1-192"
+    role: "test"
+  - path: "tests/cache_control.rs"
+    lines: "1-419"
+    role: "test"
+  - path: "tests/cordic.rs"
+    lines: "1-264"
+    role: "test"
+  - path: "tests/fixed_point.rs"
+    lines: "1-146"
+    role: "test"
+  - path: "tests/grid.rs"
+    lines: "1-41"
+    role: "test"
+  - path: "tests/production_pipeline.rs"
+    lines: "1-315"
+    role: "test"
+  - path: "tests/rapid_rpc.rs"
+    lines: "1-75"
+    role: "test"
+  - path: "tests/resources.rs"
+    lines: "1-341"
+    role: "test"
+  - path: "tests/serving.rs"
+    lines: "1-426"
+    role: "test"
+  - path: "ts/generated/trace.ts"
+    lines: "1-5"
+    role: "primary"
+  - path: "ts/generated/wire/add.ts"
+    lines: "1-68"
+    role: "primary"
+  - path: "ts/generated/wire/cordic.ts"
+    lines: "1-78"
+    role: "primary"
+  - path: "ts/generated/wire/dot.ts"
+    lines: "1-68"
+    role: "primary"
+  - path: "ts/generated/wire/load.ts"
+    lines: "1-81"
+    role: "primary"
+  - path: "ts/generated/wire/op.ts"
+    lines: "1-61"
+    role: "primary"
+  - path: "ts/generated/wire/operation.ts"
+    lines: "1-54"
+    role: "primary"
+  - path: "ts/generated/wire/relu.ts"
+    lines: "1-58"
+    role: "primary"
+  - path: "ts/generated/wire/store.ts"
+    lines: "1-61"
+    role: "primary"
+  - path: "ts/generated/wire/trace.ts"
+    lines: "1-91"
+    role: "primary"
+  - path: "ts/generated/wire.ts"
+    lines: "1-13"
+    role: "primary"
+  - path: "ts/smoke.ts"
+    lines: "1-1"
+    role: "primary"
+  - path: "ts/trace.test.ts"
+    lines: "1-45"
+    role: "test"
+  - path: "ts/trace.ts"
+    lines: "1-73"
+    role: "primary"
+  - path: "tsconfig.json"
+    lines: "1-1"
+    role: "config"
+related_issues: []
+related_documents: ["PRODUCTION_PIPELINE.md", "NEXT_STEPS.md"]
+tags: [kv, radix, automaton, fixed-point]
+---
+# Design before implementation
+
+Implement the amended Spec 15 supplied by Stewart, including all five binding rules. The current kernel runtime has no model attention/KV producer: cache payloads are opaque exact bytes supplied by a typed prefill callback. Actual model KV creation remains the model backend's responsibility. Do not relabel compiled-pipeline buffers as model KV or claim model inference. This implementation supplies real bounded block storage, exact prefix identity, plan branches, residency audits, admission, immutable reads, and runtime step ownership.
+
+# Identity, storage, and plan join
+
+A SHA-256 block key hashes canonical length-prefixed model, tokenizer, quantization, and private namespace identifiers, parent digest, token count and u32 token IDs. Each block holds 1..16 tokens; only a final block may be partial. Model identity must include weights revision and any adapter/position/attention configuration affecting KV. Namespace is mandatory; no implicit cross-tenant sharing. Hash hits verify canonical content and parent identity; conflicting payload bytes are rejected. Fixed bytes-per-block and pool capacity are mandatory configuration. A token-prefix radix path and a separate work-parent tree share immutable resident blocks. Forking a partial tail creates a new key and allocation; published payloads are never mutated. No resident interior node can be reclaimed.
+
+# Holds and boundaries
+
+References belong to open plan branches. Step leases independently increment in-use locks before enqueue; runtime attaches the lease to the native completion-owned FlightPermit, so dropping a receipt cannot release GPU protection early. Closing a work subtree marks references for deferred release. Boundary commits require no active leases; they finalize closes and free only an initial snapshot of unanchored, unreferenced, unlocked, below-threshold leaves. One pass removes at most one radix level. No wall-clock frees and no pressure override of holds.
+
+# Epoch audit and arithmetic
+
+One audit advances exactly one integer epoch. Coverage reports exact unique required token counts and resident counts separately from estimated unknown-output bytes; zero declared tokens has no percentage. Required paths come only from open, declared plan branches. Missing declared blocks become prefill demands; unknown output reservations never become fake tokens or prefill demands.
+
+Mass/rates are nonnegative signed Q1.31 raw values. Decay uses widened integer mass*(2^31-rate), round-to-nearest-even, then clamps to [0, INT32_MAX]. Unity in the intermediate is exact 2^31; anchored rate is exactly zero. Pressure multipliers require a wider unsigned fixed-point representation (31 fractional bits) because signed Q1.31 cannot represent factors >=1. Tables are mandatory, validated, enumerated configuration, not guessed production constants. Threshold comparison is strictly mass<threshold at epoch boundaries. Finite precision can leave residual mass; no continuous-exponential convergence claim.
+
+# Admission and pressure
+
+No production defaults for pool size, rate classes, pressure table, threshold, anchor fraction, queue depth, or epoch timeout. Callers must provide all parameters. Granted prefill tickets reserve pool bytes before computation; queued tickets store only declared demands. Continuations precede new roots; FIFO within each class. Queue depth and expiry are bounded. Boundary sweeps make capacity available; ready tickets are polled and filled via a model-backend callback. Over-budget anchor requests degrade visibly to tier 2. Closed branches cancel queued/ready tickets. Exceptions from the prefill callback cancel reservations. Protected pool exhaustion produces counted pressure outcomes rather than eviction of live data.
+
+# Sampling dependency — user ruling
+
+Stewart explicitly kept proposed dynamic random sampling rates and thresholds INACTIVE. Existing fixed cadence is exposed as explicit deterministic bench configuration; counters and receipts label DETERMINISTIC-MODE. No production random-sampling or Spec 15 production qualification is claimed. A dynamic-policy configuration is refused while draft. The deterministic cadence remains available for reproducible integration/bench work. Sustained full validation remains the debug-validation feature. No seed, draw stream, or purported CSPRNG implementation is introduced under an unapproved draft.
+
+# Verification and rollout
+
+Test identity isolation, divergence, immutable sharing, copy-on-write tail behavior, underflow refusal, step leases, canceled GPU receipts, boundary-only frees, one-level sweep, exact coverage, integer rounding ties and thresholds, anchor degradation, reservations, continuation-first queue order, timeout/cancel, callback failure, private namespaces, and bounded pressure. Add a deterministic randomized state-machine stress test and a CLI cache judge. Run complete production/debug, TypeScript 7.1, strict Clippy and capture/signpost gates. No deployment or independent approval implied. Tests/examples use explicitly labeled nonproduction configurations.
+
+# Grounding and next stage
+
+Amended Spec 15 and Spec 13 §12.1 define the primary contract. SHA-256 uses the RustCrypto sha2 implementation; no custom cryptography. Local Metal completion ownership remains as in ASYNC_COMPLETION.md. Next supply actual model KV callbacks, recurrent-state checkpoints where required, and approve the random sampling contract before making production cache-throughput or model-quality claims.
+
+# Implementation details and configuration
+
+Primary implementation is src/cache/mod.rs, with the native ownership seam in completion.rs/runtime.rs and the CLI cache-judge in main.rs. Exact current line references are in FILE_MAP.md. Rust supplies bounded ownership, integer arithmetic, SHA-256 identities, and typed adapters; serde provides explicit configuration and audit records. The example cache-config-bench.json is synthetic and experimental. There are deliberately no default pool/decay/anchor/admission constants for a production deployment.
+
+Unknown-output capacity reservations have a dedicated reserve_unknown method and never produce demands or fake tokens. Reservations must be explicitly resized/released when outputs arrive; branch-close finalization releases remaining reservations. Residency snapshots for prefill callbacks are CPU copies, bounded in aggregate by one configured pool's byte capacity. Concurrent prefill callbacks are bounded by max_leases, and a ticket cannot execute twice. Snapshot allocations and returned CPU read copies are distinct from stored payload residency. Model GPU KV buffers have not been substituted for these opaque CPU byte blocks.
+
+Coverage counts unique declared block tokens (shared prefixes once), with exact numerator and denominator; it does not estimate tool outputs or future prompts. When no lookahead plan is supplied, shallow roots of open branches are fallback anchor candidates within the same budget. Explicit plans take precedence. Anchor budget bytes, released-anchor count, and observed release age in epochs are reported. These observations are not a hard future wrong-plan cost guarantee; repeated incorrect anchoring can persist until the caller replans/releases it.
+
+# Final verification and evidence
+
+The final ordered judge passed **67 Rust tests in each of the normal and debug-validation builds**, plus 5 TypeScript tests, strict all-feature Clippy, formatting, both TypeScript 7.1 gates, independent integer/analytic numerical judges, native completion/signposts, CLI checks, and GPU capture. Twelve new integration tests cover the controller; an internal fault injection proves reference underflow is a named transactional refusal. The existing blocked-MTLSharedEvent native test now retains cache leases: canceled waiters cannot release cache locks before GPU completion, boundary commits are refused while blocked, and locks drain after signaling.
+
+The 10,000-operation pressure test checks capacity/reservation bounds, queue depth, and resident ancestry after every operation. A separate 10,000-case division-based oracle checks fixed-point rounding. Exact-prefix concurrent producers are deduplicated; resident hits never call the producer. Fault cases include malformed configuration, foreign controller handles, callback error/panic, bad payload size, reentrant ticket execution, callback-time branch closure, partial-tail write attempts under locks, queue expiry, anchor-budget degradation, and protected pool exhaustion.
+
+The CLI evidence/cache-judge.json reports 32 exact declared/resident tokens, separate unknown-output estimate, a protected GPU request, one passed background bench check, zero remaining leases/prefills/reservations, and SYNTHETIC-NONMODEL / production_qualified=false labels. One old prefix block deliberately remains after the one-level sweep; a subsequent boundary can reclaim it. This is expected, not a leaked allocation.
+
+# Reproduction, rollout, and retrospective
+
+Run `./run.sh cache-judge fixtures/cache-config-bench.json`, `cargo test --locked --test cache_control`, or `python3 judges/run.py` for all normal/debug gates. There is no deployment, merge, or independent approval. Configuration and source/evidence hashes are recorded locally. Existing kernel math, attention semantics, and model artifacts are not changed.
+
+The key integration lesson is that completion ownership must protect cache locks independently of the Rust receipt waiter. Another is that prefix identity alone does not provide work lifetime: branch references and native step locks are separate obligations. Epoch audits and boundary commits provide a deterministic, pressure-safe control plane; an actual model adapter and approved random policy remain necessary before production qualification.
+
+# Changelog
+
+1.0.0 — Amended Spec 15 controller, mandatory configuration, exact prefix/work-tree join, native completion leases, explicit inactive sampling policy, pressure/adversarial tests, CLI evidence, and next steps.

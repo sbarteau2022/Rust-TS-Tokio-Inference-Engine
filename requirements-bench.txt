@@ -1,0 +1,2 @@
+# Only the comparison judge uses Python; the Rust runtime does not.
+mlx==0.32.1

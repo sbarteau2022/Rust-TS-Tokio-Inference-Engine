@@ -1,0 +1,1 @@
+[{"kind":"load","name":"A","rows":73,"cols":91,"out":0},{"kind":"load","name":"bias","rows":1,"cols":91,"out":1},{"kind":"add","a":0,"b":1,"out":2},{"kind":"relu","a":2,"out":3},{"kind":"store","a":3,"name":"C"}]

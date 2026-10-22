@@ -1,0 +1,1 @@
+rust-server: idle | decode TRACE | uma-judge | kernel-judge DIRECTORY [ABS_CAPTURE_PATH] | runtime-judge | run TRACE INPUTS.json

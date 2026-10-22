@@ -1,0 +1,13 @@
+{
+  "capacity_blocks": 8,
+  "bytes_per_block": 64,
+  "max_branches": 64,
+  "max_declared_tokens": 4096,
+  "max_leases": 16,
+  "anchor_fraction_q31": 1073741824,
+  "dead_threshold": 2,
+  "rates_q31": [268435456, 1073741824, 2147483647],
+  "pressure_multipliers_q31": [2147483648, 4294967296, 8589934592],
+  "queue_depth": 4,
+  "max_wait_epochs": 3
+}

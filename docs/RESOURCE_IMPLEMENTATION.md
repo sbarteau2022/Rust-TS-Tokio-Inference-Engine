@@ -1,0 +1,348 @@
+---
+title: "Persistent resources and second kernel implementation"
+document_type: "implementation"
+version: "1.0.0"
+date: "2026-10-22T04:19:49Z"
+implementation_date: null
+author: "Codex for Stewart Barteau"
+reviewers: []
+status: "draft"
+related_files:
+  - path: ".gitignore"
+    lines: "1-5"
+    role: "config"
+  - path: "Cargo.lock"
+    lines: "1-452"
+    role: "config"
+  - path: "Cargo.toml"
+    lines: "1-26"
+    role: "config"
+  - path: "backend/rapid_worker.py"
+    lines: "1-165"
+    role: "primary"
+  - path: "build.rs"
+    lines: "1-8"
+    role: "primary"
+  - path: "fixtures/atan2.amvk"
+    lines: null
+    role: "test"
+  - path: "fixtures/cache-config-bench.json"
+    lines: "1-13"
+    role: "test"
+  - path: "fixtures/cos.amvk"
+    lines: null
+    role: "test"
+  - path: "fixtures/elementwise.amvk"
+    lines: null
+    role: "test"
+  - path: "fixtures/qwen-prompts-long.json"
+    lines: "1-4"
+    role: "test"
+  - path: "fixtures/qwen-prompts.json"
+    lines: "1-6"
+    role: "test"
+  - path: "fixtures/qwen-serving-long.json"
+    lines: "1-21"
+    role: "test"
+  - path: "fixtures/qwen-serving.json"
+    lines: "1-21"
+    role: "test"
+  - path: "fixtures/rectangular.amvk"
+    lines: null
+    role: "test"
+  - path: "fixtures/sin.amvk"
+    lines: null
+    role: "test"
+  - path: "fixtures/square.amvk"
+    lines: null
+    role: "test"
+  - path: "fixtures/tanh.amvk"
+    lines: null
+    role: "test"
+  - path: "judges/benchmark.py"
+    lines: "1-51"
+    role: "test"
+  - path: "judges/cordic.py"
+    lines: "1-30"
+    role: "test"
+  - path: "judges/generate_cordic.py"
+    lines: "1-44"
+    role: "test"
+  - path: "judges/macro.py"
+    lines: "1-14"
+    role: "test"
+  - path: "judges/model_ab.py"
+    lines: "1-93"
+    role: "test"
+  - path: "judges/resources.py"
+    lines: "1-35"
+    role: "test"
+  - path: "judges/run.py"
+    lines: "1-203"
+    role: "test"
+  - path: "native/telemetry.cpp"
+    lines: "1-23"
+    role: "primary"
+  - path: "package-lock.json"
+    lines: "1-1072"
+    role: "config"
+  - path: "package.json"
+    lines: "1-21"
+    role: "config"
+  - path: "requirements-bench.txt"
+    lines: "1-2"
+    role: "config"
+  - path: "run.sh"
+    lines: "1-5"
+    role: "primary"
+  - path: "schema/trace.fbs"
+    lines: "1-12"
+    role: "primary"
+  - path: "src/backend.rs"
+    lines: "1-614"
+    role: "primary"
+  - path: "src/cache/mod.rs"
+    lines: "1-1068"
+    role: "primary"
+  - path: "src/chain.rs"
+    lines: "1-50"
+    role: "primary"
+  - path: "src/completion.rs"
+    lines: "1-218"
+    role: "primary"
+  - path: "src/cordic.rs"
+    lines: "1-204"
+    role: "primary"
+  - path: "src/cordic_tables.rs"
+    lines: "1-102"
+    role: "primary"
+  - path: "src/execute.rs"
+    lines: "1-122"
+    role: "primary"
+  - path: "src/gpu.rs"
+    lines: "1-440"
+    role: "primary"
+  - path: "src/ir.rs"
+    lines: "1-646"
+    role: "primary"
+  - path: "src/lib.rs"
+    lines: "1-30"
+    role: "primary"
+  - path: "src/macro_bench.rs"
+    lines: "1-81"
+    role: "primary"
+  - path: "src/main.rs"
+    lines: "1-402"
+    role: "primary"
+  - path: "src/runtime.rs"
+    lines: "1-366"
+    role: "primary"
+  - path: "src/sampled.rs"
+    lines: "1-193"
+    role: "primary"
+  - path: "src/serving/config.rs"
+    lines: "1-51"
+    role: "primary"
+  - path: "src/serving/kv.rs"
+    lines: "1-280"
+    role: "primary"
+  - path: "src/serving/mod.rs"
+    lines: "1-73"
+    role: "primary"
+  - path: "src/serving/rapid.rs"
+    lines: "1-265"
+    role: "primary"
+  - path: "src/serving/scheduler.rs"
+    lines: "1-563"
+    role: "primary"
+  - path: "src/telemetry.rs"
+    lines: "1-26"
+    role: "primary"
+  - path: "src/trace_generated.rs"
+    lines: "1-1523"
+    role: "primary"
+  - path: "src/wire.rs"
+    lines: "1-124"
+    role: "primary"
+  - path: "tests/adversarial.rs"
+    lines: "1-456"
+    role: "test"
+  - path: "tests/async_completion.rs"
+    lines: "1-192"
+    role: "test"
+  - path: "tests/cache_control.rs"
+    lines: "1-419"
+    role: "test"
+  - path: "tests/cordic.rs"
+    lines: "1-264"
+    role: "test"
+  - path: "tests/fixed_point.rs"
+    lines: "1-146"
+    role: "test"
+  - path: "tests/grid.rs"
+    lines: "1-41"
+    role: "test"
+  - path: "tests/production_pipeline.rs"
+    lines: "1-315"
+    role: "test"
+  - path: "tests/rapid_rpc.rs"
+    lines: "1-75"
+    role: "test"
+  - path: "tests/resources.rs"
+    lines: "1-341"
+    role: "test"
+  - path: "tests/serving.rs"
+    lines: "1-426"
+    role: "test"
+  - path: "ts/generated/trace.ts"
+    lines: "1-5"
+    role: "primary"
+  - path: "ts/generated/wire/add.ts"
+    lines: "1-68"
+    role: "primary"
+  - path: "ts/generated/wire/cordic.ts"
+    lines: "1-78"
+    role: "primary"
+  - path: "ts/generated/wire/dot.ts"
+    lines: "1-68"
+    role: "primary"
+  - path: "ts/generated/wire/load.ts"
+    lines: "1-81"
+    role: "primary"
+  - path: "ts/generated/wire/op.ts"
+    lines: "1-61"
+    role: "primary"
+  - path: "ts/generated/wire/operation.ts"
+    lines: "1-54"
+    role: "primary"
+  - path: "ts/generated/wire/relu.ts"
+    lines: "1-58"
+    role: "primary"
+  - path: "ts/generated/wire/store.ts"
+    lines: "1-61"
+    role: "primary"
+  - path: "ts/generated/wire/trace.ts"
+    lines: "1-91"
+    role: "primary"
+  - path: "ts/generated/wire.ts"
+    lines: "1-13"
+    role: "primary"
+  - path: "ts/smoke.ts"
+    lines: "1-1"
+    role: "primary"
+  - path: "ts/trace.test.ts"
+    lines: "1-45"
+    role: "test"
+  - path: "ts/trace.ts"
+    lines: "1-73"
+    role: "primary"
+  - path: "tsconfig.json"
+    lines: "1-1"
+    role: "config"
+related_issues: []
+related_documents: ["RESOURCE_BACKEND_DESIGN.md", "../README.md", "NEXT_STEPS.md"]
+tags: [apple-hardware, metal, dynamic-inference, backend]
+---
+> Numerical update: float/matrix-kernel descriptions and measurements below refer to the original prototype. The active integer/shuffle contract is documented in [FIXED_POINT.md](FIXED_POINT.md) and README.md. The user confirmed Q1.31 storage; sin, cos, atan2 and tanh are now wired through the runtime. The runtime now has semaphore-capped 2/3-slot completion callbacks; see ASYNC_COMPLETION.md. Earlier single-worker descriptions below are historical.
+
+# Executive Summary
+
+The runtime now keeps its Metal device, command queue, compiled kernels and reusable buffers across jobs. A second kernel family uses the same checked backend. This removes repeated GPU-buffer allocation for warmed identical jobs and establishes a shared contract for future Apple accelerator backends.
+
+# Problem Statement
+
+Every admitted job previously created a GPU backend, compiled its kernel and allocated every tensor. That prevented meaningful testing of a reusable inference runtime and supplied no real second operator family to exercise the backend seam.
+
+# Solution Overview
+
+A worker-owned `MetalBackend` implements `KernelBackend`. It retains bounded LRU pipelines and exact-size UMA buffers. It executes both GEMM+bias+ReLU and broadcast row-bias add+ReLU, and reports explicit capabilities, timings and allocation/cache counters. Typed validation and independent result checking remain on every job.
+
+# Implementation Details
+
+## Files Modified
+
+Exact source/config/generated/test/document line references are in FILE_MAP.md. Core files are `src/backend.rs`, `src/gpu.rs`, `src/execute.rs`, `src/runtime.rs`, `src/ir.rs`, `src/main.rs`, `native/telemetry.cpp`, `ts/trace.ts`, `tests/resources.rs`, `judges/resources.py` and the extended common judges. The original schema and GEMM trace bytes remain compatible.
+
+## Languages Chosen and Why
+
+Rust owns immutable compiled pipelines, bounded resource pools and typed backend dispatch. TypeScript continues symbolic recording under the required tsrs/TypeScript 7.1 toolchain. Metal implements the scalar second family as well as SIMD-group matrix operations. The narrow C++ bridge supplies native telemetry and host page size. Python compares both families with MLX and summarizes measured resource reuse.
+
+Push further: qualify model loading and forward/operator coverage, then transport/scheduling. AMX/ANE qualification can proceed as separate backend proofs; backend registration must not imply that either device has executed a job.
+
+## Literature Grounding
+
+This implementation was not directly grounded in published literature. It applies established ownership, bounded caching and verified-serialization patterns. Metal APIs were checked in installed metal-rs 0.33 source and on the M5 Pro. Official accelerator references are listed in ACCELERATOR_ROADMAP.md; no published speedup claim is imported.
+
+## Configuration Changes
+
+Default retained pipeline cache: 8 entries and 1 MiB source keys. Configurable limits: 1–64 entries and 4 KiB–4 MiB key bytes. UMA resident budget defaults to 64 MiB, with 16 MiB retained idle storage. The `Config` API can tighten these limits. Capacity counts the buffers' reported `allocatedSize`, not merely tensor byte length. Admission reserves whole host pages, incorporates the Metal size/alignment query, and checks actual size before accepting a new buffer. A reservation mismatch fails closed. No driver/pipeline/process-wide memory hard cap is claimed; Metal's current allocated size is reported independently.
+
+Every reused input is fully overwritten; every output is poisoned before dispatch. Exact-size free buffers cannot cross active job ownership. Buffers recycle only after command completion and host validation. Explicit Objective-C autorelease scopes drain compile/command temporaries. Rust panic recovery discards the backend before the next job. Full canonical source, entry point, device registry ID, compiler options, layout, dtype and IR version identify cache entries.
+
+# Testing Evidence
+
+## Test Files and Locations
+
+- `src/backend.rs`: two unit tests for compile-failure cache recovery and complete cache-key identity.
+- `tests/adversarial.rs`: original 13 tests retained, including corruption, NaN/overflow, malformed graphs, concurrent producers and failure/cancellation recovery.
+- `tests/resources.rs`: ten new tests for warmed reuse, LRU and source-byte eviction, kernel separation, dynamic shapes under tight allocated-byte budgets, page granularity, capture/error cleanup, no-retention mode, second-family tails/extremes, capability accuracy and mixed-family Tokio receipts.
+- `ts/trace.test.ts`: four tests including second-family symbolic recording and wire output.
+- `judges/run.py`: original ladder plus second-family exact round-trip, MLX comparison, capabilities, retained/recreated measurements, native signposts, CLI refusal and GPU capture.
+
+Exact line counts are recorded in FILE_MAP.md.
+
+## What the Tests Showed
+
+All 25 Rust tests and four TypeScript tests passed. Both compiler gates, Clippy with warnings denied, formatting, the complete original ladder and all added judges passed. Both kernel families matched an independent f64 reference and MLX within absolute/relative tolerance 0.0002. Warmed identical executions made no additional GPU-buffer allocations: GEMM used four buffers and add+ReLU three. Each 53-job persistent benchmark had one pipeline miss, 52 hits and zero warm compilation time. The 50 measured warm samples reported flat Metal allocated bytes within each variant on this run.
+
+| Workload | Persistent wall ms | Recreated wall ms | Persistent prepare ms | Recreated prepare ms | GPU buffer allocations | Buffer reuses | Cache hits |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| square | 1.303646 | 3.284917 | 0.013875 | 0.088229 | 4 | 208 | 52 |
+| rectangular | 0.273583 | 1.908646 | 0.003916 | 0.050813 | 4 | 208 | 52 |
+| elementwise | 0.169854 | 1.643166 | 0.004083 | 0.050542 | 3 | 156 | 52 |
+
+Times are medians of 50 samples after three warmups, measured on identical f32 inputs with CPU reference checks enabled in both paths. Caller wall includes constructing each recreated backend. The persistent backend is dropped before the recreated phase, preventing a retained-pool overlap in allocation measurements. The OS shader cache is not flushed. These are sequential, shape-specific, local observations; no randomized crossover, thermal soak or serving-throughput claim is implied. Full raw timings, GPU timings, validation cost, Metal allocation sizes and scope are in `evidence/resources-*.json` and `evidence/resources-summary.json`.
+
+## Reproduction
+
+```sh
+# Project root — run the complete ordered evidence suite.
+python3 judges/run.py
+
+# src/main.rs — inspect actual registered capabilities and resource benchmark.
+./run.sh capabilities
+./run.sh backend-judge artifacts
+
+# ts/trace.ts — record and execute the second family.
+npx tsx ts/trace.ts artifacts/elementwise 73 1 91 add-relu
+./run.sh kernel-judge artifacts/elementwise
+./run.sh run artifacts/elementwise/trace.amvk artifacts/elementwise/inputs.json
+```
+
+Use the isolated Python interpreter described in the README if MLX is installed in .venv.
+
+## Was It Proven Necessary?
+
+Persistent ownership was necessary to satisfy the next-stage resource/reuse judge. The evidence shows actual cache hits and allocation reuse, plus local host-path timing differences. It does not prove industry-leading throughput, GPU compute superiority, model-generation performance or the best policy for arbitrary dynamic workloads.
+
+# Deployment / Rollout
+
+Local Desktop/RUST SERVER prototype only. No serving deployment, model replacement or merge. Stop the process to release the worker-owned device/cache/pool; there is no service installer or auto-restart. Native telemetry now names generic Kernel Job spans so both families are represented. The required canonical Local/Failures tracker received the direct-allocation finding; no application code in the separate serving projects was changed. Documentation remains draft without independent reviewers.
+
+# Next Stage of Implementation
+
+Roadmap stages 1–2 are complete under their judges. Next is model repository/loader and exact forward parity, with dtype/operator coverage designed before execution. CPU Accelerate/AMX and Core ML/ANE each require independent parity, placement and measurement gates before scheduling integration. This implementation did set us up for the Apple-native dynamic inference goal because two kernels now share a bounded, reusable and measured backend contract.
+
+# What We Learned
+
+| Category | Learning |
+| --- | --- |
+| Technical | Heap layout requirements do not upper-bound direct shared-buffer allocations; actual allocated bytes must be verified |
+| Process | A fail-closed allocation check caught the reservation mismatch before pooling; its failed test is retained |
+| Tooling | Persistent native workers need explicit autorelease scopes; driver allocation size and logical tensor bytes differ |
+| Performance | Repeated map lookups inside the CPU reference dominated validation; hoisting checked input slices preserves arithmetic while reducing judge overhead |
+| Collaboration | The user clarified AMX and the goal is saved; no subagents were used |
+
+# Changelog
+
+1.0.0 — 2026-10-21 — Codex — Design-first roadmap stages 1–2 implemented and judged.

@@ -1,0 +1,37 @@
+[
+  {
+    "case": "malformed_trace",
+    "returncode": 1,
+    "stage": "decode"
+  },
+  {
+    "case": "missing_inputs",
+    "returncode": 1,
+    "stage": "inputs"
+  },
+  {
+    "case": "oversized_trace",
+    "returncode": 1,
+    "stage": null
+  },
+  {
+    "case": "in_flight_limit",
+    "value": "0",
+    "returncode": 1
+  },
+  {
+    "case": "in_flight_limit",
+    "value": "1",
+    "returncode": 1
+  },
+  {
+    "case": "in_flight_limit",
+    "value": "4",
+    "returncode": 1
+  },
+  {
+    "case": "in_flight_limit",
+    "value": "invalid",
+    "returncode": 1
+  }
+]

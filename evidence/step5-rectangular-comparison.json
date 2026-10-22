@@ -1,0 +1,27 @@
+{
+  "pass": true,
+  "shape_mkn": [
+    73,
+    29,
+    91
+  ],
+  "kernel_family": "gemm_bias_relu",
+  "dtype": "q1_31_i32",
+  "fractional_bits": 31,
+  "oracle": "Python arbitrary-precision integers; per-product floor division",
+  "exact_matches": 6643,
+  "max_raw_error": 0,
+  "rust_dispatch_wall": {
+    "n": 50,
+    "median_ms": 0.1857085,
+    "p95_ms": 0.21875,
+    "min_ms": 0.150083
+  },
+  "rust_gpu": {
+    "n": 50,
+    "median_ms": 0.02850010059773922,
+    "p95_ms": 0.028749927878379822,
+    "min_ms": 0.028250040486454964
+  },
+  "scope": "Integer correctness and local dispatch timing only; no MLX float equivalence or throughput claim."
+}

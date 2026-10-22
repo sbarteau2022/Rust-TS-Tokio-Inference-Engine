@@ -1,0 +1,36 @@
+{
+  "pass": true,
+  "production_qualified": false,
+  "model": "Qwen3.6-35B-A3B-OptiQ-4bit",
+  "numerical_contract": "Approved external Rapid/MLX floating-activation baseline; custom integer Metal unchanged",
+  "full_integer_model_parity_available": false,
+  "rust_tests_per_feature_posture": {
+    "adversarial-tests.log": 83,
+    "debug-validation-tests.log": 83
+  },
+  "typescript_tests": 5,
+  "real_model_process_runs_in_retained_matrices": 21,
+  "short_repetitions": 3,
+  "long_repetitions": 3,
+  "final_binary_smoke_repetitions": 1,
+  "matrices": {
+    "short": "artifacts/qwen-model-ab-v2/summary.json",
+    "long": "artifacts/qwen-model-ab-long-v2/summary.json",
+    "final_smoke": "artifacts/qwen-model-ab-final-smoke/summary.json"
+  },
+  "final_binary_matches_final_smoke": true,
+  "final_smoke_tokens_match_measured_build_all_modes": true,
+  "changes_since_repeated_ab": {
+    "files": [
+      "src/serving/scheduler.rs",
+      "tests/serving.rs"
+    ],
+    "reason": "panic admission-closed telemetry and regression test; model numerical/scheduling path unchanged"
+  },
+  "preserved_ab_binary": "artifacts/qwen-ab-measured-rust-server",
+  "measured_source_manifest": "artifacts/qwen-ab-measured-source-sha256.json",
+  "default_codec": "regular",
+  "reason": "short-output congruence gate failed for both codecs; long diagnostic K8V4 pass insufficient for broad quality/SLO promotion",
+  "sampling_draft_values_active": false,
+  "artifact_manifest": "model-artifacts-sha256.json"
+}

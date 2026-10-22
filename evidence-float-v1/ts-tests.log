@@ -1,0 +1,16 @@
+
+> apple-native-rust-server@0.1.0 test
+> tsx --test ts/*.test.ts
+
+✔ MVK records exact dependency order (1.177958ms)
+✔ invalid shapes and unsafe names rejected (0.126958ms)
+✔ undefined and invalid handles rejected (0.078583ms)
+✔ second kernel family records row-bias fusion (0.175333ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 4
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 106.861125

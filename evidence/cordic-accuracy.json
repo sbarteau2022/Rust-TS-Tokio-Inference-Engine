@@ -1,0 +1,27 @@
+{
+  "pass": true,
+  "dtype": "q1_31_i32",
+  "accuracy": {
+    "sin": {
+      "outputs": 6643,
+      "max_raw_error_vs_libm": 0.9999544620513916,
+      "allowed_raw_error": 2.01
+    },
+    "cos": {
+      "outputs": 6643,
+      "max_raw_error_vs_libm": 0.9999055862426758,
+      "allowed_raw_error": 2.01
+    },
+    "atan2": {
+      "outputs": 6643,
+      "max_raw_error_vs_libm": 0.9999575018882751,
+      "allowed_raw_error": 2.01
+    },
+    "tanh": {
+      "outputs": 6643,
+      "max_raw_error_vs_libm": 0.9999884366989136,
+      "allowed_raw_error": 2.01
+    }
+  },
+  "scope": "Independent approximate analytic accuracy; exact CPU/GPU integer parity is checked separately by the runtime. Not an exhaustive 2^32 input proof."
+}

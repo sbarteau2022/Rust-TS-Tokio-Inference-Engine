@@ -1,0 +1,58 @@
+   Compiling rust-server v0.1.0 (/Users/stewartbarteau/Desktop/RUST SERVER)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.73s
+warning: the following packages contain code that will be rejected by a future version of Rust: block v0.1.6
+note: to see what the problems were, use the option `--future-incompat-report`, or run `cargo report future-incompatibilities --id 1`
+     Running unittests src/lib.rs (target/debug/deps/rust_server-df873c0bdcdaf26c)
+
+running 2 tests
+test backend::tests::key_identity_covers_every_compile_dimension ... ok
+test backend::tests::compile_failure_does_not_poison_cache ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.12s
+
+     Running unittests src/main.rs (target/debug/deps/rust_server-5e9ac7e701aabd2e)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/adversarial.rs (target/debug/deps/adversarial-ada7b9f42e6df626)
+
+running 13 tests
+test constructor_without_tokio_is_an_error ... ok
+test unsupported_version_union_and_operation_budget ... ok
+test nonfinite_and_binding_rejection ... ok
+test residency_is_consumed_by_emitter ... ok
+test mutations_fail_closed ... ok
+test borrowed_lowering_matches_debug_projection ... ok
+test valid_wire_corruption_is_contained ... ok
+test malformed_wire_never_panics ... ok
+
+thread 'tokio-rt-worker' (22813899) panicked at tests/adversarial.rs:391:17:
+assertion failed: receipt.failure.is_none()
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+thread 'tokio-rt-worker' (22813897) panicked at tests/adversarial.rs:391:17:
+assertion failed: receipt.failure.is_none()
+
+thread 'concurrent_producers_are_bounded' (22813879) panicked at tests/adversarial.rs:400:40:
+called `Result::unwrap()` on an `Err` value: JoinError::Panic(Id(9), "assertion failed: receipt.failure.is_none()", ...)
+test concurrent_producers_are_bounded ... FAILED
+test uma_alignment_and_budgets ... ok
+test tampered_plan_and_nan_intermediate_fail_closed ... ok
+
+thread 'gpu_edge_cases' (22813881) panicked at tests/adversarial.rs:195:54:
+called `Result::unwrap()` on an `Err` value: Metal allocation exceeded reserved size
+test gpu_edge_cases ... FAILED
+pressure: rejected 95/100; valid jobs completed, decode/input failures isolated, cancellation recovered
+test pressure_failure_recovery_and_cancellation ... ok
+
+failures:
+
+failures:
+    concurrent_producers_are_bounded
+    gpu_edge_cases
+
+test result: FAILED. 11 passed; 2 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.24s
+
+error: test failed, to rerun pass `--test adversarial`

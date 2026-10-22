@@ -1,0 +1,22 @@
+{
+  "backend": "metal",
+  "device": "Apple M5 Pro",
+  "device_registry_id": 4294968794,
+  "unified_memory": true,
+  "kernels": [
+    "gemm_bias_relu",
+    "add_relu",
+    "sin",
+    "cos",
+    "atan2",
+    "tanh"
+  ],
+  "dtypes": [
+    "q1_31_i32"
+  ],
+  "layouts": [
+    "row_major"
+  ],
+  "amx_execution": false,
+  "ane_execution": false
+}

@@ -1,0 +1,12 @@
+namespace Wire;
+table Load { name:string (required); rows:uint; cols:uint; out:uint; }
+table Dot { a:uint; b:uint; out:uint; }
+table Add { a:uint; b:uint; out:uint; }
+table Relu { a:uint; out:uint; }
+table Store { a:uint; name:string (required); }
+table Cordic { function:ubyte; a:uint; b:uint; out:uint; }
+union Operation { Load, Dot, Add, Relu, Store, Cordic }
+table Op { operation:Operation; }
+table Trace { version:uint = 1; ops:[Op] (required); }
+root_type Trace;
+file_identifier "AMVK";

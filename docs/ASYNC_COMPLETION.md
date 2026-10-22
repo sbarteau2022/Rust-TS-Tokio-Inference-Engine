@@ -1,0 +1,327 @@
+---
+title: "Bounded asynchronous Metal completion"
+document_type: "implementation"
+version: "1.0.0"
+date: "2026-10-22T00:00:00Z"
+implementation_date: null
+author: "Codex for Stewart Barteau"
+reviewers: []
+status: "draft"
+related_files:
+  - path: ".gitignore"
+    lines: "1-5"
+    role: "config"
+  - path: "Cargo.lock"
+    lines: "1-452"
+    role: "config"
+  - path: "Cargo.toml"
+    lines: "1-26"
+    role: "config"
+  - path: "backend/rapid_worker.py"
+    lines: "1-165"
+    role: "primary"
+  - path: "build.rs"
+    lines: "1-8"
+    role: "primary"
+  - path: "fixtures/atan2.amvk"
+    lines: null
+    role: "test"
+  - path: "fixtures/cache-config-bench.json"
+    lines: "1-13"
+    role: "test"
+  - path: "fixtures/cos.amvk"
+    lines: null
+    role: "test"
+  - path: "fixtures/elementwise.amvk"
+    lines: null
+    role: "test"
+  - path: "fixtures/qwen-prompts-long.json"
+    lines: "1-4"
+    role: "test"
+  - path: "fixtures/qwen-prompts.json"
+    lines: "1-6"
+    role: "test"
+  - path: "fixtures/qwen-serving-long.json"
+    lines: "1-21"
+    role: "test"
+  - path: "fixtures/qwen-serving.json"
+    lines: "1-21"
+    role: "test"
+  - path: "fixtures/rectangular.amvk"
+    lines: null
+    role: "test"
+  - path: "fixtures/sin.amvk"
+    lines: null
+    role: "test"
+  - path: "fixtures/square.amvk"
+    lines: null
+    role: "test"
+  - path: "fixtures/tanh.amvk"
+    lines: null
+    role: "test"
+  - path: "judges/benchmark.py"
+    lines: "1-51"
+    role: "test"
+  - path: "judges/cordic.py"
+    lines: "1-30"
+    role: "test"
+  - path: "judges/generate_cordic.py"
+    lines: "1-44"
+    role: "test"
+  - path: "judges/macro.py"
+    lines: "1-14"
+    role: "test"
+  - path: "judges/model_ab.py"
+    lines: "1-93"
+    role: "test"
+  - path: "judges/resources.py"
+    lines: "1-35"
+    role: "test"
+  - path: "judges/run.py"
+    lines: "1-203"
+    role: "test"
+  - path: "native/telemetry.cpp"
+    lines: "1-23"
+    role: "primary"
+  - path: "package-lock.json"
+    lines: "1-1072"
+    role: "config"
+  - path: "package.json"
+    lines: "1-21"
+    role: "config"
+  - path: "requirements-bench.txt"
+    lines: "1-2"
+    role: "config"
+  - path: "run.sh"
+    lines: "1-5"
+    role: "primary"
+  - path: "schema/trace.fbs"
+    lines: "1-12"
+    role: "primary"
+  - path: "src/backend.rs"
+    lines: "1-614"
+    role: "primary"
+  - path: "src/cache/mod.rs"
+    lines: "1-1068"
+    role: "primary"
+  - path: "src/chain.rs"
+    lines: "1-50"
+    role: "primary"
+  - path: "src/completion.rs"
+    lines: "1-218"
+    role: "primary"
+  - path: "src/cordic.rs"
+    lines: "1-204"
+    role: "primary"
+  - path: "src/cordic_tables.rs"
+    lines: "1-102"
+    role: "primary"
+  - path: "src/execute.rs"
+    lines: "1-122"
+    role: "primary"
+  - path: "src/gpu.rs"
+    lines: "1-440"
+    role: "primary"
+  - path: "src/ir.rs"
+    lines: "1-646"
+    role: "primary"
+  - path: "src/lib.rs"
+    lines: "1-30"
+    role: "primary"
+  - path: "src/macro_bench.rs"
+    lines: "1-81"
+    role: "primary"
+  - path: "src/main.rs"
+    lines: "1-402"
+    role: "primary"
+  - path: "src/runtime.rs"
+    lines: "1-366"
+    role: "primary"
+  - path: "src/sampled.rs"
+    lines: "1-193"
+    role: "primary"
+  - path: "src/serving/config.rs"
+    lines: "1-51"
+    role: "primary"
+  - path: "src/serving/kv.rs"
+    lines: "1-280"
+    role: "primary"
+  - path: "src/serving/mod.rs"
+    lines: "1-73"
+    role: "primary"
+  - path: "src/serving/rapid.rs"
+    lines: "1-265"
+    role: "primary"
+  - path: "src/serving/scheduler.rs"
+    lines: "1-563"
+    role: "primary"
+  - path: "src/telemetry.rs"
+    lines: "1-26"
+    role: "primary"
+  - path: "src/trace_generated.rs"
+    lines: "1-1523"
+    role: "primary"
+  - path: "src/wire.rs"
+    lines: "1-124"
+    role: "primary"
+  - path: "tests/adversarial.rs"
+    lines: "1-456"
+    role: "test"
+  - path: "tests/async_completion.rs"
+    lines: "1-192"
+    role: "test"
+  - path: "tests/cache_control.rs"
+    lines: "1-419"
+    role: "test"
+  - path: "tests/cordic.rs"
+    lines: "1-264"
+    role: "test"
+  - path: "tests/fixed_point.rs"
+    lines: "1-146"
+    role: "test"
+  - path: "tests/grid.rs"
+    lines: "1-41"
+    role: "test"
+  - path: "tests/production_pipeline.rs"
+    lines: "1-315"
+    role: "test"
+  - path: "tests/rapid_rpc.rs"
+    lines: "1-75"
+    role: "test"
+  - path: "tests/resources.rs"
+    lines: "1-341"
+    role: "test"
+  - path: "tests/serving.rs"
+    lines: "1-426"
+    role: "test"
+  - path: "ts/generated/trace.ts"
+    lines: "1-5"
+    role: "primary"
+  - path: "ts/generated/wire/add.ts"
+    lines: "1-68"
+    role: "primary"
+  - path: "ts/generated/wire/cordic.ts"
+    lines: "1-78"
+    role: "primary"
+  - path: "ts/generated/wire/dot.ts"
+    lines: "1-68"
+    role: "primary"
+  - path: "ts/generated/wire/load.ts"
+    lines: "1-81"
+    role: "primary"
+  - path: "ts/generated/wire/op.ts"
+    lines: "1-61"
+    role: "primary"
+  - path: "ts/generated/wire/operation.ts"
+    lines: "1-54"
+    role: "primary"
+  - path: "ts/generated/wire/relu.ts"
+    lines: "1-58"
+    role: "primary"
+  - path: "ts/generated/wire/store.ts"
+    lines: "1-61"
+    role: "primary"
+  - path: "ts/generated/wire/trace.ts"
+    lines: "1-91"
+    role: "primary"
+  - path: "ts/generated/wire.ts"
+    lines: "1-13"
+    role: "primary"
+  - path: "ts/smoke.ts"
+    lines: "1-1"
+    role: "primary"
+  - path: "ts/trace.test.ts"
+    lines: "1-45"
+    role: "test"
+  - path: "ts/trace.ts"
+    lines: "1-73"
+    role: "primary"
+  - path: "tsconfig.json"
+    lines: "1-1"
+    role: "config"
+related_issues: []
+related_documents: ["FIXED_POINT.md", "NEXT_STEPS.md"]
+tags: [metal, tokio, semaphore, completion]
+---
+# Executive Summary
+
+Allow two GPU command buffers in flight by default, with an explicit option for three. A Rust semaphore gates encoding and a Metal completion callback releases the permit and wakes Tokio. Inputs and outputs remain owned until the GPU has finished.
+
+# Problem Statement
+
+The previous worker blocked on Metal completion and serialized all jobs. It could not overlap preparation and GPU work and had no explicit command-buffer permit contract.
+
+# Solution Overview and Design
+
+A shared FlightGate owns tokio::sync::Semaphore initialized to 2 or 3; other limits fail before spawning workers. Acquire an owned permit before preparing/encoding a job. Register a copied Objective-C completion block before commit. That block owns the permit and retained Metal buffer handles. After GPU completion it records status/timestamps, drops retained handles and the permit, and sends a Tokio oneshot notification. Never recycle a buffer or release a committed permit because the receipt receiver was dropped.
+
+Use exactly limit independent persistent worker lanes, each with its own backend/cache/pool and queue, sharing the gate and bounded admission queue. Worker lanes do CPU preparation and result validation in bounded spawn_blocking tasks, then await the native completion notification asynchronously. This keeps mutable MetalBackend ownership exclusive without holding a mutex across a GPU await. There is no task per rejected request and no unbounded task/command fanout. Normal admission is queue capacity plus at most limit active jobs.
+
+Split the existing total 64 MiB resident and 16 MiB idle buffer budgets across worker lanes; floor division leaves any remainder unassigned. Pipeline caches are per lane (8 entries each); driver/pipeline allocation is reported separately and not covered by the buffer cap. This can duplicate compiled pipelines and reduce the maximum single-job buffer budget compared with a single lane. A shared immutable pipeline cache or central allocation scheduler is a later optimization. Per-job pool/cache counters are lane-local; device allocation reports cover process resources on that Metal device. Receipts identify their worker lane and expose shared flight counters.
+
+A synchronous judge adapter waits on a Rust completion channel from the same callback. No application code calls Metal waitUntilCompleted. The synchronous notification uses a capacity-1 Rust channel and nonblocking callback try_send; there is only one notification per consumed callback state. Runtime submission uses Tokio oneshot await, never this synchronous adapter. Cancellation drops only the reply receiver; worker execution drains normally. Dropping Runtime closes admission and workers drain accepted jobs. On a Rust panic a lane discards its backend, drains the global gate before recreating it, and returns an error receipt. Native aborts/GPU hangs remain outside in-process recovery.
+
+# Implementation Details
+
+Rust block bindings implement the Objective-C callback ABI and retain the copied block. Callback state is consumed once through a mutex, making duplicate completion notifications harmless; no panic may unwind across the callback boundary. Owned retained buffer handles protect committed resources if an awaiting Rust future is dropped during runtime shutdown. Permit origin is checked before encoding so a different gate cannot bypass the bound. Per-gate acquired/released/submitted/completed/active/peak counters support verification.
+
+Apple API: [addCompletedHandler](https://developer.apple.com/documentation/metal/mtlcommandbuffer/addcompletedhandler%28_%3A%29). This implementation applies established ownership and bounded queue patterns, not a published speedup result. Exact file line references are indexed in FILE_MAP.md and related_files.
+
+## Languages chosen and why
+
+| Language | Component | Reason |
+| --- | --- | --- |
+| Rust | Semaphore, callback ownership, async runtime and tests | Exclusive lane ownership and bounded concurrency |
+| Objective-C block ABI via block/metal crates | Native completion bridge | Metal invokes completion without polling |
+| Python | Ordered proof runner | Reproducible evidence outside runtime |
+
+The direct block 0.1.6 dependency exposes the already-used metal-rs callback ABI; it was previously transitive. Cargo flags that crate as future-incompatible, so a future compiler migration remains unqualified.
+
+# Configuration Changes
+
+Runtime::new(capacity) defaults to limit 2. Runtime::with_in_flight(capacity, limit) permits only 2 or 3. CLI commands read RUST_SERVER_IN_FLIGHT=2|3, default 2; other values fail before GPU submission. Queue capacity remains 1..32. No port, numerical contract, trace version or model changes.
+
+# Testing Evidence
+
+The final ordered run passed 43 Rust tests and 5 TypeScript tests, both compiler gates, Clippy, formatting, constants/codegen checks, all six integer families, CLI, native signposts and GPU capture. For each limit, the 24-job native runtime judge submitted and completed 24 command buffers, returned all permits and measured a peak of exactly that configured limit (2 and 3). Each 100-request pressure burst in the dedicated current-thread test admitted 8 and rejected 92, then completed a recovery job; these admission counts depend on scheduling. Both limits had zero final active/outstanding permits and zero completion errors. See evidence/async-summary.json.
+
+| Test location | Coverage |
+| --- | --- |
+| tests/async_completion.rs | Five tests: 2/3 limits, canceled waiters, wrong-gate/encode-error release, six-family pressure, recovery and owner-drop drain |
+| src/completion.rs | Two tests: error plus duplicate callback exactly once; dropped waiter preserves permit until callback |
+| src/gpu.rs | One native test at both limits: an RAII-released Metal event holds commands outstanding, verifies exact cap, asynchronous waiting, cancellation, retained buffers and final bytes |
+| src/backend.rs | Completion-error injection verifies recycling after native completion and recovery with the same GPU allocations |
+
+The native event test records exactly 2 and 3 outstanding commands while held, then signals the event and verifies every callback releases its slot. The signal guard also runs during assertion unwinding, so this test does not deliberately fault or wedge the GPU. Errors are injected into the completion bridge and completed-result path; a real driver fault is not claimed. Panic recovery is reviewed but not exercised through an injected runtime panic.
+
+Reproduce: `python3 judges/run.py`. Evidence: runtime-flight-2.json, runtime-flight-3.json, adversarial-tests.log, cli-rejections.json, judge-summary.json and source-sha256.json under evidence/. GPU-start/end intervals are not analyzed for simultaneous hardware execution; outstanding command-buffer overlap is the measured claim.
+
+## Was it proven necessary?
+
+The native held-command test demonstrates that permits stay owned through completion and prevent an extra encoding slot. This fulfills the requested bound and asynchronous handoff. It does not prove improved throughput; that needs shape/load and thermal comparisons.
+
+# Adversarial Review
+
+Single-author review checked that permit origin is verified before encoding; prepare/encode failures drop an uncommitted permit; callback state is consumed once; both success and error release a committed permit; callback retains buffers independently of its waiter; native callbacks do not perform CPU reference validation; outputs are not read/recycled before terminal completion; admission and worker counts bound host tasks; Runtime drop drains the shared receiver. Rust panics are caught outside the native callback and trigger lane backend discard plus gate drain. Callback snapshot panic is contained before notification. No unsafe GPU fault or real native process-crash recovery is claimed.
+
+# Deployment / Rollout
+
+Local prototype only. No merge or deployment. Runtime default becomes two lanes; synchronous proof commands remain supported. Rollback restores the prior single worker and synchronous dispatch together. Monitor flight counters, exact output validation, per-lane pools and failure receipts.
+
+# Next Stage of Implementation
+
+Measure grid/reduction and queue-overlap behavior on representative shapes; compare shared immutable cache designs; qualify model scale/quality before serving. This change sets up bounded overlap toward the Apple-native inference-server goal; it does not establish sustained throughput or GPU hardware execution overlap.
+
+# What We Learned
+
+A semaphore must protect encoding, not only commit. Completion must own its permit independently of the waiting future. More lanes require explicit aggregate resource budgets and lane-scoped cache metrics.
+
+# Changelog
+
+| Version | Date | Author | Change |
+| --- | --- | --- | --- |
+| 1.0.0 | 2026-10-21 | Codex | Design before implementation |
+
+## Current production policy
+
+PRODUCTION_PIPELINE.md supersedes the original default and validation policy: default in-flight cap is 3, full CPU validation is test/feature gated, and every 1000th successful receipt is checked asynchronously. Explicit limit 2 remains available for comparison.

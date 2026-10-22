@@ -1,0 +1,171 @@
+{
+  "completed": true,
+  "scope": "DIAGNOSTIC-AB; greedy; prefix-storage codec, not packed attention",
+  "production_qualified": false,
+  "full_integer_qwen_comparison_available": false,
+  "repetitions": 1,
+  "prompt_count": 4,
+  "diagnostic_probe_io_in_rust_wall_time": true,
+  "acceptance_gates_declared_before_runs": {
+    "minimum_generated_token_match": 0.99,
+    "maximum_first_decode_kl": 0.01,
+    "minimum_wall_speed_ratio": 0.95,
+    "minimum_total_state_compression": 1.1
+  },
+  "modes": {
+    "regular": {
+      "median_rust_boundary_seconds": 2.209597042,
+      "wall_speed_ratio_vs_regular": 1.0,
+      "total_state_compression_at_prefill": 1.0,
+      "minimum_generated_token_match": 1.0,
+      "maximum_first_decode_kl": 0.0,
+      "comparisons": [
+        {
+          "generated_token_position_match": 1.0,
+          "matched": 37,
+          "positions": 37,
+          "first_decode_logit_comparisons": [
+            {
+              "sequence": 1,
+              "rmse": 0.0,
+              "max_absolute_error": 0.0,
+              "kl_reference_to_candidate": 0.0,
+              "total_variation": 0.0,
+              "argmax_match": true
+            },
+            {
+              "sequence": 2,
+              "rmse": 0.0,
+              "max_absolute_error": 0.0,
+              "kl_reference_to_candidate": 0.0,
+              "total_variation": 0.0,
+              "argmax_match": true
+            },
+            {
+              "sequence": 3,
+              "rmse": 0.0,
+              "max_absolute_error": 0.0,
+              "kl_reference_to_candidate": 0.0,
+              "total_variation": 0.0,
+              "argmax_match": true
+            },
+            {
+              "sequence": 4,
+              "rmse": 0.0,
+              "max_absolute_error": 0.0,
+              "kl_reference_to_candidate": 0.0,
+              "total_variation": 0.0,
+              "argmax_match": true
+            }
+          ]
+        }
+      ],
+      "passes_candidate_gates": false
+    },
+    "rapid-turboquant-v4": {
+      "median_rust_boundary_seconds": 1.904361083,
+      "wall_speed_ratio_vs_regular": 1.160282606972388,
+      "total_state_compression_at_prefill": 1.0028643106888173,
+      "minimum_generated_token_match": 0.5945945945945946,
+      "maximum_first_decode_kl": 0.002929512625616555,
+      "comparisons": [
+        {
+          "generated_token_position_match": 0.5945945945945946,
+          "matched": 22,
+          "positions": 37,
+          "first_decode_logit_comparisons": [
+            {
+              "sequence": 1,
+              "rmse": 0.2365868833158352,
+              "max_absolute_error": 1.078125,
+              "kl_reference_to_candidate": 2.055584546848227e-06,
+              "total_variation": 8.372887677742332e-06,
+              "argmax_match": true
+            },
+            {
+              "sequence": 2,
+              "rmse": 0.15524485881849165,
+              "max_absolute_error": 0.919952392578125,
+              "kl_reference_to_candidate": 1.7298682617183419e-06,
+              "total_variation": 1.3893444172176621e-05,
+              "argmax_match": true
+            },
+            {
+              "sequence": 3,
+              "rmse": 0.09118791053488376,
+              "max_absolute_error": 0.484375,
+              "kl_reference_to_candidate": 0.002929512625616555,
+              "total_variation": 0.033834553239162665,
+              "argmax_match": false
+            },
+            {
+              "sequence": 4,
+              "rmse": 0.18186694265795167,
+              "max_absolute_error": 0.984375,
+              "kl_reference_to_candidate": 1.8988951338015375e-06,
+              "total_variation": 1.0001994443768627e-05,
+              "argmax_match": true
+            }
+          ]
+        }
+      ],
+      "passes_candidate_gates": false
+    },
+    "rapid-turboquant-k8v4": {
+      "median_rust_boundary_seconds": 2.512814667,
+      "wall_speed_ratio_vs_regular": 0.879331480756595,
+      "total_state_compression_at_prefill": 1.0050954625883168,
+      "minimum_generated_token_match": 0.5945945945945946,
+      "maximum_first_decode_kl": 0.002793357336697769,
+      "comparisons": [
+        {
+          "generated_token_position_match": 0.5945945945945946,
+          "matched": 22,
+          "positions": 37,
+          "first_decode_logit_comparisons": [
+            {
+              "sequence": 1,
+              "rmse": 0.24170985143117474,
+              "max_absolute_error": 1.171875,
+              "kl_reference_to_candidate": 2.761578148941014e-06,
+              "total_variation": 9.36637294744882e-06,
+              "argmax_match": true
+            },
+            {
+              "sequence": 2,
+              "rmse": 0.15820903882708204,
+              "max_absolute_error": 0.828125,
+              "kl_reference_to_candidate": 4.393392662016448e-06,
+              "total_variation": 3.001715534357766e-05,
+              "argmax_match": true
+            },
+            {
+              "sequence": 3,
+              "rmse": 0.09600647241258604,
+              "max_absolute_error": 0.50390625,
+              "kl_reference_to_candidate": 0.002793357336697769,
+              "total_variation": 0.03357953112101209,
+              "argmax_match": false
+            },
+            {
+              "sequence": 4,
+              "rmse": 0.18698344164802538,
+              "max_absolute_error": 0.96875,
+              "kl_reference_to_candidate": 2.9624537159466656e-06,
+              "total_variation": 2.418725194974592e-05,
+              "argmax_match": true
+            }
+          ]
+        }
+      ],
+      "passes_candidate_gates": false
+    }
+  },
+  "default_remains": "regular",
+  "default_reason": "Candidates require broader held-out quality/SLO and sustained-load qualification even if diagnostic gates pass.",
+  "binary_sha256": "2a45504c44fc9ea697804ff47d53cd494d5a7c54527d7810860c37f8e9c566b3",
+  "worker_sha256": "54d8e352b55e3fbfaaef481c6a2b0017d33778b1e9ab4e508421d47d3a3e85c8",
+  "config_sha256": "35c56693297709fc9617834611221702ecb9f69b58a7364c8490a3ac18999127",
+  "prompts_sha256": "441c71d6b7beae3f8a67b153cd2f40bd145bddf80f79eaf17375f6d0195a1f76",
+  "unix_time": 1792683739.7641249
+}

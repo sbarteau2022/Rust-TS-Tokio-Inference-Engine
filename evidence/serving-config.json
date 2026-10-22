@@ -1,0 +1,25 @@
+{
+  "production_qualified": false,
+  "resolved_config": {
+    "allocator_limit_bytes": 38654705664,
+    "codec": "regular",
+    "model": "/Users/stewartbarteau/models/Qwen3.6-35B-A3B-OptiQ-4bit",
+    "python": "/Users/stewartbarteau/.local/share/uv/tools/rapid-mlx/bin/python",
+    "rpc_timeout_seconds": 240,
+    "scheduler": {
+      "max_batch_tokens": 128,
+      "max_context_tokens": 512,
+      "max_in_flight": 3,
+      "max_new_tokens": 64,
+      "max_queued": 8,
+      "max_sequences": 2,
+      "model_memory_bytes": 536870912,
+      "prefill_chunk_tokens": 64,
+      "version": 1
+    },
+    "sequence_bytes": 134217728,
+    "version": 1,
+    "workspace_bytes": 134217728
+  },
+  "valid": true
+}

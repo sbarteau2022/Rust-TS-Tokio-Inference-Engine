@@ -1,2 +1,447 @@
-# Rust-TS-Tokio-Inference-Engine
+---
+title: "Rust Server — Apple native kernel compiler and runtime"
+document_type: "implementation"
+version: "1.8.0"
+date: "2026-10-22T03:53:10Z"
+implementation_date: null
+author: "Codex for Stewart Barteau"
+reviewers: []
+status: "draft"
+related_files:
+  - path: ".gitignore"
+    lines: "1-5"
+    role: "config"
+  - path: "Cargo.lock"
+    lines: "1-452"
+    role: "config"
+  - path: "Cargo.toml"
+    lines: "1-26"
+    role: "config"
+  - path: "backend/rapid_worker.py"
+    lines: "1-165"
+    role: "primary"
+  - path: "build.rs"
+    lines: "1-8"
+    role: "primary"
+  - path: "fixtures/atan2.amvk"
+    lines: null
+    role: "test"
+  - path: "fixtures/cache-config-bench.json"
+    lines: "1-13"
+    role: "test"
+  - path: "fixtures/cos.amvk"
+    lines: null
+    role: "test"
+  - path: "fixtures/elementwise.amvk"
+    lines: null
+    role: "test"
+  - path: "fixtures/qwen-prompts-long.json"
+    lines: "1-4"
+    role: "test"
+  - path: "fixtures/qwen-prompts.json"
+    lines: "1-6"
+    role: "test"
+  - path: "fixtures/qwen-serving-long.json"
+    lines: "1-21"
+    role: "test"
+  - path: "fixtures/qwen-serving.json"
+    lines: "1-21"
+    role: "test"
+  - path: "fixtures/rectangular.amvk"
+    lines: null
+    role: "test"
+  - path: "fixtures/sin.amvk"
+    lines: null
+    role: "test"
+  - path: "fixtures/square.amvk"
+    lines: null
+    role: "test"
+  - path: "fixtures/tanh.amvk"
+    lines: null
+    role: "test"
+  - path: "judges/benchmark.py"
+    lines: "1-51"
+    role: "test"
+  - path: "judges/cordic.py"
+    lines: "1-30"
+    role: "test"
+  - path: "judges/generate_cordic.py"
+    lines: "1-44"
+    role: "test"
+  - path: "judges/macro.py"
+    lines: "1-14"
+    role: "test"
+  - path: "judges/model_ab.py"
+    lines: "1-93"
+    role: "test"
+  - path: "judges/resources.py"
+    lines: "1-35"
+    role: "test"
+  - path: "judges/run.py"
+    lines: "1-203"
+    role: "test"
+  - path: "native/telemetry.cpp"
+    lines: "1-23"
+    role: "primary"
+  - path: "package-lock.json"
+    lines: "1-1072"
+    role: "config"
+  - path: "package.json"
+    lines: "1-21"
+    role: "config"
+  - path: "requirements-bench.txt"
+    lines: "1-2"
+    role: "config"
+  - path: "run.sh"
+    lines: "1-5"
+    role: "primary"
+  - path: "schema/trace.fbs"
+    lines: "1-12"
+    role: "primary"
+  - path: "src/backend.rs"
+    lines: "1-614"
+    role: "primary"
+  - path: "src/cache/mod.rs"
+    lines: "1-1068"
+    role: "primary"
+  - path: "src/chain.rs"
+    lines: "1-50"
+    role: "primary"
+  - path: "src/completion.rs"
+    lines: "1-218"
+    role: "primary"
+  - path: "src/cordic.rs"
+    lines: "1-204"
+    role: "primary"
+  - path: "src/cordic_tables.rs"
+    lines: "1-102"
+    role: "primary"
+  - path: "src/execute.rs"
+    lines: "1-122"
+    role: "primary"
+  - path: "src/gpu.rs"
+    lines: "1-440"
+    role: "primary"
+  - path: "src/ir.rs"
+    lines: "1-646"
+    role: "primary"
+  - path: "src/lib.rs"
+    lines: "1-30"
+    role: "primary"
+  - path: "src/macro_bench.rs"
+    lines: "1-81"
+    role: "primary"
+  - path: "src/main.rs"
+    lines: "1-402"
+    role: "primary"
+  - path: "src/runtime.rs"
+    lines: "1-366"
+    role: "primary"
+  - path: "src/sampled.rs"
+    lines: "1-193"
+    role: "primary"
+  - path: "src/serving/config.rs"
+    lines: "1-51"
+    role: "primary"
+  - path: "src/serving/kv.rs"
+    lines: "1-280"
+    role: "primary"
+  - path: "src/serving/mod.rs"
+    lines: "1-73"
+    role: "primary"
+  - path: "src/serving/rapid.rs"
+    lines: "1-265"
+    role: "primary"
+  - path: "src/serving/scheduler.rs"
+    lines: "1-563"
+    role: "primary"
+  - path: "src/telemetry.rs"
+    lines: "1-26"
+    role: "primary"
+  - path: "src/trace_generated.rs"
+    lines: "1-1523"
+    role: "primary"
+  - path: "src/wire.rs"
+    lines: "1-124"
+    role: "primary"
+  - path: "tests/adversarial.rs"
+    lines: "1-456"
+    role: "test"
+  - path: "tests/async_completion.rs"
+    lines: "1-192"
+    role: "test"
+  - path: "tests/cache_control.rs"
+    lines: "1-419"
+    role: "test"
+  - path: "tests/cordic.rs"
+    lines: "1-264"
+    role: "test"
+  - path: "tests/fixed_point.rs"
+    lines: "1-146"
+    role: "test"
+  - path: "tests/grid.rs"
+    lines: "1-41"
+    role: "test"
+  - path: "tests/production_pipeline.rs"
+    lines: "1-315"
+    role: "test"
+  - path: "tests/rapid_rpc.rs"
+    lines: "1-75"
+    role: "test"
+  - path: "tests/resources.rs"
+    lines: "1-341"
+    role: "test"
+  - path: "tests/serving.rs"
+    lines: "1-426"
+    role: "test"
+  - path: "ts/generated/trace.ts"
+    lines: "1-5"
+    role: "primary"
+  - path: "ts/generated/wire/add.ts"
+    lines: "1-68"
+    role: "primary"
+  - path: "ts/generated/wire/cordic.ts"
+    lines: "1-78"
+    role: "primary"
+  - path: "ts/generated/wire/dot.ts"
+    lines: "1-68"
+    role: "primary"
+  - path: "ts/generated/wire/load.ts"
+    lines: "1-81"
+    role: "primary"
+  - path: "ts/generated/wire/op.ts"
+    lines: "1-61"
+    role: "primary"
+  - path: "ts/generated/wire/operation.ts"
+    lines: "1-54"
+    role: "primary"
+  - path: "ts/generated/wire/relu.ts"
+    lines: "1-58"
+    role: "primary"
+  - path: "ts/generated/wire/store.ts"
+    lines: "1-61"
+    role: "primary"
+  - path: "ts/generated/wire/trace.ts"
+    lines: "1-91"
+    role: "primary"
+  - path: "ts/generated/wire.ts"
+    lines: "1-13"
+    role: "primary"
+  - path: "ts/smoke.ts"
+    lines: "1-1"
+    role: "primary"
+  - path: "ts/trace.test.ts"
+    lines: "1-45"
+    role: "test"
+  - path: "ts/trace.ts"
+    lines: "1-73"
+    role: "primary"
+  - path: "tsconfig.json"
+    lines: "1-1"
+    role: "config"
+related_issues: []
+related_documents: ["docs/DESIGN.md", "docs/SOURCE_SPEC.md", "docs/ADVERSARIAL_REVIEW.md", "docs/NEXT_STEPS.md", "docs/FILE_MAP.md"]
+tags: [rust, tokio, metal, typescript-7.1, tsrs, flatbuffers]
+---
+# Rust Server
 
+## Executive Summary
+
+A TypeScript trace reaches pure integer Metal kernels through Rust, shared buffers and Tokio receipts. An experimental real Qwen3.6-35B-A3B path now adds Rust token scheduling and selectable regular/Rapid TurboQuant prefix KV through an explicitly approved MLX numerical baseline. This advances the Apple-native serving goal; production model quality, tensor batching, full integer model execution and AMX/ANE remain unqualified. See [current model integration](docs/MODEL_INTEGRATION.md).
+
+## Problem Statement
+
+The original float prototype could not satisfy the requested deterministic fixed-point execution. The numerical contract and its judges needed to change together.
+
+## Solution Overview
+
+`TypeScript 7.1 → FlatBuffers version 3 → verified borrowed views → Rust SSA → integer MSL → shared Metal buffers → Tokio receipt`.
+
+The currently tested integer baseline is **signed Q1.31 i32**: raw values represent value/2147483648. Each operand is cast to `int64_t` before multiplication; each product is floor-shifted by 31, then summed in 64 bits. Bias, ReLU and final saturation to INT32_MAX follow. Every output must match exactly. The user confirmed 32-bit storage and 31 fractional bits. CORDIC sin, cos, atan2 and tanh are implemented through the same pipeline.
+
+Each GEMM output uses one 32-thread SIMD-group. Lanes accumulate strided K terms, then reduce signed 64-bit partials through five shuffle-down stages, shuffling both uint32 halves and reconstructing the full word. No threadgroup scratch or barriers occur in this reduction. One SIMD-group is dispatched per threadgroup/output; cross-group reduction is not needed. Runtime checks the pipeline execution width is 32. This establishes correctness, not a measured speedup over other grid choices.
+
+The six supported graph families are fixed-point GEMM+bias+ReLU, add+bias+ReLU, CORDIC sin, cos, atan2 and tanh. Subtraction is not a standalone graph operation; CORDIC uses integer add/sub internally. Unsupported graphs fail closed. See [contract](docs/FIXED_POINT.md).
+
+### CORDIC units and limits
+
+Sin/cos inputs and atan2 outputs are normalized radians/π. Raw 0 means zero angle; 1073741824 means π/2; INT32_MIN means -π. Positive π wraps to -π; atan2(0,0)=0. Atan2 inputs are Y then X. Tanh accepts dimensionless Q1.31 inputs in [-1,1); wider activation ranges need a separate scale contract. Raw outputs are Q1.31. Positive unity saturates to INT32_MAX.
+
+CORDIC uses 48 circular iterations and hyperbolic iterations 1–47 with repeated steps 4,13,40, Q60 int64 internal state and restoring integer division for tanh. Constants are committed and regenerated with 90-digit Decimal arithmetic. CPU/GPU results must match bit for bit; analytic accuracy has a separate 2.01-raw-unit gate. This is deterministic approximation, not exact transcendental arithmetic.
+
+## Build and use
+
+Run from `/Users/stewartbarteau/Desktop/RUST SERVER`:
+
+```sh
+# package.json, ts/trace.ts and src/main.rs — build and execute raw integer inputs.
+npm ci
+npx tsrs -p tsconfig.json
+npx tsc --version
+cargo build --release --locked
+npx tsx ts/trace.ts
+./run.sh kernel-judge artifacts
+./run.sh run artifacts/trace.amvk artifacts/inputs.json
+./run.sh capabilities
+# ts/trace.ts — choose sin, cos, atan2 or tanh; dimensions M x N.
+npx tsx ts/trace.ts artifacts/tanh 73 1 91 tanh
+./run.sh kernel-judge artifacts/tanh
+./run.sh run artifacts/tanh/trace.amvk artifacts/tanh/inputs.json
+```
+
+`run TRACE INPUTS.json` accepts a JSON object mapping input names to flat **raw i32 integer arrays**. Float values and integers outside i32 range are rejected. Trace versions 1 and 2 are rejected so old float traces cannot silently acquire integer semantics. The schema's legacy default remains 1 deliberately; the current producer explicitly writes 3.
+
+TypeScript is pinned to **7.1.0-beta**, tsrs to **0.18.0-ts7.1.0-dev.20260929**. Both compiler gates are required. Flatc is 25.12.19; Rust and Node dependencies have lockfiles. Current judges use Python's standard library, not MLX. `requirements-bench.txt` records the historical float comparison dependency only.
+
+```sh
+# src/gpu.rs — native capture, destination must be absent.
+METAL_CAPTURE_ENABLED=1 ./run.sh kernel-judge artifacts "$PWD/artifacts/manual.gputrace"
+```
+
+## Implementation Details
+
+Exact file line references are in [FILE_MAP.md](docs/FILE_MAP.md). The full source document was read and preserved in SOURCE_SPEC.md. User destination, toolchain and numerical requirements take precedence over that reference document.
+
+| Language | Component | Reason |
+| --- | --- | --- |
+| TypeScript 7.1 | Trace builder | Typed graph recording |
+| Rust | Validation, memory, backend and Tokio | Ownership and bounded admission |
+| MSL | Integer kernels | Native GPU arithmetic and SIMD shuffles |
+| C++ | Signpost bridge | Native Apple telemetry |
+| Python | Independent integer oracle and judges | Arbitrary-precision arithmetic outside runtime |
+
+This implementation was not directly grounded in published literature. It applies a defined fixed-point contract and established serialization, ownership and reduction patterns. Apple references: [64-bit signed type](https://developer.apple.com/documentation/metal/mtldatatype/long), [SIMD instructions](https://developer.apple.com/videos/play/tech-talks/10876/). Compilation and exact parity on the local M5 Pro gate hardware behavior.
+
+### Resource ownership and bounds
+
+Metal allocates `StorageModeShared` buffers directly. Page-rounded admission budgets are checked against actual `allocatedSize`. Exact-size buffers are pooled after command completion; there is no ring buffer or suballocation. Each persistent worker lane retains its own device/queue, bounded pipeline LRU and pool. Inputs are overwritten and outputs poisoned before use. Driver allocations are reported separately from the buffer cap.
+
+Trace limit 64 KiB, dimensions 1–4096, M×K×N <=536870912, at most 32 external arrays totaling 4 MiB at runtime admission (single kernels use up to three). Queue capacity 1–32 plus three active worker lanes by default, optionally two. The existing 64 MiB resident and 16 MiB idle buffer budgets are divided across lanes; pipeline caches retain up to 8 entries per lane. CLI JSON limit 32 MiB; dispatch repeat limit 1000. Runtime lanes await completion callbacks asynchronously; CPU preparation and output reading run in at most one blocking task per lane. Full reference validation is test/feature gated; production checks every 1000th successful receipt in a bounded background Tokio worker. No application path calls Metal waitUntilCompleted. Synchronous judges wait on a bounded Rust callback channel.
+
+The independent matrix reference uses i128 products, Euclidean division and accumulation. CORDIC uses a deterministic integer CPU reference plus independent analytic accuracy judges. The kernel's i64 bound is safe for full-range i32 and K<=4096. Validation remains enabled in caller wall times. Receipt construction copies results into Rust storage.
+
+## Bounded asynchronous completion
+
+`Runtime::new(capacity)` defaults to **3** in-flight slots. `Runtime::with_in_flight(capacity, limit)` accepts **2 or 3**. CLI runtime commands read `RUST_SERVER_IN_FLIGHT`; unsupported values fail before GPU work:
+
+```sh
+# src/main.rs — select three slots for the existing typed runtime.
+RUST_SERVER_IN_FLIGHT=3 ./run.sh run artifacts/tanh/trace.amvk artifacts/tanh/inputs.json
+```
+
+A shared Tokio semaphore gates preparation/encoding across all worker lanes. The copied Metal completion block owns the permit and retained buffer handles until native completion. It then releases those resources and wakes a Tokio oneshot. Cancellation of a receipt receiver does not release or recycle committed buffers. Dropping Runtime closes admission and drains accepted jobs. A lane returns to its pool only after completion and result validation.
+
+Receipts include `worker_id` and shared `flight` counters. Pool/cache counters are lane-local; device allocation reports cover the process's Metal device resources. Splitting the total buffer budget can reduce the maximum admitted single-job size; compiled pipelines may be duplicated across lanes. Driver/pipeline allocations remain outside the buffer cap. See [design, ownership and evidence](docs/ASYNC_COMPLETION.md).
+
+## Testing Evidence
+
+| File | Coverage |
+| --- | --- |
+| tests/async_completion.rs, src/completion.rs, src/gpu.rs | Semaphore caps, native callback ownership, canceled waiters, errors, queue drain, two/three-lane pressure |
+| tests/cordic.rs | Circular/hyperbolic accuracy, axes/quadrants/tiny vectors, repeats, graph mutations, dynamic shapes and runtime recovery |
+| tests/fixed_point.rs | Explicit widening, floor shifts, saturation, full-range cancellation, K up to 4096, SIMD boundaries, randomized exact parity and repeatability |
+| tests/adversarial.rs | 10,000 malformed traces, graph/layout mutations, input rejection, tails, pressure, cancellation and producer concurrency |
+| tests/resources.rs, src/backend.rs | Cache/pool ownership, eviction, budgets, recovery and mixed-family routing |
+| ts/trace.test.ts | Five trace and handle validation tests, including version 3 |
+| judges/benchmark.py | Independent arbitrary-precision Python comparison of every saved output |
+| tests/serving.rs, tests/rapid_rpc.rs | Typed KV, integer codec, bounded iterations, panic/cancellation/error/pressure and hostile subprocess protocol |
+| judges/model_ab.py | Separately recorded real Qwen regular/TurboQuant A/B and resumed-decode logit comparisons |
+| judges/run.py | Codegen, Rust/TS gates, CLI, receipts, native signposts, GPU capture and source manifest |
+
+The final ordered run passed **83 Rust tests in each normal/debug-validation posture, 5 TypeScript tests**, Clippy, formatting, both TypeScript 7.1 compiler gates, exact Python parity, 24 native signpost pairs, CLI rejection checks and GPU capture. At each in-flight setting, the 24-job runtime judge completed all 24 callbacks with zero leaked permits; observed peak outstanding command buffers were exactly 2 and 3. Run `python3 judges/run.py` for the complete suite. Current evidence is in `evidence/`; `judge-summary.json` and `source-sha256.json` bind it to source. Historical float evidence is preserved in `evidence-float-v1/` and does not qualify integer performance. The separate model diagnostic compares regular and TurboQuant prefix storage under MLX; no full integer-versus-MLX model comparison, sustained thermal qualification or integer speedup is claimed.
+
+The independent analytic judge checked **6,643 outputs per CORDIC function**. Maximum observed error was below one raw Q1.31 unit in that saved workload; the separate edge/random Rust/Metal test reached one raw unit. All GPU values matched the deterministic integer reference exactly. These sampled results are not an exhaustive proof over every input pair.
+
+## Was It Proven Necessary?
+
+Integer storage and arithmetic are necessary for the user's requested contract. This does not establish model-quality equivalence or prove a throughput advantage over floating-point hardware.
+
+## Deployment / Rollout
+
+Local prototype only; no merge, deployment or existing service replacement. Documents remain draft with single-author review. Rollback must restore the numerical implementation and matching wire producer together. Per-job receipts and native signposts expose failures and timings. Native process crashes and GPU hangs still need stronger isolation.
+
+## Next Stage of Implementation
+
+Qualify the real model path on held-out quality/SLO workloads, implement tensor-batched hybrid state handling, then completion-safe prefix reuse, packed attention and serving transports. [Model integration](docs/MODEL_INTEGRATION.md) records the actual boundary; [accelerator roadmap](docs/ACCELERATOR_ROADMAP.md) covers AMX and ANE.
+
+## What We Learned
+
+The location of each fixed-point shift is part of the contract. Reordering exact additions is safe only while the accumulator bound holds. Shuffling both halves preserves signed 64-bit partials without shared scratch. Local measurements are required before claiming speed.
+
+Known dependency limitation: `block 0.1.6` is flagged future-incompatible by Cargo; current compiler checks pass.
+
+## Changelog
+
+1.8.0 — 2026-10-22 — Real Qwen/Rapid integration, bounded token scheduling, typed KV, regular/TurboQuant diagnostic A/B, 83-test Rust gates and explicit production limits.
+
+| Version | Date | Author | Change |
+| --- | --- | --- | --- |
+| 1.4.0 | 2026-10-22 | Codex | Semaphore-capped 2/3 command buffers, native callback-to-Tokio completion and owned worker lanes |
+| 1.3.0 | 2026-10-21 | Codex | Integer baseline, explicit int64 operands and SIMD shuffle reduction; Q1.31 confirmed; circular/hyperbolic CORDIC wired and qualified |
+| 1.1.0 | 2026-10-21 | Codex | Persistent resources and second kernel family |
+| 1.0.0 | 2026-10-21 | Codex | Original float compiler-to-GPU proof |
+
+## Threadgroup macro throughput experiment
+
+[Design and measurement contract](docs/GRID_THROUGHPUT.md): explicit 64/128/256/512-thread groups at command-buffer caps 2/3, independent 1000/1500/2000-request Rust boundary windows, three repetitions. GEMM assigns each SIMD-group its own output column with guarded tails. Defaults remain unchanged. The original full-validation measurements are archived in `evidence-macro-validated-v1/`; the historical BENCH-MODE rerun uses deterministic background one-in-1000 sampling, described below. Run `cargo build --release --locked` then `python3 judges/macro.py`; historical benchmark measurements are archived in `evidence/macro-throughput.json`. These measurements describe the 128-cube kernel runtime, not model token throughput.
+
+Measured 72 windows / 108,000 validated requests: [median rates and limits](docs/GRID_THROUGHPUT.md#observed-results). All requested widths passed; CPU reference validation dominated that historical boundary. Detailed latency and native completion counters are archived with each window.
+
+Final verification for this experiment: **45 Rust tests and 5 TypeScript tests passed**, plus the complete ordered compiler, numerical, native completion, signpost, and Metal capture gates.
+
+## Production receipts and GPU chains
+
+Default in-flight cap is **3**. Full synchronous CPU Q1.31 validation is compiled into backend execution only under `cfg(test)` or `--features debug-validation`. Production receipts explicitly report `validation_performed: false`, `max_abs_error: null`, and `validation_ms: 0`.
+
+Every 1000th successful runtime receipt is checked asynchronously by a bounded Tokio background worker. `Runtime::validation_stats()` exposes scheduled/passed/failed counts and the last error; call `flush_validation().await` after awaiting all receipts and before shutting down Tokio. A mismatch latches admission unhealthy. No sampled check is silently dropped. Returned receipts precede background-check completion.
+
+`Runtime::submit_chain(ChainJob { traces, inputs })` accepts 1–16 stage traces. Each later stage's first input consumes the preceding output with exact shape matching; remaining inputs bind by external name. Stages encode in **one Metal command buffer and one compute encoder**, declaring read/write resource usage and explicit activation memory barriers. Existing GEMM+bias+ReLU remains fused. Intermediates stay in shared GPU buffers until completion.
+
+CLI example after the standard judge generates fixture artifacts:
+
+```sh
+./run.sh run-chain artifacts/rectangular/inputs.json artifacts/rectangular/trace.amvk artifacts/sin/trace.amvk artifacts/cos/trace.amvk artifacts/tanh/trace.amvk
+cargo test --locked --features debug-validation
+```
+
+[Design, limits, and verification](docs/PRODUCTION_PIPELINE.md). Previous full-validation macro evidence is retained in `evidence-macro-validated-v1/`; production macro rows explicitly record the sampling policy and drained sample counters. Sampling uses additional bounded host snapshots (3 queued, one active, up to one pending per lane); these are separate from the 64 MiB GPU allocation budget.
+
+Historical kernel-chain-stage verification: **54 Rust tests passed in both production and debug-validation builds; 5 TypeScript tests passed**. Production macro rerun: 72 windows / 108,000 timed requests, 96 background checks passed. [Production results and limits](docs/PRODUCTION_PIPELINE.md#production-macro-results).
+
+## Spec 15 cache controller
+
+[Design and limits](docs/SPEC15_IMPLEMENTATION.md) implements exact 16-token prefix blocks joined to plan branches: SHA-256 identity isolation, immutable tail forks, reference/step/anchor holds, boundary-only leaf reclamation, epoch Q1.31 round-to-nearest-even decay, anchor budgets, continuation-first bounded admission, queue expiry, and separate unknown-output reservations.
+
+Every cache constant is explicit configuration; `fixtures/cache-config-bench.json` is an **experimental test profile**, not production tuning. Payloads are opaque bytes supplied by `Controller::fulfill` through a prefill callback. These opaque controller blocks are not yet connected to the actual Qwen producer/consumer; the new Qwen backend owns its separate real model state. `Runtime::submit_cached` retains a cache step lease through native GPU completion; existing kernels do not consume these cache payloads as model KV.
+
+```sh
+./run.sh cache-judge fixtures/cache-config-bench.json
+cargo test --locked --test cache_control
+```
+
+The CLI judge labels its payloads SYNTHETIC-NONMODEL. Cache telemetry reports production_qualified=false. Ready prefill tickets reserve bytes before computing; duplicate shared-prefix work queues behind its producer, and resident context never calls the producer again. Close branches, finish native steps, then commit boundaries; use one audit call per successive epoch. Unknown estimates remain separate from exact coverage and explicit capacity reservations.
+
+**Sampling ruling:** proposed random-policy rates/thresholds remain inactive. `Runtime::with_sampling` accepts explicit deterministic bench configuration; `DynamicDraft` is refused. Receipts/counters label DETERMINISTIC-MODE and production_sampling_claims=false. Earlier fixed-cadence throughput results are BENCH-MODE observations, not approved production sampling claims. See [policy status](docs/SAMPLING_POLICY_STATUS.md).
+
+Historical Spec 15-stage verification: **67 Rust tests passed in each normal/debug-validation build, plus 5 TypeScript tests and the complete ordered compiler/numerical/native gates**. Scope remains a tested cache control plane with opaque payloads, not a model-serving qualification.
+
+## Proposed serving architecture and next delivery
+
+[Serving architecture](docs/SERVING_ARCHITECTURE.md) specifies proposed tuning commands, an iteration scheduler, regular/TurboQuant KV interfaces, pressure and quality gates, and the ordered route to Apple-native model serving. The broader commands remain proposed; `model-run` and `config check|print` now implement a documented subset. The experimental model path below supersedes the earlier first-model milestone. Sampling draft values remain inactive.
+
+## Real Qwen model integration — experimental
+
+Qwen3.6-35B-A3B-OptiQ-4bit now runs through the bounded Rust iteration scheduler and a private Rapid/MLX worker. Its 10 attention layers support regular KV or opt-in Rapid TurboQuant V4/K8V4 prefix storage; 30 recurrent layers retain separate native state. Decode consumes the stored state, and release acknowledgement precedes completion. This is a real-model CLI path, with a separately labeled floating-activation baseline; custom Metal kernels remain integer-only.
+
+```sh
+# src/main.rs — explicit local profile and bounded prompts; regular KV remains default.
+./run.sh config check --config fixtures/qwen-serving.json
+./run.sh model-run fixtures/qwen-serving.json fixtures/qwen-prompts.json 16
+./run.sh model-run fixtures/qwen-serving.json fixtures/qwen-prompts.json 16 --kv-codec rapid-turboquant-k8v4
+```
+
+See [implementation, tuning flags and evidence](docs/MODEL_INTEGRATION.md) and [adversarial review](docs/MODEL_ADVERSARIAL_REVIEW.md). TurboQuant is prefix-storage compression with materialization before attention; the backend does not yet tensor-batch sequences. MLX native command-buffer counts are not capped by this adapter. Rust state/workspace reservations and measured MLX physical allocations are reported separately. Production sampling proposals remain inactive.
+
+Next: broader quality/SLO qualification, tensor-batched hybrid decode, completion-safe recurrent/prefix reuse, packed attention and serving transports. Earlier roadmap sections describe stage history; they do not supersede this implementation's explicit limits.
+
+The retained A/B loaded the OptiQ checkpoint without a Fable adapter. It does not qualify the intended Fabel/Cyber fine-tune; see [checkpoint correction and next-round gates](docs/MODEL_INTEGRATION.md#checkpoint-correction--fabelcyber-qualification-pending). Exact fine-tuned weights must be identified before rerunning model qualification.

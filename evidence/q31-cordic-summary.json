@@ -1,0 +1,42 @@
+{
+  "pass": true,
+  "wire_version": 3,
+  "dtype": "q1_31_i32",
+  "fractional_bits": 31,
+  "rust_tests_passed": 43,
+  "typescript_tests_passed": 5,
+  "cordic_accuracy": {
+    "pass": true,
+    "dtype": "q1_31_i32",
+    "accuracy": {
+      "sin": {
+        "outputs": 6643,
+        "max_raw_error_vs_libm": 0.9999544620513916,
+        "allowed_raw_error": 2.01
+      },
+      "cos": {
+        "outputs": 6643,
+        "max_raw_error_vs_libm": 0.9999055862426758,
+        "allowed_raw_error": 2.01
+      },
+      "atan2": {
+        "outputs": 6643,
+        "max_raw_error_vs_libm": 0.9999575018882751,
+        "allowed_raw_error": 2.01
+      },
+      "tanh": {
+        "outputs": 6643,
+        "max_raw_error_vs_libm": 0.9999884366989136,
+        "allowed_raw_error": 2.01
+      }
+    },
+    "scope": "Independent approximate analytic accuracy; exact CPU/GPU integer parity is checked separately by the runtime. Not an exhaustive 2^32 input proof."
+  },
+  "exact_cpu_gpu_gate": "zero mismatching raw words",
+  "next_runtime_stage": "measure grid variants and bounded overlap; model calibration/quality",
+  "source_manifest": "source-sha256.json",
+  "async_completion_limits": [
+    2,
+    3
+  ]
+}

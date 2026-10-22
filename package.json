@@ -1,0 +1,21 @@
+{
+  "name": "apple-native-rust-server",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "typecheck": "tsrs -p tsconfig.json",
+    "typecheck:ts71": "tsc --noEmit -p tsconfig.json",
+    "trace": "tsx ts/trace.ts",
+    "test": "tsx --test ts/*.test.ts"
+  },
+  "devDependencies": {
+    "@types/node": "24.19.2",
+    "tsrs": "0.18.0-ts7.1.0-dev.20260929",
+    "tsx": "4.23.15",
+    "typescript": "7.1.0-beta"
+  },
+  "dependencies": {
+    "flatbuffers": "25.9.23"
+  }
+}

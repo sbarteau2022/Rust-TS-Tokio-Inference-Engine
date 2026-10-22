@@ -1,0 +1,18 @@
+{
+  "pass": true,
+  "resource_backend_stages": [
+    1,
+    2
+  ],
+  "steps": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "native_capture": "/Users/stewartbarteau/Desktop/RUST SERVER/artifacts/judge-1792642601610430000.gputrace",
+  "source_manifest": "source-sha256.json",
+  "unix_time": 1792642601.761384
+}

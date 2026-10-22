@@ -1,0 +1,10 @@
+{
+  "observed_utc": "2026-10-22T05:31:11.830487+00:00",
+  "hardware": "Apple M5 Pro\n51539607552\n",
+  "os": "ProductName:\t\tmacOS\nProductVersion:\t\t27.0.1\nBuildVersion:\t\t26A434\n",
+  "scope": "128x128x128 GEMM Q1.31, seeded inputs 42, exact CPU oracle inside timed Rust receipt boundary, 32 outstanding requests; competing host workloads and thermal state uncontrolled",
+  "commands": [
+    "target/release/rust-server macro-bench artifacts THREADS LIMIT COUNT",
+    "python3 judges/macro.py"
+  ]
+}

@@ -1,0 +1,13 @@
+    Updating crates.io index
+     Locking 3 packages to highest compatible versions
+      Adding cc v1.9.0
+      Adding find-msvc-tools v0.1.15
+      Adding shlex v2.0.1
+   Compiling shlex v2.0.1
+   Compiling find-msvc-tools v0.1.15
+   Compiling cc v1.9.0
+   Compiling rust-server v0.1.0 (/Users/stewartbarteau/Desktop/RUST SERVER)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 2.58s
+warning: the following packages contain code that will be rejected by a future version of Rust: block v0.1.6
+note: to see what the problems were, use the option `--future-incompat-report`, or run `cargo report future-incompatibilities --id 1`
+     Running `target/debug/rust-server runtime-judge`

@@ -1,0 +1,8 @@
+{
+  "observed_utc": "2026-10-22T05:51:50Z",
+  "hardware": "Apple M5 Pro\n51539607552\n",
+  "os": "ProductName:\t\tmacOS\nProductVersion:\t\t27.0.1\nBuildVersion:\t\t26A434\n",
+  "policy": "production full host reference disabled; every 1000th successful receipt checked asynchronously; sampled checks drained after each window outside macro elapsed time",
+  "scope": "128x128x128 GEMM Q1.31, seed42, 32 outstanding requests, widths64/128/256/512, caps2/3; competing host workloads and thermal state uncontrolled",
+  "binary_sha256": "d3bd85038931d81beb7426a50c356d87f2654029fb9eb1ec6a609fda52b77163"
+}

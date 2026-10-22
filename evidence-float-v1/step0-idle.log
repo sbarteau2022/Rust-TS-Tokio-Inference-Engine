@@ -1,0 +1,1 @@
+PASS: starts, idles, exits on SIGTERM

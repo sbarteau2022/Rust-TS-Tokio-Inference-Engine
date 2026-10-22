@@ -1,0 +1,311 @@
+---
+title: "Production receipts, sampled validation, and GPU kernel chains"
+document_type: "implementation"
+version: "1.0.0"
+date: "2026-10-22T05:51:50Z"
+implementation_date: null
+author: "Codex for Stewart Barteau"
+reviewers: []
+status: "draft"
+related_files:
+  - path: ".gitignore"
+    lines: "1-5"
+    role: "config"
+  - path: "Cargo.lock"
+    lines: "1-452"
+    role: "config"
+  - path: "Cargo.toml"
+    lines: "1-26"
+    role: "config"
+  - path: "backend/rapid_worker.py"
+    lines: "1-165"
+    role: "primary"
+  - path: "build.rs"
+    lines: "1-8"
+    role: "primary"
+  - path: "fixtures/atan2.amvk"
+    lines: null
+    role: "test"
+  - path: "fixtures/cache-config-bench.json"
+    lines: "1-13"
+    role: "test"
+  - path: "fixtures/cos.amvk"
+    lines: null
+    role: "test"
+  - path: "fixtures/elementwise.amvk"
+    lines: null
+    role: "test"
+  - path: "fixtures/qwen-prompts-long.json"
+    lines: "1-4"
+    role: "test"
+  - path: "fixtures/qwen-prompts.json"
+    lines: "1-6"
+    role: "test"
+  - path: "fixtures/qwen-serving-long.json"
+    lines: "1-21"
+    role: "test"
+  - path: "fixtures/qwen-serving.json"
+    lines: "1-21"
+    role: "test"
+  - path: "fixtures/rectangular.amvk"
+    lines: null
+    role: "test"
+  - path: "fixtures/sin.amvk"
+    lines: null
+    role: "test"
+  - path: "fixtures/square.amvk"
+    lines: null
+    role: "test"
+  - path: "fixtures/tanh.amvk"
+    lines: null
+    role: "test"
+  - path: "judges/benchmark.py"
+    lines: "1-51"
+    role: "test"
+  - path: "judges/cordic.py"
+    lines: "1-30"
+    role: "test"
+  - path: "judges/generate_cordic.py"
+    lines: "1-44"
+    role: "test"
+  - path: "judges/macro.py"
+    lines: "1-14"
+    role: "test"
+  - path: "judges/model_ab.py"
+    lines: "1-93"
+    role: "test"
+  - path: "judges/resources.py"
+    lines: "1-35"
+    role: "test"
+  - path: "judges/run.py"
+    lines: "1-203"
+    role: "test"
+  - path: "native/telemetry.cpp"
+    lines: "1-23"
+    role: "primary"
+  - path: "package-lock.json"
+    lines: "1-1072"
+    role: "config"
+  - path: "package.json"
+    lines: "1-21"
+    role: "config"
+  - path: "requirements-bench.txt"
+    lines: "1-2"
+    role: "config"
+  - path: "run.sh"
+    lines: "1-5"
+    role: "primary"
+  - path: "schema/trace.fbs"
+    lines: "1-12"
+    role: "primary"
+  - path: "src/backend.rs"
+    lines: "1-614"
+    role: "primary"
+  - path: "src/cache/mod.rs"
+    lines: "1-1068"
+    role: "primary"
+  - path: "src/chain.rs"
+    lines: "1-50"
+    role: "primary"
+  - path: "src/completion.rs"
+    lines: "1-218"
+    role: "primary"
+  - path: "src/cordic.rs"
+    lines: "1-204"
+    role: "primary"
+  - path: "src/cordic_tables.rs"
+    lines: "1-102"
+    role: "primary"
+  - path: "src/execute.rs"
+    lines: "1-122"
+    role: "primary"
+  - path: "src/gpu.rs"
+    lines: "1-440"
+    role: "primary"
+  - path: "src/ir.rs"
+    lines: "1-646"
+    role: "primary"
+  - path: "src/lib.rs"
+    lines: "1-30"
+    role: "primary"
+  - path: "src/macro_bench.rs"
+    lines: "1-81"
+    role: "primary"
+  - path: "src/main.rs"
+    lines: "1-402"
+    role: "primary"
+  - path: "src/runtime.rs"
+    lines: "1-366"
+    role: "primary"
+  - path: "src/sampled.rs"
+    lines: "1-193"
+    role: "primary"
+  - path: "src/serving/config.rs"
+    lines: "1-51"
+    role: "primary"
+  - path: "src/serving/kv.rs"
+    lines: "1-280"
+    role: "primary"
+  - path: "src/serving/mod.rs"
+    lines: "1-73"
+    role: "primary"
+  - path: "src/serving/rapid.rs"
+    lines: "1-265"
+    role: "primary"
+  - path: "src/serving/scheduler.rs"
+    lines: "1-563"
+    role: "primary"
+  - path: "src/telemetry.rs"
+    lines: "1-26"
+    role: "primary"
+  - path: "src/trace_generated.rs"
+    lines: "1-1523"
+    role: "primary"
+  - path: "src/wire.rs"
+    lines: "1-124"
+    role: "primary"
+  - path: "tests/adversarial.rs"
+    lines: "1-456"
+    role: "test"
+  - path: "tests/async_completion.rs"
+    lines: "1-192"
+    role: "test"
+  - path: "tests/cache_control.rs"
+    lines: "1-419"
+    role: "test"
+  - path: "tests/cordic.rs"
+    lines: "1-264"
+    role: "test"
+  - path: "tests/fixed_point.rs"
+    lines: "1-146"
+    role: "test"
+  - path: "tests/grid.rs"
+    lines: "1-41"
+    role: "test"
+  - path: "tests/production_pipeline.rs"
+    lines: "1-315"
+    role: "test"
+  - path: "tests/rapid_rpc.rs"
+    lines: "1-75"
+    role: "test"
+  - path: "tests/resources.rs"
+    lines: "1-341"
+    role: "test"
+  - path: "tests/serving.rs"
+    lines: "1-426"
+    role: "test"
+  - path: "ts/generated/trace.ts"
+    lines: "1-5"
+    role: "primary"
+  - path: "ts/generated/wire/add.ts"
+    lines: "1-68"
+    role: "primary"
+  - path: "ts/generated/wire/cordic.ts"
+    lines: "1-78"
+    role: "primary"
+  - path: "ts/generated/wire/dot.ts"
+    lines: "1-68"
+    role: "primary"
+  - path: "ts/generated/wire/load.ts"
+    lines: "1-81"
+    role: "primary"
+  - path: "ts/generated/wire/op.ts"
+    lines: "1-61"
+    role: "primary"
+  - path: "ts/generated/wire/operation.ts"
+    lines: "1-54"
+    role: "primary"
+  - path: "ts/generated/wire/relu.ts"
+    lines: "1-58"
+    role: "primary"
+  - path: "ts/generated/wire/store.ts"
+    lines: "1-61"
+    role: "primary"
+  - path: "ts/generated/wire/trace.ts"
+    lines: "1-91"
+    role: "primary"
+  - path: "ts/generated/wire.ts"
+    lines: "1-13"
+    role: "primary"
+  - path: "ts/smoke.ts"
+    lines: "1-1"
+    role: "primary"
+  - path: "ts/trace.test.ts"
+    lines: "1-45"
+    role: "test"
+  - path: "ts/trace.ts"
+    lines: "1-73"
+    role: "primary"
+  - path: "tsconfig.json"
+    lines: "1-1"
+    role: "config"
+related_issues: []
+related_documents: ["ASYNC_COMPLETION.md", "GRID_THROUGHPUT.md"]
+tags: [metal, validation, chains]
+---
+# Design contract
+
+Default runtime limit becomes 3. Full synchronous integer reference execution is compiled into backend completion only under cfg(test) or the opt-in debug-validation Cargo feature. Receipt metrics explicitly distinguish checked and unchecked results; unchecked receipts report max_abs_error=null and validation_performed=false.
+
+Every 1000th successful receipt per Runtime reserves an independent raw-word check, then delivers its receipt before enqueuing background work. A bounded Tokio channel (3 queued, one active CPU check, at most one pending sample per runtime lane) feeds a single Tokio task using spawn_blocking for the integer oracle. No task is spawned per unsampled receipt. Samples own inputs, plans, and output snapshots, never pooled Metal memory. Expose counters, drain API, and last failure; failures reject new admission and remain visible after the already-delivered receipt. No sampled check is silently dropped. Background backpressure may pause a worker after its sampled receipt is delivered.
+
+A ChainJob contains 1..16 verified traces and external named input buffers. Each subsequent stage's first input is explicitly the previous stage's output; shapes must match exactly. Other inputs resolve by name from immutable external inputs. Intermediate outputs are distinct shared Metal allocations, retained through one command buffer's completion. All stage pipelines, shapes, bindings, grids, and aggregate page-rounded residency are validated before encoding. One compute encoder encodes the chain, declaring MTLResourceUsage::Read/Write and placing a resource-specific memory barrier on each produced activation before its consumer dispatch. Resource usage is a residency/access declaration, not a substitute for a dependency barrier. Fences are for cross-encoder dependencies; this single-pass chain uses intrapass resource barriers. Existing GEMM+bias+ReLU fusion stays fused.
+
+# Verification plan
+
+Test production and debug feature builds, exact chain parity across kernel families, tails, one-command-per-chain counters, shape/budget errors, canceled receivers, background mismatch injection, exactly one sample in 1000 successful receipts, sampler draining, and no samples for 999 receipts. Preserve all earlier integer/adversarial suites and rerun the macro matrix with the production validation policy explicitly recorded.
+
+# Grounding
+
+Apple documents resource-specific compute barriers and distinguishes serial pass ordering from explicit resource synchronization: https://developer.apple.com/documentation/metal/mtlcomputecommandencoder/memorybarrier(resources:) and https://developer.apple.com/documentation/metal/resource-synchronization . Local metal-rs 0.33 bindings provide memory_barrier_with_resources and use_resource.
+
+# Next stage
+
+Qualify production sampling and chain performance with representative model graphs and thermal windows; preserve previous validation-inclusive measurements as historical evidence. No model-serving or AMX/ANE execution claim.
+
+# Implementation details
+
+Rust owns typed stage bindings, bounded queues, receipt counters, and background scheduling. Metal keeps Q1.31 arithmetic and 64-bit SIMD reduction unchanged. Python archives repeated measurements. Exact file line references are in FILE_MAP.md. Source changes: chain.rs, sampled.rs, backend.rs, runtime.rs, gpu.rs, execute.rs, main.rs, macro_bench.rs, Cargo.toml, tests/production_pipeline.rs, and judges/run.py. Existing cache assertions were updated for three default worker lanes; fixed-point tests distinguish unchecked metrics from debug-validated results.
+
+# Verification and adversarial review
+
+The final ordered judge passed **54 Rust tests in each of production and debug-validation configurations**, 5 TypeScript tests, strict all-feature Clippy, formatting, TypeScript 7.1, independent numerical judges, native completion/signposts, CLI rejection checks, and Metal capture. Tests cover raw parity for mixed chains across all four widths and both caps, sixteen-stage chains, canceled receipts, residency rejection before dispatch, invalid late-stage encoding releasing permits without submission, missing bindings, mismatched shapes, sampler cadence, sampled chain parity, and injected mismatch latching admission unhealthy. A CLI four-stage chain with the environment override absent produced four kernel dispatches in one completed command buffer at default cap 3. See evidence/chain-default3.json.
+
+The sampler queues CPU-owned snapshots and never borrows recycled buffers. It checks the chain's final output against an integer reference that recomputes every stage; this is not per-intermediate GPU readback. Intermediate allocation totals are checked before compiling/encoding. All grids are validated before command encoding starts. MTLResourceUsage declares access; memory_barrier_with_resources supplies the explicit producer-to-consumer dependency. One encoder makes cross-encoder fences unnecessary.
+
+# Production macro results
+
+All 72 repeated windows passed: 108,000 timed requests, 2304 warmup requests, and **96 scheduled background checks, all passed**. Median request-to-receipt requests/s over three repetitions:
+
+| Threads | Cap | 1000 requests | 1500 requests | 2000 requests |
+| --- | --- | --- | --- | --- |
+| 64 | 2 | 10899.9 | 11218.5 | 11657.1 |
+| 64 | 3 | 15969.9 | 15925.6 | 15974.4 |
+| 128 | 2 | 11221.1 | 11443.6 | 11367.5 |
+| 128 | 3 | 15393.2 | 15670.5 | 15814.1 |
+| 256 | 2 | 11021.7 | 11238.7 | 11389.0 |
+| 256 | 3 | 15229.4 | 15698.3 | 16012.1 |
+| 512 | 2 | 11325.3 | 11494.8 | 11257.9 |
+| 512 | 3 | 15386.5 | 15884.8 | 15958.9 |
+
+The macro clock ends at the final Rust receipt. Explicit background draining occurs afterward and is excluded from macro elapsed time; background checks that run during the window contend normally. The reported rate includes admission/input copies, kernel execution, completion, and output/receipt delivery. It excludes compilation/warmup and synchronous full validation. This is a changed validation policy, not an equivalent-work speedup against the archived validation-inclusive benchmark. No model tokens/second or thermal qualification is claimed. Current default GEMM grid remains unchanged because width differences are small relative to observed run variation.
+
+# Reproduce and rollout
+
+Run `python3 judges/run.py` for both build policies and all gates. Run `cargo build --release --locked` then `python3 judges/macro.py` for the matrix. Use `./run.sh run-chain INPUTS.json TRACE [TRACE ...]` for 1–16 stages. Run `cargo test --locked --features debug-validation` to force full per-execution checking. Application shutdown must await all receipts and flush_validation before shutting down Tokio; abrupt executor/process termination cannot guarantee outstanding sample completion.
+
+Bounded host sample snapshots add up to three queued, one active, and one pending per lane, outside the GPU buffer budget. The sequential oracle can allocate temporary CPU intermediates while checking one sample. Very large or expensive chains can backpressure lanes after their sampled receipt has been delivered. This is deliberate bounded behavior; monitoring should watch scheduled minus passed/failed and last_error. There is no persistent HTTP health endpoint yet.
+
+This remains a local draft implementation with no merge/deployment or independent reviewer claimed. Previous full-validation matrix files are retained in evidence-macro-validated-v1/. The current source/evidence manifests bind the final implementation and measured binary.
+
+# Retrospective and next stage
+
+Removing the mandatory CPU oracle exposes a much higher request rate for this small GEMM workload. End-to-end costs still include host copies, IR processing, resource preparation, and receipt scheduling. Next qualify realistic model chains and sustained thermal workloads, expose persistent service health for sampled failures, then assess AMX/ANE routing against quality and determinism gates.
+
+# Changelog
+
+1.0.0 — Test/debug-gated synchronous oracle, bounded one-in-1000 receipt sampling, default cap 3, one-pass GPU chains, adversarial coverage, and production macro rerun.
+
+# Sampling qualification update
+
+Stewart later kept the proposed dynamic random policy inactive. The deterministic fixed-cadence runs above are BENCH-MODE observations, not approved production sampling claims. Runtime receipts/counters now label DETERMINISTIC-MODE; explicit DynamicDraft configuration is refused. See SAMPLING_POLICY_STATUS.md for the ruling and remaining contract work. Prior executable hashes describe the earlier measured source, not the new Spec 15 controller build.
