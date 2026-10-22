@@ -1,8 +1,8 @@
 ---
 title: "Rust Server — Apple native kernel compiler and runtime"
 document_type: "implementation"
-version: "1.14.0"
-date: "2026-10-22T03:53:10Z"
+version: "1.15.0"
+date: "2026-10-22T20:21:00Z"
 implementation_date: null
 author: "Codex for Stewart Barteau"
 reviewers: []
@@ -21,7 +21,7 @@ related_files:
     lines: "1-165"
     role: "primary"
   - path: "build.rs"
-    lines: "1-55"
+    lines: "1-56"
     role: "primary"
   - path: "fixtures/atan2.amvk"
     lines: null
@@ -92,6 +92,9 @@ related_files:
   - path: "judges/run.py"
     lines: "1-202"
     role: "test"
+  - path: "native/attention_reference.h"
+    lines: "1-21"
+    role: "primary"
   - path: "native/mlx_bridge.cpp"
     lines: "1-167"
     role: "primary"
@@ -99,7 +102,7 @@ related_files:
     lines: "1-60"
     role: "primary"
   - path: "native/qwen_model.inc"
-    lines: "1-106"
+    lines: "1-133"
     role: "primary"
   - path: "native/telemetry.cpp"
     lines: "1-23"
@@ -153,7 +156,7 @@ related_files:
     lines: "1-81"
     role: "primary"
   - path: "src/main.rs"
-    lines: "1-433"
+    lines: "1-435"
     role: "primary"
   - path: "src/runtime.rs"
     lines: "1-366"
@@ -174,13 +177,16 @@ related_files:
     lines: "1-280"
     role: "primary"
   - path: "src/serving/mod.rs"
-    lines: "1-91"
+    lines: "1-93"
     role: "primary"
   - path: "src/serving/model_ir.rs"
-    lines: "1-173"
+    lines: "1-182"
     role: "primary"
   - path: "src/serving/native_boundary.rs"
     lines: "1-193"
+    role: "primary"
+  - path: "src/serving/native_diagnose.rs"
+    lines: "1-104"
     role: "primary"
   - path: "src/serving/native_extended.rs"
     lines: "1-214"
@@ -192,7 +198,7 @@ related_files:
     lines: "1-273"
     role: "primary"
   - path: "src/serving/native_qwen.rs"
-    lines: "1-636"
+    lines: "1-656"
     role: "primary"
   - path: "src/serving/native_state.rs"
     lines: "1-194"
@@ -201,7 +207,7 @@ related_files:
     lines: "1-123"
     role: "primary"
   - path: "src/serving/qwen_tests.rs"
-    lines: "1-483"
+    lines: "1-528"
     role: "primary"
   - path: "src/serving/rapid.rs"
     lines: "1-265"
@@ -589,4 +595,39 @@ Post-IR result: **20/20 constrained smoke**, with continuation and drain passing
 
 `cargo run --release --locked -- native-qualify --extended` runs 24 new authored Rust/security cases plus actual Combined context-512 continuation, overflow rejection and three-fork serial/concurrent isolation. Declared choices and unconstrained cases are reported separately. This is a local engineering gate; independent full-model reference logits and production/domain qualification remain missing. The original 16/20-case suites are preserved. See [preregistered design and measured outcome](docs/NATIVE_QWEN_GENERATION.md).
 
-Extended measured result: **23/24; local model gate FAILED**. Context-512 chunk-versus-token continuation exceeds the fixed drift bounds (logits 0.05924, state 0.01250; limit 0.01). Overflow rejection, three-fork isolation and drain pass. Regression passes 114 default / 114 debug / 87 minimal Rust tests and TS/Metal/compiler gates. [Failure evidence](evidence/native-extended/summary.json). Next: identify the first divergent operator and establish independent reference evidence before device-state/batching optimization.
+Historical extended result before the attention correction: **23/24; local model gate FAILED**. Context-512 chunk-versus-token continuation exceeds the fixed drift bounds (logits 0.05924, state 0.01250; limit 0.01). Overflow rejection, three-fork isolation and drain pass. Regression passes 114 default / 114 debug / 87 minimal Rust tests and TS/Metal/compiler gates. [Failure evidence](evidence/native-extended/summary.json). Next: identify the first divergent operator and establish independent reference evidence before device-state/batching optimization.
+
+
+## Attention divergence diagnosis and correction
+
+`cargo run --release --locked -- native-diagnose` opt-in traces five stages per
+layer from the same context-504 snapshot, checks trace/untraced equivalence, and
+compares attention with an independent scalar FP64 oracle on actual Q/K/V.
+Normal execution allocates no trace and runs no CPU attention validation.
+
+The first divergence was layer 3 attention. Both fused SDPA and explicit batched
+FP32 matrix operations differed from the scalar oracle; single-query SDPA also
+failed at short context. The accepted reference uses FP32 elementwise products,
+stable softmax and reductions with explicit cached causal visibility. This
+establishes observed dispatch-dependent numerical error, not its unverified
+hardware-internal cause. Custom integer Metal kernels remain unchanged.
+
+Context-512 logit NRMSE improves from **0.05924135 to 0.000000379**; state NRMSE
+from **0.01249746 to 0.000000336**. Trace controls are unchanged, all traced
+attention calls pass the 1e-5 scalar-oracle bound, and no layer-stage drift exceeds
+1e-4. This is a correctness reference path with no throughput promotion.
+Full-model independent reference and semantic qualification remain separate gates.
+See [diagnosis and final qualification evidence](evidence/native-diagnose/EXPERIMENTS.md).
+
+1.15.0 — 2026-10-22 — Bounded opt-in layer tracing, independent FP64 attention
+oracle, adversarial trace validation and corrected FP32 attention reference.
+
+Final unchanged-fixture results after correction: **20/20 constrained smoke**,
+**23/24 extended domain cases**, **15/16 raw smoke**. Context continuation,
+overflow rejection, three-fork isolation and drain pass. The cancellation-domain
+answer remains wrong (`no` versus `yes`); the raw formatting failure remains.
+Full-model qualification stays blocked. Regression: 114 default / 114 debug /
+87 minimal Rust tests, five TS tests, Clippy, compiler/Metal gates and sanitizer
+harnesses pass. Next: independently validate exact-checkpoint projections and
+full-model logits, then resolve semantic qualification before optimizing attention,
+device-resident state, batching or a drafting head.

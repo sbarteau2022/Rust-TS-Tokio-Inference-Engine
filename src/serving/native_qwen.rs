@@ -173,6 +173,7 @@ impl ModelState {
 pub struct ModelStep {
     pub state: ModelState,
     pub logits: Vec<f32>,
+    pub trace: Vec<f32>,
 }
 impl ModelStep {
     pub fn greedy_token(&self) -> u32 {
@@ -373,9 +374,14 @@ impl QwenExecutor {
             .try_acquire_owned()
             .context("model in-flight limit reached")?;
         let next = c.state_len(state.offset + ir.len()) * 4;
+        let trace_bytes = if ir.trace_enabled() {
+            c.layers as usize * 5 * ir.len() * c.hidden as usize * 4
+        } else {
+            0
+        };
         let lease = self.ledger.reserve(Footprint {
-            host_bytes: state.bytes() + next + c.vocab as usize * 4,
-            tensor_bytes: state.bytes() + next + 256 * 1024 * 1024,
+            host_bytes: state.bytes() + next + c.vocab as usize * 4 + trace_bytes,
+            tensor_bytes: state.bytes() + next + 256 * 1024 * 1024 + trace_bytes,
             graph_nodes: 1,
         })?;
         let (reply, receive) = oneshot::channel();
@@ -441,6 +447,11 @@ fn forward(
     let offset = state.offset + tokens.len();
     let mut values = vec![0f32; c.state_len(offset)];
     let mut logits = vec![0f32; c.vocab as usize];
+    let mut trace = if ir.trace_enabled() {
+        vec![0.; c.layers as usize * 5 * tokens.len() * c.hidden as usize]
+    } else {
+        Vec::new()
+    };
     let mut e = [0 as c_char; 1024];
     native_status(
         unsafe {
@@ -459,6 +470,8 @@ fn forward(
                 values.len(),
                 logits.as_mut_ptr(),
                 logits.len(),
+                trace.as_mut_ptr(),
+                trace.len(),
                 e.as_mut_ptr(),
                 e.len(),
             )
@@ -467,7 +480,11 @@ fn forward(
     )?;
     manifest.verify_stamps()?;
     ensure!(
-        values.iter().chain(&logits).all(|v| v.is_finite()),
+        values
+            .iter()
+            .chain(&logits)
+            .chain(&trace)
+            .all(|v| v.is_finite()),
         "nonfinite model result"
     );
     Ok(ModelStep {
@@ -477,6 +494,7 @@ fn forward(
             values: Arc::new(values),
         },
         logits,
+        trace,
     })
 }
 unsafe extern "C" {
@@ -503,6 +521,8 @@ unsafe extern "C" {
         new_count: usize,
         logits: *mut f32,
         logits_count: usize,
+        trace: *mut f32,
+        trace_count: usize,
         error: *mut c_char,
         cap: usize,
     ) -> i32;

@@ -1,0 +1,38 @@
+{
+  "regression_pass": true,
+  "rust_tests": {
+    "default": 114,
+    "debug_validation": 114,
+    "minimal": 87
+  },
+  "typescript_tests": 5,
+  "typescript_version": "7.1",
+  "scalar_attention_oracle": {
+    "implementation": "independent scalar FP64 on actual projected QKV",
+    "calls": 90,
+    "max_nrmse": 2.22337139e-07,
+    "threshold": 1e-05
+  },
+  "context_512": {
+    "continuation": true,
+    "logit_nrmse": 3.79e-07,
+    "state_nrmse": 3.36e-07,
+    "overflow_rejected": true,
+    "fork_isolation": true,
+    "drain": true
+  },
+  "model_suites": {
+    "raw": "15/16",
+    "contracts": "20/20",
+    "extended_domain": "23/24"
+  },
+  "full_model_independent_reference": false,
+  "full_model_qualified": false,
+  "throughput_promotion": false,
+  "sanitizers": {
+    "analytic_oracle": true,
+    "malformed_ffi_descriptors": 7000,
+    "prebuilt_mlx_instrumented": false,
+    "leak_detection": false
+  }
+}

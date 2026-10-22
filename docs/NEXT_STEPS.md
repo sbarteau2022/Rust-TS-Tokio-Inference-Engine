@@ -2,7 +2,7 @@
 title: "Next stages toward an Apple native inference server"
 document_type: "architecture"
 version: "1.0.0"
-date: "2026-10-22T03:50:40Z"
+date: "2026-10-22T20:21:00Z"
 implementation_date: null
 author: "Codex for Stewart Barteau"
 reviewers: []
@@ -21,7 +21,7 @@ related_files:
     lines: "1-165"
     role: "primary"
   - path: "build.rs"
-    lines: "1-55"
+    lines: "1-56"
     role: "primary"
   - path: "fixtures/atan2.amvk"
     lines: null
@@ -92,6 +92,9 @@ related_files:
   - path: "judges/run.py"
     lines: "1-202"
     role: "test"
+  - path: "native/attention_reference.h"
+    lines: "1-21"
+    role: "primary"
   - path: "native/mlx_bridge.cpp"
     lines: "1-167"
     role: "primary"
@@ -99,7 +102,7 @@ related_files:
     lines: "1-60"
     role: "primary"
   - path: "native/qwen_model.inc"
-    lines: "1-106"
+    lines: "1-133"
     role: "primary"
   - path: "native/telemetry.cpp"
     lines: "1-23"
@@ -153,7 +156,7 @@ related_files:
     lines: "1-81"
     role: "primary"
   - path: "src/main.rs"
-    lines: "1-433"
+    lines: "1-435"
     role: "primary"
   - path: "src/runtime.rs"
     lines: "1-366"
@@ -174,13 +177,16 @@ related_files:
     lines: "1-280"
     role: "primary"
   - path: "src/serving/mod.rs"
-    lines: "1-91"
+    lines: "1-93"
     role: "primary"
   - path: "src/serving/model_ir.rs"
-    lines: "1-173"
+    lines: "1-182"
     role: "primary"
   - path: "src/serving/native_boundary.rs"
     lines: "1-193"
+    role: "primary"
+  - path: "src/serving/native_diagnose.rs"
+    lines: "1-104"
     role: "primary"
   - path: "src/serving/native_extended.rs"
     lines: "1-214"
@@ -192,7 +198,7 @@ related_files:
     lines: "1-273"
     role: "primary"
   - path: "src/serving/native_qwen.rs"
-    lines: "1-636"
+    lines: "1-656"
     role: "primary"
   - path: "src/serving/native_state.rs"
     lines: "1-194"
@@ -201,7 +207,7 @@ related_files:
     lines: "1-123"
     role: "primary"
   - path: "src/serving/qwen_tests.rs"
-    lines: "1-483"
+    lines: "1-528"
     role: "primary"
   - path: "src/serving/rapid.rs"
     lines: "1-265"
@@ -315,7 +321,7 @@ tags: [rust, metal, prototype]
 
 The typed native decoder and lexical I/O boundary are implemented. The constrained 20-case smoke passes; the original raw 16-case profile remains 15/16. Earlier stage tables below are historical and do not describe current completion status.
 
-1. Diagnose the failed extended gate: frozen domain suite 23/24 and context-512 chunk/single logit NRMSE 0.05924 / state NRMSE 0.01250 exceed the 0.01 bound. Trace the first divergent layer/operator from the same snapshot; preserve all fixtures and acceptance criteria. Overflow, fork isolation and drain passed.
+1. Context drift is corrected by the FP32 attention reduction reference: logit NRMSE 0.000000379 / state 0.000000336 at context 512, with trace controls and an independent scalar attention oracle. Preserve the failed fused/matmul/short-context experiments and unchanged fixtures. Resolve remaining semantic qualification failures without changing expected answers; operator-level attention evidence does not qualify the full model.
 2. Obtain an independently implemented exact-checkpoint native reference for logits/tokenization, then broaden domain and actual scheduler cancellation/restart qualification. A CPU rerun of our equations is insufficient. No independent full-model reference is currently established.
 3. Move state to completion-owned device handles; prove snapshot/fork/rollback parity before genuine tensor batching and scheduler performance qualification.
 4. Integrate native paged regular/TurboQuant attention with hybrid prefix-state boundaries and measured quality/memory/SLO gates.

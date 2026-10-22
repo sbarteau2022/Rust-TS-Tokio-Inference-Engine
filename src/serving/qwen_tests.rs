@@ -240,6 +240,17 @@ async fn complete_hybrid_cpu_gpu_and_chunked_state_equivalence() -> Result<()> {
     let tokens = vec![3, 5, 8, 11, 13, 17];
     let a = cpu.step(&cpu.empty_state(), tokens.clone()).await?;
     let b = gpu.step(&gpu.empty_state(), tokens.clone()).await?;
+    assert!(b.trace.is_empty());
+    let traced = gpu
+        .execute(
+            &gpu.empty_state(),
+            ModelStepIr::compile(StepKind::Prefill, 0, tokens.clone(), 64)?.with_trace(),
+        )
+        .await?;
+    assert_eq!(traced.trace.len(), 4 * 5 * tokens.len() * 32);
+    assert!(traced.trace.iter().all(|v| v.is_finite()));
+    near(&b.logits, &traced.logits);
+    near(&b.state.values, &traced.state.values);
     near(&a.logits, &b.logits);
     near(&a.state.values, &b.state.values);
     let first = gpu.step(&gpu.empty_state(), tokens[..2].to_vec()).await?;
@@ -449,8 +460,40 @@ async fn malformed_ir_and_native_layer_program_reject_before_publication() -> Re
                 state.len(),
                 logits.as_mut_ptr(),
                 logits.len(),
+                std::ptr::null_mut(),
+                0,
                 e.as_mut_ptr(),
                 e.len(),
+            )
+        };
+        assert_ne!(status, 0);
+        assert!(state.iter().all(|v| *v == 0.));
+    }
+    for (pointer, length) in [
+        (std::ptr::null_mut(), 640usize),
+        (std::ptr::null_mut(), usize::MAX),
+    ] {
+        let mut error = [0 as c_char; 1024];
+        let status = unsafe {
+            rs_qwen_forward(
+                weights.0,
+                0,
+                &fixture.c,
+                good.as_ptr().cast(),
+                4,
+                tokens.as_ptr(),
+                1,
+                0,
+                std::ptr::null(),
+                0,
+                state.as_mut_ptr(),
+                state.len(),
+                logits.as_mut_ptr(),
+                logits.len(),
+                pointer,
+                length,
+                error.as_mut_ptr(),
+                error.len(),
             )
         };
         assert_ne!(status, 0);
@@ -473,6 +516,8 @@ async fn malformed_ir_and_native_layer_program_reject_before_publication() -> Re
             state.len(),
             logits.as_mut_ptr(),
             logits.len(),
+            std::ptr::null_mut(),
+            0,
             e.as_mut_ptr(),
             e.len(),
         )

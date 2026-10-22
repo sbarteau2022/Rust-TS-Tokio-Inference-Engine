@@ -1,5 +1,7 @@
 // Complete text-only Qwen3.5/3.6 hybrid reference, invoked only by its Rust executor.
 #include <cmath>
+#include <cstdio>
+#include "attention_reference.h"
 namespace {
 struct Qwen {
  Weights& weights;rs_qwen_config c;mx::Stream s;bool shift=false;
@@ -23,7 +25,7 @@ struct Qwen {
   auto shared=linear(mx::multiply(silu(linear(flat,p+".shared_expert.gate_proj")),linear(flat,p+".shared_expert.up_proj"),s),p+".shared_expert.down_proj");
   return mx::reshape(mx::add(y,mx::multiply(shared,mx::sigmoid(linear(flat,p+".shared_expert_gate"),s),s),s),x.shape(),s);
  }
- mx::array attention(const mx::array& x,const std::string& p,int offset,mx::array old_k,mx::array old_v,std::vector<mx::array>& next){
+ mx::array attention(const mx::array& x,const std::string& p,int offset,mx::array old_k,mx::array old_v,std::vector<mx::array>& next,bool diagnose=false){
   int t=x.shape(1);auto qg=mx::split(mx::reshape(linear(x,p+".q_proj"),{1,t,c.q_heads,2*c.head_dim},s),2,-1,s);
   auto q=mx::transpose(norm(qg[0],p+".q_norm.weight"),{0,2,1,3},s);
   auto k=mx::transpose(norm(mx::reshape(linear(x,p+".k_proj"),{1,t,c.kv_heads,c.head_dim},s),p+".k_norm.weight"),{0,2,1,3},s);
@@ -31,7 +33,28 @@ struct Qwen {
   q=mx::fast::rope(q,c.rope_dims,false,c.theta,1.f,offset,{},s);k=mx::fast::rope(k,c.rope_dims,false,c.theta,1.f,offset,{},s);
   if(offset){k=mx::concatenate({old_k,k},2,s);v=mx::concatenate({old_v,v},2,s);}
   next.push_back(k);next.push_back(v);
-  auto y=mx::fast::scaled_dot_product_attention(q,k,v,1.f/std::sqrt(float(c.head_dim)),"causal",{},{},false,s);
+  std::vector<mx::array> rows;
+  for(int row=0;row<t;++row){
+   auto qr=mx::slice(q,{0,0,row,0},{1,c.q_heads,row+1,c.head_dim},s);
+   auto kr=mx::slice(k,{0,0,0,0},{1,c.kv_heads,offset+row+1,c.head_dim},s);
+   auto vr=mx::slice(v,{0,0,0,0},{1,c.kv_heads,offset+row+1,c.head_dim},s);
+   auto grouped=mx::reshape(mx::astype(qr,mx::float32,s),{1,c.kv_heads,c.q_heads/c.kv_heads,1,c.head_dim},s);
+   auto keys=mx::expand_dims(mx::astype(kr,mx::float32,s),2,s),values=mx::expand_dims(mx::astype(vr,mx::float32,s),2,s);
+   auto scores=mx::multiply(mx::sum(mx::multiply(grouped,keys,s),-1,false,s),mx::array(1.f/std::sqrt(float(c.head_dim))),s);
+   auto probabilities=mx::expand_dims(mx::softmax(scores,-1,true,s),-1,s);
+   rows.push_back(mx::reshape(mx::sum(mx::multiply(probabilities,values,s),-2,false,s),{1,c.q_heads,1,c.head_dim},s));
+  }
+  auto y=mx::concatenate(rows,2,s);
+  if(diagnose){
+   std::vector<mx::array> probe;for(auto a:{q,k,v,y})probe.push_back(mx::contiguous(mx::astype(a,mx::float32,s),false,s));
+   mx::eval(probe);mx::synchronize(s);
+   const float *qp=probe[0].data<float>(),*kp=probe[1].data<float>(),*vp=probe[2].data<float>(),*yp=probe[3].data<float>();
+   auto expected=attention_reference({qp,qp+probe[0].size()},{kp,kp+probe[1].size()},{vp,vp+probe[2].size()},c.q_heads,c.kv_heads,t,offset,c.head_dim);
+   double square=0,reference=0,maximum=0;
+   for(size_t i=0;i<expected.size();++i){double delta=yp[i]-expected[i];square+=delta*delta;reference+=expected[i]*expected[i];maximum=std::max(maximum,std::abs(delta));}
+   std::fprintf(stderr,"ATTENTION-ORACLE layer=%s offset=%d tokens=%d nrmse=%.9g max_abs=%.9g\n",p.c_str(),offset,t,std::sqrt(square/std::max(reference,1e-30)),maximum);
+   if(!std::isfinite(square)||std::sqrt(square/std::max(reference,1e-30))>1e-5)throw std::runtime_error("attention differs from scalar FP64 oracle");
+  }
   y=mx::reshape(mx::transpose(y,{0,2,1,3},s),{1,t,c.q_heads*c.head_dim},s);
   return linear(mx::multiply(y,mx::sigmoid(mx::reshape(qg[1],{1,t,c.q_heads*c.head_dim},s),s),s),p+".o_proj");
  }
@@ -72,7 +95,7 @@ extern "C" int rs_qwen_quant(void* store,const char* module,int group,int bits,c
  if(!store||!module||!(group==32||group==64||group==128)||!(bits==2||bits==3||bits==4||bits==5||bits==6||bits==8))throw std::invalid_argument("invalid model quantization");
  static_cast<Weights*>(store)->quant[std::string(module)]={group,bits};
 });}
-extern "C" int rs_qwen_forward(void* store,int gpu,const rs_qwen_config* config,const rs_qwen_layer* layers,size_t layer_count,const uint32_t* tokens,size_t count,size_t offset,const float* old_state,size_t old_count,float* new_state,size_t new_count,float* logits,size_t logits_count,char* error,size_t capacity){return checked(error,capacity,[&]{
+extern "C" int rs_qwen_forward(void* store,int gpu,const rs_qwen_config* config,const rs_qwen_layer* layers,size_t layer_count,const uint32_t* tokens,size_t count,size_t offset,const float* old_state,size_t old_count,float* new_state,size_t new_count,float* logits,size_t logits_count,float* trace,size_t trace_count,char* error,size_t capacity){return checked(error,capacity,[&]{
  if(!store||!config||!layers||!tokens||!new_state||!logits)throw std::invalid_argument("invalid model descriptor");auto c=*config;
  if(c.hidden<=0||c.hidden>8192||c.layers<=0||c.layers>64||c.vocab<=0||c.vocab>300000||c.interval<=0||c.layers%c.interval||c.context<=0||c.context>512||c.chunk<=0||c.chunk>8||count==0||count>size_t(c.chunk)||offset>size_t(c.context)||offset+count>size_t(c.context)||logits_count!=size_t(c.vocab))throw std::invalid_argument("model geometry/capacity");
  if(layer_count!=size_t(c.layers))throw std::invalid_argument("IR layer count");
@@ -82,6 +105,7 @@ extern "C" int rs_qwen_forward(void* store,int gpu,const rs_qwen_config* config,
  if(new_count!=qwen_state_count(c,offset+count)||(offset?old_count!=qwen_state_count(c,offset)||!old_state:old_count!=0))throw std::invalid_argument("model state length");
  if(new_count>32*1024*1024)throw std::invalid_argument("model state byte cap");
  for(size_t i=0;i<count;++i)if(tokens[i]>=uint32_t(c.vocab))throw std::invalid_argument("token outside vocabulary");
+ if(trace_count && (!trace||trace_count!=size_t(c.layers)*5*count*c.hidden||trace_count>64*5*8*8192))throw std::invalid_argument("trace capacity");
  Qwen m(*static_cast<Weights*>(store),c,gpu!=0);auto s=m.s;
  try{
  auto ids=mx::array(tokens,{int(count)},mx::uint32);std::string embed="language_model.model.embed_tokens";auto [group,bits]=m.quant(embed);
@@ -92,11 +116,14 @@ extern "C" int rs_qwen_forward(void* store,int gpu,const rs_qwen_config* config,
   std::string prefix="language_model.model.layers."+std::to_string(layer);std::vector<mx::array> next;
   auto h=m.norm(x,prefix+".input_layernorm.weight");mx::array r=h;
   if(layers[layer].mixer==0){int cd=2*c.key_heads*c.key_dim+c.value_heads*c.value_dim;auto conv=state({1,c.conv-1,cd},x.dtype());auto recurrent=state({1,c.value_heads,c.value_dim,c.key_dim},mx::float32);r=m.recurrent(h,prefix+".linear_attn",conv,recurrent,next);}
-  else{auto k=state({1,c.kv_heads,int(offset),c.head_dim},x.dtype());auto v=state({1,c.kv_heads,int(offset),c.head_dim},x.dtype());r=m.attention(h,prefix+".self_attn",int(offset),k,v,next);}
-  auto residual=mx::add(x,r,s);x=mx::add(residual,m.moe(m.norm(residual,prefix+".post_attention_layernorm.weight"),prefix+".mlp"),s);
+  else{auto k=state({1,c.kv_heads,int(offset),c.head_dim},x.dtype());auto v=state({1,c.kv_heads,int(offset),c.head_dim},x.dtype());r=m.attention(h,prefix+".self_attn",int(offset),k,v,next,trace_count!=0);}
+  auto residual=mx::add(x,r,s);auto mlp=m.moe(m.norm(residual,prefix+".post_attention_layernorm.weight"),prefix+".mlp");x=mx::add(residual,mlp,s);
   std::vector<mx::array> evaluated={x};for(auto& a:next)evaluated.push_back(mx::contiguous(mx::astype(a,mx::float32,s),false,s));
+  size_t state_end=evaluated.size();
+  if(trace_count)for(auto a:{h,r,residual,mlp,x})evaluated.push_back(mx::contiguous(mx::astype(a,mx::float32,s),false,s));
   mx::eval(evaluated);mx::synchronize(s);x=evaluated[0];
-  for(size_t i=1;i<evaluated.size();++i){const auto& a=evaluated[i];if(write+a.size()>new_count)throw std::invalid_argument("state write overflow");std::memcpy(new_state+write,a.data<float>(),a.size()*4);write+=a.size();}
+  if(trace_count)for(size_t stage=0;stage<5;++stage){const auto& a=evaluated[state_end+stage];if(a.size()!=count*size_t(c.hidden))throw std::invalid_argument("trace shape");std::memcpy(trace+(size_t(layer)*5+stage)*count*c.hidden,a.data<float>(),a.size()*4);}
+  for(size_t i=1;i<state_end;++i){const auto& a=evaluated[i];if(write+a.size()>new_count)throw std::invalid_argument("state write overflow");std::memcpy(new_state+write,a.data<float>(),a.size()*4);write+=a.size();}
  }
  if(write!=new_count||read!=old_count)throw std::invalid_argument("state accounting mismatch");
  auto last=mx::take(m.norm(x,"language_model.model.norm.weight"),int(count)-1,1,s);

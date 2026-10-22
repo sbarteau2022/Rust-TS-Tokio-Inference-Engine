@@ -54,7 +54,7 @@ fn cases(text: &str) -> Result<Vec<Case<'_>>> {
         })
         .collect()
 }
-fn relative(a: &[f32], b: &[f32]) -> Result<f64> {
+pub(super) fn relative(a: &[f32], b: &[f32]) -> Result<f64> {
     ensure!(
         !a.is_empty() && a.len() == b.len() && a.iter().chain(b).all(|v| v.is_finite()),
         "comparison shape/finite"

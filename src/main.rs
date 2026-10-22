@@ -13,6 +13,8 @@ async fn main() -> Result<()> {
     let args: Vec<_> = std::env::args().collect();
     match args.get(1).map(String::as_str) {
         #[cfg(feature = "native-mlx")]
+        Some("native-diagnose") => {ensure!(args.len()==2,"native-diagnose takes no arguments");rust_server::serving::native_diagnose::run().await?;}
+        #[cfg(feature = "native-mlx")]
         Some("native-qualify") => {
             ensure!(args.len()==2 || (args.len()==3 && ["--contracts","--extended"].contains(&args[2].as_str())),"native-qualify [--contracts|--extended]");
             if args.get(2).is_some_and(|s|s=="--extended") {rust_server::serving::native_extended::run().await?;} else {rust_server::serving::native_boundary::qualify_cli(args.len()==3).await?;}

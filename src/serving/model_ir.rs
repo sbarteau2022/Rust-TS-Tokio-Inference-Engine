@@ -14,6 +14,7 @@ impl TokenPosition {
 }
 #[derive(Clone, Debug)]
 pub struct ModelStepIr {
+    trace: bool,
     kind: StepKind,
     position: TokenPosition,
     vocabulary: u32,
@@ -43,11 +44,19 @@ impl ModelStepIr {
             "IR context bound"
         );
         Ok(Self {
+            trace: false,
             kind,
             position: TokenPosition(position),
             vocabulary,
             tokens: tokens.into_boxed_slice(),
         })
+    }
+    pub fn with_trace(mut self) -> Self {
+        self.trace = true;
+        self
+    }
+    pub fn trace_enabled(&self) -> bool {
+        self.trace
     }
     pub fn kind(&self) -> StepKind {
         self.kind

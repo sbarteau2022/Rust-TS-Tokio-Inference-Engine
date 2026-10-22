@@ -1,8 +1,8 @@
 ---
 title: "Native Qwen hybrid generation and qualification"
 document_type: "architecture"
-version: "1.3.0"
-date: "2026-10-22T20:00:00Z"
+version: "1.4.0"
+date: "2026-10-22T20:21:00Z"
 implementation_date: null
 author: "Codex for Stewart Barteau"
 reviewers: []
@@ -21,7 +21,7 @@ related_files:
     lines: "1-165"
     role: "primary"
   - path: "build.rs"
-    lines: "1-55"
+    lines: "1-56"
     role: "primary"
   - path: "fixtures/atan2.amvk"
     lines: null
@@ -92,6 +92,9 @@ related_files:
   - path: "judges/run.py"
     lines: "1-202"
     role: "test"
+  - path: "native/attention_reference.h"
+    lines: "1-21"
+    role: "primary"
   - path: "native/mlx_bridge.cpp"
     lines: "1-167"
     role: "primary"
@@ -99,7 +102,7 @@ related_files:
     lines: "1-60"
     role: "primary"
   - path: "native/qwen_model.inc"
-    lines: "1-106"
+    lines: "1-133"
     role: "primary"
   - path: "native/telemetry.cpp"
     lines: "1-23"
@@ -153,7 +156,7 @@ related_files:
     lines: "1-81"
     role: "primary"
   - path: "src/main.rs"
-    lines: "1-433"
+    lines: "1-435"
     role: "primary"
   - path: "src/runtime.rs"
     lines: "1-366"
@@ -174,13 +177,16 @@ related_files:
     lines: "1-280"
     role: "primary"
   - path: "src/serving/mod.rs"
-    lines: "1-91"
+    lines: "1-93"
     role: "primary"
   - path: "src/serving/model_ir.rs"
-    lines: "1-173"
+    lines: "1-182"
     role: "primary"
   - path: "src/serving/native_boundary.rs"
     lines: "1-193"
+    role: "primary"
+  - path: "src/serving/native_diagnose.rs"
+    lines: "1-104"
     role: "primary"
   - path: "src/serving/native_extended.rs"
     lines: "1-214"
@@ -192,7 +198,7 @@ related_files:
     lines: "1-273"
     role: "primary"
   - path: "src/serving/native_qwen.rs"
-    lines: "1-636"
+    lines: "1-656"
     role: "primary"
   - path: "src/serving/native_state.rs"
     lines: "1-194"
@@ -201,7 +207,7 @@ related_files:
     lines: "1-123"
     role: "primary"
   - path: "src/serving/qwen_tests.rs"
-    lines: "1-483"
+    lines: "1-528"
     role: "primary"
   - path: "src/serving/rapid.rs"
     lines: "1-265"
@@ -447,3 +453,80 @@ Regression passed 114 default Rust tests, 114 debug-validation tests, 87 minimal
 The next necessary engineering step is bounded layer/operator tracing at the first divergence from the same position-504 snapshot: isolate quantized projection dispatch, attention, recurrent updates and MoE route selection, then compare the suspect operator against an independently coded numerical oracle. No cause is presumed. Do this before persistent device state, tensor batching or drafting-head optimization. Preserve both failures and rerun the same gates after any fix.
 
 1.3.0 — 2026-10-22 — Preregistered extended qualification; retained 23/24 domain result and failed context-512 continuation, with passing overflow/isolation/drain controls.
+
+# Divergence diagnosis — design before implementation
+
+Add opt-in bounded typed layer tracing to the native model IR. Capture each layer's normalized input, mixer result, residual, MoE result and output for every token; return CPU-owned FP32 trace data after completion. The production/default path allocates no trace. Charge trace storage to the completion ledger and validate ABI lengths before evaluation. Diagnostic traces may affect graph materialization: compare traced and untraced runs from identical state and require logit/state NRMSE <=1e-6 before treating a trace as evidence about the original failure.
+
+Reproduce the frozen context fixture from position 504. Compare chunk-eight layer/token trace with eight single-token traces and report the first stage with NRMSE >1e-4, while retaining full trace differences. Do not assume which kernel caused it. Add an independent scalar numerical oracle only after locating the suspect stage. Keep original failures and acceptance limits unchanged; no throughput or full-model qualification claim follows from a trace alone.
+
+Attention diagnostic oracle: traced calls additionally compare SDPA with a scalar
+FP64 stable-softmax implementation on CPU-owned copies of the actual post-RoPE
+Q, cached K and V. Grouped heads map by integer head ratio, and row i admits
+keys 0 through offset+i inclusive. This tests attention arithmetic and cached
+causality independently of MLX attention; it does not independently qualify
+projections, weights, the complete model or semantic answers. Trace/untraced
+controls remain mandatory because materialization can affect dispatch.
+
+Correction under test: replace shape-dependent fused SDPA with explicit FP32
+GQA matrix products and stable softmax. Q is reshaped into KV-head/group axes;
+K/V broadcast across query groups. An explicit bottom-right additive mask admits
+key <= offset+query row. This is a correctness reference path; no throughput
+promotion is implied. The prior fused path remains preserved in failed evidence.
+
+The explicit batched FP32 matmul experiment reproduced the same ~0.00089
+attention error against FP64; expressing the operation differently did not fix
+it. Next correction under test: evaluate each query row through the validated
+single-query SDPA dispatch, with K/V sliced through offset+row inclusive and no
+implicit mask. Concatenation restores original head/token order. This preserves
+GPU execution but intentionally trades prefill dispatch efficiency for a stable
+reference. Hardware-internal precision is not established by these experiments.
+
+The single-query dispatch is also inaccurate for short keys (synthetic six-token
+oracle NRMSE 0.000777), so it is not accepted as a general fix. The final reference
+candidate uses FP32 elementwise products and reductions for both QK and PV,
+row by row, with grouped-head broadcasting and physically truncated K/V. It
+avoids shape-dependent matrix dispatch entirely; scalar-oracle agreement is a
+hard diagnostic gate at 1e-5 NRMSE. Peak per-row products are bounded by the
+existing 256 MiB logical temporary allowance for this supported architecture.
+
+### Observed attention correction
+
+The initial trace controls were exactly unchanged. Layer 0–2 mixer errors were
+below 5e-7 NRMSE; layer 3 attention rose to 0.000877932, with later amplification.
+For actual layer-3 QKV, batched attention differed from the independent scalar
+oracle by 0.000893746; the long-context single-query path was ~1.18e-7. Explicit
+batched FP32 matmul reproduced the error. Single-query dispatch fixed that window
+but failed the six-token synthetic oracle at 0.000776917, so was rejected.
+
+The final elementwise/reduction path passes the scalar oracle (first actual
+batched attention 1.14e-7), short-context synthetic checks and trace controls.
+At 512, logit NRMSE is 3.79e-7 and state NRMSE 3.36e-7; no traced stage exceeds
+1e-4. These observations implicate shape-dependent matrix/attention arithmetic;
+the hardware-internal precision mechanism is unverified. Cached causal visibility
+is explicitly checked by the independent oracle and analytic test cases.
+
+The final path performs per-row FP32 products/reductions on GPU, not CPU inference
+or custom floating-point Metal kernels. CPU FP64 checks run only with explicit
+tracing. No comparative throughput claim is made; test runs may overlap other
+verification jobs. A future fast attention kernel must pass the same short/long
+context and oracle gates before replacing this reference.
+
+### Final unchanged-fixture gates and adversarial review
+
+Final reference results: constrained 20/20; extended domain 23/24 (r10 remains
+`no` against expected `yes`); raw 15/16 (original punctuation failure retained).
+Context continuation, overflow, three-fork replay isolation and drain pass.
+Independent attention arithmetic is established only on supplied projected QKV;
+projection dequantization, tokenization and complete logits still lack a separate
+exact-checkpoint implementation. No full-model promotion follows.
+
+Reviewed trace capacities before store access, finite snapshots, unchanged
+untraced allocation behavior, grouped-head indexing, cached causal bounds,
+ledger charging and drain on errors. Analytic scalar tests and 7,000 invalid FFI
+descriptors run under ASan/UBSan; synthetic native CPU/GPU/chunk tests include
+trace/untraced equivalence. Full regression passes 114 default / 114 debug / 87
+minimal Rust tests, five TS tests, Clippy and compiler/Metal gates. This is an
+implementation adversarial review, not independent external sign-off. Prebuilt
+MLX is uninstrumented and its internal command buffers/physical workspace remain
+outside Rust's hard caps. Failed intermediate experiments remain visible.

@@ -1,0 +1,293 @@
+DIAGNOSE identity=509cc92543203798f2db08b6fb6cbb38a80942fc0437ae81a3ef9ff27720915b activation=f32 state=fp32 context=512 window=504..512 trace=layer-stage-token
+ATTENTION-ORACLE layer=language_model.model.layers.3.self_attn offset=504 tokens=8 nrmse=0.000893745924 max_abs=0.0030583816
+ATTENTION-ORACLE layer=language_model.model.layers.7.self_attn offset=504 tokens=8 nrmse=0.00110214991 max_abs=0.0167146655
+ATTENTION-ORACLE layer=language_model.model.layers.11.self_attn offset=504 tokens=8 nrmse=0.000934715418 max_abs=0.00975876404
+ATTENTION-ORACLE layer=language_model.model.layers.15.self_attn offset=504 tokens=8 nrmse=0.000932097099 max_abs=0.00530513165
+ATTENTION-ORACLE layer=language_model.model.layers.19.self_attn offset=504 tokens=8 nrmse=0.000950947125 max_abs=0.0135392179
+ATTENTION-ORACLE layer=language_model.model.layers.23.self_attn offset=504 tokens=8 nrmse=0.000859106799 max_abs=0.00593687951
+ATTENTION-ORACLE layer=language_model.model.layers.27.self_attn offset=504 tokens=8 nrmse=0.0010784579 max_abs=0.0118125141
+ATTENTION-ORACLE layer=language_model.model.layers.31.self_attn offset=504 tokens=8 nrmse=0.00108227713 max_abs=0.0165464695
+ATTENTION-ORACLE layer=language_model.model.layers.35.self_attn offset=504 tokens=8 nrmse=0.000833151668 max_abs=0.00638312566
+ATTENTION-ORACLE layer=language_model.model.layers.39.self_attn offset=504 tokens=8 nrmse=0.000715892551 max_abs=0.0141645928
+ATTENTION-ORACLE layer=language_model.model.layers.3.self_attn offset=504 tokens=1 nrmse=1.18230385e-07 max_abs=4.28304288e-07
+ATTENTION-ORACLE layer=language_model.model.layers.7.self_attn offset=504 tokens=1 nrmse=1.65126404e-07 max_abs=2.37270577e-06
+ATTENTION-ORACLE layer=language_model.model.layers.11.self_attn offset=504 tokens=1 nrmse=9.68021038e-08 max_abs=5.59405305e-07
+ATTENTION-ORACLE layer=language_model.model.layers.15.self_attn offset=504 tokens=1 nrmse=1.10614438e-07 max_abs=5.19733126e-07
+ATTENTION-ORACLE layer=language_model.model.layers.19.self_attn offset=504 tokens=1 nrmse=8.78171146e-08 max_abs=4.86528112e-07
+ATTENTION-ORACLE layer=language_model.model.layers.23.self_attn offset=504 tokens=1 nrmse=1.11779656e-07 max_abs=3.97891052e-07
+ATTENTION-ORACLE layer=language_model.model.layers.27.self_attn offset=504 tokens=1 nrmse=1.34713255e-07 max_abs=9.86258985e-07
+ATTENTION-ORACLE layer=language_model.model.layers.31.self_attn offset=504 tokens=1 nrmse=1.00119165e-07 max_abs=5.87890881e-07
+ATTENTION-ORACLE layer=language_model.model.layers.35.self_attn offset=504 tokens=1 nrmse=9.69988007e-08 max_abs=1.26848792e-06
+ATTENTION-ORACLE layer=language_model.model.layers.39.self_attn offset=504 tokens=1 nrmse=8.93228839e-08 max_abs=1.830502e-06
+ATTENTION-ORACLE layer=language_model.model.layers.3.self_attn offset=505 tokens=1 nrmse=1.07057186e-07 max_abs=5.42781497e-07
+ATTENTION-ORACLE layer=language_model.model.layers.7.self_attn offset=505 tokens=1 nrmse=1.22128498e-07 max_abs=1.11521347e-06
+ATTENTION-ORACLE layer=language_model.model.layers.11.self_attn offset=505 tokens=1 nrmse=1.20325052e-07 max_abs=8.86168523e-07
+ATTENTION-ORACLE layer=language_model.model.layers.15.self_attn offset=505 tokens=1 nrmse=1.32072162e-07 max_abs=3.07097482e-07
+ATTENTION-ORACLE layer=language_model.model.layers.19.self_attn offset=505 tokens=1 nrmse=1.81901835e-07 max_abs=1.81365532e-06
+ATTENTION-ORACLE layer=language_model.model.layers.23.self_attn offset=505 tokens=1 nrmse=1.52139122e-07 max_abs=6.57182605e-07
+ATTENTION-ORACLE layer=language_model.model.layers.27.self_attn offset=505 tokens=1 nrmse=1.19300565e-07 max_abs=5.72407238e-07
+ATTENTION-ORACLE layer=language_model.model.layers.31.self_attn offset=505 tokens=1 nrmse=1.31790382e-07 max_abs=1.01540308e-06
+ATTENTION-ORACLE layer=language_model.model.layers.35.self_attn offset=505 tokens=1 nrmse=7.90587035e-08 max_abs=8.14688998e-07
+ATTENTION-ORACLE layer=language_model.model.layers.39.self_attn offset=505 tokens=1 nrmse=9.33354786e-08 max_abs=2.9923048e-06
+ATTENTION-ORACLE layer=language_model.model.layers.3.self_attn offset=506 tokens=1 nrmse=9.68513854e-08 max_abs=3.93029929e-07
+ATTENTION-ORACLE layer=language_model.model.layers.7.self_attn offset=506 tokens=1 nrmse=1.14087889e-07 max_abs=1.05535212e-06
+ATTENTION-ORACLE layer=language_model.model.layers.11.self_attn offset=506 tokens=1 nrmse=1.38096948e-07 max_abs=1.48525353e-06
+ATTENTION-ORACLE layer=language_model.model.layers.15.self_attn offset=506 tokens=1 nrmse=9.59623208e-08 max_abs=2.83049054e-07
+ATTENTION-ORACLE layer=language_model.model.layers.19.self_attn offset=506 tokens=1 nrmse=8.7677272e-08 max_abs=5.83295533e-07
+ATTENTION-ORACLE layer=language_model.model.layers.23.self_attn offset=506 tokens=1 nrmse=7.95323883e-08 max_abs=4.22007484e-07
+ATTENTION-ORACLE layer=language_model.model.layers.27.self_attn offset=506 tokens=1 nrmse=1.69262777e-07 max_abs=2.15537262e-06
+ATTENTION-ORACLE layer=language_model.model.layers.31.self_attn offset=506 tokens=1 nrmse=1.0104429e-07 max_abs=4.93787162e-07
+ATTENTION-ORACLE layer=language_model.model.layers.35.self_attn offset=506 tokens=1 nrmse=6.66606557e-08 max_abs=8.91578847e-07
+ATTENTION-ORACLE layer=language_model.model.layers.39.self_attn offset=506 tokens=1 nrmse=7.47636177e-08 max_abs=9.81660664e-07
+ATTENTION-ORACLE layer=language_model.model.layers.3.self_attn offset=507 tokens=1 nrmse=9.66366439e-08 max_abs=3.68962641e-07
+ATTENTION-ORACLE layer=language_model.model.layers.7.self_attn offset=507 tokens=1 nrmse=1.39797592e-07 max_abs=1.69419789e-06
+ATTENTION-ORACLE layer=language_model.model.layers.11.self_attn offset=507 tokens=1 nrmse=1.49574212e-07 max_abs=1.27664226e-06
+ATTENTION-ORACLE layer=language_model.model.layers.15.self_attn offset=507 tokens=1 nrmse=1.9166241e-07 max_abs=8.11952716e-07
+ATTENTION-ORACLE layer=language_model.model.layers.19.self_attn offset=507 tokens=1 nrmse=1.65331245e-07 max_abs=4.00525181e-07
+ATTENTION-ORACLE layer=language_model.model.layers.23.self_attn offset=507 tokens=1 nrmse=1.51532505e-07 max_abs=5.05686081e-07
+ATTENTION-ORACLE layer=language_model.model.layers.27.self_attn offset=507 tokens=1 nrmse=1.92870156e-07 max_abs=7.33410449e-07
+ATTENTION-ORACLE layer=language_model.model.layers.31.self_attn offset=507 tokens=1 nrmse=1.7848261e-07 max_abs=7.71400883e-07
+ATTENTION-ORACLE layer=language_model.model.layers.35.self_attn offset=507 tokens=1 nrmse=9.19641842e-08 max_abs=1.31453391e-06
+ATTENTION-ORACLE layer=language_model.model.layers.39.self_attn offset=507 tokens=1 nrmse=8.54696039e-08 max_abs=2.25082452e-06
+ATTENTION-ORACLE layer=language_model.model.layers.3.self_attn offset=508 tokens=1 nrmse=1.15721498e-07 max_abs=7.21087793e-07
+ATTENTION-ORACLE layer=language_model.model.layers.7.self_attn offset=508 tokens=1 nrmse=8.71006387e-08 max_abs=8.19498087e-07
+ATTENTION-ORACLE layer=language_model.model.layers.11.self_attn offset=508 tokens=1 nrmse=1.08942292e-07 max_abs=5.19346407e-07
+ATTENTION-ORACLE layer=language_model.model.layers.15.self_attn offset=508 tokens=1 nrmse=1.11679008e-07 max_abs=3.24497195e-07
+ATTENTION-ORACLE layer=language_model.model.layers.19.self_attn offset=508 tokens=1 nrmse=7.59002995e-08 max_abs=4.15628355e-07
+ATTENTION-ORACLE layer=language_model.model.layers.23.self_attn offset=508 tokens=1 nrmse=8.34493888e-08 max_abs=3.59816881e-07
+ATTENTION-ORACLE layer=language_model.model.layers.27.self_attn offset=508 tokens=1 nrmse=1.53158273e-07 max_abs=1.68068785e-06
+ATTENTION-ORACLE layer=language_model.model.layers.31.self_attn offset=508 tokens=1 nrmse=1.32456885e-07 max_abs=4.7766569e-07
+ATTENTION-ORACLE layer=language_model.model.layers.35.self_attn offset=508 tokens=1 nrmse=1.02572006e-07 max_abs=1.1008172e-06
+ATTENTION-ORACLE layer=language_model.model.layers.39.self_attn offset=508 tokens=1 nrmse=8.51632375e-08 max_abs=2.65856664e-06
+ATTENTION-ORACLE layer=language_model.model.layers.3.self_attn offset=509 tokens=1 nrmse=8.81324337e-08 max_abs=4.44563093e-07
+ATTENTION-ORACLE layer=language_model.model.layers.7.self_attn offset=509 tokens=1 nrmse=9.28309157e-08 max_abs=8.57906957e-07
+ATTENTION-ORACLE layer=language_model.model.layers.11.self_attn offset=509 tokens=1 nrmse=1.47363449e-07 max_abs=1.72626939e-06
+ATTENTION-ORACLE layer=language_model.model.layers.15.self_attn offset=509 tokens=1 nrmse=9.43036799e-08 max_abs=1.76827782e-07
+ATTENTION-ORACLE layer=language_model.model.layers.19.self_attn offset=509 tokens=1 nrmse=6.95403382e-08 max_abs=5.11371067e-07
+ATTENTION-ORACLE layer=language_model.model.layers.23.self_attn offset=509 tokens=1 nrmse=7.33676869e-08 max_abs=2.76745454e-07
+ATTENTION-ORACLE layer=language_model.model.layers.27.self_attn offset=509 tokens=1 nrmse=1.17897788e-07 max_abs=6.36542932e-07
+ATTENTION-ORACLE layer=language_model.model.layers.31.self_attn offset=509 tokens=1 nrmse=2.034223e-07 max_abs=2.49935683e-06
+ATTENTION-ORACLE layer=language_model.model.layers.35.self_attn offset=509 tokens=1 nrmse=8.82053835e-08 max_abs=1.39495713e-06
+ATTENTION-ORACLE layer=language_model.model.layers.39.self_attn offset=509 tokens=1 nrmse=8.84087418e-08 max_abs=2.20939502e-06
+ATTENTION-ORACLE layer=language_model.model.layers.3.self_attn offset=510 tokens=1 nrmse=1.01335582e-07 max_abs=3.48386294e-07
+ATTENTION-ORACLE layer=language_model.model.layers.7.self_attn offset=510 tokens=1 nrmse=1.16227047e-07 max_abs=1.089085e-06
+ATTENTION-ORACLE layer=language_model.model.layers.11.self_attn offset=510 tokens=1 nrmse=1.16656748e-07 max_abs=1.21259312e-06
+ATTENTION-ORACLE layer=language_model.model.layers.15.self_attn offset=510 tokens=1 nrmse=1.3032967e-07 max_abs=3.334409e-07
+ATTENTION-ORACLE layer=language_model.model.layers.19.self_attn offset=510 tokens=1 nrmse=8.50848654e-08 max_abs=4.91554023e-07
+ATTENTION-ORACLE layer=language_model.model.layers.23.self_attn offset=510 tokens=1 nrmse=8.03820824e-08 max_abs=2.10837791e-07
+ATTENTION-ORACLE layer=language_model.model.layers.27.self_attn offset=510 tokens=1 nrmse=1.04222448e-07 max_abs=9.3287653e-07
+ATTENTION-ORACLE layer=language_model.model.layers.31.self_attn offset=510 tokens=1 nrmse=1.18989323e-07 max_abs=9.24813165e-07
+ATTENTION-ORACLE layer=language_model.model.layers.35.self_attn offset=510 tokens=1 nrmse=9.29287496e-08 max_abs=1.05240372e-06
+ATTENTION-ORACLE layer=language_model.model.layers.39.self_attn offset=510 tokens=1 nrmse=7.42008969e-08 max_abs=1.18341917e-06
+ATTENTION-ORACLE layer=language_model.model.layers.3.self_attn offset=511 tokens=1 nrmse=1.21828805e-07 max_abs=8.8299152e-07
+ATTENTION-ORACLE layer=language_model.model.layers.7.self_attn offset=511 tokens=1 nrmse=9.93953689e-08 max_abs=1.23697666e-06
+ATTENTION-ORACLE layer=language_model.model.layers.11.self_attn offset=511 tokens=1 nrmse=2.1040568e-07 max_abs=2.84497604e-06
+ATTENTION-ORACLE layer=language_model.model.layers.15.self_attn offset=511 tokens=1 nrmse=1.10219494e-07 max_abs=2.55916182e-07
+ATTENTION-ORACLE layer=language_model.model.layers.19.self_attn offset=511 tokens=1 nrmse=9.21911392e-08 max_abs=3.62727145e-07
+ATTENTION-ORACLE layer=language_model.model.layers.23.self_attn offset=511 tokens=1 nrmse=7.33702188e-08 max_abs=2.13986722e-07
+ATTENTION-ORACLE layer=language_model.model.layers.27.self_attn offset=511 tokens=1 nrmse=1.20371925e-07 max_abs=1.05652254e-06
+ATTENTION-ORACLE layer=language_model.model.layers.31.self_attn offset=511 tokens=1 nrmse=1.4694485e-07 max_abs=1.2400362e-06
+ATTENTION-ORACLE layer=language_model.model.layers.35.self_attn offset=511 tokens=1 nrmse=7.52656325e-08 max_abs=8.96341413e-07
+ATTENTION-ORACLE layer=language_model.model.layers.39.self_attn offset=511 tokens=1 nrmse=7.51568013e-08 max_abs=1.26933051e-06
+TRACE-CONTROL chunk_nrmse=0.000000000 single_nrmse=0.000000000 trustworthy=true
+TRACE layer=0 stage=input_norm nrmse=0.000000000 max_abs=0.000000000
+TRACE layer=0 stage=mixer nrmse=0.000000389 max_abs=0.000000119
+TRACE layer=0 stage=residual nrmse=0.000000323 max_abs=0.000000119
+TRACE layer=0 stage=moe nrmse=0.000000523 max_abs=0.000000030
+TRACE layer=0 stage=output nrmse=0.000000321 max_abs=0.000000119
+TRACE layer=1 stage=input_norm nrmse=0.000000357 max_abs=0.000003815
+TRACE layer=1 stage=mixer nrmse=0.000000451 max_abs=0.000000060
+TRACE layer=1 stage=residual nrmse=0.000000285 max_abs=0.000000119
+TRACE layer=1 stage=moe nrmse=0.000000568 max_abs=0.000000097
+TRACE layer=1 stage=output nrmse=0.000000286 max_abs=0.000000119
+TRACE layer=2 stage=input_norm nrmse=0.000000302 max_abs=0.000003815
+TRACE layer=2 stage=mixer nrmse=0.000000474 max_abs=0.000000209
+TRACE layer=2 stage=residual nrmse=0.000000256 max_abs=0.000000358
+TRACE layer=2 stage=moe nrmse=0.000000569 max_abs=0.000000298
+TRACE layer=2 stage=output nrmse=0.000000245 max_abs=0.000000358
+TRACE layer=3 stage=input_norm nrmse=0.000000211 max_abs=0.000003815
+TRACE layer=3 stage=mixer nrmse=0.000877932 max_abs=0.000376701
+TRACE layer=3 stage=residual nrmse=0.000285344 max_abs=0.000376701
+TRACE layer=3 stage=moe nrmse=0.000713419 max_abs=0.000176497
+TRACE layer=3 stage=output nrmse=0.000318368 max_abs=0.000452995
+TRACE layer=4 stage=input_norm nrmse=0.000406980 max_abs=0.002667189
+TRACE layer=4 stage=mixer nrmse=0.000596088 max_abs=0.000173450
+TRACE layer=4 stage=residual nrmse=0.000272000 max_abs=0.000511885
+TRACE layer=4 stage=moe nrmse=0.000618827 max_abs=0.000204176
+TRACE layer=4 stage=output nrmse=0.000254839 max_abs=0.000318885
+TRACE layer=5 stage=input_norm nrmse=0.000279096 max_abs=0.002529740
+TRACE layer=5 stage=mixer nrmse=0.000359209 max_abs=0.000099212
+TRACE layer=5 stage=residual nrmse=0.000204320 max_abs=0.000219584
+TRACE layer=5 stage=moe nrmse=0.000368719 max_abs=0.000082761
+TRACE layer=5 stage=output nrmse=0.000219313 max_abs=0.000210285
+TRACE layer=6 stage=input_norm nrmse=0.000245340 max_abs=0.001958907
+TRACE layer=6 stage=mixer nrmse=0.000408614 max_abs=0.000102073
+TRACE layer=6 stage=residual nrmse=0.000192658 max_abs=0.000312328
+TRACE layer=6 stage=moe nrmse=0.000472320 max_abs=0.000078628
+TRACE layer=6 stage=output nrmse=0.000192627 max_abs=0.000359058
+TRACE layer=7 stage=input_norm nrmse=0.000160625 max_abs=0.001237631
+TRACE layer=7 stage=mixer nrmse=0.001282471 max_abs=0.000419274
+TRACE layer=7 stage=residual nrmse=0.000359833 max_abs=0.000322938
+TRACE layer=7 stage=moe nrmse=0.001195950 max_abs=0.000224903
+TRACE layer=7 stage=output nrmse=0.000402444 max_abs=0.000239611
+TRACE layer=8 stage=input_norm nrmse=0.000454918 max_abs=0.004011154
+TRACE layer=8 stage=mixer nrmse=0.001023057 max_abs=0.000445053
+TRACE layer=8 stage=residual nrmse=0.000380226 max_abs=0.000377059
+TRACE layer=8 stage=moe nrmse=0.000839271 max_abs=0.000254601
+TRACE layer=8 stage=output nrmse=0.000393949 max_abs=0.000372648
+TRACE layer=9 stage=input_norm nrmse=0.000415049 max_abs=0.004374981
+TRACE layer=9 stage=mixer nrmse=0.000628375 max_abs=0.000088781
+TRACE layer=9 stage=residual nrmse=0.000368680 max_abs=0.000461459
+TRACE layer=9 stage=moe nrmse=0.000974418 max_abs=0.000158694
+TRACE layer=9 stage=output nrmse=0.000377266 max_abs=0.000390410
+TRACE layer=10 stage=input_norm nrmse=0.000377695 max_abs=0.004228830
+TRACE layer=10 stage=mixer nrmse=0.000663947 max_abs=0.000174824
+TRACE layer=10 stage=residual nrmse=0.000356746 max_abs=0.000384331
+TRACE layer=10 stage=moe nrmse=0.000967493 max_abs=0.000296821
+TRACE layer=10 stage=output nrmse=0.000388471 max_abs=0.000284433
+TRACE layer=11 stage=input_norm nrmse=0.000366756 max_abs=0.007122040
+TRACE layer=11 stage=mixer nrmse=0.001353758 max_abs=0.000273868
+TRACE layer=11 stage=residual nrmse=0.000567717 max_abs=0.000502229
+TRACE layer=11 stage=moe nrmse=0.001977862 max_abs=0.000477523
+TRACE layer=11 stage=output nrmse=0.000669609 max_abs=0.000755310
+TRACE layer=12 stage=input_norm nrmse=0.000787273 max_abs=0.006656885
+TRACE layer=12 stage=mixer nrmse=0.001643007 max_abs=0.000842452
+TRACE layer=12 stage=residual nrmse=0.000759847 max_abs=0.001147509
+TRACE layer=12 stage=moe nrmse=0.070638364 max_abs=0.007000392
+TRACE layer=12 stage=output nrmse=0.011654261 max_abs=0.006956147
+TRACE layer=13 stage=input_norm nrmse=0.014033595 max_abs=0.140793979
+TRACE layer=13 stage=mixer nrmse=0.022828102 max_abs=0.005453303
+TRACE layer=13 stage=residual nrmse=0.011483779 max_abs=0.007966876
+TRACE layer=13 stage=moe nrmse=0.065473407 max_abs=0.009948790
+TRACE layer=13 stage=output nrmse=0.015901322 max_abs=0.008983488
+TRACE layer=14 stage=input_norm nrmse=0.018886402 max_abs=0.190029755
+TRACE layer=14 stage=mixer nrmse=0.024698568 max_abs=0.027867854
+TRACE layer=14 stage=residual nrmse=0.017755045 max_abs=0.029849887
+TRACE layer=14 stage=moe nrmse=0.099127798 max_abs=0.057945564
+TRACE layer=14 stage=output nrmse=0.024586426 max_abs=0.028095603
+TRACE layer=15 stage=input_norm nrmse=0.025763079 max_abs=0.389921904
+TRACE layer=15 stage=mixer nrmse=0.030658150 max_abs=0.008629143
+TRACE layer=15 stage=residual nrmse=0.024413067 max_abs=0.034555435
+TRACE layer=15 stage=moe nrmse=0.100051459 max_abs=0.046820372
+TRACE layer=15 stage=output nrmse=0.029034166 max_abs=0.018505838
+TRACE layer=16 stage=input_norm nrmse=0.033744655 max_abs=0.391178906
+TRACE layer=16 stage=mixer nrmse=0.055952061 max_abs=0.040775329
+TRACE layer=16 stage=residual nrmse=0.029841915 max_abs=0.028510332
+TRACE layer=16 stage=moe nrmse=0.073699403 max_abs=0.014967136
+TRACE layer=16 stage=output nrmse=0.030383573 max_abs=0.025726795
+TRACE layer=17 stage=input_norm nrmse=0.035793292 max_abs=0.410588741
+TRACE layer=17 stage=mixer nrmse=0.041989422 max_abs=0.042648613
+TRACE layer=17 stage=residual nrmse=0.032979140 max_abs=0.022551000
+TRACE layer=17 stage=moe nrmse=0.068266903 max_abs=0.040915847
+TRACE layer=17 stage=output nrmse=0.032663277 max_abs=0.024025112
+TRACE layer=18 stage=input_norm nrmse=0.037708528 max_abs=0.525266647
+TRACE layer=18 stage=mixer nrmse=0.050033879 max_abs=0.057292342
+TRACE layer=18 stage=residual nrmse=0.035703275 max_abs=0.033298373
+TRACE layer=18 stage=moe nrmse=0.123457711 max_abs=0.034842968
+TRACE layer=18 stage=output nrmse=0.044918776 max_abs=0.027831070
+TRACE layer=19 stage=input_norm nrmse=0.048009380 max_abs=0.601222515
+TRACE layer=19 stage=mixer nrmse=0.090361197 max_abs=0.068754494
+TRACE layer=19 stage=residual nrmse=0.049555189 max_abs=0.067209899
+TRACE layer=19 stage=moe nrmse=0.149226836 max_abs=0.140685201
+TRACE layer=19 stage=output nrmse=0.061101748 max_abs=0.073475361
+TRACE layer=20 stage=input_norm nrmse=0.068304612 max_abs=0.895784482
+TRACE layer=20 stage=mixer nrmse=0.108861243 max_abs=0.044208169
+TRACE layer=20 stage=residual nrmse=0.062252103 max_abs=0.043358518
+TRACE layer=20 stage=moe nrmse=0.253832265 max_abs=0.068498552
+TRACE layer=20 stage=output nrmse=0.066609470 max_abs=0.097765923
+TRACE layer=21 stage=input_norm nrmse=0.071048755 max_abs=0.861026168
+TRACE layer=21 stage=mixer nrmse=0.123122543 max_abs=0.054718465
+TRACE layer=21 stage=residual nrmse=0.066346583 max_abs=0.043175342
+TRACE layer=21 stage=moe nrmse=0.186655503 max_abs=0.025587946
+TRACE layer=21 stage=output nrmse=0.069405028 max_abs=0.054244041
+TRACE layer=22 stage=input_norm nrmse=0.068455210 max_abs=0.673171997
+TRACE layer=22 stage=mixer nrmse=0.110260070 max_abs=0.043404818
+TRACE layer=22 stage=residual nrmse=0.072295922 max_abs=0.049721181
+TRACE layer=22 stage=moe nrmse=0.195415018 max_abs=0.059874482
+TRACE layer=22 stage=output nrmse=0.080780600 max_abs=0.053897306
+TRACE layer=23 stage=input_norm nrmse=0.078400674 max_abs=1.197825909
+TRACE layer=23 stage=mixer nrmse=0.153323935 max_abs=0.199744768
+TRACE layer=23 stage=residual nrmse=0.081375463 max_abs=0.150709629
+TRACE layer=23 stage=moe nrmse=0.124736378 max_abs=0.060244679
+TRACE layer=23 stage=output nrmse=0.076413851 max_abs=0.210954189
+TRACE layer=24 stage=input_norm nrmse=0.082181102 max_abs=0.888370514
+TRACE layer=24 stage=mixer nrmse=0.110899773 max_abs=0.039901435
+TRACE layer=24 stage=residual nrmse=0.078417716 max_abs=0.171052814
+TRACE layer=24 stage=moe nrmse=0.175378871 max_abs=0.043311507
+TRACE layer=24 stage=output nrmse=0.076034403 max_abs=0.127741337
+TRACE layer=25 stage=input_norm nrmse=0.084129216 max_abs=0.778809547
+TRACE layer=25 stage=mixer nrmse=0.108106301 max_abs=0.047512710
+TRACE layer=25 stage=residual nrmse=0.080710439 max_abs=0.080228567
+TRACE layer=25 stage=moe nrmse=0.102220007 max_abs=0.052279115
+TRACE layer=25 stage=output nrmse=0.073472296 max_abs=0.132507801
+TRACE layer=26 stage=input_norm nrmse=0.075023919 max_abs=0.756181970
+TRACE layer=26 stage=mixer nrmse=0.088339434 max_abs=0.081509113
+TRACE layer=26 stage=residual nrmse=0.077830576 max_abs=0.137885571
+TRACE layer=26 stage=moe nrmse=0.155788497 max_abs=0.222899377
+TRACE layer=26 stage=output nrmse=0.087637484 max_abs=0.085013747
+TRACE layer=27 stage=input_norm nrmse=0.088118449 max_abs=1.135039330
+TRACE layer=27 stage=mixer nrmse=0.133556397 max_abs=0.045061052
+TRACE layer=27 stage=residual nrmse=0.082003104 max_abs=0.064448714
+TRACE layer=27 stage=moe nrmse=0.079465860 max_abs=0.079484224
+TRACE layer=27 stage=output nrmse=0.068409817 max_abs=0.061005384
+TRACE layer=28 stage=input_norm nrmse=0.070383672 max_abs=0.805691242
+TRACE layer=28 stage=mixer nrmse=0.076783940 max_abs=0.062173843
+TRACE layer=28 stage=residual nrmse=0.074072914 max_abs=0.059093626
+TRACE layer=28 stage=moe nrmse=0.087287691 max_abs=0.023109436
+TRACE layer=28 stage=output nrmse=0.065323262 max_abs=0.061508202
+TRACE layer=29 stage=input_norm nrmse=0.066142437 max_abs=0.572268248
+TRACE layer=29 stage=mixer nrmse=0.055707821 max_abs=0.051107049
+TRACE layer=29 stage=residual nrmse=0.073279099 max_abs=0.055291228
+TRACE layer=29 stage=moe nrmse=0.097340436 max_abs=0.102318466
+TRACE layer=29 stage=output nrmse=0.065088773 max_abs=0.060221270
+TRACE layer=30 stage=input_norm nrmse=0.064101062 max_abs=0.620316029
+TRACE layer=30 stage=mixer nrmse=0.093235885 max_abs=0.060977429
+TRACE layer=30 stage=residual nrmse=0.065333617 max_abs=0.058734624
+TRACE layer=30 stage=moe nrmse=0.234241982 max_abs=0.044827625
+TRACE layer=30 stage=output nrmse=0.071926494 max_abs=0.062766511
+TRACE layer=31 stage=input_norm nrmse=0.067789984 max_abs=0.515087699
+TRACE layer=31 stage=mixer nrmse=0.066213956 max_abs=0.092117637
+TRACE layer=31 stage=residual nrmse=0.069208811 max_abs=0.065174162
+TRACE layer=31 stage=moe nrmse=0.183949790 max_abs=0.075997591
+TRACE layer=31 stage=output nrmse=0.074408677 max_abs=0.070684575
+TRACE layer=32 stage=input_norm nrmse=0.070169448 max_abs=0.655969143
+TRACE layer=32 stage=mixer nrmse=0.087908661 max_abs=0.142674029
+TRACE layer=32 stage=residual nrmse=0.075519818 max_abs=0.126951218
+TRACE layer=32 stage=moe nrmse=0.285154292 max_abs=0.103082209
+TRACE layer=32 stage=output nrmse=0.098641740 max_abs=0.112621963
+TRACE layer=33 stage=input_norm nrmse=0.094901264 max_abs=0.970096588
+TRACE layer=33 stage=mixer nrmse=0.112647162 max_abs=0.132994413
+TRACE layer=33 stage=residual nrmse=0.097433867 max_abs=0.147301674
+TRACE layer=33 stage=moe nrmse=0.189958917 max_abs=0.136562144
+TRACE layer=33 stage=output nrmse=0.096528331 max_abs=0.136797711
+TRACE layer=34 stage=input_norm nrmse=0.087970208 max_abs=0.931758881
+TRACE layer=34 stage=mixer nrmse=0.102528436 max_abs=0.094874740
+TRACE layer=34 stage=residual nrmse=0.097418129 max_abs=0.138898034
+TRACE layer=34 stage=moe nrmse=0.188754368 max_abs=0.467987895
+TRACE layer=34 stage=output nrmse=0.098708153 max_abs=0.514951706
+TRACE layer=35 stage=input_norm nrmse=0.084773177 max_abs=1.429111481
+TRACE layer=35 stage=mixer nrmse=0.104804448 max_abs=0.889048994
+TRACE layer=35 stage=residual nrmse=0.081510222 max_abs=0.374097347
+TRACE layer=35 stage=moe nrmse=0.100066589 max_abs=0.124027431
+TRACE layer=35 stage=output nrmse=0.075421984 max_abs=0.250070095
+TRACE layer=36 stage=input_norm nrmse=0.071578495 max_abs=1.474731445
+TRACE layer=36 stage=mixer nrmse=0.077271207 max_abs=0.048934221
+TRACE layer=36 stage=residual nrmse=0.076101679 max_abs=0.201135635
+TRACE layer=36 stage=moe nrmse=0.132391474 max_abs=0.182308197
+TRACE layer=36 stage=output nrmse=0.073226046 max_abs=0.133579373
+TRACE layer=37 stage=input_norm nrmse=0.067909256 max_abs=0.790593475
+TRACE layer=37 stage=mixer nrmse=0.063861306 max_abs=0.208565474
+TRACE layer=37 stage=residual nrmse=0.074112580 max_abs=0.227393150
+TRACE layer=37 stage=moe nrmse=0.106749667 max_abs=0.120306253
+TRACE layer=37 stage=output nrmse=0.071170481 max_abs=0.157303877
+TRACE layer=38 stage=input_norm nrmse=0.064417879 max_abs=0.825185776
+TRACE layer=38 stage=mixer nrmse=0.058946177 max_abs=0.294811964
+TRACE layer=38 stage=residual nrmse=0.072760976 max_abs=0.344519615
+TRACE layer=38 stage=moe nrmse=0.094532694 max_abs=0.405693650
+TRACE layer=38 stage=output nrmse=0.067639151 max_abs=0.200394154
+TRACE layer=39 stage=input_norm nrmse=0.062293432 max_abs=0.647481050
+TRACE layer=39 stage=mixer nrmse=0.043819861 max_abs=0.154524922
+TRACE layer=39 stage=residual nrmse=0.061160267 max_abs=0.125592053
+TRACE layer=39 stage=moe nrmse=0.063929726 max_abs=0.807590961
+TRACE layer=39 stage=output nrmse=0.064690751 max_abs=0.737886906
+DIAGNOSTIC-SUMMARY first_over_1e4=Some((3, "mixer")) logit_nrmse=0.059241349 state_nrmse=0.012497463 independent_reference=false

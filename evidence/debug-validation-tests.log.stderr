@@ -1,3 +1,4 @@
+   Compiling rust-server v0.1.0 (/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine)
 warning: rust-server@0.1.0: In file included from native/mlx_bridge.cpp:2:
 warning: rust-server@0.1.0: In file included from /Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/vendor/mlx/include/mlx/mlx.h:5:
 warning: rust-server@0.1.0: In file included from /Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/vendor/mlx/include/mlx/array.h:11:
@@ -23,19 +24,19 @@ warning: rust-server@0.1.0: /Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-I
 warning: rust-server@0.1.0:    38 |     return (*this = _MLX_BFloat16(x));
 warning: rust-server@0.1.0:       |                   ^
 warning: rust-server@0.1.0: 4 warnings generated.
-   Compiling rust-server v0.1.0 (/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine)
-    Finished `test` profile [unoptimized + debuginfo] target(s) in 3.11s
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 4.85s
 warning: the following packages contain code that will be rejected by a future version of Rust: block v0.1.6
 note: to see what the problems were, use the option `--future-incompat-report`, or run `cargo report future-incompatibilities --id 1`
      Running unittests src/lib.rs (target/debug/deps/rust_server-9bc63fff87d7a7be)
 background Q1.31 validation failed: result length mismatch
 background Q1.31 validation failed: result length mismatch
+ATTENTION-ORACLE layer=language_model.model.layers.3.self_attn offset=0 tokens=6 nrmse=3.97816087e-08 max_abs=2.78164525e-08
      Running unittests src/main.rs (target/debug/deps/rust_server-7e12fd3199264fa8)
      Running tests/adversarial.rs (target/debug/deps/adversarial-468ce521bc5665f8)
      Running tests/async_completion.rs (target/debug/deps/async_completion-9c229c2874ed6493)
      Running tests/cache_control.rs (target/debug/deps/cache_control-327db835a10da0f5)
 
-thread 'prefix_inflight_is_deduplicated_and_producer_errors_release_reservations' (23778284) panicked at tests/cache_control.rs:211:26:
+thread 'prefix_inflight_is_deduplicated_and_producer_errors_release_reservations' (23826066) panicked at tests/cache_control.rs:211:26:
 injected producer panic
 note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
      Running tests/cordic.rs (target/debug/deps/cordic-464d6c5c83b7d367)
@@ -49,7 +50,7 @@ note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
      Running tests/resources.rs (target/debug/deps/resources-2d8cc43fe152867d)
      Running tests/serving.rs (target/debug/deps/serving-714141ed3c264fd5)
 
-thread 'panicked_backend_closes_admission_and_reports_unfinished_work' (23779042) panicked at tests/serving.rs:217:27:
+thread 'panicked_backend_closes_admission_and_reports_unfinished_work' (23827263) panicked at tests/serving.rs:217:27:
 injected model backend panic
 note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
    Doc-tests rust_server
