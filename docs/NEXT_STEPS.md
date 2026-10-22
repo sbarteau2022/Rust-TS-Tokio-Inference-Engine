@@ -38,6 +38,9 @@ related_files:
   - path: "fixtures/native-choice-heldout.tsv"
     lines: "1-4"
     role: "test"
+  - path: "fixtures/native-domain-heldout.tsv"
+    lines: "1-24"
+    role: "test"
   - path: "fixtures/native-heldout.tsv"
     lines: "1-16"
     role: "test"
@@ -171,13 +174,16 @@ related_files:
     lines: "1-280"
     role: "primary"
   - path: "src/serving/mod.rs"
-    lines: "1-89"
+    lines: "1-91"
     role: "primary"
   - path: "src/serving/model_ir.rs"
     lines: "1-173"
     role: "primary"
   - path: "src/serving/native_boundary.rs"
     lines: "1-193"
+    role: "primary"
+  - path: "src/serving/native_extended.rs"
+    lines: "1-214"
     role: "primary"
   - path: "src/serving/native_mlx.rs"
     lines: "1-925"
@@ -304,6 +310,16 @@ related_documents: ["DESIGN.md", "../README.md"]
 tags: [rust, metal, prototype]
 ---
 > Numerical update: float/matrix-kernel descriptions and measurements below refer to the original prototype. The active integer/shuffle contract is documented in [FIXED_POINT.md](FIXED_POINT.md) and README.md. The user confirmed Q1.31 storage; sin, cos, atan2 and tanh are now wired through the runtime. The runtime now has semaphore-capped 2/3-slot completion callbacks; see ASYNC_COMPLETION.md. Earlier single-worker descriptions below are historical.
+
+# Current delivery order — native Combined
+
+The typed native decoder and lexical I/O boundary are implemented. The constrained 20-case smoke passes; the original raw 16-case profile remains 15/16. Earlier stage tables below are historical and do not describe current completion status.
+
+1. Diagnose the failed extended gate: frozen domain suite 23/24 and context-512 chunk/single logit NRMSE 0.05924 / state NRMSE 0.01250 exceed the 0.01 bound. Trace the first divergent layer/operator from the same snapshot; preserve all fixtures and acceptance criteria. Overflow, fork isolation and drain passed.
+2. Obtain an independently implemented exact-checkpoint native reference for logits/tokenization, then broaden domain and actual scheduler cancellation/restart qualification. A CPU rerun of our equations is insufficient. No independent full-model reference is currently established.
+3. Move state to completion-owned device handles; prove snapshot/fork/rollback parity before genuine tensor batching and scheduler performance qualification.
+4. Integrate native paged regular/TurboQuant attention with hybrid prefix-state boundaries and measured quality/memory/SLO gates.
+5. Evaluate a custom drafting head only with exact target verification and atomic hybrid-state rollback. Native MTP and proposed production sampling stay disabled; ANE/AMX execution stays capability-gated until measured.
 
 # Context
 

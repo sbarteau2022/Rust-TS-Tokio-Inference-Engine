@@ -1,0 +1,1 @@
+fc565e8cbb0d95769c05f949765bc16e01b5e652f4dcd78b7835168b7ab8f414  target/release/rust-server

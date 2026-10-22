@@ -1,7 +1,7 @@
 ---
 title: "Native Qwen hybrid generation and qualification"
 document_type: "architecture"
-version: "1.2.0"
+version: "1.3.0"
 date: "2026-10-22T20:00:00Z"
 implementation_date: null
 author: "Codex for Stewart Barteau"
@@ -37,6 +37,9 @@ related_files:
     role: "test"
   - path: "fixtures/native-choice-heldout.tsv"
     lines: "1-4"
+    role: "test"
+  - path: "fixtures/native-domain-heldout.tsv"
+    lines: "1-24"
     role: "test"
   - path: "fixtures/native-heldout.tsv"
     lines: "1-16"
@@ -171,13 +174,16 @@ related_files:
     lines: "1-280"
     role: "primary"
   - path: "src/serving/mod.rs"
-    lines: "1-89"
+    lines: "1-91"
     role: "primary"
   - path: "src/serving/model_ir.rs"
     lines: "1-173"
     role: "primary"
   - path: "src/serving/native_boundary.rs"
     lines: "1-193"
+    role: "primary"
+  - path: "src/serving/native_extended.rs"
+    lines: "1-214"
     role: "primary"
   - path: "src/serving/native_mlx.rs"
     lines: "1-925"
@@ -419,3 +425,25 @@ Next: independent exact-checkpoint reference logits and broader held-out domain/
 1.2.0 — 2026-10-22 — Typed internal model-step/layer IR, lexical boundary isolation and unchanged post-IR constrained model smoke.
 
 The final CLI smoke `native-generate "Does Rust allow two simultaneous mutable references to the same value in safe code? Reply with only yes or no." 8 --choices yes,no` emits exactly `no` then EOS, with contract fingerprint 38530787a615166fb03bb840a5aeb22916f9cbe2a58347ce45f45b65c619f0d6. Both yes/no choices were legal. This single smoke is not a throughput benchmark.
+
+# Extended qualification — design and preregistration
+
+Before tuning device residency, add a separately labeled `native-qualify --extended` local gate. Preserve the original raw/constrained fixtures. Freeze 24 new authored Rust/defensive-security cases before the run, explicitly declaring each case's legal choices independently of its expected answer; require all 24 exact trimmed outputs and EOS. A choice set must contain at least two alternatives, and unconstrained cases remain unconstrained. This is authored engineering qualification, not a standardized Cyber benchmark.
+
+Exercise the actual Combined checkpoint to context 512 with a fixed raw-text-derived token cycle. From position 504 compare an eight-token chunk with eight single-token steps: same top-1 and logit/state NRMSE <=0.01. Reject token 513 without changing the immutable snapshot. Fork position 511 into three admitted one-token operations with distinct tokens; compare their results to serial replay (same top-1, NRMSE <=1e-7), then require the executor ledger to drain. This tests real hybrid KV/convolution/recurrent state and bounded native queue isolation; it does not establish fused tensor batching.
+
+Use the existing FP32 profile, exact Combined fingerprint and native typed IR. Keep tokenization in I/O. Record per-case results, state size, timings, logical scheduler memory and drain separately. CPU/GPU or split-continuation agreement is same-implementation evidence, not an independent full-model reference. Print independent_reference=false and full_model_qualified=false even if these local gates pass. An external, exact-checkpoint independent reference remains required and must not be fabricated from this executor's own outputs.
+
+# Extended measured findings — gate failed, preserved
+
+The exact Combined FP32 run scored 23/24. Case r10 expected `yes` for cancellation of a future by dropping it; the model emitted `no` despite both alternatives being legal. Keep the prompt/expectation unchanged. [Tokio's select tutorial](https://tokio.rs/tokio/tutorial/select) documents cancellation by dropping a future; [JoinHandle documentation](https://docs.rs/tokio/latest/tokio/task/struct.JoinHandle.html) distinguishes dropping a join handle, which detaches its task. The authored question tests the former distinction; no answer rewrite or constraint narrowing was applied.
+
+At context 512 the unified snapshot contains 86,835,200 bytes. From the same position-504 snapshot, chunk-eight versus eight single-token steps produced logit NRMSE 0.05924135 and state NRMSE 0.01249746, both exceeding the preregistered 0.01 bound. This is observed chunk-dependent numerical drift; its operator-level cause has not been established. The earlier eight-token/20-case smoke remains valid within its narrower scope and cannot qualify context 512.
+
+Overflow rejection, three-fork versus serial replay isolation, native lease drain and scheduler shutdown passed. Scheduler logical memory peaked at 797,376,512 bytes; this is a logical reservation, not measured MLX physical residency. The model gate exits 1. Evidence/native-extended retains source/binary/SDK/fixture identities, the failed report and structured summary.
+
+Regression passed 114 default Rust tests, 114 debug-validation tests, 87 minimal-feature tests, five TS tests, TS 7.1/tsrs, Clippy, formatting and existing integer Metal/resource/signpost/GPU capture checks. Harness tests passing do not override the model gate. Actual scheduler cancellation/restart under workhorse load and an independent full-model oracle remain unestablished.
+
+The next necessary engineering step is bounded layer/operator tracing at the first divergence from the same position-504 snapshot: isolate quantized projection dispatch, attention, recurrent updates and MoE route selection, then compare the suspect operator against an independently coded numerical oracle. No cause is presumed. Do this before persistent device state, tensor batching or drafting-head optimization. Preserve both failures and rerun the same gates after any fix.
+
+1.3.0 — 2026-10-22 — Preregistered extended qualification; retained 23/24 domain result and failed context-512 continuation, with passing overflow/isolation/drain controls.

@@ -1,7 +1,7 @@
 ---
 title: "Rust Server — Apple native kernel compiler and runtime"
 document_type: "implementation"
-version: "1.13.0"
+version: "1.14.0"
 date: "2026-10-22T03:53:10Z"
 implementation_date: null
 author: "Codex for Stewart Barteau"
@@ -37,6 +37,9 @@ related_files:
     role: "test"
   - path: "fixtures/native-choice-heldout.tsv"
     lines: "1-4"
+    role: "test"
+  - path: "fixtures/native-domain-heldout.tsv"
+    lines: "1-24"
     role: "test"
   - path: "fixtures/native-heldout.tsv"
     lines: "1-16"
@@ -171,13 +174,16 @@ related_files:
     lines: "1-280"
     role: "primary"
   - path: "src/serving/mod.rs"
-    lines: "1-89"
+    lines: "1-91"
     role: "primary"
   - path: "src/serving/model_ir.rs"
     lines: "1-173"
     role: "primary"
   - path: "src/serving/native_boundary.rs"
     lines: "1-193"
+    role: "primary"
+  - path: "src/serving/native_extended.rs"
+    lines: "1-214"
     role: "primary"
   - path: "src/serving/native_mlx.rs"
     lines: "1-925"
@@ -578,3 +584,9 @@ The pre-IR constrained model smoke passed 20/20 while the raw profile remained 1
 1.13.0 — 2026-10-22 — Explicit per-request output choices; separate raw/constrained qualification; typed native model-step/layer IR and lexical I/O boundary.
 
 Post-IR result: **20/20 constrained smoke**, with continuation and drain passing; reported outputs/metrics match the pre-IR run. Regression passed 113 default / 113 debug / 87 minimal-feature Rust tests, five TS tests and the existing compiler/Metal gates. The original unconstrained profile remains 15/16; broader model quality remains unqualified. [Recorded findings](evidence/native-ir/summary.json).
+
+## Extended qualification gate
+
+`cargo run --release --locked -- native-qualify --extended` runs 24 new authored Rust/security cases plus actual Combined context-512 continuation, overflow rejection and three-fork serial/concurrent isolation. Declared choices and unconstrained cases are reported separately. This is a local engineering gate; independent full-model reference logits and production/domain qualification remain missing. The original 16/20-case suites are preserved. See [preregistered design and measured outcome](docs/NATIVE_QWEN_GENERATION.md).
+
+Extended measured result: **23/24; local model gate FAILED**. Context-512 chunk-versus-token continuation exceeds the fixed drift bounds (logits 0.05924, state 0.01250; limit 0.01). Overflow rejection, three-fork isolation and drain pass. Regression passes 114 default / 114 debug / 87 minimal Rust tests and TS/Metal/compiler gates. [Failure evidence](evidence/native-extended/summary.json). Next: identify the first divergent operator and establish independent reference evidence before device-state/batching optimization.

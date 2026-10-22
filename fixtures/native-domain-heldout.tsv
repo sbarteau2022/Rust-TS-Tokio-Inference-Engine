@@ -1,0 +1,24 @@
+r01	rust	A,B	Which Rust type allows shared ownership across threads: A) Arc B) Rc? Reply with only A or B.	A
+r02	rust	A,B	Which type permits single-threaded interior mutability checked at runtime: A) Mutex B) RefCell? Reply with only A or B.	B
+r03	rust	yes,no	Does moving a non-Copy String normally invalidate the previous binding? Reply with only yes or no.	yes
+r04	rust	yes,no	Is a shared reference &T normally allowed to mutate T without interior mutability? Reply with only yes or no.	no
+r05	rust	A,B	Which Rust trait permits implicit bitwise copying: A) Clone B) Copy? Reply with only A or B.	B
+r06	rust	A,B	Which operation waits asynchronously without blocking a Tokio worker: A) tokio::time::sleep(...).await B) std::thread::sleep(...)? Reply with only A or B.	A
+r07	rust	-	What Rust keyword declares an asynchronous function before fn? Reply with only the keyword.	async
+r08	rust	-	Which Rust Option variant represents absence? Reply with only the variant name without parentheses.	None
+r09	rust	-	Which Rust Result variant represents failure? Reply with only the variant name without parentheses.	Err
+r10	rust	yes,no	Can a Rust future be cancelled by dropping it before completion? Reply with only yes or no.	yes
+r11	rust	yes,no	Does an unbounded queue impose a fixed capacity limit on queued messages? Reply with only yes or no.	no
+r12	rust	A,B	Which avoids holding a synchronous mutex guard across await: A) drop the guard before await B) keep the guard across await? Reply with only A or B.	A
+s01	security	A,B	Which prevents SQL injection: A) escaping HTML B) parameterized SQL statements? Reply with only A or B.	B
+s02	security	yes,no	Should an authorization check be enforced on the server even if the UI hides the action? Reply with only yes or no.	yes
+s03	security	yes,no	Is base64 encoding by itself encryption? Reply with only yes or no.	no
+s04	security	A,B	Which prevents directory traversal: A) resolve and enforce the allowed root B) concatenate the user path to the root? Reply with only A or B.	A
+s05	security	A,B	Which protects stored passwords better: A) plain SHA-256 without salt B) a salted password hashing function such as Argon2id? Reply with only A or B.	B
+s06	security	yes,no	Should a production log contain a user's plaintext password? Reply with only yes or no.	no
+s07	security	yes,no	Can a time-of-check/time-of-use race occur when opening a path after checking it? Reply with only yes or no.	yes
+s08	security	A,B	Which is appropriate for unpredictable authentication tokens: A) operating-system cryptographic randomness B) the current timestamp alone? Reply with only A or B.	A
+s09	security	A,B	Which avoids a shell injection boundary for untrusted arguments: A) interpolate them into sh -c B) pass them as separate arguments without a shell? Reply with only A or B.	B
+s10	security	-	What does the abbreviation TLS expand to? Reply with exactly the three words and no punctuation.	Transport Layer Security
+s11	security	-	What is the default TCP port for HTTP? Reply with only the integer.	80
+s12	security	yes,no	Should access be denied when an authorization policy cannot be evaluated reliably? Reply with only yes or no.	yes

@@ -76,6 +76,8 @@ impl Drop for Charge {
 #[cfg(feature = "native-mlx")]
 pub mod native_boundary;
 #[cfg(feature = "native-mlx")]
+pub mod native_extended;
+#[cfg(feature = "native-mlx")]
 pub mod native_mlx;
 #[cfg(feature = "native-mlx")]
 pub mod native_qwen;

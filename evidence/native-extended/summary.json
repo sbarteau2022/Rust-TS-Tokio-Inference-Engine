@@ -1,0 +1,31 @@
+{
+  "local_gate_pass": false,
+  "regression_pass": true,
+  "rust_tests": {
+    "default": 114,
+    "debug_validation": 114,
+    "no_default": 87
+  },
+  "typescript_tests": 5,
+  "typescript": "7.1",
+  "model_identity": "509cc92543203798f2db08b6fb6cbb38a80942fc0437ae81a3ef9ff27720915b",
+  "profile": "f32-activations/fp32-state, regular-kv, chunk8",
+  "domain_passed": 23,
+  "domain_total": 24,
+  "failed_case": {
+    "id": "r10",
+    "expected": "yes",
+    "actual": "no"
+  },
+  "context": 512,
+  "state_bytes": 86835200,
+  "continuation_pass": false,
+  "logit_nrmse": 0.05924135,
+  "state_nrmse": 0.01249746,
+  "threshold": 0.01,
+  "overflow_rejected": true,
+  "fork_isolation_pass": true,
+  "drain": true,
+  "independent_reference": false,
+  "full_model_qualified": false
+}

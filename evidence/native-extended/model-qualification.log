@@ -1,0 +1,29 @@
+EXTENDED identity=509cc92543203798f2db08b6fb6cbb38a80942fc0437ae81a3ef9ff27720915b sdk=0.32.4 activation=f32 state=fp32 regular-kv independent_reference=false full_model_qualified=false
+CONTEXT position=512 state_bytes=86835200 continuation=false logit_nrmse=0.05924135 state_nrmse=0.01249746 overflow_rejected=true elapsed_ms=7776.469
+FORKS admitted=3 distinct_tokens=true isolated=true native_leases=0
+DOMAIN id=r01 domain=rust constrained=true pass=true expected="A" actual="A" finish=eos
+DOMAIN id=r02 domain=rust constrained=true pass=true expected="B" actual="B" finish=eos
+DOMAIN id=r03 domain=rust constrained=true pass=true expected="yes" actual="yes" finish=eos
+DOMAIN id=r04 domain=rust constrained=true pass=true expected="no" actual="no" finish=eos
+DOMAIN id=r05 domain=rust constrained=true pass=true expected="B" actual="B" finish=eos
+DOMAIN id=r06 domain=rust constrained=true pass=true expected="A" actual="A" finish=eos
+DOMAIN id=r07 domain=rust constrained=false pass=true expected="async" actual="async" finish=eos
+DOMAIN id=r08 domain=rust constrained=false pass=true expected="None" actual="None" finish=eos
+DOMAIN id=r09 domain=rust constrained=false pass=true expected="Err" actual="Err" finish=eos
+DOMAIN id=r10 domain=rust constrained=true pass=false expected="yes" actual="no" finish=eos
+DOMAIN id=r11 domain=rust constrained=true pass=true expected="no" actual="no" finish=eos
+DOMAIN id=r12 domain=rust constrained=true pass=true expected="A" actual="A" finish=eos
+DOMAIN id=s01 domain=security constrained=true pass=true expected="B" actual="B" finish=eos
+DOMAIN id=s02 domain=security constrained=true pass=true expected="yes" actual="yes" finish=eos
+DOMAIN id=s03 domain=security constrained=true pass=true expected="no" actual="no" finish=eos
+DOMAIN id=s04 domain=security constrained=true pass=true expected="A" actual="A" finish=eos
+DOMAIN id=s05 domain=security constrained=true pass=true expected="B" actual="B" finish=eos
+DOMAIN id=s06 domain=security constrained=true pass=true expected="no" actual="no" finish=eos
+DOMAIN id=s07 domain=security constrained=true pass=true expected="yes" actual="yes" finish=eos
+DOMAIN id=s08 domain=security constrained=true pass=true expected="A" actual="A" finish=eos
+DOMAIN id=s09 domain=security constrained=true pass=true expected="B" actual="B" finish=eos
+DOMAIN id=s10 domain=security constrained=false pass=true expected="Transport Layer Security" actual="Transport Layer Security" finish=eos
+DOMAIN id=s11 domain=security constrained=false pass=true expected="80" actual="80" finish=eos
+DOMAIN id=s12 domain=security constrained=true pass=true expected="yes" actual="yes" finish=eos
+EXTENDED-SUMMARY domain=23/24 continuation=false overflow=true isolation=true drain=true output_tokens_including_eos=51 wall_seconds=11.689 logical_memory_peak=797376512 independent_reference=false full_model_qualified=false scope=authored-local-gate
+Error: extended local qualification failed; preserve report

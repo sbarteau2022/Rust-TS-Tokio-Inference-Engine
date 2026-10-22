@@ -14,8 +14,8 @@ async fn main() -> Result<()> {
     match args.get(1).map(String::as_str) {
         #[cfg(feature = "native-mlx")]
         Some("native-qualify") => {
-            ensure!(args.len()==2 || (args.len()==3 && args[2]=="--contracts"),"native-qualify [--contracts]");
-            rust_server::serving::native_boundary::qualify_cli(args.len()==3).await?;
+            ensure!(args.len()==2 || (args.len()==3 && ["--contracts","--extended"].contains(&args[2].as_str())),"native-qualify [--contracts|--extended]");
+            if args.get(2).is_some_and(|s|s=="--extended") {rust_server::serving::native_extended::run().await?;} else {rust_server::serving::native_boundary::qualify_cli(args.len()==3).await?;}
         }
         #[cfg(feature = "native-mlx")]
         Some("native-generate") => {
