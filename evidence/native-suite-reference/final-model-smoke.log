@@ -1,0 +1,4 @@
+NATIVE-QWEN identity=509cc92543203798f2db08b6fb6cbb38a80942fc0437ae81a3ef9ff27720915b device=Gpu mode=F32-activations/fp32-recurrence kv=regular max_in_flight=3 context=512 chunk=8 prompt_tokens=20 load_ms=33382.223
+OUTPUT-CONTRACT fingerprint=None
+READY
+NATIVE-QWEN generated=2 elapsed_ms=1694.221 finish=eos tokens=[44061, 248046] held_out_qualified=false

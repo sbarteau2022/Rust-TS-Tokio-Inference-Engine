@@ -2,7 +2,7 @@
 title: "Adversarial review of the native kernel prototype"
 document_type: "research"
 version: "1.0.0"
-date: "2026-10-22T23:03:00Z"
+date: "2026-10-22T23:29:35Z"
 implementation_date: null
 author: "Codex for Stewart Barteau"
 reviewers: []
@@ -15,7 +15,7 @@ related_files:
     lines: "1-1015"
     role: "config"
   - path: "Cargo.toml"
-    lines: "1-33"
+    lines: "1-37"
     role: "config"
   - path: "backend/rapid_worker.py"
     lines: "1-165"
@@ -25,6 +25,9 @@ related_files:
     role: "primary"
   - path: "examples/native_discriminators.rs"
     lines: "1-145"
+    role: "primary"
+  - path: "examples/native_suite_reference.rs"
+    lines: "1-198"
     role: "primary"
   - path: "fixtures/atan2.amvk"
     lines: null
@@ -102,7 +105,13 @@ related_files:
     lines: "1-35"
     role: "test"
   - path: "judges/run.py"
-    lines: "1-206"
+    lines: "1-209"
+    role: "test"
+  - path: "judges/suite_reference.py"
+    lines: "1-243"
+    role: "test"
+  - path: "judges/test_suite_reference.py"
+    lines: "1-107"
     role: "test"
   - path: "native/attention_reference.h"
     lines: "1-21"
@@ -234,7 +243,7 @@ related_files:
     lines: "1-194"
     role: "primary"
   - path: "src/serving/native_tokenizer.rs"
-    lines: "1-123"
+    lines: "1-213"
     role: "primary"
   - path: "src/serving/qwen_tests.rs"
     lines: "1-566"
@@ -444,3 +453,32 @@ warning is retained; parity covers tested prompts only. Stock BF16/F32 varies mo
 than KV precision, so no KV-only causal claim is made. The async-cleanup probe's
 profile-dependent winner and thin cancellation margins remain explicit. A shared
 wrong answer does not establish all-route model correctness or production quality.
+
+# Full frozen-suite reference review — 2026-10-22
+
+Self-review only; no delegated or independent reviewer. New offline runners
+separate declared output choices from expected answers and require exact inventory,
+model identity, template/token parity, contract fingerprints and complete drains.
+Malformed/truncated/duplicate reports, bad vector paths, wrong model identity,
+nonfinite/wrong-shape vectors, illegal trie paths, terminal/shared prefixes and
+signed-zero/lowest-ID ties are covered. A missing NumPy installation skips only
+vector unit tests in the portable environment; those run in the stock environment.
+Both Rust examples are now explicit default-judge gates, with native feature
+requirements preserving minimal builds.
+
+The first actual run failed on a genuine EOS-language discrepancy before any
+stock generation. The correction reads fingerprint-bound checkpoint policy with
+bounded strict configuration parsing, top-level precedence and explicit generation
+overrides. Scalar/list/duplicate EOS, invalid/unknown IDs, empty/oversized lists,
+noninteger/negative/overflow values and malformed config objects are tested.
+All original native generated IDs/first vectors remain unchanged by this fix.
+The rejected attempt is retained instead of silently aligning stock's policy.
+
+The accepted comparison uses unchanged RECORD-verified stock code and the exact
+index-only view, excluding the previously demonstrated MTP loader contamination.
+60/60 exact trajectories are observed, but only 44 unique prompts. Both old
+quality misses remain. Full first-answer vectors differ substantially on some
+cases (up to 6.54% NRMSE); no bitwise/numerical graph-equivalence or production
+qualification claim is supported. Layerwise drift localization is the next gate.
+GPU/CPU state resources, physical command-buffer limits, fault isolation, long
+context, tensor batching and sustained load are not covered by this offline run.

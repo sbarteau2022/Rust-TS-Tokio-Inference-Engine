@@ -31,3 +31,7 @@ cc = "1"
 [[example]]
 name = "native_discriminators"
 required-features = ["native-mlx"]
+
+[[example]]
+name = "native_suite_reference"
+required-features = ["native-mlx"]

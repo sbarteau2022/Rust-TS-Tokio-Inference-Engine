@@ -1,0 +1,23 @@
+[
+  {
+    "metric": "max_abs",
+    "minimum": 0.0026731491088867188,
+    "median": 0.09460997581481934,
+    "maximum": 0.7536278963088989,
+    "worst_case": "domain/s10"
+  },
+  {
+    "metric": "nrmse",
+    "minimum": 0.0001739933567731861,
+    "median": 0.008851782599268734,
+    "maximum": 0.06536765297056261,
+    "worst_case": "domain/s10"
+  },
+  {
+    "metric": "centered_nrmse",
+    "minimum": 0.00019575404636267707,
+    "median": 0.009168676592116324,
+    "maximum": 0.06559390595104189,
+    "worst_case": "domain/r11"
+  }
+]

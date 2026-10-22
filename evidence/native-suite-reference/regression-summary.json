@@ -1,0 +1,19 @@
+{
+  "default_rust_tests": 117,
+  "debug_rust_tests": 117,
+  "minimal_rust_tests": 87,
+  "native_example_tests": 2,
+  "margin_example_tests": 2,
+  "external_reference_unit_tests": 7,
+  "typescript_tests": 5,
+  "compiler_clippy_format_metal_capture": "passed",
+  "model_quality_promoted": false,
+  "exact_trajectory_matches": 60,
+  "unique_prompts": 44,
+  "native_boundary_eos": [
+    248046
+  ],
+  "physical_mlx_command_buffer_cap_qualified": false,
+  "independent_review": false,
+  "actual_combined_smoke": "READY + EOS [44061,248046]"
+}

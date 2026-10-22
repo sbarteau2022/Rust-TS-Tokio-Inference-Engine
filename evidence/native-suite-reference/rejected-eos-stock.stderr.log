@@ -1,0 +1,9 @@
+[transformers] The tokenizer you are loading from '/tmp/rust-server-combined-indexed-stock-view' with an incorrect regex pattern: https://huggingface.co/mistralai/Mistral-Small-3.1-24B-Instruct-2503/discussions/84#69121093e8b480e709447d5e. This will lead to incorrect tokenization. You should set the `fix_mistral_regex=True` flag when loading this tokenizer to fix this issue.
+Traceback (most recent call last):
+  File "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/judges/suite_reference.py", line 243, in <module>
+    main()
+  File "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/judges/suite_reference.py", line 177, in main
+    require(eos == sorted(native['eos']) and paths == native['choice_paths'], 'tokenizer contract mismatch')
+  File "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/judges/suite_reference.py", line 22, in require
+    raise ValueError(message)
+ValueError: tokenizer contract mismatch

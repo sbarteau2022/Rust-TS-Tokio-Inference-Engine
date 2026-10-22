@@ -1,0 +1,1 @@
+PASS: complete-vocabulary offset/centered drift and shape/NaN/Inf rejection {'max_abs': 0.2500004768371582, 'nrmse': 0.05404725751861113, 'centered_nrmse': 1.0526163045301774e-08, 'mean_offset': -0.2500000000093012}

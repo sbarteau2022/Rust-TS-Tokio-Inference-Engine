@@ -24,10 +24,20 @@ impl NativeTokenizer {
         );
         let tokenizer = tokenizers::Tokenizer::from_file(path)
             .map_err(|e| anyhow::anyhow!("native tokenizer: {e}"))?;
-        let eos = ["<|im_end|>", "<|endoftext|>"]
-            .iter()
-            .map(|t| tokenizer.token_to_id(t).context("EOS token missing"))
-            .collect::<Result<Vec<_>>>()?;
+        let config = super::weights::strict(&super::weights::bounded(
+            &manifest.directory.join("config.json"),
+            1024 * 1024,
+        )?)?;
+        let generation_path = manifest.directory.join("generation_config.json");
+        let generation = if generation_path.try_exists()? {
+            Some(super::weights::strict(&super::weights::bounded(
+                &generation_path,
+                64 * 1024,
+            )?)?)
+        } else {
+            None
+        };
+        let eos = configured_eos(&config, generation.as_ref(), &tokenizer)?;
         for t in ["<|im_start|>", "<think>", "</think>"] {
             ensure!(tokenizer.token_to_id(t).is_some(), "chat token missing");
         }
@@ -85,6 +95,42 @@ impl NativeTokenizer {
         self.encode(&render_chat(system, user)?)
     }
 }
+// The checkpoint's top-level generation policy wins over nested model metadata.
+// A generation_config override is explicit; malformed overrides fail closed.
+fn configured_eos(
+    config: &serde_json::Value,
+    generation: Option<&serde_json::Value>,
+    tokenizer: &tokenizers::Tokenizer,
+) -> Result<Vec<u32>> {
+    ensure!(config.is_object(), "model configuration object required");
+    if let Some(generation) = generation {
+        ensure!(
+            generation.is_object(),
+            "generation configuration object required"
+        );
+    }
+    let value = generation
+        .and_then(|v| v.get("eos_token_id"))
+        .filter(|v| !v.is_null())
+        .or_else(|| config.get("eos_token_id"))
+        .context("checkpoint EOS policy missing")?;
+    let values = value
+        .as_array()
+        .cloned()
+        .unwrap_or_else(|| vec![value.clone()]);
+    ensure!((1..=16).contains(&values.len()), "EOS count 1..16");
+    let mut eos = values
+        .iter()
+        .map(|v| {
+            let id = u32::try_from(v.as_u64().context("EOS must be an unsigned integer")?)?;
+            ensure!(tokenizer.id_to_token(id).is_some(), "unknown EOS token");
+            Ok(id)
+        })
+        .collect::<Result<Vec<_>>>()?;
+    eos.sort();
+    eos.dedup();
+    Ok(eos)
+}
 pub fn render_chat(system: Option<&str>, user: &str) -> Result<String> {
     ensure!(!user.trim().is_empty(), "empty user message");
     for value in system.into_iter().chain(std::iter::once(user)) {
@@ -110,6 +156,50 @@ pub fn render_chat(system: Option<&str>, user: &str) -> Result<String> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn checkpoint_eos_precedence_and_malformed_policy() -> Result<()> {
+        use serde_json::json;
+        let model = tokenizers::models::wordlevel::WordLevel::builder()
+            .vocab(
+                [("end".to_string(), 0), ("other".to_string(), 1)]
+                    .into_iter()
+                    .collect(),
+            )
+            .unk_token("end".into())
+            .build()
+            .map_err(|e| anyhow::anyhow!("{e}"))?;
+        let tokenizer = tokenizers::Tokenizer::new(model);
+        let config = json!({"eos_token_id": 1, "text_config": {"eos_token_id": 0}});
+        assert_eq!(configured_eos(&config, None, &tokenizer)?, vec![1]);
+        assert_eq!(
+            configured_eos(&config, Some(&json!({"eos_token_id": [1,0,1]})), &tokenizer)?,
+            vec![0, 1]
+        );
+        assert_eq!(
+            configured_eos(&config, Some(&json!({"eos_token_id": null})), &tokenizer)?,
+            vec![1]
+        );
+        for value in [
+            json!([]),
+            json!(vec![0; 17]),
+            json!(-1),
+            json!(4294967296u64),
+            json!(2),
+            json!(1.5),
+            json!("1"),
+            json!(true),
+            json!({}),
+            json!([0, null]),
+        ] {
+            assert!(configured_eos(&json!({"eos_token_id":value}), None, &tokenizer).is_err());
+            assert!(
+                configured_eos(&config, Some(&json!({"eos_token_id":value})), &tokenizer).is_err()
+            );
+        }
+        assert!(configured_eos(&json!({}), None, &tokenizer).is_err());
+        assert!(configured_eos(&config, Some(&json!([])), &tokenizer).is_err());
+        Ok(())
+    }
     #[test]
     fn single_turn_template_is_explicit() {
         assert_eq!(

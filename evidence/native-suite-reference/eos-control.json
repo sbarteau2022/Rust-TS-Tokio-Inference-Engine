@@ -1,0 +1,12 @@
+{
+  "cases": 60,
+  "before_eos": [
+    248046,
+    248044
+  ],
+  "after_eos": [
+    248046
+  ],
+  "all_generated_ids_unchanged": true,
+  "all_first_vectors_bitwise_unchanged": true
+}

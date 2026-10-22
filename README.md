@@ -1,8 +1,8 @@
 ---
 title: "Rust Server — Apple native kernel compiler and runtime"
 document_type: "implementation"
-version: "1.18.0"
-date: "2026-10-22T23:14:48Z"
+version: "1.19.0"
+date: "2026-10-22T23:29:35Z"
 implementation_date: null
 author: "Codex for Stewart Barteau"
 reviewers: []
@@ -15,7 +15,7 @@ related_files:
     lines: "1-1015"
     role: "config"
   - path: "Cargo.toml"
-    lines: "1-33"
+    lines: "1-37"
     role: "config"
   - path: "backend/rapid_worker.py"
     lines: "1-165"
@@ -25,6 +25,9 @@ related_files:
     role: "primary"
   - path: "examples/native_discriminators.rs"
     lines: "1-145"
+    role: "primary"
+  - path: "examples/native_suite_reference.rs"
+    lines: "1-198"
     role: "primary"
   - path: "fixtures/atan2.amvk"
     lines: null
@@ -102,7 +105,13 @@ related_files:
     lines: "1-35"
     role: "test"
   - path: "judges/run.py"
-    lines: "1-206"
+    lines: "1-209"
+    role: "test"
+  - path: "judges/suite_reference.py"
+    lines: "1-243"
+    role: "test"
+  - path: "judges/test_suite_reference.py"
+    lines: "1-107"
     role: "test"
   - path: "native/attention_reference.h"
     lines: "1-21"
@@ -234,7 +243,7 @@ related_files:
     lines: "1-194"
     role: "primary"
   - path: "src/serving/native_tokenizer.rs"
-    lines: "1-123"
+    lines: "1-213"
     role: "primary"
   - path: "src/serving/qwen_tests.rs"
     lines: "1-566"
@@ -776,3 +785,36 @@ remain unchanged. [Measurements and reproducible provenance](evidence/native-dis
 1.18.0 — 2026-10-22 — Native margin diagnostic, authorized external stock
 reference, indexed-shard loader control, interpretation probes and isolated
 real-prompt embedding A/B. Server runtime remains Rust-owned MLX.
+
+
+## Frozen-suite stock reference
+
+[Design and qualification scope](docs/NATIVE_SUITE_REFERENCE.md) cover all 60
+frozen raw/contract/domain executions against unchanged stock mlx-lm, on the
+same Combined checkpoint with F32 floating parameters. The comparison is an
+offline experiment; the server remains native Rust/MLX, without a Python worker.
+The first attempt caught an EOS policy discrepancy: native accepted an extra
+terminator. Native now follows checkpoint top-level eos_token_id and explicit
+generation overrides, with bounded parsing and malformed-policy rejection.
+Original prompts, expectations and output choices remain unchanged.
+
+Reproduce in a new scratch directory with
+`cargo run --release --locked --example native_suite_reference -- NEW_SCRATCH`.
+Then run `judges/suite_reference.py --scratch NEW_SCRATCH --view INDEX_ONLY_VIEW
+--out NEW_EVIDENCE` in the authorized stock MLX environment. Use the exact
+index-only symlink view documented in the prior discriminator evidence; the
+runner rejects model/view/source drift and incomplete native captures.
+Full first-answer vectors stay in scratch; their hashes and comparison aggregates
+are retained. Original fixture quality gates and production readiness remain
+separate from backend agreement. See evidence/native-suite-reference/.
+
+1.19.0 — 2026-10-22 — Full frozen-suite native/stock capture and comparison;
+checkpoint-defined EOS boundary, fail-closed reference provenance and pressure tests.
+
+
+The completed comparison matches **60/60 exact native/stock trajectories** over
+44 unique prompts. Both lanes retain **15/16 raw, 20/20 contracted and 23/24 domain**
+quality. The EOS correction leaves all observed outputs/first logits unchanged.
+First-answer logit NRMSE still reaches **0.06537** (6.54%); this is not numerical
+graph equivalence. Next is layerwise drift localization before wider fidelity or
+production claims. [Results and limitations](docs/NATIVE_SUITE_REFERENCE.md).

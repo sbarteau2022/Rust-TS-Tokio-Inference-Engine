@@ -2,7 +2,7 @@
 title: "Implementation file map and evidence index"
 document_type: "implementation"
 version: "1.0.0"
-date: "2026-10-22T23:15:22Z"
+date: "2026-10-22T23:30:15Z"
 implementation_date: null
 author: "Codex for Stewart Barteau"
 reviewers: []
@@ -15,7 +15,7 @@ related_files:
     lines: "1-1015"
     role: "config"
   - path: "Cargo.toml"
-    lines: "1-33"
+    lines: "1-37"
     role: "config"
   - path: "backend/rapid_worker.py"
     lines: "1-165"
@@ -25,6 +25,9 @@ related_files:
     role: "primary"
   - path: "examples/native_discriminators.rs"
     lines: "1-145"
+    role: "primary"
+  - path: "examples/native_suite_reference.rs"
+    lines: "1-198"
     role: "primary"
   - path: "fixtures/atan2.amvk"
     lines: null
@@ -102,7 +105,13 @@ related_files:
     lines: "1-35"
     role: "test"
   - path: "judges/run.py"
-    lines: "1-206"
+    lines: "1-209"
+    role: "test"
+  - path: "judges/suite_reference.py"
+    lines: "1-243"
+    role: "test"
+  - path: "judges/test_suite_reference.py"
+    lines: "1-107"
     role: "test"
   - path: "native/attention_reference.h"
     lines: "1-21"
@@ -234,7 +243,7 @@ related_files:
     lines: "1-194"
     role: "primary"
   - path: "src/serving/native_tokenizer.rs"
-    lines: "1-123"
+    lines: "1-213"
     role: "primary"
   - path: "src/serving/qwen_tests.rs"
     lines: "1-566"
@@ -353,10 +362,11 @@ Exact text line references for this local implementation. Binary fixtures have n
 | --- | --- | --- |
 | `.gitignore` | 1–9 | config |
 | `Cargo.lock` | 1–1015 | config |
-| `Cargo.toml` | 1–33 | config |
+| `Cargo.toml` | 1–37 | config |
 | `backend/rapid_worker.py` | 1–165 | primary |
 | `build.rs` | 1–60 | primary |
 | `examples/native_discriminators.rs` | 1–145 | primary |
+| `examples/native_suite_reference.rs` | 1–198 | primary |
 | `fixtures/atan2.amvk` | Binary / no text lines | test |
 | `fixtures/cache-config-bench.json` | 1–13 | test |
 | `fixtures/cos.amvk` | Binary / no text lines | test |
@@ -382,7 +392,9 @@ Exact text line references for this local implementation. Binary fixtures have n
 | `judges/operator_reference.cpp` | 1–29 | test |
 | `judges/projection_reference.cpp` | 1–53 | test |
 | `judges/resources.py` | 1–35 | test |
-| `judges/run.py` | 1–206 | test |
+| `judges/run.py` | 1–209 | test |
+| `judges/suite_reference.py` | 1–243 | test |
+| `judges/test_suite_reference.py` | 1–107 | test |
 | `native/attention_reference.h` | 1–21 | primary |
 | `native/mlx_bridge.cpp` | 1–178 | primary |
 | `native/mlx_bridge.h` | 1–67 | primary |
@@ -426,7 +438,7 @@ Exact text line references for this local implementation. Binary fixtures have n
 | `src/serving/native_qwen.rs` | 1–662 | primary |
 | `src/serving/native_reference.rs` | 1–100 | primary |
 | `src/serving/native_state.rs` | 1–194 | primary |
-| `src/serving/native_tokenizer.rs` | 1–123 | primary |
+| `src/serving/native_tokenizer.rs` | 1–213 | primary |
 | `src/serving/qwen_tests.rs` | 1–566 | primary |
 | `src/serving/rapid.rs` | 1–265 | primary |
 | `src/serving/scheduler.rs` | 1–632 | primary |
@@ -462,30 +474,31 @@ Exact text line references for this local implementation. Binary fixtures have n
 | `ts/trace.test.ts` | 1–45 | test |
 | `ts/trace.ts` | 1–73 | primary |
 | `tsconfig.json` | 1–1 | config |
-| `README.md` | 1–778 | primary |
-| `docs/ACCELERATOR_ROADMAP.md` | 1–396 | primary |
-| `docs/ADVERSARIAL_REVIEW.md` | 1–446 | primary |
-| `docs/ASYNC_COMPLETION.md` | 1–429 | primary |
-| `docs/DESIGN.md` | 1–383 | primary |
-| `docs/FILE_MAP.md` | 1–496 | primary |
-| `docs/FIXED_POINT.md` | 1–453 | primary |
-| `docs/Failures.md` | 1–381 | primary |
-| `docs/GRID_THROUGHPUT.md` | 1–412 | primary |
-| `docs/MODEL_ADVERSARIAL_REVIEW.md` | 1–394 | primary |
-| `docs/MODEL_INTEGRATION.md` | 1–501 | primary |
-| `docs/NATIVE_DISCRIMINATORS.md` | 1–440 | primary |
-| `docs/NATIVE_MLX_BACKEND.md` | 1–466 | primary |
-| `docs/NATIVE_QWEN_GENERATION.md` | 1–749 | primary |
-| `docs/NATIVE_WEIGHTS_EXECUTION.md` | 1–406 | primary |
-| `docs/NEXT_STEPS.md` | 1–509 | primary |
-| `docs/PRODUCTION_PIPELINE.md` | 1–413 | primary |
-| `docs/RESOURCE_BACKEND_DESIGN.md` | 1–393 | primary |
-| `docs/RESOURCE_IMPLEMENTATION.md` | 1–450 | primary |
-| `docs/SAMPLING_POLICY_STATUS.md` | 1–374 | primary |
-| `docs/SERVING_ARCHITECTURE.md` | 1–481 | primary |
-| `docs/SOURCE_SPEC.md` | 1–569 | primary |
-| `docs/SPEC15_IMPLEMENTATION.md` | 1–406 | primary |
-| `docs/SPEC15_SOURCE.md` | 1–606 | primary |
+| `README.md` | 1–820 | primary |
+| `docs/ACCELERATOR_ROADMAP.md` | 1–405 | primary |
+| `docs/ADVERSARIAL_REVIEW.md` | 1–484 | primary |
+| `docs/ASYNC_COMPLETION.md` | 1–438 | primary |
+| `docs/DESIGN.md` | 1–392 | primary |
+| `docs/FILE_MAP.md` | 1–509 | primary |
+| `docs/FIXED_POINT.md` | 1–462 | primary |
+| `docs/Failures.md` | 1–390 | primary |
+| `docs/GRID_THROUGHPUT.md` | 1–421 | primary |
+| `docs/MODEL_ADVERSARIAL_REVIEW.md` | 1–403 | primary |
+| `docs/MODEL_INTEGRATION.md` | 1–510 | primary |
+| `docs/NATIVE_DISCRIMINATORS.md` | 1–449 | primary |
+| `docs/NATIVE_MLX_BACKEND.md` | 1–475 | primary |
+| `docs/NATIVE_QWEN_GENERATION.md` | 1–758 | primary |
+| `docs/NATIVE_SUITE_REFERENCE.md` | 1–489 | primary |
+| `docs/NATIVE_WEIGHTS_EXECUTION.md` | 1–415 | primary |
+| `docs/NEXT_STEPS.md` | 1–542 | primary |
+| `docs/PRODUCTION_PIPELINE.md` | 1–422 | primary |
+| `docs/RESOURCE_BACKEND_DESIGN.md` | 1–402 | primary |
+| `docs/RESOURCE_IMPLEMENTATION.md` | 1–459 | primary |
+| `docs/SAMPLING_POLICY_STATUS.md` | 1–383 | primary |
+| `docs/SERVING_ARCHITECTURE.md` | 1–490 | primary |
+| `docs/SOURCE_SPEC.md` | 1–578 | primary |
+| `docs/SPEC15_IMPLEMENTATION.md` | 1–415 | primary |
+| `docs/SPEC15_SOURCE.md` | 1–615 | primary |
 
 # Evidence
 

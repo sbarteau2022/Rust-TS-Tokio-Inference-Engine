@@ -1,0 +1,21 @@
+{
+  "tested_trajectories": 60,
+  "first_logit_entries": 14899200,
+  "unique_prompts": 44,
+  "raw_top1_agreement": 60,
+  "exact_generation_agreement": 60,
+  "native_misses": [
+    [
+      "raw",
+      "rust-borrow",
+      "No.",
+      "no"
+    ],
+    [
+      "domain",
+      "r10",
+      "no",
+      "yes"
+    ]
+  ]
+}

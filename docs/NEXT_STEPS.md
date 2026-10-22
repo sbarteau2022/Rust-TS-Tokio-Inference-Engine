@@ -2,7 +2,7 @@
 title: "Next stages toward an Apple native inference server"
 document_type: "architecture"
 version: "1.0.0"
-date: "2026-10-22T23:03:00Z"
+date: "2026-10-22T23:29:35Z"
 implementation_date: null
 author: "Codex for Stewart Barteau"
 reviewers: []
@@ -15,7 +15,7 @@ related_files:
     lines: "1-1015"
     role: "config"
   - path: "Cargo.toml"
-    lines: "1-33"
+    lines: "1-37"
     role: "config"
   - path: "backend/rapid_worker.py"
     lines: "1-165"
@@ -25,6 +25,9 @@ related_files:
     role: "primary"
   - path: "examples/native_discriminators.rs"
     lines: "1-145"
+    role: "primary"
+  - path: "examples/native_suite_reference.rs"
+    lines: "1-198"
     role: "primary"
   - path: "fixtures/atan2.amvk"
     lines: null
@@ -102,7 +105,13 @@ related_files:
     lines: "1-35"
     role: "test"
   - path: "judges/run.py"
-    lines: "1-206"
+    lines: "1-209"
+    role: "test"
+  - path: "judges/suite_reference.py"
+    lines: "1-243"
+    role: "test"
+  - path: "judges/test_suite_reference.py"
+    lines: "1-107"
     role: "test"
   - path: "native/attention_reference.h"
     lines: "1-21"
@@ -234,7 +243,7 @@ related_files:
     lines: "1-194"
     role: "primary"
   - path: "src/serving/native_tokenizer.rs"
-    lines: "1-123"
+    lines: "1-213"
     role: "primary"
   - path: "src/serving/qwen_tests.rs"
     lines: "1-566"
@@ -507,3 +516,27 @@ then extend reference comparisons to the frozen suite before assigning a wider
 fidelity label. Keep production readiness separate from backend fidelity and
 measured model behavior. Device-state/batching/KV work stays experimental until
 its numerical, cancellation, resource and quality gates pass.
+
+## After the 60-execution stock comparison
+
+Exact generated trajectories match stock F32 on all frozen executions (44 unique
+prompts), including both known failures. The native EOS boundary was corrected
+to checkpoint top-level configuration; accepted contract fingerprints now agree.
+Quality remains 15/16 raw, 20/20 contracted and 23/24 domain in both lanes.
+This does not promote full-model readiness.
+
+1. Localize first-layer/state drift on domain s10 and r11 using paired intermediate
+traces at identical prompt/chunk boundaries. First-answer logit NRMSE reaches
+0.06537 and centered NRMSE 0.06559 despite matching argmax/outputs. Preserve
+untouched stock as the reference and distinguish an intentional precision policy
+from an implementation discrepancy before choosing a numerical acceptance gate.
+2. Add fresh Rust/Cyber held-out questions after freezing a bounded reasoning/
+format profile. Keep the original semantic and orthographic misses visible; never
+teach an expected answer through an output-choice mask or change the old labels.
+3. Design completion-owned device KV/convolution/recurrent state with transaction
+publication, cancellation, fork/prefix isolation and drain accounting. Compare
+against the snapshot reference before enabling actual tensor batching.
+4. Qualify paged regular KV and native TurboQuant as separate codec policies;
+then measure concurrent TTFT, tail latency, throughput and memory together.
+MTP/custom drafting, physical MLX command-buffer bounds, AMX/ANE and production
+sampling proposals remain separately gated. No new production claim is made.
