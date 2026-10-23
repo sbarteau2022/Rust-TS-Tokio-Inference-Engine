@@ -1,0 +1,4 @@
+code-repeat	Write a Rust module with ten small functions named add_0 through add_9. Each takes two i32 arguments named a and b and returns a + b. Output only the Rust code, with one function per line.
+code-tests	Write six Rust unit tests for a function fn identity(x: i32) -> i32. Name them identity_0 through identity_5 and assert that each input is returned unchanged. Output only the test code.
+code-loop	Write Rust code declaring an array of integers from 0 to 15, then print each number using a for loop. Then write an equivalent while loop and an equivalent loop expression. Include short comments explaining each version.
+security-review	Review this Rust server design: a shared mutable KV buffer is reused after a client disconnects while a GPU command is still running. Explain the lifetime bug and give a short Rust sketch that retains an immutable Arc-owned state until completion. Discuss cancellation and shutdown separately.

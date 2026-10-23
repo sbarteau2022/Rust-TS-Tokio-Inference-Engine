@@ -1,0 +1,29 @@
+{
+  "block_state_maxima": [
+    7.525890078655473e-7,
+    0.000054836273193359375
+  ],
+  "boundary_cases": 19,
+  "cancellation": true,
+  "context_edge": 512,
+  "diagnostic_exported_bytes": 7865466880,
+  "free_greedy_requests": 21,
+  "identity": "509cc92543203798f2db08b6fb6cbb38a80942fc0437ae81a3ef9ff27720915b",
+  "mlx_peak_bytes_process": 20706435560,
+  "pass": true,
+  "per_position_logit_maxima": [
+    2.147667810912755e-6,
+    0.00003790855407714844
+  ],
+  "production_qualified": false,
+  "residents_after_drain": 0,
+  "retrieval_acceptance": 0.125,
+  "retrieval_accepted": 1,
+  "retrieval_committed_tokens": 60,
+  "retrieval_proposed": 8,
+  "retrieval_target_calls": 60,
+  "scheduler_integrated": false,
+  "stochastic_sampling": false,
+  "trained_mtp": false,
+  "uploaded_bytes": 0
+}

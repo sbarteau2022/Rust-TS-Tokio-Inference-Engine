@@ -1,0 +1,23 @@
+{
+  "recorded_at": "2026-10-23T03:46:20.140424+00:00",
+  "base_commit": "b0f3a088cc0878272cdabca83406388d6a3df6d5",
+  "model_path": "/Users/stewartbarteau/models/fused/Qwen3.6-MoE-Combined",
+  "identity": "509cc92543203798f2db08b6fb6cbb38a80942fc0437ae81a3ef9ff27720915b",
+  "profile": "combined-fp32-explicit-attention-regular-kv-greedy",
+  "initial_short_run_scope": "21 frozen free-greedy requests; four longer authored prompts added before final run",
+  "source_binding": "final source and final binaries hashed; first-short run is exploratory and predates final authored fixture/test additions",
+  "default_changed": false,
+  "trained_MTP": false,
+  "runtime_transport": "Rust-owned C++ MLX ABI; no Python worker/JSON transport",
+  "limits": [
+    "one native sequence per request measurement",
+    "25 paired decode-only requests",
+    "fixed baseline-then-variant order",
+    "load/prefill excluded",
+    "no confidence interval",
+    "no autonomous agent loop or HTTP streaming",
+    "no stochastic/constrained-choice speculation",
+    "no tensor batching/paging or early exit"
+  ],
+  "review": "implementer self-review, no independent approval"
+}

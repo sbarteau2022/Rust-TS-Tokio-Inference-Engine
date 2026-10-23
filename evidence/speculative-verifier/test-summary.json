@@ -1,0 +1,23 @@
+{
+  "pass": true,
+  "default_rust_tests": 126,
+  "debug_validation_rust_tests": 126,
+  "no_default_feature_rust_tests": 87,
+  "native_ABI_sanitizer_checks": 70030,
+  "native_table_sanitizer_checks": 96024,
+  "upstream_MLX_sanitized": false,
+  "default_reference_executions": 60,
+  "default_reference_steps": 360,
+  "default_reference_bitwise": true,
+  "historical_trajectories_preserved": 60,
+  "speculative_requests": 25,
+  "speculative_boundary_cases": 19,
+  "quality_unchanged": [
+    15,
+    20,
+    23
+  ],
+  "pressure_pass": true,
+  "independent_review": false,
+  "production_qualified": false
+}

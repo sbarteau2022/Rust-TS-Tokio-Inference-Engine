@@ -42,6 +42,7 @@ def main():
         versions[name] = subprocess.check_output(command, cwd=ROOT, env=ENV, text=True).strip()
     assert "7.1." in versions["typescript"] and "ts7.1" in json.loads((ROOT / "node_modules/tsrs/package.json").read_text())["version"]
     (EVIDENCE / "toolchain.json").write_text(json.dumps(versions, indent=2))
+    run([sys.executable,"judges/test_speculative_report.py"],"speculative-report-tests.log")
     run([sys.executable,"judges/test_device_smoke_report.py"],"device-smoke-report-tests.log")
     run([sys.executable,"judges/test_attention_profile.py"],"attention-profile-tests.log")
     run([sys.executable,"judges/test_layer_reference.py"],"layer-reference-tests.log")
@@ -50,6 +51,7 @@ def main():
     run(["cargo", "test", "--locked", "--example", "native_suite_reference"], "native-suite-tests.log")
     run(["cargo", "test", "--locked", "--example", "native_device_reference"], "native-device-example-tests.log")
     run(["cargo", "test", "--locked", "--example", "native_device_pressure"], "native-device-pressure-example-tests.log")
+    run(["cargo", "test", "--locked", "--example", "native_speculative_smoke"], "native-speculative-example-tests.log")
     run([sys.executable,"judges/generate_cordic.py","--check"],"cordic-table-check.log")
     # Step 0: deterministic bindings and both requested compiler gates.
     with tempfile.TemporaryDirectory() as tmp:

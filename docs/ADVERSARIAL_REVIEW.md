@@ -15,7 +15,7 @@ related_files:
     lines: "1-1015"
     role: "config"
   - path: "Cargo.toml"
-    lines: "1-45"
+    lines: "1-49"
     role: "config"
   - path: "backend/rapid_worker.py"
     lines: "1-165"
@@ -31,6 +31,9 @@ related_files:
     role: "primary"
   - path: "examples/native_discriminators.rs"
     lines: "1-145"
+    role: "primary"
+  - path: "examples/native_speculative_smoke.rs"
+    lines: "1-370"
     role: "primary"
   - path: "examples/native_suite_reference.rs"
     lines: "1-198"
@@ -61,6 +64,9 @@ related_files:
     role: "test"
   - path: "fixtures/native-model.path"
     lines: "1-1"
+    role: "test"
+  - path: "fixtures/native-speculative-prompts.tsv"
+    lines: "1-4"
     role: "test"
   - path: "fixtures/qwen-prompts-long.json"
     lines: "1-4"
@@ -99,7 +105,7 @@ related_files:
     lines: "1-30"
     role: "test"
   - path: "judges/device_abi.cpp"
-    lines: "1-39"
+    lines: "1-49"
     role: "test"
   - path: "judges/device_smoke_report.py"
     lines: "1-38"
@@ -126,7 +132,10 @@ related_files:
     lines: "1-35"
     role: "test"
   - path: "judges/run.py"
-    lines: "1-218"
+    lines: "1-220"
+    role: "test"
+  - path: "judges/speculative_report.py"
+    lines: "1-74"
     role: "test"
   - path: "judges/state_table.cpp"
     lines: "1-21"
@@ -143,6 +152,9 @@ related_files:
   - path: "judges/test_layer_reference.py"
     lines: "1-56"
     role: "test"
+  - path: "judges/test_speculative_report.py"
+    lines: "1-34"
+    role: "test"
   - path: "judges/test_suite_reference.py"
     lines: "1-107"
     role: "test"
@@ -153,7 +165,7 @@ related_files:
     lines: "1-178"
     role: "primary"
   - path: "native/mlx_bridge.h"
-    lines: "1-85"
+    lines: "1-87"
     role: "primary"
   - path: "native/operator_probe.inc"
     lines: "1-28"
@@ -168,10 +180,10 @@ related_files:
     lines: "1-30"
     role: "primary"
   - path: "native/qwen_device.inc"
-    lines: "1-45"
+    lines: "1-47"
     role: "primary"
   - path: "native/qwen_model.inc"
-    lines: "1-171"
+    lines: "1-172"
     role: "primary"
   - path: "native/state_table.h"
     lines: "1-38"
@@ -258,7 +270,7 @@ related_files:
     lines: "1-193"
     role: "primary"
   - path: "src/serving/native_device.rs"
-    lines: "1-546"
+    lines: "1-607"
     role: "primary"
   - path: "src/serving/native_device_scheduler.rs"
     lines: "1-178"
@@ -285,10 +297,13 @@ related_files:
     lines: "1-273"
     role: "primary"
   - path: "src/serving/native_qwen.rs"
-    lines: "1-674"
+    lines: "1-678"
     role: "primary"
   - path: "src/serving/native_reference.rs"
     lines: "1-100"
+    role: "primary"
+  - path: "src/serving/native_speculative.rs"
+    lines: "1-340"
     role: "primary"
   - path: "src/serving/native_state.rs"
     lines: "1-194"
@@ -585,3 +600,25 @@ The optimized path keeps validation but moves reductions to the final completion
 barrier; it requires a fresh full-model A/B and throughput run. Do not describe
 three logical lanes as three physical command buffers, tensor batching, client
 streaming or speculative acceptance. This is self-review, not independent review.
+
+
+## Native linear verifier self-review
+
+Challenged the off-by-one relation between initial logits and candidate-position
+rows; zero, partial and full acceptance; EOS inside a rejected suffix; missing bonus
+capacity; signed-zero and tie selection; nonfinite rejected rows; and arbitrary
+cursor/state pairing. Private cursors bind state/logits, and the selector matches
+existing total-order greedy semantics. The old final-logit ABI/default path is intact.
+
+Challenged cancellation before/after verification, bonus allocation failure after
+successful verification, shared prefixes, three concurrent transactions, bounded
+history and foreign state epochs. Transactions publish only after unified-state
+completion and retire provisional branches through the existing worker channel.
+KV-only truncation was rejected as invalid for the recurrent/convolution model.
+This is bounded replay, not a claim of factorized tree verification.
+
+The measured retrieval lane reduced target calls without demonstrating a speedup;
+it stays experimental. Floating chunk-vs-sequential drift remains nonzero, so finite
+trajectory preservation is not an all-input proof. No stochastic, constrained-choice,
+trained-head, early-exit or production-serving equivalence is claimed. This review
+was performed by the implementing agent; no independent reviewers were used.

@@ -32,6 +32,11 @@ impl DeviceState {
         self.token.as_ref().map_or(0, |t| t.id.bytes as usize)
     }
 }
+pub struct DeviceBlock {
+    pub state: DeviceState,
+    /// Position-major target logits; row i predicts the token after input i.
+    pub logits: Vec<Vec<f32>>,
+}
 pub struct DeviceStep {
     pub state: DeviceState,
     pub logits: Vec<f32>,
@@ -60,6 +65,7 @@ enum Work {
     Step {
         state: DeviceState,
         ir: ModelStepIr,
+        all_logits: bool,
         reply: oneshot::Sender<Result<DeviceStep>>,
         _permit: OwnedSemaphorePermit,
     },
@@ -159,7 +165,7 @@ impl QwenDeviceExecutor {
                             work = rx.recv() => {
                                 let Some(work)=work else { break; };
                                 match work {
-                                    Work::Step { state,ir,reply,_permit } => {
+                                    Work::Step { state,ir,all_logits,reply,_permit } => {
                                         let usage=session.stats()?;
                                         let required=(architecture.state_len(state.position()+ir.len())*4) as u64;
                                         let result=if faulted {
@@ -167,7 +173,7 @@ impl QwenDeviceExecutor {
                                         }else if usage.residents>=slots as u64 || required>limit.saturating_sub(usage.logical_bytes) {
                                             Err(anyhow::anyhow!("device resident budget exhausted"))
                                         }else {
-                                            let result=device_forward(&session,&manifest,architecture,owner,&worker_releases,&state,&ir);
+                                            let result=device_forward(&session,&manifest,architecture,owner,&worker_releases,&state,(&ir,all_logits));
                                             if result.is_err(){faulted=true;worker_closed.store(true,Ordering::Release);}
                                             result
                                         };
@@ -249,6 +255,32 @@ impl QwenDeviceExecutor {
         .await
     }
     pub async fn execute(&self, state: &DeviceState, ir: ModelStepIr) -> Result<DeviceStep> {
+        self.execute_mode(state, ir, false).await
+    }
+    /// Experimental verifier ABI; no candidate is committed by this call.
+    pub async fn verify_block(&self, state: &DeviceState, tokens: Vec<u32>) -> Result<DeviceBlock> {
+        let ir = ModelStepIr::compile(
+            StepKind::Prefill,
+            state.position(),
+            tokens,
+            self.architecture.vocab as u32,
+        )?;
+        let result = self.execute_mode(state, ir, true).await?;
+        Ok(DeviceBlock {
+            state: result.state,
+            logits: result
+                .logits
+                .chunks_exact(self.architecture.vocab as usize)
+                .map(<[f32]>::to_vec)
+                .collect(),
+        })
+    }
+    async fn execute_mode(
+        &self,
+        state: &DeviceState,
+        ir: ModelStepIr,
+        all_logits: bool,
+    ) -> Result<DeviceStep> {
         self.validate(state)?;
         ensure!(
             ir.position().get() == state.position()
@@ -273,6 +305,7 @@ impl QwenDeviceExecutor {
             .try_send(Work::Step {
                 state: state.clone(),
                 ir,
+                all_logits,
                 reply,
                 _permit: permit,
             })
@@ -369,11 +402,12 @@ fn device_forward(
     owner: u64,
     releases: &mpsc::UnboundedSender<StateId>,
     state: &DeviceState,
-    ir: &ModelStepIr,
+    mode: (&ModelStepIr, bool),
 ) -> Result<DeviceStep> {
+    let (ir, all_logits) = mode;
     manifest.verify_stamps()?;
     let mut id = StateId::default();
-    let mut logits = vec![0.; c.vocab as usize];
+    let mut logits = vec![0.; c.vocab as usize * if all_logits { ir.len() } else { 1 }];
     let mut trace = if ir.trace_enabled() {
         vec![0.; c.layers as usize * 5 * ir.len() * c.hidden as usize]
     } else {
@@ -382,20 +416,35 @@ fn device_forward(
     let mut e = [0; 1024];
     native_status(
         unsafe {
-            rs_qwen_device_step(
-                session.0,
-                state.token.as_ref().map_or(std::ptr::null(), |t| &t.id),
-                state.position(),
-                ir.ffi_ids().as_ptr(),
-                ir.len(),
-                &mut id,
-                logits.as_mut_ptr(),
-                logits.len(),
-                trace.as_mut_ptr(),
-                trace.len(),
-                e.as_mut_ptr(),
-                e.len(),
-            )
+            if all_logits {
+                rs_qwen_device_block(
+                    session.0,
+                    state.token.as_ref().map_or(std::ptr::null(), |t| &t.id),
+                    state.position(),
+                    ir.ffi_ids().as_ptr(),
+                    ir.len(),
+                    &mut id,
+                    logits.as_mut_ptr(),
+                    logits.len(),
+                    e.as_mut_ptr(),
+                    e.len(),
+                )
+            } else {
+                rs_qwen_device_step(
+                    session.0,
+                    state.token.as_ref().map_or(std::ptr::null(), |t| &t.id),
+                    state.position(),
+                    ir.ffi_ids().as_ptr(),
+                    ir.len(),
+                    &mut id,
+                    logits.as_mut_ptr(),
+                    logits.len(),
+                    trace.as_mut_ptr(),
+                    trace.len(),
+                    e.as_mut_ptr(),
+                    e.len(),
+                )
+            }
         },
         &e,
     )?;
@@ -443,6 +492,18 @@ unsafe extern "C" {
         logits_count: usize,
         trace: *mut f32,
         trace_count: usize,
+        error: *mut c_char,
+        cap: usize,
+    ) -> i32;
+    fn rs_qwen_device_block(
+        session: *mut c_void,
+        previous: *const StateId,
+        position: usize,
+        tokens: *const u32,
+        count: usize,
+        output: *mut StateId,
+        logits: *mut f32,
+        logits_count: usize,
         error: *mut c_char,
         cap: usize,
     ) -> i32;

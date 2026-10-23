@@ -1,0 +1,40 @@
+SPEC-AB raw add
+SPEC-AB raw multiply
+SPEC-AB raw subtract
+SPEC-AB raw power
+SPEC-AB raw rust-binding
+SPEC-AB raw rust-success
+SPEC-AB raw rust-owner
+SPEC-AB raw rust-borrow
+SPEC-AB raw https
+SPEC-AB raw ssh
+SPEC-AB raw dns
+SPEC-AB raw hash
+SPEC-AB raw sql
+SPEC-AB raw privilege
+SPEC-AB raw reverse
+SPEC-AB raw instruction
+SPEC-AB domain r07
+SPEC-AB domain r08
+SPEC-AB domain r09
+SPEC-AB domain s10
+SPEC-AB domain s11
+{"block_state_maxima":[7.525890078655473e-7,0.000054836273193359375],"boundary_cases":19,"cancellation":true,"context_edge":512,"diagnostic_exported_bytes":7865466880,"free_greedy_requests":21,"identity":"509cc92543203798f2db08b6fb6cbb38a80942fc0437ae81a3ef9ff27720915b","mlx_peak_bytes_process":20706435560,"pass":true,"per_position_logit_maxima":[2.147667810912755e-6,0.00003790855407714844],"production_qualified":false,"residents_after_drain":0,"retrieval_acceptance":0.125,"retrieval_accepted":1,"retrieval_committed_tokens":60,"retrieval_proposed":8,"retrieval_target_calls":60,"scheduler_integrated":false,"stochastic_sampling":false,"trained_mtp":false,"uploaded_bytes":0}
+       94.34 real        71.52 user         9.70 sys
+         21330821120  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+             1342168  page reclaims
+                 195  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                 995  voluntary context switches
+              322426  involuntary context switches
+       1382389898015  instructions retired
+        363650058570  cycles elapsed
+         26814071008  peak memory footprint

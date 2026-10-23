@@ -1,0 +1,548 @@
+---
+title: "September–October research review and native speculative execution proposal"
+document_type: "research"
+version: "1.0.0"
+date: "2026-10-23T02:02:02Z"
+implementation_date: null
+author: "Codex for Stewart Barteau"
+reviewers: []
+status: "draft"
+related_files:
+  - path: ".gitignore"
+    lines: "1-9"
+    role: "config"
+  - path: "Cargo.lock"
+    lines: "1-1015"
+    role: "config"
+  - path: "Cargo.toml"
+    lines: "1-49"
+    role: "config"
+  - path: "backend/rapid_worker.py"
+    lines: "1-165"
+    role: "primary"
+  - path: "build.rs"
+    lines: "1-62"
+    role: "primary"
+  - path: "examples/native_device_pressure.rs"
+    lines: "1-184"
+    role: "primary"
+  - path: "examples/native_device_reference.rs"
+    lines: "1-162"
+    role: "primary"
+  - path: "examples/native_discriminators.rs"
+    lines: "1-145"
+    role: "primary"
+  - path: "examples/native_speculative_smoke.rs"
+    lines: "1-370"
+    role: "primary"
+  - path: "examples/native_suite_reference.rs"
+    lines: "1-198"
+    role: "primary"
+  - path: "fixtures/atan2.amvk"
+    lines: null
+    role: "test"
+  - path: "fixtures/cache-config-bench.json"
+    lines: "1-13"
+    role: "test"
+  - path: "fixtures/cos.amvk"
+    lines: null
+    role: "test"
+  - path: "fixtures/elementwise.amvk"
+    lines: null
+    role: "test"
+  - path: "fixtures/native-choice-heldout.tsv"
+    lines: "1-4"
+    role: "test"
+  - path: "fixtures/native-domain-heldout.tsv"
+    lines: "1-24"
+    role: "test"
+  - path: "fixtures/native-heldout.tsv"
+    lines: "1-16"
+    role: "test"
+  - path: "fixtures/native-interpretation-probes.tsv"
+    lines: "1-4"
+    role: "test"
+  - path: "fixtures/native-model.path"
+    lines: "1-1"
+    role: "test"
+  - path: "fixtures/native-speculative-prompts.tsv"
+    lines: "1-4"
+    role: "test"
+  - path: "fixtures/qwen-prompts-long.json"
+    lines: "1-4"
+    role: "test"
+  - path: "fixtures/qwen-prompts.json"
+    lines: "1-6"
+    role: "test"
+  - path: "fixtures/qwen-serving-long.json"
+    lines: "1-21"
+    role: "test"
+  - path: "fixtures/qwen-serving.json"
+    lines: "1-21"
+    role: "test"
+  - path: "fixtures/rectangular.amvk"
+    lines: null
+    role: "test"
+  - path: "fixtures/sin.amvk"
+    lines: null
+    role: "test"
+  - path: "fixtures/square.amvk"
+    lines: null
+    role: "test"
+  - path: "fixtures/tanh.amvk"
+    lines: null
+    role: "test"
+  - path: "judges/attention_identical_inputs.py"
+    lines: "1-72"
+    role: "test"
+  - path: "judges/attention_profile.py"
+    lines: "1-44"
+    role: "test"
+  - path: "judges/benchmark.py"
+    lines: "1-51"
+    role: "test"
+  - path: "judges/cordic.py"
+    lines: "1-30"
+    role: "test"
+  - path: "judges/device_abi.cpp"
+    lines: "1-49"
+    role: "test"
+  - path: "judges/device_smoke_report.py"
+    lines: "1-38"
+    role: "test"
+  - path: "judges/generate_cordic.py"
+    lines: "1-44"
+    role: "test"
+  - path: "judges/layer_reference.py"
+    lines: "1-185"
+    role: "test"
+  - path: "judges/macro.py"
+    lines: "1-14"
+    role: "test"
+  - path: "judges/model_ab.py"
+    lines: "1-93"
+    role: "test"
+  - path: "judges/operator_reference.cpp"
+    lines: "1-29"
+    role: "test"
+  - path: "judges/projection_reference.cpp"
+    lines: "1-53"
+    role: "test"
+  - path: "judges/resources.py"
+    lines: "1-35"
+    role: "test"
+  - path: "judges/run.py"
+    lines: "1-220"
+    role: "test"
+  - path: "judges/speculative_report.py"
+    lines: "1-74"
+    role: "test"
+  - path: "judges/state_table.cpp"
+    lines: "1-21"
+    role: "test"
+  - path: "judges/suite_reference.py"
+    lines: "1-248"
+    role: "test"
+  - path: "judges/test_attention_profile.py"
+    lines: "1-51"
+    role: "test"
+  - path: "judges/test_device_smoke_report.py"
+    lines: "1-26"
+    role: "test"
+  - path: "judges/test_layer_reference.py"
+    lines: "1-56"
+    role: "test"
+  - path: "judges/test_speculative_report.py"
+    lines: "1-34"
+    role: "test"
+  - path: "judges/test_suite_reference.py"
+    lines: "1-107"
+    role: "test"
+  - path: "native/attention_reference.h"
+    lines: "1-21"
+    role: "primary"
+  - path: "native/mlx_bridge.cpp"
+    lines: "1-178"
+    role: "primary"
+  - path: "native/mlx_bridge.h"
+    lines: "1-87"
+    role: "primary"
+  - path: "native/operator_probe.inc"
+    lines: "1-28"
+    role: "primary"
+  - path: "native/operator_reference.h"
+    lines: "1-58"
+    role: "primary"
+  - path: "native/projection_probe.inc"
+    lines: "1-22"
+    role: "primary"
+  - path: "native/projection_reference.h"
+    lines: "1-30"
+    role: "primary"
+  - path: "native/qwen_device.inc"
+    lines: "1-47"
+    role: "primary"
+  - path: "native/qwen_model.inc"
+    lines: "1-172"
+    role: "primary"
+  - path: "native/state_table.h"
+    lines: "1-38"
+    role: "primary"
+  - path: "native/telemetry.cpp"
+    lines: "1-23"
+    role: "primary"
+  - path: "package-lock.json"
+    lines: "1-1072"
+    role: "config"
+  - path: "package.json"
+    lines: "1-21"
+    role: "config"
+  - path: "requirements-bench.txt"
+    lines: "1-2"
+    role: "config"
+  - path: "run.sh"
+    lines: "1-5"
+    role: "primary"
+  - path: "schema/trace.fbs"
+    lines: "1-12"
+    role: "primary"
+  - path: "src/backend.rs"
+    lines: "1-614"
+    role: "primary"
+  - path: "src/cache/mod.rs"
+    lines: "1-1068"
+    role: "primary"
+  - path: "src/chain.rs"
+    lines: "1-50"
+    role: "primary"
+  - path: "src/completion.rs"
+    lines: "1-218"
+    role: "primary"
+  - path: "src/cordic.rs"
+    lines: "1-204"
+    role: "primary"
+  - path: "src/cordic_tables.rs"
+    lines: "1-102"
+    role: "primary"
+  - path: "src/execute.rs"
+    lines: "1-122"
+    role: "primary"
+  - path: "src/gpu.rs"
+    lines: "1-440"
+    role: "primary"
+  - path: "src/ir.rs"
+    lines: "1-646"
+    role: "primary"
+  - path: "src/lib.rs"
+    lines: "1-30"
+    role: "primary"
+  - path: "src/macro_bench.rs"
+    lines: "1-81"
+    role: "primary"
+  - path: "src/main.rs"
+    lines: "1-451"
+    role: "primary"
+  - path: "src/runtime.rs"
+    lines: "1-366"
+    role: "primary"
+  - path: "src/sampled.rs"
+    lines: "1-193"
+    role: "primary"
+  - path: "src/serving/choices.rs"
+    lines: "1-123"
+    role: "primary"
+  - path: "src/serving/completion_ledger.rs"
+    lines: "1-100"
+    role: "primary"
+  - path: "src/serving/config.rs"
+    lines: "1-51"
+    role: "primary"
+  - path: "src/serving/kv.rs"
+    lines: "1-280"
+    role: "primary"
+  - path: "src/serving/mod.rs"
+    lines: "1-104"
+    role: "primary"
+  - path: "src/serving/model_ir.rs"
+    lines: "1-244"
+    role: "primary"
+  - path: "src/serving/native_boundary.rs"
+    lines: "1-193"
+    role: "primary"
+  - path: "src/serving/native_device.rs"
+    lines: "1-607"
+    role: "primary"
+  - path: "src/serving/native_device_scheduler.rs"
+    lines: "1-178"
+    role: "primary"
+  - path: "src/serving/native_device_smoke.rs"
+    lines: "1-162"
+    role: "primary"
+  - path: "src/serving/native_diagnose.rs"
+    lines: "1-104"
+    role: "primary"
+  - path: "src/serving/native_extended.rs"
+    lines: "1-214"
+    role: "primary"
+  - path: "src/serving/native_ingestion.rs"
+    lines: "1-272"
+    role: "primary"
+  - path: "src/serving/native_layer_reference.rs"
+    lines: "1-93"
+    role: "primary"
+  - path: "src/serving/native_mlx.rs"
+    lines: "1-925"
+    role: "primary"
+  - path: "src/serving/native_ops.rs"
+    lines: "1-273"
+    role: "primary"
+  - path: "src/serving/native_qwen.rs"
+    lines: "1-678"
+    role: "primary"
+  - path: "src/serving/native_reference.rs"
+    lines: "1-100"
+    role: "primary"
+  - path: "src/serving/native_speculative.rs"
+    lines: "1-340"
+    role: "primary"
+  - path: "src/serving/native_state.rs"
+    lines: "1-194"
+    role: "primary"
+  - path: "src/serving/native_tokenizer.rs"
+    lines: "1-213"
+    role: "primary"
+  - path: "src/serving/qwen_tests.rs"
+    lines: "1-566"
+    role: "primary"
+  - path: "src/serving/rapid.rs"
+    lines: "1-265"
+    role: "primary"
+  - path: "src/serving/scheduler.rs"
+    lines: "1-645"
+    role: "primary"
+  - path: "src/serving/weights.rs"
+    lines: "1-395"
+    role: "primary"
+  - path: "src/telemetry.rs"
+    lines: "1-26"
+    role: "primary"
+  - path: "src/trace_generated.rs"
+    lines: "1-1523"
+    role: "primary"
+  - path: "src/wire.rs"
+    lines: "1-124"
+    role: "primary"
+  - path: "tests/adversarial.rs"
+    lines: "1-456"
+    role: "test"
+  - path: "tests/async_completion.rs"
+    lines: "1-192"
+    role: "test"
+  - path: "tests/cache_control.rs"
+    lines: "1-419"
+    role: "test"
+  - path: "tests/cordic.rs"
+    lines: "1-264"
+    role: "test"
+  - path: "tests/fixed_point.rs"
+    lines: "1-146"
+    role: "test"
+  - path: "tests/grid.rs"
+    lines: "1-41"
+    role: "test"
+  - path: "tests/native_execution.rs"
+    lines: "1-486"
+    role: "test"
+  - path: "tests/native_mlx.rs"
+    lines: "1-297"
+    role: "test"
+  - path: "tests/output_choices.rs"
+    lines: "1-110"
+    role: "test"
+  - path: "tests/production_pipeline.rs"
+    lines: "1-315"
+    role: "test"
+  - path: "tests/rapid_rpc.rs"
+    lines: "1-76"
+    role: "test"
+  - path: "tests/resources.rs"
+    lines: "1-341"
+    role: "test"
+  - path: "tests/serving.rs"
+    lines: "1-435"
+    role: "test"
+  - path: "ts/generated/trace.ts"
+    lines: "1-5"
+    role: "primary"
+  - path: "ts/generated/wire/add.ts"
+    lines: "1-68"
+    role: "primary"
+  - path: "ts/generated/wire/cordic.ts"
+    lines: "1-78"
+    role: "primary"
+  - path: "ts/generated/wire/dot.ts"
+    lines: "1-68"
+    role: "primary"
+  - path: "ts/generated/wire/load.ts"
+    lines: "1-81"
+    role: "primary"
+  - path: "ts/generated/wire/op.ts"
+    lines: "1-61"
+    role: "primary"
+  - path: "ts/generated/wire/operation.ts"
+    lines: "1-54"
+    role: "primary"
+  - path: "ts/generated/wire/relu.ts"
+    lines: "1-58"
+    role: "primary"
+  - path: "ts/generated/wire/store.ts"
+    lines: "1-61"
+    role: "primary"
+  - path: "ts/generated/wire/trace.ts"
+    lines: "1-91"
+    role: "primary"
+  - path: "ts/generated/wire.ts"
+    lines: "1-13"
+    role: "primary"
+  - path: "ts/smoke.ts"
+    lines: "1-1"
+    role: "primary"
+  - path: "ts/trace.test.ts"
+    lines: "1-45"
+    role: "test"
+  - path: "ts/trace.ts"
+    lines: "1-73"
+    role: "primary"
+  - path: "tsconfig.json"
+    lines: "1-1"
+    role: "config"
+related_issues: []
+related_documents: ["DEVICE_STATE_IMPLEMENTATION.md", "DEVICE_STATE_OWNERSHIP.md", "NEXT_STEPS.md", "SERVING_ARCHITECTURE.md"]
+tags: [speculation, MTP, paging, batching, research]
+---
+
+# Executive summary
+
+Reviewed relevant September and October records in the local Deep Research vault and its adjacent preprints catalog before proceeding with runtime optimization. The proposed direction is a Rust-owned speculative controller that budgets candidate generation, exact verification, state memory, and request latency together. This is a research/design change only: no decoder, page tier, early exit, flag, or performance gain described below is implemented or qualified.
+
+# Problem statement
+
+The current native Combined lane has immutable device state and continuous scheduling, but serial rows, dense KV, and no speculative verifier. Its context ceiling is 512 and chunks are at most eight tokens. Its ABI returns final-position logits, not the per-position logits required to verify a candidate block. A cache priority estimate cannot by itself establish that omitted attention or model layers would leave the answer unchanged.
+
+# Review scope and literature
+
+Local root: `/Users/stewartbarteau/Desktop/Ai Research and Preprint Vault/Deep Research`.
+Read selected PDF introductory/method sections in folders 08 and 14, the folder-14 index, and relevant abstract records in the adjacent `preprints` directory. This is a targeted review, not an exhaustive full-paper replication. Primary arXiv records were checked for AgSpec, ASPIRE, H-Spec, OVAL, DGE, Page-EntroKV, GrowPage, TreeWY, and the self-consensus warning. Remaining rows are local evidence only and require primary/full-method verification before implementation. Author-reported gains are not Apple measurements.
+
+| Source (arXiv, 2026) | Evidence read | Engineering contribution and limitation |
+| --- | --- | --- |
+| Lee et al., [AgSpec, 2610.01108](https://arxiv.org/abs/2610.01108) | Local PDF sections; primary abstract | Session/workspace retrieval and feedback-driven draft lengths; strong first Rust draft source without training. Isolate corpora by tenant/model/tokenizer and permission. |
+| Ziashahabi et al., [ASPIRE, 2609.17943](https://arxiv.org/abs/2609.17943) | Local and primary abstract | Per-request asynchronous draft/verify decisions and mixed forwards; requires real tensor batching and hybrid state compatibility here. |
+| Jiang et al., [H-Spec, 2609.24197](https://arxiv.org/abs/2609.24197) | Local and primary abstract | Target KV plus last-position hidden features for a hybrid parallel drafter, avoiding a separate growing draft KV; requires trained compatible parameters, not arbitrary KV aliasing. |
+| Li et al., [SpecStream, 2609.33184](https://arxiv.org/abs/2609.33184) | Local abstract | Stream committed target KV across verification queries and prioritize target work; Apple unified-memory benefit must be measured rather than importing GPU/CPU transfer assumptions. |
+| Jung et al., [Spexis, 2609.34370](https://arxiv.org/abs/2609.34370) | Local abstract | Lookahead joint scheduling of speculation and future memory; multi-GPU results do not transfer directly to this Mac. |
+| Ma et al., [GrowPage, 2609.03494](https://arxiv.org/abs/2609.03494) | Local and primary abstract | Online page budget growth using attention demand; compression is a separate numerical policy. |
+| Li et al., [KVSET, 2609.27746](https://arxiv.org/abs/2609.27746) | Local PDF intro | Prefix reuse-distance working-set analysis; prefix hit rate is not within-request attention importance. |
+| Kang and Yoo, [DGE, 2609.33334](https://arxiv.org/abs/2609.33334) | Local and primary abstract | Delay eviction until answer-trajectory evidence exists; retained attention mass is not task-quality proof. |
+| S, [Page-EntroKV, 2610.03135](https://arxiv.org/abs/2610.03135) | Local and primary abstract | Score and budget actual shared GQA pages; pilot results do not qualify this hybrid. |
+| Shahbazi et al., [OVAL, 2610.06686](https://arxiv.org/abs/2610.06686) | Local and primary abstract | Output-aware page summaries rather than key similarity alone; sparse retrieval remains approximate. |
+| Yang et al., [BitNest, 2610.02800](https://arxiv.org/abs/2610.02800) | Local abstract | Nested precision may share draft/target weight representation; existing Q4 weights cannot be assumed bit-nested. |
+| Xie et al., [FlexEE, 2609.17008](https://arxiv.org/abs/2609.17008) | Local abstract | Exit supervision and state-compatible self-speculation; intermediate logits alone are not a calibrated exit head. |
+| Amankulov and Mamatin, [Limits of Speculation, 2609.22156](https://arxiv.org/abs/2609.22156) | Local PDF intro | Account for union-of-experts verification cost, not acceptance alone. PDF/index displays August 26 despite September identifier: date provenance needs resolution. |
+| Mo et al., [Stable Answers, 2609.09989](https://arxiv.org/abs/2609.09989) | Local PDF intro; primary abstract | Repeated answer agreement does not establish reasoning completion; counters a confidence-only stopping rule. |
+| Ghantasala, [TreeWY, 2608.20961](https://arxiv.org/abs/2608.20961) | Local PDF method sections; primary abstract | August dependency: factorized Gated DeltaNet verification and reconstruct accepted recurrent state; derive against actual native recurrence. |
+| Wang et al., [Bole, 2608.01651](https://arxiv.org/abs/2608.01651) | Local PDF intro/method sections | August dependency: hybrid tree verification, compact state factors, and batch-wide verification budgets; CUDA kernels need a separate Metal implementation. |
+
+The local index also lists AdaMTP, EntMTP, CLP, ESP and Beyond-MTP sources. They are discovery leads, not fully reviewed evidence in this pass. No claim that a trained MTP head is currently available or trustworthy is made.
+
+# Solution overview and inferred pattern
+
+The common pattern is prediction with bounded resources, followed by explicit commitment. The controller should predict the cost of accepted progress, not declare correctness from confidence. Proposed synthesis: one Rust-owned transaction joins a draft proposal, page-prefetch plan, verification budget, and atomic unified-state commit. This combination is an engineering hypothesis, not a claim of research novelty or priority.
+
+Minimize measured `(draft + verification + replay + page movement + interference time) / committed tokens`, subject to memory, queue, and tail-latency limits. Measure MoE expert-union bytes, not just draft acceptance. Compare with no speculation continuously through separately scheduled control windows; disable unprofitable speculation with hysteresis. The existing production-validation sampling policy remains inactive and separate from this scheduler controller.
+
+# Proposed native contracts
+
+Rust owns scheduling, sampling, corpus isolation, budgets and receipts. The existing C++ MLX ABI and new Metal kernels perform tensor work. No Python runtime worker or JSON transport. A trained MTP component means Rust-native execution of a head with qualified weights; coding a head does not supply the missing training/calibration.
+
+1. A draft provider returns token IDs, source identity, bounded length and, where needed, actual proposal probabilities. Start with permission-scoped suffix/retrieval drafting, then compare a custom trained head and self-speculation through the same interface. Never feed cache prediction into the final sampler as if it were a target distribution.
+2. A verifier returns all candidate-position target logits and provisional unified state under one owner/generation/model/tokenizer/numerical-profile epoch. Start with a linear chain before tree verification. The current final-logit-only ABI must be extended first.
+3. For greedy decoding, commit only the longest prefix matching target choices under fixed tie-breaking, then the target correction. Compare against sequential autoregressive logits because chunk arithmetic can change near-tie winners. For stochastic decoding, implement the full acceptance/residual correction using the actual proposal distribution and qualified RNG accounting; greedy equality does not prove distribution preservation.
+4. Commit KV, convolution windows, recurrent state, token position and RNG state atomically. Truncating KV alone is invalid for this model. First use bounded checkpoint/replay for correctness; later qualify factorized recurrent reconstruction against the reference. Cancellation/rejection releases every provisional branch after completion.
+5. Preserve exact baseline fallback at transaction boundaries. Never switch numerical mode silently midway through an accepted sequence.
+
+# Monte Shuffle: a bounded page-prediction experiment
+
+Tier 1 means an application-managed hot page set, not guaranteed CPU/GPU hardware cache placement. On Apple unified memory, pointer sharing alone does not create distinct HBM/DRAM tiers or prove locality improvements. Keep logical token positions, causal masks and RoPE coordinates unchanged when physical pages move.
+
+Maintain separate scores for prefix reuse across calls and page relevance within a call. Rank physical `(model epoch, layer, KV group, page)` objects using measured query/draft evidence, recency, and output sensitivity. Monte Carlo rollouts may estimate page demand and uncertainty within a strict CPU/GPU/time budget; seed and replay metadata belong to this experiment, not production receipt-validation selection. Include LRU, deterministic scoring, and random prefetch controls. Use hysteresis to prevent thrashing and isolate users to prevent cache poisoning or data leakage.
+
+Exact track: ranking changes prefetch/residency order only; all required attention pages remain accessible and contribute. Chunked online softmax can process every page without one contiguous cache, subject to numerical qualification. No page prediction certifies that absent contributions are zero.
+
+Approximate track: sparse attention, eviction, compressed pages, layer skipping or early termination must have distinct fingerprints, explicit opt-in and held-out quality gates. A bounded omitted-attention estimate could support adaptive expansion, but a local attention bound alone is not an end-to-end logit or task guarantee. Do not stop after Tier 1 merely because its answer seems confident.
+
+# Hybrid dynamic forward and prefill separation
+
+An exact speculative verifier still executes the full target graph for candidate positions, amortizing multiple sequential calls. A cheap draft may skip layers/use sparse context, but its output is provisional. Actual target layer skipping needs a qualified exit head, a continuation-state strategy and a separate approximate-model claim. Early termination of reasoning is yet another decision and cannot be inferred from repeated agreement.
+
+On one Mac, begin with logical prefill/decode queues over shared immutable weights, chunked prefill, decode-priority budgets and bounded admission. Independent queues do not prove physical overlap; contention may erase gains. Cross-device disaggregation is later work requiring an explicit unified-state handoff, transfer-cost measurement, epochs and cancellation ownership. Do not duplicate the roughly 19.5 GB weight store just to mimic a distributed architecture.
+
+# Configuration proposal (not available flags)
+
+| Proposed setting | Initial posture |
+| --- | --- |
+| draft provider | off; candidates retrieval / trained head / self / hybrid |
+| maximum draft length | sweep 1, 2, 4, 8 after verifier exists |
+| verification policy | exact greedy first; stochastic separately qualified |
+| recurrent branch storage | bounded checkpoint/replay first; factors experimental |
+| KV policy | dense reference; exact paged next; sparse explicit experiment |
+| page prediction | off; deterministic and Monte Carlo A/B controls |
+| prefill policy | bounded chunks with decode latency budget |
+| early exit | off; no implicit task-completion detector |
+
+# Testing evidence and adversarial review
+
+No runtime code changed and no new model benchmark ran for this review. Existing measurements remain the prior device-state smoke, not evidence for these proposals. Read current final-logit ABI, dense state ownership and context/chunk validation; checked primary literature as marked above. Documentation indexes and unchanged-source hashes are checked on this change.
+
+Required implementation gates: all frozen trajectories plus fresh preregistered long/agent workloads; accepted lengths and every rejected suffix; zero/one/all acceptance; EOS inside draft; near ties; invalid proposal probabilities; wrong tokenizer/model epochs; branch cancellation; recurrent/convolution rollback; stale pages; prefix forks; OOM and queue saturation; shutdown drain; hostile corpus injection; and cross-tenant isolation. Run sanitizers over the ABI/state primitives, full regressions, and actual Combined smoke. Compare sequential/block verifier logits and state, not tokens alone.
+
+Run paired alternating baseline/variant repetitions at concurrency 1 and 3 initially; expand only after real tensor batching and context gates pass. Publish TTFT, token latency p50/p95/p99, aggregate and per-lane decode, proposal acceptance and committed tokens per target call, replay cost, page-hit/miss and bytes, expert-union cost, peak memory, cancellation/drain accounting, and quality separately. Include prediction overhead and unsuccessful speculative work. Use disjoint tuning and qualification prompts; preserve old misses rather than relabeling them.
+
+# Deployment and next stage
+
+No deployment or defaults change. Immediate next implementation is the per-position verification ABI plus atomic hybrid-state acceptance/rollback using a tiny bounded linear draft. Retrieval drafting provides an untrained correctness probe; custom MTP training/execution follows the same contract. Factorized recurrence, tensor batching, page prediction and approximate exits each require isolated A/B gates before combination. Novelty and benefits remain unproven until those experiments pass.
+
+# What we learned
+
+| Area | Finding |
+| --- | --- |
+| State correctness | Recurrent and convolution state make KV-only rollback insufficient. |
+| Performance | Acceptance can rise while MoE verification cost makes throughput fall. |
+| Cache semantics | Prefix working set, attention relevance and hardware locality are different measurements. |
+| Evidence | Several September/October catalog entries contain abstracts only; method and code audits remain required. |
+
+# Changelog
+
+1.0.0 — 2026-10-22 — Targeted vault review and native speculation/page-policy research proposal; runtime unchanged.
+
+# First implementation contract (2026-10-22)
+
+Implement an opt-in linear greedy verifier, maximum eight draft tokens, with a private
+Rust cursor binding immutable state and next-token logits. A native block ABI returns
+position-major logits for each consumed candidate. Compare candidate zero against
+cursor logits and candidate i against block row i-1. On rejection, replay the accepted
+prefix plus target correction from the original state; on full acceptance append one
+target bonus unless context or EOS stops the transaction. A terminal EOS is consumed
+consistently into state. All externally visible commit fields publish together.
+The initial implementation uses bounded replay, not factorized recurrence, and does
+not integrate production scheduling or stochastic sampling. A request-local bounded
+suffix drafter supplies candidates; rejected candidates never enter its history.
+Qualify block-vs-sequential numerical drift, token decisions and unified-state replay
+on the actual Combined model before making any preservation claim. Record failed
+experiments. Native exported blocks have no public cursor constructor, and cursors
+cannot be used with another executor. No model defaults or active policy change.
+
+
+The bounded linear first phase is now implemented as an explicit experimental API;
+see NATIVE_SPECULATIVE_VERIFIER.md for actual scope and negative-performance results.
+The broader mechanisms and proposed flags above remain proposals.

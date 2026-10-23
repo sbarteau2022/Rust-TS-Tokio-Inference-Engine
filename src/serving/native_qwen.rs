@@ -667,8 +667,12 @@ mod tests;
 
 #[path = "native_device.rs"]
 mod device;
-pub use device::{DeviceState, DeviceStats, DeviceStep, QwenDeviceExecutor};
+pub use device::{DeviceBlock, DeviceState, DeviceStats, DeviceStep, QwenDeviceExecutor};
 
 #[path = "native_device_scheduler.rs"]
 mod device_scheduler;
 pub use device_scheduler::{ScheduledDevice, StateMode};
+
+#[path = "native_speculative.rs"]
+mod speculative;
+pub use speculative::{GreedyCursor, GreedyTransaction, SuffixDraft};

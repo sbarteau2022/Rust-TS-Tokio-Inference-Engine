@@ -15,7 +15,7 @@ related_files:
     lines: "1-1015"
     role: "config"
   - path: "Cargo.toml"
-    lines: "1-45"
+    lines: "1-49"
     role: "config"
   - path: "backend/rapid_worker.py"
     lines: "1-165"
@@ -31,6 +31,9 @@ related_files:
     role: "primary"
   - path: "examples/native_discriminators.rs"
     lines: "1-145"
+    role: "primary"
+  - path: "examples/native_speculative_smoke.rs"
+    lines: "1-370"
     role: "primary"
   - path: "examples/native_suite_reference.rs"
     lines: "1-198"
@@ -61,6 +64,9 @@ related_files:
     role: "test"
   - path: "fixtures/native-model.path"
     lines: "1-1"
+    role: "test"
+  - path: "fixtures/native-speculative-prompts.tsv"
+    lines: "1-4"
     role: "test"
   - path: "fixtures/qwen-prompts-long.json"
     lines: "1-4"
@@ -99,7 +105,7 @@ related_files:
     lines: "1-30"
     role: "test"
   - path: "judges/device_abi.cpp"
-    lines: "1-39"
+    lines: "1-49"
     role: "test"
   - path: "judges/device_smoke_report.py"
     lines: "1-38"
@@ -126,7 +132,10 @@ related_files:
     lines: "1-35"
     role: "test"
   - path: "judges/run.py"
-    lines: "1-218"
+    lines: "1-220"
+    role: "test"
+  - path: "judges/speculative_report.py"
+    lines: "1-74"
     role: "test"
   - path: "judges/state_table.cpp"
     lines: "1-21"
@@ -143,6 +152,9 @@ related_files:
   - path: "judges/test_layer_reference.py"
     lines: "1-56"
     role: "test"
+  - path: "judges/test_speculative_report.py"
+    lines: "1-34"
+    role: "test"
   - path: "judges/test_suite_reference.py"
     lines: "1-107"
     role: "test"
@@ -153,7 +165,7 @@ related_files:
     lines: "1-178"
     role: "primary"
   - path: "native/mlx_bridge.h"
-    lines: "1-85"
+    lines: "1-87"
     role: "primary"
   - path: "native/operator_probe.inc"
     lines: "1-28"
@@ -168,10 +180,10 @@ related_files:
     lines: "1-30"
     role: "primary"
   - path: "native/qwen_device.inc"
-    lines: "1-45"
+    lines: "1-47"
     role: "primary"
   - path: "native/qwen_model.inc"
-    lines: "1-171"
+    lines: "1-172"
     role: "primary"
   - path: "native/state_table.h"
     lines: "1-38"
@@ -258,7 +270,7 @@ related_files:
     lines: "1-193"
     role: "primary"
   - path: "src/serving/native_device.rs"
-    lines: "1-546"
+    lines: "1-607"
     role: "primary"
   - path: "src/serving/native_device_scheduler.rs"
     lines: "1-178"
@@ -285,10 +297,13 @@ related_files:
     lines: "1-273"
     role: "primary"
   - path: "src/serving/native_qwen.rs"
-    lines: "1-674"
+    lines: "1-678"
     role: "primary"
   - path: "src/serving/native_reference.rs"
     lines: "1-100"
+    role: "primary"
+  - path: "src/serving/native_speculative.rs"
+    lines: "1-340"
     role: "primary"
   - path: "src/serving/native_state.rs"
     lines: "1-194"
@@ -642,3 +657,25 @@ acceptance/verification overhead; speculative acceptance is currently N/A.
 4. Preserve original held-out failures and qualify fresh Rust/Cyber workloads.
 Physical MLX command-buffer limits, AMX/ANE, active dynamic production sampling
 and a broad Triton-style deployment claim remain separately gated.
+
+
+## After the native greedy verifier and retrieval smoke
+
+The first opt-in linear verifier is implemented; see NATIVE_SPECULATIVE_VERIFIER.md.
+It returns all candidate-position logits and commits unified state with bounded
+replay. Retrieval accepts 25.31% of proposals on four authored code/security probes
+but does not improve measured throughput. It remains off the production scheduler.
+
+1. Build a measured per-request cost controller that can choose no speculation.
+Then audit/train a compatible custom MTP or hybrid proposal head, with separate
+training/calibration/qualification data and Rust-native execution. Do not activate
+checkpoint MTP tensors based solely on their presence.
+2. Derive and qualify factorized recurrent acceptance to reduce replay, retaining
+the current transaction as the state oracle. Require near-tie token comparisons
+and branch/cancel/context pressure before combining with tensor batching.
+3. Implement exact page ownership and regular paged attention before page-prediction
+experiments. Monte Shuffle may reorder application-managed residency/prefetch;
+missing attention or skipped layers are separately labeled approximate modes.
+4. Repeat sustained alternating no-speculation/speculation windows, include prefill,
+TTFT/tail latency, concurrency and quality. Four 64-token probes are not completed
+agents. Native MTP, mixed speculative tensor batching and broad readiness remain open.

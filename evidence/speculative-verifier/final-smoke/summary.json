@@ -1,0 +1,31 @@
+{
+  "authored_agent_smoke_requests": 4,
+  "block_state_maxima": [
+    7.525890078655473e-7,
+    0.000054836273193359375
+  ],
+  "boundary_cases": 19,
+  "cancellation": true,
+  "context_edge": 512,
+  "diagnostic_exported_bytes": 8432599040,
+  "frozen_free_greedy_requests": 21,
+  "identity": "509cc92543203798f2db08b6fb6cbb38a80942fc0437ae81a3ef9ff27720915b",
+  "mlx_peak_bytes_process": 20706435560,
+  "pass": true,
+  "per_position_logit_maxima": [
+    2.147667810912755e-6,
+    0.00003790855407714844
+  ],
+  "production_qualified": false,
+  "requests": 25,
+  "residents_after_drain": 0,
+  "retrieval_acceptance": 0.24899598393574296,
+  "retrieval_accepted": 62,
+  "retrieval_committed_tokens": 316,
+  "retrieval_proposed": 249,
+  "retrieval_target_calls": 293,
+  "scheduler_integrated": false,
+  "stochastic_sampling": false,
+  "trained_mtp": false,
+  "uploaded_bytes": 0
+}

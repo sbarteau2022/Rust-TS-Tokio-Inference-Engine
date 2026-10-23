@@ -1,0 +1,25 @@
+{
+  "branch_isolation": true,
+  "chunk_single_logit_drift": [
+    4.446597695705537e-7,
+    5.245208740234375e-6
+  ],
+  "chunk_single_state_drift": [
+    1.870075524533521e-7,
+    9.894371032714844e-6
+  ],
+  "context": 512,
+  "explicit_diagnostic_exported_bytes": 438517760,
+  "fourth_step_rejected": true,
+  "hot_path_exported_bytes": 0,
+  "hot_path_uploaded_bytes": 0,
+  "mlx_peak_bytes_process": 20152852968,
+  "pass": true,
+  "pending_receipt_cancel": true,
+  "physical_command_buffer_cap_claim": false,
+  "recovery": true,
+  "restart_foreign_epoch_rejected": true,
+  "shutdown_invalidated": 1,
+  "slot_exhaustion": true,
+  "three_admitted_queue_cancel": true
+}

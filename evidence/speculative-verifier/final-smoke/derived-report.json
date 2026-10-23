@@ -1,0 +1,46 @@
+{
+  "pass": true,
+  "groups": {
+    "raw": {
+      "requests": 16,
+      "tokens": 47,
+      "proposed": 8,
+      "accepted": 1,
+      "target_calls": 47,
+      "baseline_seconds": 2.299040292,
+      "speculative_seconds": 2.3376310410000003,
+      "acceptance": 0.125,
+      "baseline_decode_tok_s": 20.443312874309555,
+      "speculative_decode_tok_s": 20.105824732672172,
+      "committed_per_target_call": 1.0
+    },
+    "domain": {
+      "requests": 5,
+      "tokens": 13,
+      "proposed": 0,
+      "accepted": 0,
+      "target_calls": 13,
+      "baseline_seconds": 0.6338202079999999,
+      "speculative_seconds": 0.630027835,
+      "acceptance": null,
+      "baseline_decode_tok_s": 20.510548316250595,
+      "speculative_decode_tok_s": 20.63400897200042,
+      "committed_per_target_call": 1.0
+    },
+    "agent-smoke": {
+      "requests": 4,
+      "tokens": 256,
+      "proposed": 241,
+      "accepted": 61,
+      "target_calls": 233,
+      "baseline_seconds": 12.584747499999999,
+      "speculative_seconds": 12.768063584,
+      "acceptance": 0.25311203319502074,
+      "baseline_decode_tok_s": 20.342084733920963,
+      "speculative_decode_tok_s": 20.050025465161404,
+      "committed_per_target_call": 1.0987124463519313
+    }
+  },
+  "measurement_scope": "single-lane offline decode-only; fixed baseline-then-variant order; prefill/load excluded; no confidence interval",
+  "production_qualified": false
+}

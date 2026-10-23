@@ -43,3 +43,7 @@ required-features = ["native-mlx"]
 [[example]]
 name = "native_device_pressure"
 required-features = ["native-mlx"]
+
+[[example]]
+name = "native_speculative_smoke"
+required-features = ["native-mlx"]

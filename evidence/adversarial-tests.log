@@ -1,24 +1,28 @@
 
-running 28 tests
-test backend::tests::key_identity_covers_every_compile_dimension ... ok
-test serving::native_layer_reference::tests::capture_rejects_empty_nonfinite_before_write ... ok
-test serving::native_device_smoke::tests::quantiles_and_invalid_observations ... ok
-test serving::native_ingestion::tests::malformed_export_rejects_before_store ... ok
+running 32 tests
 test serving::choices::tests::malformed_contracts_fail_closed ... ok
-test completion::tests::failed_and_duplicate_completion_release_exactly_once ... ok
+test serving::native_layer_reference::tests::capture_rejects_empty_nonfinite_before_write ... ok
+test backend::tests::key_identity_covers_every_compile_dimension ... ok
+test serving::native_device_smoke::tests::quantiles_and_invalid_observations ... ok
 test completion::tests::dropped_waiter_keeps_permit_until_callback ... ok
+test completion::tests::failed_and_duplicate_completion_release_exactly_once ... ok
 test serving::native_qwen::device::tests::invalid_budget_rejects_before_loading_weights ... ok
-test serving::native_qwen::device::tests::only_final_clone_retires_and_closed_worker_is_safe ... ok
 test serving::model_ir::tests::core_runtime_has_no_lexical_dependency ... ok
+test serving::native_qwen::device::tests::only_final_clone_retires_and_closed_worker_is_safe ... ok
+test serving::native_ingestion::tests::malformed_export_rejects_before_store ... ok
+test serving::native_qwen::speculative::tests::malformed_rejected_suffix_never_commits ... ok
+test serving::native_qwen::speculative::tests::suffix_is_bounded_committed_only_and_deterministic ... ok
+test serving::model_ir::tests::typed_program_and_steps_validate_bounds ... ok
+test serving::choices::tests::shared_and_terminal_prefixes_and_stable_selection ... ok
+test serving::native_state::tests::reservation_drop_and_invalid_commit_are_atomic ... ok
+test cache::tests::reference_underflow_is_a_named_transactional_refusal ... ok
+test serving::native_qwen::speculative::tests::every_acceptance_boundary_bonus_eos_context_and_ties ... ok
 test serving::native_tokenizer::tests::single_turn_template_is_explicit ... ok
 test serving::native_tokenizer::tests::checkpoint_eos_precedence_and_malformed_policy ... ok
-test serving::model_ir::tests::typed_program_and_steps_validate_bounds ... ok
-test serving::native_state::tests::reservation_drop_and_invalid_commit_are_atomic ... ok
-test serving::choices::tests::shared_and_terminal_prefixes_and_stable_selection ... ok
-test cache::tests::reference_underflow_is_a_named_transactional_refusal ... ok
 test serving::native_extended::tests::domain_fixtures_and_invalid_contracts ... ok
-test sampled::tests::mismatch_latches_failure_and_drains ... ok
 test runtime::tests::background_mismatch_rejects_new_admission ... ok
+test sampled::tests::mismatch_latches_failure_and_drains ... ok
+test serving::native_qwen::speculative::tests::tie_break_matches_existing_selector_under_pressure ... ok
 test serving::native_qwen::device::tests::release_records_survive_full_work_queue_and_dropped_receipt ... ok
 test serving::native_qwen::tests::malformed_ir_and_native_layer_program_reject_before_publication ... ok
 test gpu::completion_tests::native_completion_holds_two_or_three_permits_and_resources ... ok
@@ -29,7 +33,7 @@ test serving::native_qwen::tests::complete_hybrid_cpu_gpu_and_chunked_state_equi
 test serving::native_ingestion::tests::raw_payload_all_dtypes_chunks_and_bounds ... ok
 test serving::native_qwen::tests::context_bound_and_scheduler_drain_with_three_requests ... ok
 
-test result: ok. 28 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.67s
+test result: ok. 32 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.71s
 
 
 running 0 tests
@@ -38,23 +42,23 @@ test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; fini
 
 
 running 13 tests
-test unsupported_version_union_and_operation_budget ... ok
 test constructor_without_tokio_is_an_error ... ok
+test unsupported_version_union_and_operation_budget ... ok
+test integer_json_and_binding_rejection ... ok
 test residency_is_consumed_by_emitter ... ok
 test mutations_fail_closed ... ok
 test borrowed_lowering_matches_debug_projection ... ok
-test integer_json_and_binding_rejection ... ok
 test valid_wire_corruption_is_contained ... ok
 test malformed_wire_never_panics ... ok
-test uma_alignment_and_budgets ... ok
 test tampered_plan_and_extreme_integer_cancellation ... ok
+test uma_alignment_and_budgets ... ok
 concurrent producers: 11 accepted, 53 rejected, 64 total
 test concurrent_producers_are_bounded ... ok
 pressure: rejected 93/100; valid jobs completed, decode/input failures isolated, cancellation recovered
 test pressure_failure_recovery_and_cancellation ... ok
 test gpu_edge_cases ... ok
 
-test result: ok. 13 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.50s
+test result: ok. 13 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.81s
 
 
 running 5 tests
@@ -66,38 +70,38 @@ limit 2: 8 admitted, 92 rejected; 9 callbacks; peak encoded 2, peak outstanding 
 limit 3: 8 admitted, 92 rejected; 9 callbacks; peak encoded 3, peak outstanding 3
 test both_limits_route_six_families_under_pressure_and_recover ... ok
 
-test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.89s
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.93s
 
 
 running 12 tests
 test epochs_and_fixed_point_match_independent_division_oracle ... ok
 test invalid_configuration_and_unknown_fields_fail_closed ... ok
-test duplicate_prefill_execution_and_close_during_callback_are_safe ... ok
+test anchors_degrade_visibly_and_holds_survive_pressure ... ok
 test unknown_reservations_are_not_tokens_and_queue_is_bounded ... ok
 test partial_tail_fork_is_immutable_and_locks_bar_write_forks ... ok
 test decay_ties_thresholds_and_one_level_per_boundary ... ok
-test anchors_degrade_visibly_and_holds_survive_pressure ... ok
+test duplicate_prefill_execution_and_close_during_callback_are_safe ... ok
 test continuation_queue_priority_expiry_and_no_resident_reprefill ... ok
 test exact_prefix_identity_is_path_and_namespace_dependent ... ok
 test prefix_inflight_is_deduplicated_and_producer_errors_release_reservations ... ok
 test random_pressure_operations_preserve_bounds_and_parentage ... ok
 test cached_gpu_receipts_release_leases_on_native_completion ... ok
 
-test result: ok. 12 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.47s
+test result: ok. 12 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.80s
 
 
 running 5 tests
 test cordic_graph_mutations_fail_closed ... ok
 test quadrant_axes_tiny_vectors_and_tanh_monotonicity ... ok
-Sin: 6643 exact GPU outputs; max libm error 1 raw units
 test runtime_cordic_receipts_and_failure_recovery ... ok
+Sin: 6643 exact GPU outputs; max libm error 1 raw units
 Cos: 6643 exact GPU outputs; max libm error 1 raw units
 Atan2: 6643 exact GPU outputs; max libm error 0.9998299777507782 raw units
 test cordic_dynamic_shapes_tails_and_pool_reuse ... ok
 Tanh: 6643 exact GPU outputs; max libm error 1 raw units
 test all_cordic_gpu_outputs_exact_and_accurate ... ok
 
-test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.51s
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.83s
 
 
 running 4 tests
@@ -106,14 +110,14 @@ test widened_elementwise_add_and_negative_relu ... ok
 test explicit_widening_floor_shift_and_final_saturation ... ok
 test full_range_randomized_gpu_parity_and_repeatability ... ok
 
-test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.54s
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.89s
 
 
 running 2 tests
 test reject_invalid_width_before_workers ... ok
 test all_widths_families_and_tails ... ok
 
-test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.87s
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.19s
 
 
 running 12 tests
@@ -121,16 +125,16 @@ test metadata_duplicates_overlap_and_symlink_fail_closed ... ok
 test checkpoint_mutation_and_malformed_metadata_rejected ... ok
 test changed_checkpoint_closes_admission_before_parameter_evaluation ... ok
 test expert_route_gather_mix_and_oob_rejection ... ok
-test causal_attention_and_rope_analytic_oracles ... ok
 test state_batches_preserve_rows_through_reorder_remove_and_failed_work ... ok
 test recurrent_multi_output_state_matches_scalar_update ... ok
 test recurrent_chunking_equals_full_sequence_and_cancellation_rolls_back ... ok
+test causal_attention_and_rope_analytic_oracles ... ok
 test persistent_weights_reuse_and_owner_isolation ... ok
 test mixed_affine_widths_constant_packing_oracle ... ok
 test mixed_bitstream_nonconstant_values_match_scalar_decode ... ok
 test recurrent_pressure_matches_independent_scalar_state_per_sequence ... ok
 
-test result: ok. 12 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.50s
+test result: ok. 12 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.84s
 
 
 running 8 tests
@@ -143,12 +147,12 @@ test packed_q4_and_rms_match_independent_scalar_oracles ... ok
 test native_dense_graphs_match_independent_oracle_on_cpu_and_gpu ... ok
 test native_pressure_4500_completions_bound_three_and_reconcile_windows ... ok
 
-test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.30s
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.57s
 
 
 running 2 tests
-test isolated_contracts_eos_receipts_and_cancelled_rows ... ok
 test unsupported_invalid_and_lying_backends_fail_closed ... ok
+test isolated_contracts_eos_receipts_and_cancelled_rows ... ok
 
 test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
 
@@ -162,7 +166,7 @@ test chains_are_exact_at_all_grids_and_both_caps ... ok
 test samples_exactly_every_thousand_successful_receipts ... ok
 test sampled_chain_checks_all_intermediate_stages ... ok
 
-test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.91s
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.40s
 
 
 running 0 tests
@@ -176,28 +180,28 @@ test elementwise_wire_validation_and_capabilities ... ok
 test page_granularity_is_reserved_before_admission ... ok
 test zero_retention_and_failed_jobs_never_leak_pool_accounting ... ok
 test lru_and_kernel_family_separation ... ok
+test warmed_jobs_reuse_pipeline_and_every_buffer ... ok
 test hard_memory_bound_dynamic_shapes_and_recovery ... ok
 test pipeline_source_bytes_are_bounded_independently_of_entry_count ... ok
-test warmed_jobs_reuse_pipeline_and_every_buffer ... ok
 test runtime_routes_both_families_and_retains_resources ... ok
 test second_family_tails_extremes_and_no_stale_output ... ok
 
-test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.48s
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.85s
 
 
 running 14 tests
 test config_unknown_fields_and_limits_are_explicit ... ok
-test turbo_integer_shapes_identity_and_untrusted_bytes ... ok
-test bounded_admission_does_not_spawn_unbounded_work ... ok
 test cancellation_retains_inflight_state_until_completion ... ok
-test scheduler_oom_invalid_requests_and_eos ... ok
-test batch_validation_is_atomic_and_response_order_is_not_assumed ... ok
-test scheduler_real_kv_consumption_chunk_invariance_and_drain ... ok
+test bounded_admission_does_not_spawn_unbounded_work ... ok
 test runtime_accepts_both_typed_host_codecs ... ok
-test malformed_backend_batches_and_release_errors_latch_admission ... ok
+test batch_validation_is_atomic_and_response_order_is_not_assumed ... ok
 test panicked_backend_closes_admission_and_reports_unfinished_work ... ok
-test global_byte_budget_concurrent_reservations ... ok
+test malformed_backend_batches_and_release_errors_latch_admission ... ok
+test scheduler_real_kv_consumption_chunk_invariance_and_drain ... ok
+test turbo_integer_shapes_identity_and_untrusted_bytes ... ok
+test scheduler_oom_invalid_requests_and_eos ... ok
 test regular_exact_lifetimes_and_budget_pressure ... ok
+test global_byte_budget_concurrent_reservations ... ok
 test turbo_rotation_inverse_and_extreme_integer_oracle ... ok
 test ten_thousand_token_steps_remain_bounded ... ok
 

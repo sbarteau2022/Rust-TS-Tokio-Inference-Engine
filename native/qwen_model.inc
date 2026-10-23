@@ -116,9 +116,9 @@ extern "C" int rs_qwen_quant(void* store,const char* module,int group,int bits,c
  if(!store||!module||!(group==32||group==64||group==128)||!(bits==2||bits==3||bits==4||bits==5||bits==6||bits==8))throw std::invalid_argument("invalid model quantization");
  static_cast<Weights*>(store)->quant[std::string(module)]={group,bits};
 });}
-static int qwen_forward_core(void* store,int gpu,const rs_qwen_config* config,const rs_qwen_layer* layers,size_t layer_count,const uint32_t* tokens,size_t count,size_t offset,const float* old_state,size_t old_count,float* new_state,size_t new_count,float* logits,size_t logits_count,int projection_checks,const uint32_t* projection_outputs,size_t projection_output_count,float* trace,size_t trace_count,char* error,size_t capacity,const std::vector<mx::array>* device_old=nullptr,std::vector<mx::array>* device_next=nullptr){return checked(error,capacity,[&]{
+static int qwen_forward_core(void* store,int gpu,const rs_qwen_config* config,const rs_qwen_layer* layers,size_t layer_count,const uint32_t* tokens,size_t count,size_t offset,const float* old_state,size_t old_count,float* new_state,size_t new_count,float* logits,size_t logits_count,int projection_checks,const uint32_t* projection_outputs,size_t projection_output_count,float* trace,size_t trace_count,char* error,size_t capacity,const std::vector<mx::array>* device_old=nullptr,std::vector<mx::array>* device_next=nullptr,bool all_logits=false){return checked(error,capacity,[&]{
  if(!store||!config||!layers||!tokens||(!new_state&&!device_next)||!logits)throw std::invalid_argument("invalid model descriptor");auto c=*config;
- if(c.hidden<=0||c.hidden>8192||c.layers<=0||c.layers>64||c.vocab<=0||c.vocab>300000||c.interval<=0||c.layers%c.interval||c.context<=0||c.context>512||c.chunk<=0||c.chunk>8||count==0||count>size_t(c.chunk)||offset>size_t(c.context)||offset+count>size_t(c.context)||logits_count!=size_t(c.vocab))throw std::invalid_argument("model geometry/capacity");
+ if(c.hidden<=0||c.hidden>8192||c.layers<=0||c.layers>64||c.vocab<=0||c.vocab>300000||c.interval<=0||c.layers%c.interval||c.context<=0||c.context>512||c.chunk<=0||c.chunk>8||count==0||count>size_t(c.chunk)||offset>size_t(c.context)||offset+count>size_t(c.context)||logits_count!=size_t(c.vocab)*(all_logits?count:1))throw std::invalid_argument("model geometry/capacity");
  if(layer_count!=size_t(c.layers))throw std::invalid_argument("IR layer count");
  for(size_t i=0;i<layer_count;++i)if(layers[i].index!=i||layers[i].mixer>1||layers[i].mixer!=uint32_t((i+1)%c.interval==0))throw std::invalid_argument("IR layer program");
  for(auto d:{c.q_heads,c.kv_heads,c.head_dim,c.key_heads,c.value_heads,c.key_dim,c.value_dim,c.conv,c.experts,c.top,c.intermediate,c.shared})if(d<=0||d>8192)throw std::invalid_argument("model dimension bounds");
@@ -157,7 +157,8 @@ static int qwen_forward_core(void* store,int gpu,const rs_qwen_config* config,co
    else std::memcpy(new_state+write,a.data<float>(),a.size()*4);write+=a.size();}
  }
  if(write!=new_count||read!=old_count)throw std::invalid_argument("state accounting mismatch");
- auto last=mx::take(m.norm(x,"language_model.model.norm.weight"),int(count)-1,1,s);
+ auto normalized=m.norm(x,"language_model.model.norm.weight");
+ auto last=all_logits?normalized:mx::take(normalized,int(count)-1,1,s);
  auto output=mx::contiguous(mx::astype(m.linear(last,"language_model.lm_head"),mx::float32,s),false,s);
  std::vector<mx::array> final_outputs={output};final_outputs.insert(final_outputs.end(),finite_checks.begin(),finite_checks.end());mx::eval(final_outputs);mx::synchronize(s);
  for(const auto& finite:finite_checks)if(!finite.item<bool>())throw std::runtime_error("nonfinite device state");

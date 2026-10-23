@@ -1,8 +1,8 @@
 ---
 title: "Rust Server — Apple native kernel compiler and runtime"
 document_type: "implementation"
-version: "1.21.0"
-date: "2026-10-23T00:42:45Z"
+version: "1.22.0"
+date: "2026-10-23T03:45:56Z"
 implementation_date: null
 author: "Codex for Stewart Barteau"
 reviewers: []
@@ -15,7 +15,7 @@ related_files:
     lines: "1-1015"
     role: "config"
   - path: "Cargo.toml"
-    lines: "1-45"
+    lines: "1-49"
     role: "config"
   - path: "backend/rapid_worker.py"
     lines: "1-165"
@@ -31,6 +31,9 @@ related_files:
     role: "primary"
   - path: "examples/native_discriminators.rs"
     lines: "1-145"
+    role: "primary"
+  - path: "examples/native_speculative_smoke.rs"
+    lines: "1-370"
     role: "primary"
   - path: "examples/native_suite_reference.rs"
     lines: "1-198"
@@ -61,6 +64,9 @@ related_files:
     role: "test"
   - path: "fixtures/native-model.path"
     lines: "1-1"
+    role: "test"
+  - path: "fixtures/native-speculative-prompts.tsv"
+    lines: "1-4"
     role: "test"
   - path: "fixtures/qwen-prompts-long.json"
     lines: "1-4"
@@ -99,7 +105,7 @@ related_files:
     lines: "1-30"
     role: "test"
   - path: "judges/device_abi.cpp"
-    lines: "1-39"
+    lines: "1-49"
     role: "test"
   - path: "judges/device_smoke_report.py"
     lines: "1-38"
@@ -126,7 +132,10 @@ related_files:
     lines: "1-35"
     role: "test"
   - path: "judges/run.py"
-    lines: "1-218"
+    lines: "1-220"
+    role: "test"
+  - path: "judges/speculative_report.py"
+    lines: "1-74"
     role: "test"
   - path: "judges/state_table.cpp"
     lines: "1-21"
@@ -143,6 +152,9 @@ related_files:
   - path: "judges/test_layer_reference.py"
     lines: "1-56"
     role: "test"
+  - path: "judges/test_speculative_report.py"
+    lines: "1-34"
+    role: "test"
   - path: "judges/test_suite_reference.py"
     lines: "1-107"
     role: "test"
@@ -153,7 +165,7 @@ related_files:
     lines: "1-178"
     role: "primary"
   - path: "native/mlx_bridge.h"
-    lines: "1-85"
+    lines: "1-87"
     role: "primary"
   - path: "native/operator_probe.inc"
     lines: "1-28"
@@ -168,10 +180,10 @@ related_files:
     lines: "1-30"
     role: "primary"
   - path: "native/qwen_device.inc"
-    lines: "1-45"
+    lines: "1-47"
     role: "primary"
   - path: "native/qwen_model.inc"
-    lines: "1-171"
+    lines: "1-172"
     role: "primary"
   - path: "native/state_table.h"
     lines: "1-38"
@@ -258,7 +270,7 @@ related_files:
     lines: "1-193"
     role: "primary"
   - path: "src/serving/native_device.rs"
-    lines: "1-546"
+    lines: "1-607"
     role: "primary"
   - path: "src/serving/native_device_scheduler.rs"
     lines: "1-178"
@@ -285,10 +297,13 @@ related_files:
     lines: "1-273"
     role: "primary"
   - path: "src/serving/native_qwen.rs"
-    lines: "1-674"
+    lines: "1-678"
     role: "primary"
   - path: "src/serving/native_reference.rs"
     lines: "1-100"
+    role: "primary"
+  - path: "src/serving/native_speculative.rs"
+    lines: "1-340"
     role: "primary"
   - path: "src/serving/native_state.rs"
     lines: "1-194"
@@ -934,3 +949,27 @@ paired six-request smoke. Device TTFT p50/p95 is **306/376 ms** (one lane) and
 **978/980 ms** (three). These small fixed-order windows preserve trajectories but
 are not a sustained benchmark or network streaming result. Both the regression
 and improvement are retained; see the implementation document for full metrics.
+
+The [September–October speculative execution research review](docs/SPECULATIVE_RESEARCH_2026_10.md)
+proposes native draft/verify transactions, recurrent-state-safe commit, and separate
+exact-prefetch versus approximate sparse-cache experiments. These are design proposals;
+no speculation, MTP, page prediction, early exit or new tuning flags are activated.
+
+
+## Experimental native greedy speculative verifier
+
+The [native verifier implementation](docs/NATIVE_SPECULATIVE_VERIFIER.md) adds
+per-position target logits, private Rust cursors and atomic KV/convolution/recurrent
+commit using bounded rejected-prefix replay. A request-local suffix drafter exercises
+the interface; no trained MTP, production scheduler integration, stochastic sampling,
+paging or early exit is activated. Use the explicit `native_speculative_smoke` example.
+
+In the Combined 25-request preservation smoke, every generated trajectory agrees
+with its sequential reference. Four authored 64-token code/security probes accept
+61/241 proposals (25.31%) and measure 20.05 vs 20.34 decode tok/s: no demonstrated
+speedup. These are fixed-order offline probes, not network or autonomous-agent
+throughput, completed-task quality, or model qualification. Existing default serving
+and original held-out misses remain unchanged.
+
+1.22.0 — 2026-10-22 — Research-grounded opt-in native block verification, Rust
+hybrid-state transactions and retained negative-performance retrieval smoke.

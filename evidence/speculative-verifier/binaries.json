@@ -1,0 +1,6 @@
+{
+  "target/release/rust-server": "4422cbc6484a4e7f1f3130ad29110ff682dfffeea78407ecbadf2fd46ec0e641",
+  "target/release/examples/native_speculative_smoke": "3698b7df0fa8742c5e716a98c8ffc35299c9baf2b02c8c3e25843e53bd03a404",
+  "target/release/examples/native_device_reference": "f24bcdd176d79163d1c6cbceef329e03a6205a2e1aaf5a214cf0d7d5f514eb5f",
+  "target/release/examples/native_device_pressure": "546b39c694c5c06132e2957493971a713322f88a9a200afa812970f70dc73512"
+}

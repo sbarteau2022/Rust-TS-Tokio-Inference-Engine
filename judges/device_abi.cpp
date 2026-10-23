@@ -34,6 +34,16 @@ int main(){
  assert(rs_qwen_device_snapshot(session,&forged,nullptr,1,error,sizeof(error))!=0);++checks;
  uint64_t invalidated=99;assert(rs_qwen_device_drain(session,&invalidated,error,sizeof(error))==0&&invalidated==0);++checks;
  assert(rs_qwen_device_stats(session,stats,7,error,sizeof(error))==0&&stats[0]==0&&stats[1]==0&&stats[4]==0);++checks;
+ // Block output count and input validation reject before sentinel weight dereference.
+ for(size_t n=0;n<=10;++n){
+  std::vector<uint32_t> ids(n,invalid);std::vector<float> rows(size_t(c.vocab)*std::min(n,size_t(8)));
+  assert(rs_qwen_device_block(session,nullptr,0,ids.data(),n,&output,rows.data(),rows.size(),error,sizeof(error))!=0);++checks;
+  assert(output.owner==9&&output.slot==9&&output.generation==9);
+ }
+ assert(rs_qwen_device_block(session,nullptr,0,&valid,1,&output,&scalar,1,error,sizeof(error))!=0);++checks;
+ assert(rs_qwen_device_block(session,&forged,1,&valid,1,&output,logits.data(),logits.size(),error,sizeof(error))!=0);++checks;
+ assert(rs_qwen_device_block(session,nullptr,0,&valid,1,nullptr,logits.data(),logits.size(),error,sizeof(error))!=0);++checks;
+ assert(rs_qwen_device_stats(session,stats,7,error,sizeof(error))==0&&stats[0]==0&&stats[1]==0&&stats[4]==0);++checks;
  rs_qwen_device_destroy(session);rs_qwen_device_destroy(nullptr);rs_mlx_cleanup();
  std::cout<<"PASS device ABI checks="<<checks+2<<" ASan/UBSan (upstream MLX uninstrumented)\n";
 }
