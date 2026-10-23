@@ -173,6 +173,9 @@ related_files:
   - path: "judges/native_http_smoke.py"
     lines: "1-81"
     role: "test"
+  - path: "judges/native_physical_http.py"
+    lines: "1-88"
+    role: "test"
   - path: "judges/native_seed_http.py"
     lines: "1-84"
     role: "test"
@@ -318,7 +321,7 @@ related_files:
     lines: "1-193"
     role: "primary"
   - path: "src/serving/batch_transaction.rs"
-    lines: "1-430"
+    lines: "1-591"
     role: "primary"
   - path: "src/serving/choices.rs"
     lines: "1-133"
@@ -351,7 +354,7 @@ related_files:
     lines: "1-1001"
     role: "primary"
   - path: "src/serving/native_device_scheduler.rs"
-    lines: "1-131"
+    lines: "1-205"
     role: "primary"
   - path: "src/serving/native_device_smoke.rs"
     lines: "1-162"
@@ -363,7 +366,7 @@ related_files:
     lines: "1-214"
     role: "primary"
   - path: "src/serving/native_http.rs"
-    lines: "1-267"
+    lines: "1-333"
     role: "primary"
   - path: "src/serving/native_ingestion.rs"
     lines: "1-272"
@@ -917,3 +920,10 @@ Next preregister the batch-shaped native ABI/graph: define state gather/scatter 
 An explicit completion-owned Rust/native batch graph now accepts equal-position target decode rows. Qualification compares scalar tokens, logits and all unified state for sizes 1/2/3; the server still selects scalar execution. Next wire successful compatible target cohorts through PreparedBatch with a required opt-in physical mode, independent native packed-call/row telemetry and conservative backing-aware admission. All ineligible geometry, snapshot mode, MTP branches and SeedPending rows must stay on scalar execution or be refused explicitly.
 
 Before promotion, test scheduler atomic commit under mixed eligible/ineligible cohorts, cancellation, output pressure and injected later-row native failure, with zero residual leases. Then run alternating scalar/physical HTTP 1k/1500/2k windows at one/three lanes and sustained arrivals, reporting TTFT, first-to-second/p95 gaps, total/decode throughput, packing ratio, rejection, fairness and physical/logical memory separately. No speed claim follows from native numerical parity. Per-layer synchronization removal is a separate ablation; native paging/compressed KV, custom Dspark and broad held-out qualification remain open.
+
+
+## After opt-in target scheduler routing
+
+Physical target scheduling is now explicitly selectable with `--tensor-batching physical`, with a larger conservative 2 GiB logical-state budget. Scalar remains default and MTP profiles reject this mode before loading weights. Completion counters distinguish packed graphs/rows from fallback scalar calls; mixed-cohort transactions restore input order and retain all-or-nothing parent publication.
+
+Next measure alternating scalar/physical HTTP 1k/1500/2k token windows at one/three lanes, then sustained arrivals and unequal prompt lengths. Report TTFT, inter-token tails, total/decode throughput, actual packing ratio, queue rejection, per-lane fairness and MLX physical memory separately. No speed claim follows from the bounded functional gate. Add native post-reservation fault injection before production promotion. Keep per-layer synchronization removal a separate ablation; MTP packing, native paging/compressed KV, custom Dspark and full held-out qualification remain open.

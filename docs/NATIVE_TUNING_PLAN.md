@@ -173,6 +173,9 @@ related_files:
   - path: "judges/native_http_smoke.py"
     lines: "1-81"
     role: "test"
+  - path: "judges/native_physical_http.py"
+    lines: "1-88"
+    role: "test"
   - path: "judges/native_seed_http.py"
     lines: "1-84"
     role: "test"
@@ -318,7 +321,7 @@ related_files:
     lines: "1-193"
     role: "primary"
   - path: "src/serving/batch_transaction.rs"
-    lines: "1-430"
+    lines: "1-591"
     role: "primary"
   - path: "src/serving/choices.rs"
     lines: "1-133"
@@ -351,7 +354,7 @@ related_files:
     lines: "1-1001"
     role: "primary"
   - path: "src/serving/native_device_scheduler.rs"
-    lines: "1-131"
+    lines: "1-205"
     role: "primary"
   - path: "src/serving/native_device_smoke.rs"
     lines: "1-162"
@@ -363,7 +366,7 @@ related_files:
     lines: "1-214"
     role: "primary"
   - path: "src/serving/native_http.rs"
-    lines: "1-267"
+    lines: "1-333"
     role: "primary"
   - path: "src/serving/native_ingestion.rs"
     lines: "1-272"
@@ -872,3 +875,11 @@ Implement an explicit Rust decode_batch API and completion-owned worker command 
 Child row views deliberately charge each surviving handle for the *entire* B-row packed state backing: bytes = B × scalar_state_bytes(P+1), with B such child charges reserved upfront. This conservatively overcounts by up to B and keeps the full backing charged after sibling release without relying on contiguous() detachment. The native resident limit remains a logical-state limit, not a process/weights/workspace physical-memory ceiling; report MLX active/peak separately. Validate every parent and token before reservation, roll back all reservations on any failure, and assign output handles only after all payloads publish. Rust installs retirement ownership for all returned handles before fallible receipt checks; dropped result receivers must retire all children after completion. Invalid descriptors/budget pressure must not poison admission; native computation failures do.
 
 Native qualification uses the designated Combined checkpoint and unchanged prompts. Compare B=1/2/3 children against independent scalar calls from the identical parents, then repeated greedy advancement, reverse row order, unequal-position/foreign-owner/invalid-token rejection, bounded resident pressure and sibling release. Require exact selected-token parity at every comparison. Report bitwise equality and per-row full-logit/full-unified-state max absolute and NRMSE errors; numerical gate is NRMSE ≤1e-5 and max absolute ≤1e-3 for both logits and state (FP32 model lane, not the integer-only Metal contract). Any token or numeric failure blocks scheduler promotion. Drain all state, and retain failed observations. This native gate does not establish HTTP batching, MTP integration or throughput gains; benchmark only after it passes.
+
+### Scheduler promotion preregistration
+
+Expose opt-in `--tensor-batching scalar|physical` for target HTTP only; reject MTP combinations before model loading. Default remains scalar. Physical mode uses 2 GiB logical native and scheduler budgets, and reserves three times the scalar maximum per sequence (260,505,600 bytes), because packed row views retain the whole backing. At most three live parents plus three provisional children require at most 18 scalar backing charges (1,563,033,600 bytes). Workspace is separately 512 MiB; weights and transient MLX allocations remain outside this logical limit.
+
+Execute exact-geometry cohorts transactionally: only multirow Decode cohorts at positive equal positions use the native packed graph; prefill, singleton and incompatible cohorts execute scalar. Preserve original response order and commit no parent until every cohort passes cardinality, position, vocabulary and finite-logit checks. Cancellation or a later cohort failure drops all provisional children. Count actual successfully completed packed calls/rows and scalar calls at the adapter boundary; these are completion counters, not intent or throughput claims. Require malformed-cardinality and later-cohort rollback tests plus existing cancellation/permutation gates, then real HTTP three-lane parity and zero drain before any performance claim. Physical mode remains experimental and unqualified until those live gates pass; MTP and per-layer synchronization remain unchanged.
+
+Scheduler adversarial review: native packing may retain B-row backing after a sibling exits, so physical mode increases per-sequence reservation rather than charging only the visible row. Parents remain leased until the complete transaction commits; worst-case three packed parents plus three packed children fit the explicit logical budget. Group callbacks return owned children; cardinality mismatch, invalid logits, later failure and dropped futures therefore reclaim all provisional leases without changing committed parents. The scalar default uses its original input-order execution path. Adapter counters advance only after successful executor completion and can include later-rolled-back work; they do not represent committed tokens. Engine retains completion ownership during HTTP cancellation. Remaining limits: no native post-publication injected fault, no heterogeneous padding, no MTP packing, no sustained performance or held-out quality promotion from this functional gate.

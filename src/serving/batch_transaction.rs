@@ -1,4 +1,4 @@
-//! Scalar transaction boundary for future physical batching. No tensor fusion occurs here.
+//! Atomic parent transactions for scalar execution and compatible native cohorts.
 use super::{
     model_ir::{ModelStepIr, StepKind},
     scheduler::{StepInput, StepOutput},
@@ -130,6 +130,43 @@ impl<'a, P: Parent> PreparedBatch<'a, P> {
     }
     pub fn cohorts(&self) -> &[Cohort] {
         &self.cohorts
+    }
+    /// Executes compatible cohorts without publishing any partial parent map.
+    /// The executor must preserve row order within each returned cohort.
+    pub async fn execute_grouped<F, Fut>(self, mut executor: F) -> Result<CompletedBatch<'a, P>>
+    where
+        F: FnMut(Vec<(P, ModelStepIr)>) -> Fut,
+        Fut: Future<Output = Result<Vec<(P, Vec<f32>)>>>,
+    {
+        let mut results: Vec<Option<(P, Vec<f32>)>> = (0..self.rows.len()).map(|_| None).collect();
+        for cohort in &self.cohorts {
+            let inputs = cohort
+                .rows
+                .iter()
+                .map(|&i| {
+                    let row = &self.rows[i];
+                    (row.parent.clone(), row.ir.clone())
+                })
+                .collect();
+            let outputs = executor(inputs).await?;
+            ensure!(
+                outputs.len() == cohort.rows.len(),
+                "batch cohort cardinality"
+            );
+            for (&i, output) in cohort.rows.iter().zip(outputs) {
+                results[i] = Some(output);
+            }
+        }
+        let mut results = results.into_iter();
+        self.execute(move |_, _| {
+            std::future::ready(
+                results
+                    .next()
+                    .flatten()
+                    .ok_or_else(|| anyhow::anyhow!("batch missing row")),
+            )
+        })
+        .await
     }
     /// Scalar input order is retained. A dropped/failed future exposes no CompletedBatch.
     /// The caller must retain completion ownership for native work already dispatched.
@@ -425,6 +462,130 @@ mod tests {
             answers.push(answer);
         }
         assert_eq!(answers[0], answers[1]);
+        Ok(())
+    }
+    #[tokio::test]
+    async fn grouped_cardinality_and_later_failure_rollback_all_children() -> Result<()> {
+        for mode in 0..4 {
+            let mut map = parents();
+            map.insert(3, state(1, 33));
+            let mut third = row(3);
+            third.position = 1;
+            let leases: Arc<Mutex<Vec<Weak<()>>>> = Arc::default();
+            let observed = leases.clone();
+            let mut calls = 0;
+            let result =
+                PreparedBatch::prepare(vec![row(2), third, row(1)], &mut map, || state(0, 0), 16)?
+                    .execute_grouped(move |rows| {
+                        calls += 1;
+                        let fail = calls == 2;
+                        let mut outputs: Vec<_> = rows
+                            .into_iter()
+                            .map(|(p, ir)| {
+                                let next = advance(p, ir);
+                                observed.lock().unwrap().push(Arc::downgrade(&next.0.lease));
+                                next
+                            })
+                            .collect();
+                        if fail {
+                            match mode {
+                                0 => {
+                                    outputs.pop();
+                                }
+                                1 => {
+                                    outputs.push(advance(
+                                        state(1, 0),
+                                        ModelStepIr::compile(StepKind::Decode, 1, vec![1], 16)
+                                            .unwrap(),
+                                    ));
+                                }
+                                2 => {
+                                    outputs[0].1[0] = f32::NAN;
+                                }
+                                _ => {
+                                    return std::future::ready(Err(anyhow::anyhow!(
+                                        "later cohort failure"
+                                    )))
+                                }
+                            }
+                        }
+                        std::future::ready(Ok(outputs))
+                    })
+                    .await;
+            assert!(result.is_err());
+            drop(result);
+            unchanged(&map);
+            assert_eq!(map[&3].position, 1);
+            assert!(leases.lock().unwrap().iter().all(|w| w.upgrade().is_none()));
+        }
+        Ok(())
+    }
+    #[tokio::test]
+    async fn grouped_noncontiguous_rows_restore_original_order() -> Result<()> {
+        let mut map = parents();
+        map.insert(3, state(1, 33));
+        let mut third = row(3);
+        third.position = 1;
+        let mut sizes = Vec::new();
+        let completed =
+            PreparedBatch::prepare(vec![row(2), third, row(1)], &mut map, || state(0, 0), 16)?
+                .execute_grouped(|rows| {
+                    sizes.push(rows.len());
+                    std::future::ready(Ok(rows.into_iter().map(|(p, ir)| advance(p, ir)).collect()))
+                })
+                .await?;
+        let output = completed.commit();
+        assert_eq!(sizes, vec![2, 1]);
+        assert_eq!(
+            output.iter().map(|o| o.sequence).collect::<Vec<_>>(),
+            vec![2, 3, 1]
+        );
+        assert_eq!(map[&1].tag, 12);
+        assert_eq!(map[&2].tag, 24);
+        assert_eq!(map[&3].tag, 36);
+        Ok(())
+    }
+    #[tokio::test]
+    async fn dropping_grouped_future_rolls_back_finished_cohort() -> Result<()> {
+        let mut map = parents();
+        map.insert(3, state(1, 33));
+        let mut third = row(3);
+        third.position = 1;
+        let leases: Arc<Mutex<Vec<Weak<()>>>> = Arc::default();
+        let observed = leases.clone();
+        let mut calls = 0;
+        let prepared =
+            PreparedBatch::prepare(vec![row(1), third, row(2)], &mut map, || state(0, 0), 16)?;
+        let mut execution = Box::pin(prepared.execute_grouped(move |rows| {
+            calls += 1;
+            let wait = calls == 2;
+            let observed = observed.clone();
+            async move {
+                if wait {
+                    std::future::pending::<()>().await;
+                }
+                Ok(rows
+                    .into_iter()
+                    .map(|(p, ir)| {
+                        let result = advance(p, ir);
+                        observed
+                            .lock()
+                            .unwrap()
+                            .push(Arc::downgrade(&result.0.lease));
+                        result
+                    })
+                    .collect())
+            }
+        }));
+        std::future::poll_fn(|cx| {
+            assert!(execution.as_mut().poll(cx).is_pending());
+            std::task::Poll::Ready(())
+        })
+        .await;
+        assert_eq!(leases.lock().unwrap().len(), 2);
+        drop(execution);
+        unchanged(&map);
+        assert!(leases.lock().unwrap().iter().all(|w| w.upgrade().is_none()));
         Ok(())
     }
 }

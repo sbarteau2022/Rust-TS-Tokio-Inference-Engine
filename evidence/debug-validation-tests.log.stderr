@@ -1,4 +1,3 @@
-   Compiling rust-server v0.1.0 (/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine)
 warning: rust-server@0.1.0: In file included from native/mlx_bridge.cpp:2:
 warning: rust-server@0.1.0: In file included from /Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/vendor/mlx/include/mlx/mlx.h:5:
 warning: rust-server@0.1.0: In file included from /Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/vendor/mlx/include/mlx/array.h:11:
@@ -24,7 +23,8 @@ warning: rust-server@0.1.0: /Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-I
 warning: rust-server@0.1.0:    38 |     return (*this = _MLX_BFloat16(x));
 warning: rust-server@0.1.0:       |                   ^
 warning: rust-server@0.1.0: 4 warnings generated.
-    Finished `test` profile [unoptimized + debuginfo] target(s) in 10.71s
+   Compiling rust-server v0.1.0 (/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 10.20s
 warning: the following packages contain code that will be rejected by a future version of Rust: block v0.1.6
 note: to see what the problems were, use the option `--future-incompat-report`, or run `cargo report future-incompatibilities --id 1`
      Running unittests src/lib.rs (target/debug/deps/rust_server-7b6797375be1ded3)
@@ -451,7 +451,7 @@ PROJECTION-ORACLE module=language_model.lm_head bits=4 group=32 rows=1 channels=
      Running tests/async_completion.rs (target/debug/deps/async_completion-a3f26e946e34aee3)
      Running tests/cache_control.rs (target/debug/deps/cache_control-fa0127fe13398c22)
 
-thread 'prefix_inflight_is_deduplicated_and_producer_errors_release_reservations' (25790035) panicked at tests/cache_control.rs:211:26:
+thread 'prefix_inflight_is_deduplicated_and_producer_errors_release_reservations' (25820601) panicked at tests/cache_control.rs:211:26:
 injected producer panic
 note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
      Running tests/cordic.rs (target/debug/deps/cordic-6280251da062db3f)
@@ -467,7 +467,7 @@ note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
      Running tests/resources.rs (target/debug/deps/resources-11ebf0d71942c6bf)
      Running tests/serving.rs (target/debug/deps/serving-ba673d35066067a4)
 
-thread 'panicked_backend_closes_admission_and_reports_unfinished_work' (25791070) panicked at tests/serving.rs:228:27:
+thread 'panicked_backend_closes_admission_and_reports_unfinished_work' (25822044) panicked at tests/serving.rs:228:27:
 injected model backend panic
 note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
    Doc-tests rust_server

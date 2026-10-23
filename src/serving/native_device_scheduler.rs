@@ -31,6 +31,8 @@ pub struct ScheduledDevice {
     mode: StateMode,
     identity: String,
     eos: Vec<u32>,
+    physical: bool,
+    counters: Arc<Mutex<BatchCounters>>,
     pub drain: Arc<Mutex<Option<DeviceStats>>>,
 }
 impl ScheduledDevice {
@@ -41,17 +43,31 @@ impl ScheduledDevice {
             mode,
             identity: executor.identity().to_owned(),
             eos,
+            physical: false,
+            counters: Arc::new(Mutex::new(BatchCounters::default())),
             drain: Arc::new(Mutex::new(None)),
         }
+    }
+    /// Opt-in target-only graph packing; caller must provision the documented 2 GiB budget.
+    pub fn with_physical_batching(mut self) -> Result<Self> {
+        ensure!(
+            self.mode == StateMode::Device,
+            "physical batching requires device state"
+        );
+        self.physical = true;
+        Ok(self)
+    }
+    pub fn batch_counters(&self) -> Arc<Mutex<BatchCounters>> {
+        self.counters.clone()
     }
     pub fn storage(&self) -> Storage {
         Storage::BackendManaged {
             fingerprint: Sha256::digest(format!(
-                "native-qwen-experimental-{:?}-state-v1",
-                self.mode
+                "native-qwen-experimental-{:?}-physical-{}-state-v1",
+                self.mode, self.physical
             ))
             .into(),
-            sequence_bytes: 86_835_200,
+            sequence_bytes: 86_835_200 * if self.physical { 3 } else { 1 },
             experimental: true,
         }
     }
@@ -87,23 +103,73 @@ impl ModelBackend for ScheduledDevice {
                 248320,
             )?;
             let executor = self.executor.clone();
-            let completed = prepared
-                .execute(move |old, ir| {
-                    let executor = executor.clone();
-                    async move {
-                        match old {
-                            State::Snapshot(old) => {
-                                let result = executor.reference_execute(&old, ir).await?;
-                                Ok((State::Snapshot(result.state), result.logits))
-                            }
-                            State::Device(old) => {
-                                let result = executor.execute(&old, ir).await?;
-                                Ok((State::Device(result.state), result.logits))
-                            }
+            let physical = self.physical;
+            let counters = self.counters.clone();
+            let run = move |rows: Vec<(State, super::super::model_ir::ModelStepIr)>| {
+                let executor = executor.clone();
+                let counters = counters.clone();
+                async move {
+                    let packed = physical
+                        && rows.len() > 1
+                        && rows[0].1.kind() == super::super::model_ir::StepKind::Decode
+                        && rows[0].1.position().get() > 0;
+                    if packed {
+                        let parents = rows
+                            .iter()
+                            .map(|(s, _)| match s {
+                                State::Device(s) => Ok(s.clone()),
+                                _ => anyhow::bail!("packed snapshot state"),
+                            })
+                            .collect::<Result<Vec<_>>>()?;
+                        let tokens = rows.iter().map(|(_, ir)| ir.ffi_ids()[0]).collect();
+                        let result = executor.decode_batch(&parents, tokens).await?;
+                        let mut count = counters
+                            .lock()
+                            .map_err(|_| anyhow::anyhow!("batch counters poisoned"))?;
+                        count.packed_calls += 1;
+                        count.packed_rows += result.len() as u64;
+                        Ok(result
+                            .into_iter()
+                            .map(|r| (State::Device(r.state), r.logits))
+                            .collect())
+                    } else {
+                        let mut results = Vec::with_capacity(rows.len());
+                        for (old, ir) in rows {
+                            let result = match old {
+                                State::Snapshot(old) => {
+                                    let r = executor.reference_execute(&old, ir).await?;
+                                    (State::Snapshot(r.state), r.logits)
+                                }
+                                State::Device(old) => {
+                                    let r = executor.execute(&old, ir).await?;
+                                    (State::Device(r.state), r.logits)
+                                }
+                            };
+                            counters
+                                .lock()
+                                .map_err(|_| anyhow::anyhow!("batch counters poisoned"))?
+                                .scalar_calls += 1;
+                            results.push(result);
                         }
+                        Ok(results)
                     }
-                })
-                .await?;
+                }
+            };
+            let completed = if physical {
+                prepared.execute_grouped(run).await?
+            } else {
+                prepared
+                    .execute(move |parent, ir| {
+                        let result = run(vec![(parent, ir)]);
+                        async move {
+                            result
+                                .await?
+                                .pop()
+                                .ok_or_else(|| anyhow::anyhow!("scalar result missing"))
+                        }
+                    })
+                    .await?
+            };
             Ok(completed.commit())
         })
     }
@@ -128,4 +194,12 @@ impl ModelBackend for ScheduledDevice {
             Ok(())
         })
     }
+}
+
+/// Successfully completed native calls, including provisional results later rolled back.
+#[derive(Debug, Default, Clone, Copy)]
+pub struct BatchCounters {
+    pub packed_calls: u64,
+    pub packed_rows: u64,
+    pub scalar_calls: u64,
 }

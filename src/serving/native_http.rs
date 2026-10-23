@@ -93,6 +93,27 @@ fn seed_flags(flags: &[String]) -> Result<(bool, Vec<String>)> {
     }
     Ok((mode.unwrap_or(false), rest))
 }
+fn batching_flags(flags: &[String]) -> Result<(bool, Vec<String>)> {
+    ensure!(
+        flags.len().is_multiple_of(2),
+        "batching flags require pairs"
+    );
+    let mut mode = None;
+    let mut rest = Vec::new();
+    for pair in flags.as_chunks::<2>().0 {
+        if pair[0] == "--tensor-batching" {
+            ensure!(mode.is_none(), "duplicate tensor batching mode");
+            mode = Some(match pair[1].as_str() {
+                "scalar" => false,
+                "physical" => true,
+                _ => anyhow::bail!("tensor batching must be scalar|physical"),
+            });
+        } else {
+            rest.extend_from_slice(pair);
+        }
+    }
+    Ok((mode.unwrap_or(false), rest))
+}
 pub async fn serve(
     address: SocketAddr,
     body_timeout_ms: u64,
@@ -114,11 +135,16 @@ pub async fn serve(
             && (1..=64).contains(&max_connections),
         "explicit loopback address/nonzero port and HTTP limits required"
     );
-    let (deferred_seed, flags) = seed_flags(flags)?;
+    let (physical, flags) = batching_flags(flags)?;
+    let (deferred_seed, flags) = seed_flags(&flags)?;
     let (execution, flags) = profile_flags(&flags)?;
     ensure!(
         !(deferred_seed && execution == Profile::Target),
         "deferred seed requires an MTP execution profile"
+    );
+    ensure!(
+        !physical || execution == Profile::Target,
+        "physical batching requires target profile"
     );
     let options = Options::parse(&flags)?;
     let controller = options.controller()?;
@@ -126,8 +152,8 @@ pub async fn serve(
         include_str!("../../fixtures/native-model.path").trim(),
     ))?;
     let tokenizer = NativeTokenizer::load(&manifest)?;
-    let executor =
-        Arc::new(QwenDeviceExecutor::open_mtp(Device::Gpu, 64, 1024 * 1024 * 1024).await?);
+    let state_budget = if physical { 2 } else { 1 } * 1024 * 1024 * 1024;
+    let executor = Arc::new(QwenDeviceExecutor::open_mtp(Device::Gpu, 64, state_budget).await?);
     let config = Config {
         version: 1,
         max_queued: 3,
@@ -136,12 +162,23 @@ pub async fn serve(
         prefill_chunk_tokens: 8,
         max_context_tokens: 511,
         max_new_tokens: 128,
-        model_memory_bytes: 1024 * 1024 * 1024,
+        model_memory_bytes: state_budget as usize,
         max_in_flight: 3,
     };
-    let (engine, proposer, seed_metrics) = if execution == Profile::Target {
+    let (engine, proposer, seed_metrics, batch_counters) = if execution == Profile::Target {
         let backend = ScheduledDevice::new(executor.clone(), tokenizer.eos(), StateMode::Device);
-        (Engine::new(config, backend.storage(), backend)?, None, None)
+        let backend = if physical {
+            backend.with_physical_batching()?
+        } else {
+            backend
+        };
+        let counters = backend.batch_counters();
+        (
+            Engine::new(config, backend.storage(), backend)?,
+            None,
+            None,
+            Some(counters),
+        )
     } else {
         let mut backend = ScheduledMtp::new(
             controller.clone(),
@@ -162,9 +199,10 @@ pub async fn serve(
             Engine::new(config, backend.storage(), backend)?,
             Some(id),
             Some(seed_metrics),
+            None,
         )
     };
-    let profile=format!("EXPERIMENTAL-NATIVE-HTTP execution={execution:?} seed_mode={} width={} stream_capacity={} policy={:?} context=511 in_flight=3 body_timeout_ms={body_timeout_ms} max_connections={max_connections} physical_tensor_batching=false production_qualified=false audit_clock={}",if deferred_seed {"deferred"} else {"eager"},options.width,options.capacity,options.policy,if execution==Profile::Audited {"validated-batches"} else {"disabled"});
+    let profile=format!("EXPERIMENTAL-NATIVE-HTTP execution={execution:?} seed_mode={} width={} stream_capacity={} policy={:?} context=511 in_flight=3 body_timeout_ms={body_timeout_ms} max_connections={max_connections} physical_tensor_batching={physical} state_budget_bytes={state_budget} production_qualified=false audit_clock={}",if deferred_seed {"deferred"} else {"eager"},options.width,options.capacity,options.policy,if execution==Profile::Audited {"validated-batches"} else {"disabled"});
     let engine = Arc::new(engine);
     let codec = Arc::new(Codec::new(tokenizer, executor.identity().into()));
     let server = http::Server::bind(
@@ -206,6 +244,14 @@ pub async fn serve(
             && native.logical_bytes == 0,
         "HTTP shutdown drain"
     );
+    if let Some(counters) = batch_counters {
+        println!(
+            "BATCH_METRICS {:?}",
+            *counters
+                .lock()
+                .map_err(|_| anyhow::anyhow!("batch counters poisoned"))?
+        );
+    }
     if let Some(metrics) = seed_metrics {
         println!("SEED_METRICS {:?}", metrics.snapshot());
     }
@@ -226,6 +272,26 @@ mod tests {
     use super::*;
     fn args(s: &str) -> Vec<String> {
         s.split_whitespace().map(str::to_owned).collect()
+    }
+    #[test]
+    fn batching_mode_fails_closed_and_defaults_scalar() {
+        assert!(!batching_flags(&[]).unwrap().0);
+        assert!(
+            batching_flags(&args("--tensor-batching physical"))
+                .unwrap()
+                .0
+        );
+        for s in [
+            "--tensor-batching",
+            "--tensor-batching auto",
+            "--tensor-batching scalar --tensor-batching physical",
+        ] {
+            assert!(batching_flags(&args(s)).is_err());
+        }
+        let (physical, rest) =
+            batching_flags(&args("--tensor-batching scalar --execution-profile target")).unwrap();
+        assert!(!physical);
+        assert_eq!(rest, args("--execution-profile target"));
     }
     #[test]
     fn seed_mode_is_explicit_and_default_remains_eager() {

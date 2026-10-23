@@ -1,7 +1,7 @@
 ---
 title: "Rust Server — Apple native kernel compiler and runtime"
 document_type: "implementation"
-version: "1.40.0"
+version: "1.41.0"
 date: "2026-10-23T12:43:42Z"
 implementation_date: null
 author: "Codex for Stewart Barteau"
@@ -173,6 +173,9 @@ related_files:
   - path: "judges/native_http_smoke.py"
     lines: "1-81"
     role: "test"
+  - path: "judges/native_physical_http.py"
+    lines: "1-88"
+    role: "test"
   - path: "judges/native_seed_http.py"
     lines: "1-84"
     role: "test"
@@ -318,7 +321,7 @@ related_files:
     lines: "1-193"
     role: "primary"
   - path: "src/serving/batch_transaction.rs"
-    lines: "1-430"
+    lines: "1-591"
     role: "primary"
   - path: "src/serving/choices.rs"
     lines: "1-133"
@@ -351,7 +354,7 @@ related_files:
     lines: "1-1001"
     role: "primary"
   - path: "src/serving/native_device_scheduler.rs"
-    lines: "1-131"
+    lines: "1-205"
     role: "primary"
   - path: "src/serving/native_device_smoke.rs"
     lines: "1-162"
@@ -363,7 +366,7 @@ related_files:
     lines: "1-214"
     role: "primary"
   - path: "src/serving/native_http.rs"
-    lines: "1-267"
+    lines: "1-333"
     role: "primary"
   - path: "src/serving/native_ingestion.rs"
     lines: "1-272"
@@ -1377,3 +1380,14 @@ Reproduce with `cargo run --locked --release --example native_physical_batch -- 
 Native prototype gate passed **96 full-logit/unified-state row comparisons** with exact selected-token parity. Maximum absolute drift: **1.2397766e-05 logits / 1.9073486e-05 state**; maximum NRMSE: 1.2277146e-06 / 4.1213842e-07. All 16 B=1 comparisons were bitwise equal; B>1 uses the explicitly preregistered FP32 bounds, not bitwise equality. Reverse-row state/logits, pressure recovery, sibling charge and dropped-receiver drain passed. Native MTP widths 1/2/4/8 retained transactional controls across 62 emitted tokens.
 
 Final gates: **181 default / 181 debug Rust checks**, **118 minimal tests**, 22 TS tests, TS 7.1/tsrs, strict Clippy and full schema/native/GPU judges; **120,035 C ABI checks** under ASan/UBSan (upstream MLX uninstrumented). [Bound native batch evidence](evidence/native-physical-batch/qualification.json). The scheduler/HTTP path remains scalar; next wire explicit physical routing and telemetry, then measure performance.
+
+
+## Opt-in physical target scheduling
+
+`native-mtp-serve` accepts `--tensor-batching scalar|physical` alongside the existing required execution profile and seven explicit policy flags. Default is scalar. Physical mode requires `--execution-profile target`; MTP combinations fail before model loading. Equal-position, positive-position, multirow target decode cohorts execute one packed graph. Prefill, singletons and incompatible geometry fall back to scalar. Responses retain request order and all cohorts validate before the parent map commits. MTP, deferred seed and per-layer synchronization are unchanged.
+
+Physical mode explicitly increases both logical state budgets to **2 GiB** and reserves **260,505,600 bytes per lane** to account conservatively for packed backing retained by row views. Scalar mode retains its 1 GiB budget and original execution order. These are logical resident reservations, not process memory ceilings; weights and transient MLX workspaces are additional. Shutdown `BATCH_METRICS` reports successfully completed `packed_calls`, `packed_rows` and `scalar_calls`, including provisional results later rolled back. They are adapter completion observations, not committed-token counts or a global profiler.
+
+Reproduce the bounded functional check with `python3 judges/native_physical_http.py NEW_EVIDENCE_DIRECTORY` after `cargo build --locked --release`. It requires actual packed calls, exact recorded scalar token parity at one/three lanes, deadline, disconnect/recovery, Rust/TS AMST readers and zero charged state at shutdown. This is experimental FP32 model execution; it does not qualify MTP packing, held-out agent quality or a speed improvement. Native post-reservation fault injection and sustained 1k/1500/2k scalar/physical benchmarks remain promotion gates.
+
+Final scheduler gate: **185 default / 185 debug Rust checks**, 121 minimal tests, 22 TS tests, TS 7.1/tsrs, strict Clippy and schema/native/GPU judges passed. The final HTTP run recorded **7 packed calls / 21 rows**, exact scalar reference tokens and zero charged state at drain. [Bound scheduler evidence](evidence/native-physical-scheduler/qualification.json). Performance windows and native injected-fault promotion gates remain open.

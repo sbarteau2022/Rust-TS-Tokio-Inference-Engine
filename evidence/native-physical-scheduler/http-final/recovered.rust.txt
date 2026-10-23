@@ -1,0 +1,2 @@
+STREAM frames=10 tokens=8 terminal=2
+TEXT 4, 5, 6,

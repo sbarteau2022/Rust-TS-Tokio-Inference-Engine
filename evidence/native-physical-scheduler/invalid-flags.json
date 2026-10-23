@@ -1,0 +1,55 @@
+[
+  {
+    "command": [
+      "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
+      "native-mtp-serve",
+      "127.0.0.1:19876",
+      "1000",
+      "8",
+      "--execution-profile",
+      "mtp",
+      "--tensor-batching",
+      "physical"
+    ],
+    "exit_code": 1,
+    "stdout": "",
+    "stderr": "Error: physical batching requires target profile\n",
+    "binary_sha256": "b7e49563aa2fda7cf9ef6338fc4ef3b9174efd400a49f5e4c0a515e133021e13"
+  },
+  {
+    "command": [
+      "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
+      "native-mtp-serve",
+      "127.0.0.1:19876",
+      "1000",
+      "8",
+      "--execution-profile",
+      "target",
+      "--tensor-batching",
+      "bogus"
+    ],
+    "exit_code": 1,
+    "stdout": "",
+    "stderr": "Error: tensor batching must be scalar|physical\n",
+    "binary_sha256": "b7e49563aa2fda7cf9ef6338fc4ef3b9174efd400a49f5e4c0a515e133021e13"
+  },
+  {
+    "command": [
+      "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
+      "native-mtp-serve",
+      "127.0.0.1:19876",
+      "1000",
+      "8",
+      "--execution-profile",
+      "target",
+      "--tensor-batching",
+      "scalar",
+      "--tensor-batching",
+      "physical"
+    ],
+    "exit_code": 1,
+    "stdout": "",
+    "stderr": "Error: duplicate tensor batching mode\n",
+    "binary_sha256": "b7e49563aa2fda7cf9ef6338fc4ef3b9174efd400a49f5e4c0a515e133021e13"
+  }
+]
