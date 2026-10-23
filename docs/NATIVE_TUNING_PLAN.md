@@ -15,7 +15,7 @@ related_files:
     lines: "1-1015"
     role: "config"
   - path: "Cargo.toml"
-    lines: "1-77"
+    lines: "1-81"
     role: "config"
   - path: "backend/rapid_worker.py"
     lines: "1-165"
@@ -46,6 +46,9 @@ related_files:
     role: "primary"
   - path: "examples/native_mtp_decode_smoke.rs"
     lines: "1-160"
+    role: "primary"
+  - path: "examples/native_mtp_scheduler_bench.rs"
+    lines: "1-264"
     role: "primary"
   - path: "examples/native_mtp_scheduler_smoke.rs"
     lines: "1-155"
@@ -156,7 +159,7 @@ related_files:
     lines: "1-35"
     role: "test"
   - path: "judges/run.py"
-    lines: "1-231"
+    lines: "1-232"
     role: "test"
   - path: "judges/speculative_report.py"
     lines: "1-74"
@@ -342,7 +345,7 @@ related_files:
     lines: "1-436"
     role: "primary"
   - path: "src/serving/native_mtp_scheduler.rs"
-    lines: "1-722"
+    lines: "1-726"
     role: "primary"
   - path: "src/serving/native_ops.rs"
     lines: "1-273"
@@ -659,3 +662,13 @@ Add a default no-op asynchronous backend boundary hook to Engine. Invoke it exac
 Controls: generic Engine tests must prove hook ordering, error refusal and no audit on malformed output; native smoke must preserve exact three-lane outputs, cancellation and zero resident drain with live audits enabled. Re-run default/debug/minimal suites, strict Clippy and native/GPU judges. CLI uses this explicit experimental batch clock; throughput must be remeasured rather than transferred from the earlier pilot. Shared payload-cache audit planning and adaptive pressure remain outside this metadata-only hook.
 
 Implementation of the preregistered boundary is now present: `ModelBackend::validated_boundary` is awaited by Engine between validation and publication, and `ScheduledMtp::with_exclusive_metadata_audits` enables Normal-pressure batch epochs. The CLI and native three-lane smoke opt in. This supersedes the earlier drain-only CLI limitation above; a controller shared with other runtimes or payload-cache branches still requires a global live-set planner and is not supported by this adapter. `AUDIT epochs=...` reports the actual controller clock after CLI shutdown. No new environment variables or production sampling modes are introduced.
+
+## Preregistered scheduler throughput matrix
+
+Measure the designated Combined model through Engine token streams with identical greedy prompts under target-only ScheduledDevice, ScheduledMtp without live audits, and ScheduledMtp with Normal-pressure validated-batch audits. Use regular FP32 state, draft width four, stream capacity one, one/three concurrent request lanes, 64-token request budgets and aggregate checkpoints at 1,000/1,500/2,000 delivered tokens per cell. Tokenization, model load and per-profile warmup are excluded. A fixed four-prompt sequence repeats; all measured outputs must equal a separately computed 64-token target reference prefix. EOS is honored and short completions count actual tokens; a no-progress request fails rather than fabricating throughput. Two rounds reverse profile ordering to expose drift; report raw request token times, receiver timing, complete policy, audit epochs and learned-only acceptance ledger. Ledger target-call counts cover admitted speculative transactions only and must not be mislabeled as total native calls.
+
+Macro windows include request turnover and host orchestration. TTFT is scheduler-admission to first published token; publication ITL and receiver-observed ITL are distinct and include near-zero gaps when a verified bundle drains. Aggregate post-first-token speed excludes each request's first token and is not total wall throughput. No HTTP, physical tensor batching, long-context, serving-isolation or quality-generalization claim follows. Save per-cell evidence before proceeding, preserve failures and include warmups/target references separately. Compilation, bounded metric-unit tests, parity and zero-resident cleanup are gates before publishing numbers.
+
+Matrix workload interpretation: request lanes are submitted in synchronized groups and replenished after the group completes. This measures bounded concurrent stream groups; it is not a Poisson/open-loop arrival test or sustained continuous-batching qualification. The target-only adapter predicts the final output without consuming it into state, while MTP maintains target/draft state through committed output; that extra work is included rather than subtracted. An existing external Dspark service is resident on the shared host; process inventory is retained and no service is restarted for the experiment.
+
+Observed audit-clock consequence: single-lane cells advanced 2,216 measured audit epochs; three-lane cells advanced 834/840. Output parity held, but controller decay exposure depends on row packing and consumer scheduling. Keep the no-live-audit profile as a control. Clock cadence and lane-normalized alternatives require explicit tuning/qualification rather than treating these per-batch rates as universal production settings.

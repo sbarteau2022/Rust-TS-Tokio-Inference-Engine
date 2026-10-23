@@ -1,0 +1,6 @@
+ProductName:		macOS
+ProductVersion:		27.0.1
+BuildVersion:		26A434
+hw.model: Mac17,8
+hw.memsize: 51539607552
+hw.ncpu: 18

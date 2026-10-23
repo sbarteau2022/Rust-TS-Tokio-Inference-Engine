@@ -1,7 +1,7 @@
 ---
 title: "Rust Server — Apple native kernel compiler and runtime"
 document_type: "implementation"
-version: "1.31.0"
+version: "1.32.0"
 date: "2026-10-23T05:21:07Z"
 implementation_date: null
 author: "Codex for Stewart Barteau"
@@ -15,7 +15,7 @@ related_files:
     lines: "1-1015"
     role: "config"
   - path: "Cargo.toml"
-    lines: "1-77"
+    lines: "1-81"
     role: "config"
   - path: "backend/rapid_worker.py"
     lines: "1-165"
@@ -46,6 +46,9 @@ related_files:
     role: "primary"
   - path: "examples/native_mtp_decode_smoke.rs"
     lines: "1-160"
+    role: "primary"
+  - path: "examples/native_mtp_scheduler_bench.rs"
+    lines: "1-264"
     role: "primary"
   - path: "examples/native_mtp_scheduler_smoke.rs"
     lines: "1-155"
@@ -156,7 +159,7 @@ related_files:
     lines: "1-35"
     role: "test"
   - path: "judges/run.py"
-    lines: "1-231"
+    lines: "1-232"
     role: "test"
   - path: "judges/speculative_report.py"
     lines: "1-74"
@@ -342,7 +345,7 @@ related_files:
     lines: "1-436"
     role: "primary"
   - path: "src/serving/native_mtp_scheduler.rs"
-    lines: "1-722"
+    lines: "1-726"
     role: "primary"
   - path: "src/serving/native_ops.rs"
     lines: "1-273"
@@ -1114,3 +1117,22 @@ Streaming checkpoint validation: **153 default / 153 debug-validation / 101 mini
 Live audit integration: Engine now owns a quiescent `validated_boundary` after whole-batch validation and before token publication. Failure closes admission and releases affected rows without publishing their output. ScheduledMtp opts in only for its exclusively owned draft-metadata controller; other backends retain a no-op default. Native completion guards have ended before the audit. This clock counts validated batches, including buffered publication, rather than target calls or delivered tokens. Shared payload-cache live-set planning and adaptive pressure remain unfinished.
 
 Live audit checkpoint: **154 default / 154 debug-validation / 102 minimal-feature Rust tests**, strict Clippy, TS 7.1/tsrs and native/GPU judges passed. Native three-lane output parity, capacity-one backpressure, cancellation and zero-state drain passed with 18 audit epochs matching validated batch iterations. [Raw evidence and source bindings](evidence/native-mtp-live-audit/qualification.json). No throughput gain is inferred from this correctness gate.
+
+The `native_mtp_scheduler_bench` example measures bounded Rust Engine streams under target-only, MTP with no live audits and MTP with live validated-batch audits. It records one/three-lane cells, two reversed-order rounds, fixed 1,000/1,500/2,000-token macro checkpoints, per-request publication/receiver timings and learned-only acceptance. Every measured output must match the separate target reference prefix. Run `cargo run --release --locked --example native_mtp_scheduler_bench -- NEW_DIRECTORY`; the directory must not exist. This is a repeated short-context workload, not HTTP, physical tensor batching, long-context or broad model qualification. Controller target-call ledger values cover speculative transactions only.
+
+## Shared scheduler stream matrix
+
+Two reversed-order rounds, 2,000 tokens/cell, 24,000 measured tokens total. Repeated short prompts, 64-token request cap, width four, capacity-one streams, FP32 regular state. Resident external Dspark service: shared-host results, not isolated measurements. All output IDs matched target-reference prefixes.
+
+| Lanes | Profile | Aggregate tok/s | Mean TTFT ms | Mean / p95 publication ITL ms | Learned acceptance |
+| --- | --- | --- | --- | --- | --- |
+| 1 | target-only | 17.253 | 602.0 | 49.11 / 49.53 | N/A |
+| 1 | mtp-no-live-audit | 23.930 | 722.3 | 30.72 / 139.18 | 84.53% |
+| 1 | mtp-live-audit | 23.915 | 722.1 | 30.75 / 139.42 | 84.53% |
+| 3 | target-only | 17.215 | 1766.6 | 143.59 / 149.36 | N/A |
+| 3 | mtp-no-live-audit | 23.924 | 1841.7 | 94.80 / 283.86 | 84.53% |
+| 3 | mtp-live-audit | 23.735 | 1844.7 | 94.43 / 277.45 | 84.55% |
+
+MTP output is bursty: verified bundles drain through per-token streams, so low mean gaps do not establish uniform token execution. Multi-lane aggregate rate is shared across lanes. This is synchronized-group iteration scheduling, not HTTP, physical tensor batching or open-loop continuous-batching qualification. Macro checkpoints at 1,000/1,500/2,000 tokens, receiver timing, per-round variation and complete ledgers are retained in [raw evidence](evidence/native-mtp-stream-matrix/qualification.json). No speed/quality claim transfers to longer contexts or other models.
+
+Validation: 154 default / 154 debug-validation / 102 minimal-feature Rust tests, metric-unit and strict all-target Clippy, TS 7.1/tsrs and native/GPU judges passed.

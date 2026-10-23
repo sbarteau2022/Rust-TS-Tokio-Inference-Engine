@@ -15,7 +15,7 @@ related_files:
     lines: "1-1015"
     role: "config"
   - path: "Cargo.toml"
-    lines: "1-77"
+    lines: "1-81"
     role: "config"
   - path: "backend/rapid_worker.py"
     lines: "1-165"
@@ -46,6 +46,9 @@ related_files:
     role: "primary"
   - path: "examples/native_mtp_decode_smoke.rs"
     lines: "1-160"
+    role: "primary"
+  - path: "examples/native_mtp_scheduler_bench.rs"
+    lines: "1-264"
     role: "primary"
   - path: "examples/native_mtp_scheduler_smoke.rs"
     lines: "1-155"
@@ -156,7 +159,7 @@ related_files:
     lines: "1-35"
     role: "test"
   - path: "judges/run.py"
-    lines: "1-231"
+    lines: "1-232"
     role: "test"
   - path: "judges/speculative_report.py"
     lines: "1-74"
@@ -342,7 +345,7 @@ related_files:
     lines: "1-436"
     role: "primary"
   - path: "src/serving/native_mtp_scheduler.rs"
-    lines: "1-722"
+    lines: "1-726"
     role: "primary"
   - path: "src/serving/native_ops.rs"
     lines: "1-273"
@@ -721,3 +724,5 @@ Streaming validates whole backend batches before enqueueing events. The schedule
 MTP rows hold a virtual consumed position distinct from the private ahead-of-publication target cursor. Input IDs must match the last published token; verified pending IDs remain request-local and bounded by the scheduler's remaining output budget. Three real-model lanes and 1/8/16-token limits check buffered order against the independent sequential target path. Choice masks and external histories are unsupported and rejected. The profile conservatively exposes context 511 because its native state consumes every returned token within context 512. This is shared iteration scheduling, not physical tensor batching or HTTP serving.
 
 Live audit boundary review: request-side event consumption cannot establish native quiescence. The scheduler now awaits the hook only after successful whole-batch validation; malformed batches skip it, and hook failure follows the poisoned-admission cleanup path before publication. Opt-in MTP metadata audits reject payload blocks, reservations and open branches, preserving the distinction from a shared KV cache planner. The API requires exclusive ownership of the controller audit clock; unrelated concurrent users can force explicit epoch/lease errors and are unsupported. Buffered receipts advance the declared batch clock even without a new target call. This can affect admission profitability and must be measured, not assumed beneficial.
+
+Scheduler matrix review: measured outputs must match independent sequential target prefixes, not merely one another. Group budgets reserve no more than the remaining 2,000-token cell limit; early EOS reduces actual delivered count and subsequent groups refill it, while empty completions fail explicitly. Each independent consumer checks event index, ID and publication timestamp congruence with the final receipt. Macro checkpoints sort receiver-observed times across lanes rather than adding per-lane rates. Warmup ledger counters are subtracted; acceptance excludes known seeds, and speculative-only target-call accounting is labeled. Synchronized groups limit arrival-model claims. Per-cell evidence persists before the next profile; final source and binary hashes bind the experiment. Two opposite profile orders expose but cannot eliminate shared-host thermal/load drift. Repeated prompts establish mechanical parity, not semantic quality or unseen-task generalization.

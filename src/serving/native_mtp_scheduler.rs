@@ -327,6 +327,10 @@ impl ScheduledMtp {
         ))
     }
 
+    pub fn proposer_id(&self) -> crate::cache::ProposerId {
+        self.0.driver.lane.id()
+    }
+
     pub fn storage(&self) -> Storage {
         self.0.storage()
     }

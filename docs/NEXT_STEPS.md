@@ -15,7 +15,7 @@ related_files:
     lines: "1-1015"
     role: "config"
   - path: "Cargo.toml"
-    lines: "1-77"
+    lines: "1-81"
     role: "config"
   - path: "backend/rapid_worker.py"
     lines: "1-165"
@@ -46,6 +46,9 @@ related_files:
     role: "primary"
   - path: "examples/native_mtp_decode_smoke.rs"
     lines: "1-160"
+    role: "primary"
+  - path: "examples/native_mtp_scheduler_bench.rs"
+    lines: "1-264"
     role: "primary"
   - path: "examples/native_mtp_scheduler_smoke.rs"
     lines: "1-155"
@@ -156,7 +159,7 @@ related_files:
     lines: "1-35"
     role: "test"
   - path: "judges/run.py"
-    lines: "1-231"
+    lines: "1-232"
     role: "test"
   - path: "judges/speculative_report.py"
     lines: "1-74"
@@ -342,7 +345,7 @@ related_files:
     lines: "1-436"
     role: "primary"
   - path: "src/serving/native_mtp_scheduler.rs"
-    lines: "1-722"
+    lines: "1-726"
     role: "primary"
   - path: "src/serving/native_ops.rs"
     lines: "1-273"
@@ -768,3 +771,5 @@ The native width-4 pilot shows 33.97 versus 20.35 decode tok/s with output congr
 The MTP adapter is connected to the shared Engine and bounded Rust token streams, with explicit local CLI policy flags. Bind the current evidence and remeasure this complete path with alternating warmed trials, 1k/1500/2k windows and mixed request lengths. Next add a transport with cancellation/deadline propagation and a correct incremental UTF-8 text decoder; current CLI events expose token IDs and final decoded text. Reduce whole-row batch head-of-line delay and first-token initialization cost while preserving validation-before-publication. Unify configuration/policy fingerprints, own the global audit driver, and distinguish maintained-state fallback cost from target-only fallback before production promotion. Physical tensor batching, paging/compressed KV, native Dspark taps/backbone and broad model qualification remain separate unfinished work.
 
 Live metadata audit clock is now wired at the scheduler's validated boundary. Next measure the complete path with this clock enabled against identical-output target-only and no-live-audit controls: report TTFT, publication ITL distributions, decode throughput, learned acceptance, controller epochs and per-lane fairness. Then integrate HTTP cancellation/deadlines and incremental text decoding. Shared payload-cache audit planning, unified policy fingerprints, adaptive pressure and sustained/model-quality qualification remain open.
+
+The shared Engine throughput matrix now has 24,000 exact-reference tokens across 12 cells (two orders × one/three lanes × target/no-live-audit/live-audit). Promote no broad quality claim from it. Next integrate native HTTP streaming with cancellation/deadlines and incremental tokenizer output, then replay the same timed workload over that transport. Optimize first-token initialization and burst-tail latency; physical tensor batching is necessary before claiming multi-lane compute scaling. Expose an explicit audit-clock cadence and unify policy/configuration fingerprints; batch-count trust decay varies with lane packing. Add open-loop/continuous-arrival sweeps, mixed prompt lengths, deep-context paging/KV and matched native/external controls before production promotion.
