@@ -1,0 +1,40 @@
+[
+  {
+    "flags": [
+      "--execution-profile",
+      "target",
+      "--seed-mode",
+      "deferred"
+    ],
+    "returncode": 1,
+    "seconds": 0.006639458006247878,
+    "stdout": "",
+    "stderr": "Error: deferred seed requires an MTP execution profile\n"
+  },
+  {
+    "flags": [
+      "--execution-profile",
+      "mtp",
+      "--seed-mode",
+      "bad"
+    ],
+    "returncode": 1,
+    "seconds": 0.0054680840112268925,
+    "stdout": "",
+    "stderr": "Error: seed mode must be eager|deferred\n"
+  },
+  {
+    "flags": [
+      "--execution-profile",
+      "mtp",
+      "--seed-mode",
+      "eager",
+      "--seed-mode",
+      "deferred"
+    ],
+    "returncode": 1,
+    "seconds": 0.006210708059370518,
+    "stdout": "",
+    "stderr": "Error: duplicate seed mode\n"
+  }
+]

@@ -75,6 +75,24 @@ fn profile_flags(flags: &[String]) -> Result<(Profile, Vec<String>)> {
         policy,
     ))
 }
+fn seed_flags(flags: &[String]) -> Result<(bool, Vec<String>)> {
+    ensure!(flags.len().is_multiple_of(2), "seed flags require pairs");
+    let mut mode = None;
+    let mut rest = Vec::new();
+    for pair in flags.as_chunks::<2>().0 {
+        if pair[0] == "--seed-mode" {
+            ensure!(mode.is_none(), "duplicate seed mode");
+            mode = Some(match pair[1].as_str() {
+                "eager" => false,
+                "deferred" => true,
+                _ => anyhow::bail!("seed mode must be eager|deferred"),
+            });
+        } else {
+            rest.extend_from_slice(pair);
+        }
+    }
+    Ok((mode.unwrap_or(false), rest))
+}
 pub async fn serve(
     address: SocketAddr,
     body_timeout_ms: u64,
@@ -96,7 +114,12 @@ pub async fn serve(
             && (1..=64).contains(&max_connections),
         "explicit loopback address/nonzero port and HTTP limits required"
     );
-    let (execution, flags) = profile_flags(flags)?;
+    let (deferred_seed, flags) = seed_flags(flags)?;
+    let (execution, flags) = profile_flags(&flags)?;
+    ensure!(
+        !(deferred_seed && execution == Profile::Target),
+        "deferred seed requires an MTP execution profile"
+    );
     let options = Options::parse(&flags)?;
     let controller = options.controller()?;
     let manifest = Manifest::read(std::path::Path::new(
@@ -116,9 +139,9 @@ pub async fn serve(
         model_memory_bytes: 1024 * 1024 * 1024,
         max_in_flight: 3,
     };
-    let (engine, proposer) = if execution == Profile::Target {
+    let (engine, proposer, seed_metrics) = if execution == Profile::Target {
         let backend = ScheduledDevice::new(executor.clone(), tokenizer.eos(), StateMode::Device);
-        (Engine::new(config, backend.storage(), backend)?, None)
+        (Engine::new(config, backend.storage(), backend)?, None, None)
     } else {
         let mut backend = ScheduledMtp::new(
             controller.clone(),
@@ -127,13 +150,21 @@ pub async fn serve(
             options.width,
             "local-native-http".into(),
         )?;
+        if deferred_seed {
+            backend = backend.with_deferred_seed()?;
+        }
+        let seed_metrics = backend.seed_metrics();
         let id = backend.proposer_id();
         if execution == Profile::Audited {
             backend = backend.with_exclusive_metadata_audits();
         }
-        (Engine::new(config, backend.storage(), backend)?, Some(id))
+        (
+            Engine::new(config, backend.storage(), backend)?,
+            Some(id),
+            Some(seed_metrics),
+        )
     };
-    let profile=format!("EXPERIMENTAL-NATIVE-HTTP execution={execution:?} width={} stream_capacity={} policy={:?} context=511 in_flight=3 body_timeout_ms={body_timeout_ms} max_connections={max_connections} physical_tensor_batching=false production_qualified=false audit_clock={}",options.width,options.capacity,options.policy,if execution==Profile::Audited {"validated-batches"} else {"disabled"});
+    let profile=format!("EXPERIMENTAL-NATIVE-HTTP execution={execution:?} seed_mode={} width={} stream_capacity={} policy={:?} context=511 in_flight=3 body_timeout_ms={body_timeout_ms} max_connections={max_connections} physical_tensor_batching=false production_qualified=false audit_clock={}",if deferred_seed {"deferred"} else {"eager"},options.width,options.capacity,options.policy,if execution==Profile::Audited {"validated-batches"} else {"disabled"});
     let engine = Arc::new(engine);
     let codec = Arc::new(Codec::new(tokenizer, executor.identity().into()));
     let server = http::Server::bind(
@@ -175,6 +206,9 @@ pub async fn serve(
             && native.logical_bytes == 0,
         "HTTP shutdown drain"
     );
+    if let Some(metrics) = seed_metrics {
+        println!("SEED_METRICS {:?}", metrics.snapshot());
+    }
     if let Some(id) = proposer {
         let ledger = controller.draft_ledger(id)?;
         println!("DRAFT_LEDGER proposed={} accepted={} known_seed={} committed={} target_calls={} failures={} unfinished={}",ledger.proposed,ledger.accepted,ledger.known_prefix,ledger.committed,ledger.target_calls,ledger.failures,ledger.unfinished);
@@ -192,6 +226,22 @@ mod tests {
     use super::*;
     fn args(s: &str) -> Vec<String> {
         s.split_whitespace().map(str::to_owned).collect()
+    }
+    #[test]
+    fn seed_mode_is_explicit_and_default_remains_eager() {
+        assert!(!seed_flags(&[]).unwrap().0);
+        assert!(seed_flags(&args("--seed-mode deferred")).unwrap().0);
+        for s in [
+            "--seed-mode",
+            "--seed-mode bad",
+            "--seed-mode eager --seed-mode deferred",
+        ] {
+            assert!(seed_flags(&args(s)).is_err());
+        }
+        let (deferred, rest) =
+            seed_flags(&args("--seed-mode eager --execution-profile mtp-audited")).unwrap();
+        assert!(!deferred);
+        assert_eq!(rest, args("--execution-profile mtp-audited"));
     }
     #[test]
     fn explicit_profile_controls_fail_closed() {

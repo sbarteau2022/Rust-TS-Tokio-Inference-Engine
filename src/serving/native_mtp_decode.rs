@@ -33,6 +33,8 @@ impl MtpCursor {
     pub fn resident_bytes(&self) -> usize {
         self.target.state.bytes() + self.draft.state.bytes()
     }
+    /// Read-only opaque state for offline state-equivalence qualification.
+    pub fn draft_state(&self) -> &super::MtpState { &self.draft.state }
     pub fn target(&self) -> &GreedyCursor {
         &self.target
     }

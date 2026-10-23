@@ -15,7 +15,7 @@ related_files:
     lines: "1-1148"
     role: "config"
   - path: "Cargo.toml"
-    lines: "1-94"
+    lines: "1-98"
     role: "config"
   - path: "backend/rapid_worker.py"
     lines: "1-165"
@@ -55,6 +55,9 @@ related_files:
     role: "primary"
   - path: "examples/native_mtp_smoke.rs"
     lines: "1-186"
+    role: "primary"
+  - path: "examples/native_seed_qualification.rs"
+    lines: "1-271"
     role: "primary"
   - path: "examples/native_speculative_smoke.rs"
     lines: "1-370"
@@ -163,6 +166,9 @@ related_files:
     role: "test"
   - path: "judges/native_http_smoke.py"
     lines: "1-81"
+    role: "test"
+  - path: "judges/native_seed_http.py"
+    lines: "1-84"
     role: "test"
   - path: "judges/native_stream_disconnect.py"
     lines: "1-36"
@@ -345,7 +351,7 @@ related_files:
     lines: "1-214"
     role: "primary"
   - path: "src/serving/native_http.rs"
-    lines: "1-217"
+    lines: "1-267"
     role: "primary"
   - path: "src/serving/native_ingestion.rs"
     lines: "1-272"
@@ -360,19 +366,19 @@ related_files:
     lines: "1-468"
     role: "primary"
   - path: "src/serving/native_mtp_automaton.rs"
-    lines: "1-206"
+    lines: "1-207"
     role: "primary"
   - path: "src/serving/native_mtp_cli.rs"
     lines: "1-344"
     role: "primary"
   - path: "src/serving/native_mtp_decode.rs"
-    lines: "1-273"
+    lines: "1-275"
     role: "primary"
   - path: "src/serving/native_mtp_device.rs"
     lines: "1-436"
     role: "primary"
   - path: "src/serving/native_mtp_scheduler.rs"
-    lines: "1-726"
+    lines: "1-1057"
     role: "primary"
   - path: "src/serving/native_ops.rs"
     lines: "1-273"
@@ -384,7 +390,7 @@ related_files:
     lines: "1-100"
     role: "primary"
   - path: "src/serving/native_speculative.rs"
-    lines: "1-386"
+    lines: "1-391"
     role: "primary"
   - path: "src/serving/native_state.rs"
     lines: "1-194"
@@ -811,10 +817,16 @@ Report offered versus successful requests/tokens, per-attempt schedule/start/end
 
 Synthetic gates must prove strict parser/ordering limits, absolute arrival scheduling independent of completion, exact final-window token budgets, typed overload recognition, bounded shutdown timeout ownership and finite timing arithmetic. Cancel the losing shutdown timer rather than retaining a referenced 60-second timer after a clean process exit. Retain the old fixed-order evidence as historical; reverse-order/no-audit results are new measurements, not replacements. Shared native/file compiler caches are not reset, and this remains one reverse-order repetition on a shared host with short prompts and unqualified broader model quality.
 
-## Candidate first-token scheduling experiment — design only
+## First-token scheduling experiment — preregistered design, implemented opt-in
 
 The current MTP prefill path stages the prompt, runs `mtp_start` (target hidden blocks plus shifted draft prefill), then runs `no_draft` before publishing the first token. That token is already determined by final prompt logits, but `no_draft` also consumes it into target/draft state before delivery. Candidate: publish the validated prefill seed first and represent its not-yet-consumed state explicitly, then perform the exact existing seed advance before any later speculative transaction. This moves work, not eliminates all of it; the next gap may worsen, so TTFT alone is not a promotion gate.
 
 Use a typed SeedPending/Ready row state rather than pretending the cursor's materialized position already includes the published seed. Retain immutable completion-owned prompt state; the next input token must equal the published seed and virtual position must match. Advancing that seed may not publish it again, increment committed output twice, or open a speculative branch on a stale parent. A one-token/EOS request must release safely without unnecessary advancement. Explicit counters must separate prefill-derived seed delivery from deferred target/draft maintenance, avoiding fabricated target calls or double-counted controller progress.
 
 Before enabling this candidate: compare old/eager and deferred full outputs and unified target/draft state; cover all four prompts, output lengths 1/2/4/8/64, EOS, cancellation immediately after seed, bounded backpressure, three lanes, failed deferred advance, repeated parents and rejected-draft rollback. Require unchanged native ownership/accounting and target parity. Benchmark both TTFT and first-to-second/p95 gaps and full request throughput in alternating order; reject a cosmetic TTFT win that causes unacceptable tail or total-throughput regression. Deferring *all* MTP prefill would additionally require independently leased hidden windows rather than retaining complete historical KV/recurrent states; that is a separate unimplemented design, not assumed safe by this seed experiment.
+
+### Seed experiment implementation contract
+
+Keep eager as default. Add an explicit HTTP `--seed-mode eager|deferred` control (deferred is refused for the target-only backend before model load) and an opt-in ScheduledMtp builder. Rows carry a typed Ready/SeedPending(seed) state; the cursor retains its actual materialized prefix and is not relabeled as already advanced. On the next decode, require empty buffered output, advance via the exact existing no_draft operation, require its sole emitted token equals the previously published seed, discard that duplicate receipt, then obtain the next speculative output. Failure leaves the old row snapshot unchanged and normal Engine poison/release rules apply.
+
+Expose diagnostic counters for backend prefill-seed receipts, deferred advancement attempts/completions and pending-seed releases. These are not end-user delivery acknowledgements. The existing controller baseline records seed maintenance once when it actually runs; one-token/EOS/canceled pending rows incur no fabricated maintenance or target-call record. Engine output counts remain authoritative for delivered/committed tokens; controller baseline progress may lag a prefill-derived seed until its later maintenance. Counters must not call this another newly delivered token. This first version still performs shifted draft prefill before the seed; deferring all draft prefill is outside its scope.

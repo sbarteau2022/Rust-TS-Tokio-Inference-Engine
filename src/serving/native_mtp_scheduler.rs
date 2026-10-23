@@ -7,16 +7,23 @@ use std::{
     collections::{BTreeMap, BTreeSet, VecDeque},
     future::Future,
     pin::Pin,
-    sync::Arc,
+    sync::{
+        atomic::{AtomicU64, Ordering},
+        Arc,
+    },
 };
 
 type DriverFuture<'a, T> = Pin<Box<dyn Future<Output = Result<T>> + Send + 'a>>;
 
 trait MtpCursorState: Clone + Send + Sync + 'static {
+    fn position(&self) -> usize;
     fn resident_bytes(&self) -> usize;
 }
 
 impl MtpCursorState for AutomatonMtpCursor {
+    fn position(&self) -> usize {
+        self.target().state().position()
+    }
     fn resident_bytes(&self) -> usize {
         AutomatonMtpCursor::resident_bytes(self)
     }
@@ -29,6 +36,7 @@ struct DriverReceipt<C> {
 
 trait MtpDriver: Send + Sync + 'static {
     type Cursor: MtpCursorState;
+    fn seed(&self, cursor: &Self::Cursor) -> Result<u32>;
     fn start(&self, prompt: Vec<u32>) -> DriverFuture<'_, Self::Cursor>;
     fn no_draft<'a>(
         &'a self,
@@ -53,6 +61,9 @@ struct NativeMtpDriver {
 impl MtpDriver for NativeMtpDriver {
     type Cursor = AutomatonMtpCursor;
 
+    fn seed(&self, cursor: &Self::Cursor) -> Result<u32> {
+        cursor.target().next_greedy_token()
+    }
     fn start(&self, prompt: Vec<u32>) -> DriverFuture<'_, Self::Cursor> {
         Box::pin(async move { self.lane.start(prompt).await })
     }
@@ -99,7 +110,41 @@ impl MtpDriver for NativeMtpDriver {
     }
 }
 
+#[derive(Clone, Copy, Default, Debug, PartialEq, Eq)]
+enum SeedState {
+    #[default]
+    Ready,
+    SeedPending(u32),
+}
+#[derive(Default)]
+struct SeedCounts {
+    receipts: AtomicU64,
+    attempts: AtomicU64,
+    completed: AtomicU64,
+    pending_releases: AtomicU64,
+}
+/// Snapshot only after draining for a coherent final accounting cut.
+#[derive(Clone, Default)]
+pub struct SeedMetrics(Arc<SeedCounts>);
+#[derive(Debug, serde::Serialize)]
+pub struct SeedSnapshot {
+    pub prefill_seed_receipts: u64,
+    pub advance_attempts: u64,
+    pub advance_completed: u64,
+    pub pending_releases: u64,
+}
+impl SeedMetrics {
+    pub fn snapshot(&self) -> SeedSnapshot {
+        SeedSnapshot {
+            prefill_seed_receipts: self.0.receipts.load(Ordering::SeqCst),
+            advance_attempts: self.0.attempts.load(Ordering::SeqCst),
+            advance_completed: self.0.completed.load(Ordering::SeqCst),
+            pending_releases: self.0.pending_releases.load(Ordering::SeqCst),
+        }
+    }
+}
 struct Row<C> {
+    seed: SeedState,
     prompt: Vec<u32>,
     cursor: Option<C>,
     pending: VecDeque<u32>,
@@ -110,6 +155,7 @@ struct Row<C> {
 impl<C: Clone> Clone for Row<C> {
     fn clone(&self) -> Self {
         Self {
+            seed: self.seed,
             prompt: self.prompt.clone(),
             cursor: self.cursor.clone(),
             pending: self.pending.clone(),
@@ -122,6 +168,7 @@ impl<C: Clone> Clone for Row<C> {
 impl<C> Default for Row<C> {
     fn default() -> Self {
         Self {
+            seed: SeedState::Ready,
             prompt: Vec::new(),
             cursor: None,
             pending: VecDeque::new(),
@@ -132,6 +179,9 @@ impl<C> Default for Row<C> {
 }
 
 struct Core<D: MtpDriver> {
+    started: bool,
+    deferred_seed: bool,
+    seed_metrics: SeedMetrics,
     driver: D,
     rows: BTreeMap<u64, Row<D::Cursor>>,
     width: usize,
@@ -173,6 +223,7 @@ impl<D: MtpDriver> Core<D> {
             !batch.is_empty() && batch.len() <= 3,
             "MTP scheduler row bounds"
         );
+        self.started = true;
         let mut seen = BTreeSet::new();
         let mut prepared = Vec::with_capacity(batch.len());
         let new = batch
@@ -198,6 +249,18 @@ impl<D: MtpDriver> Core<D> {
                 item.position == row.consumed,
                 "MTP scheduler virtual position"
             );
+            if let SeedState::SeedPending(seed) = row.seed {
+                ensure!(
+                    self.deferred_seed
+                        && row.pending.is_empty()
+                        && row.last == Some(seed)
+                        && row
+                            .cursor
+                            .as_ref()
+                            .is_some_and(|c| c.position() == row.consumed),
+                    "pending seed materialization invariant"
+                );
+            }
             match item.kind {
                 StepKind::Prefill => {
                     ensure!(
@@ -219,6 +282,7 @@ impl<D: MtpDriver> Core<D> {
             }
             prepared.push((item, row));
         }
+        let mut seed_receipts = 0;
         let mut output = Vec::with_capacity(prepared.len());
         let mut updates = Vec::with_capacity(prepared.len());
         for (item, mut row) in prepared {
@@ -227,11 +291,45 @@ impl<D: MtpDriver> Core<D> {
                 row.prompt.extend(item.tokens);
                 if item.prompt_complete {
                     let cursor = self.driver.start(std::mem::take(&mut row.prompt)).await?;
-                    let tx = self.driver.no_draft(&cursor, &self.eos).await?;
-                    row.pending.extend(tx.emitted);
-                    row.cursor = Some(tx.cursor);
+                    if self.deferred_seed {
+                        ensure!(
+                            cursor.position() == row.consumed,
+                            "prefill materialized position"
+                        );
+                        let seed = self.driver.seed(&cursor)?;
+                        ensure!(seed < 248320, "prefill seed vocabulary");
+                        row.pending.push_back(seed);
+                        row.seed = SeedState::SeedPending(seed);
+                        row.cursor = Some(cursor);
+                        seed_receipts += 1;
+                    } else {
+                        let tx = self.driver.no_draft(&cursor, &self.eos).await?;
+                        row.pending.extend(tx.emitted);
+                        row.cursor = Some(tx.cursor);
+                    }
                 }
             } else if row.pending.is_empty() {
+                if let SeedState::SeedPending(seed) = row.seed {
+                    ensure!(
+                        row.last == Some(seed) && !self.eos.contains(&seed),
+                        "deferred seed input/EOS"
+                    );
+                    self.seed_metrics.0.attempts.fetch_add(1, Ordering::SeqCst);
+                    let tx = self
+                        .driver
+                        .no_draft(
+                            row.cursor.as_ref().context("deferred seed cursor")?,
+                            &self.eos,
+                        )
+                        .await?;
+                    ensure!(
+                        tx.emitted == [seed] && tx.cursor.position() == row.consumed,
+                        "deferred advance changed published seed/position"
+                    );
+                    self.seed_metrics.0.completed.fetch_add(1, Ordering::SeqCst);
+                    row.cursor = Some(tx.cursor);
+                    row.seed = SeedState::Ready;
+                }
                 let tx = self
                     .driver
                     .next(
@@ -272,6 +370,10 @@ impl<D: MtpDriver> Core<D> {
             });
             updates.push((item.sequence, row));
         }
+        self.seed_metrics
+            .0
+            .receipts
+            .fetch_add(seed_receipts, Ordering::SeqCst);
         for (id, row) in updates {
             self.rows.insert(id, row);
         }
@@ -279,11 +381,20 @@ impl<D: MtpDriver> Core<D> {
     }
 
     fn release(&mut self, sequence: u64) {
-        self.rows.remove(&sequence);
+        if let Some(row) = self.rows.remove(&sequence) {
+            if matches!(row.seed, SeedState::SeedPending(_)) {
+                self.seed_metrics
+                    .0
+                    .pending_releases
+                    .fetch_add(1, Ordering::SeqCst);
+            }
+        }
     }
 
     async fn shutdown(&mut self) -> Result<()> {
-        self.rows.clear();
+        for id in self.rows.keys().copied().collect::<Vec<_>>() {
+            self.release(id);
+        }
         self.driver.verify_drained().await
     }
 }
@@ -291,6 +402,19 @@ impl<D: MtpDriver> Core<D> {
 pub struct ScheduledMtp(Core<NativeMtpDriver>, crate::cache::Controller, bool);
 
 impl ScheduledMtp {
+    /// Experimental opt-in; materialization of a published prefill seed is deferred.
+    pub fn with_deferred_seed(mut self) -> Result<Self> {
+        ensure!(
+            !self.0.started && self.0.rows.is_empty() && !self.0.deferred_seed,
+            "seed mode must be configured once before admission"
+        );
+        self.0.deferred_seed = true;
+        self.0.identity.push_str("-seed-deferred-v1");
+        Ok(self)
+    }
+    pub fn seed_metrics(&self) -> SeedMetrics {
+        self.0.seed_metrics.clone()
+    }
     /// Caller must exclusively own this draft-only metadata controller's audit clock.
     /// Payload-cache controllers are refused at every boundary.
     pub fn with_exclusive_metadata_audits(mut self) -> Self {
@@ -316,6 +440,9 @@ impl ScheduledMtp {
         let lane = AutomatonMtp::register(controller.clone(), executor.clone(), namespace)?;
         Ok(Self(
             Core {
+                started: false,
+                deferred_seed: false,
+                seed_metrics: SeedMetrics::default(),
                 driver: NativeMtpDriver { executor, lane },
                 rows: BTreeMap::new(),
                 width,
@@ -394,6 +521,9 @@ mod tests {
     }
 
     impl MtpCursorState for FakeCursor {
+        fn position(&self) -> usize {
+            self.history.len()
+        }
         fn resident_bytes(&self) -> usize {
             self.bytes
         }
@@ -405,6 +535,11 @@ mod tests {
         next_calls: Arc<AtomicUsize>,
         lease_root: Arc<()>,
         overshoot_budget: Arc<AtomicBool>,
+        fail_advance: Arc<AtomicBool>,
+        fail_advance_at: AtomicUsize,
+        wrong_seed: Arc<AtomicBool>,
+        wrong_position: Arc<AtomicBool>,
+        advance_gate: Option<Arc<tokio::sync::Semaphore>>,
     }
 
     impl FakeDriver {
@@ -415,6 +550,11 @@ mod tests {
                 next_calls: Arc::new(AtomicUsize::new(0)),
                 lease_root: Arc::new(()),
                 overshoot_budget: Arc::new(AtomicBool::new(false)),
+                fail_advance: Arc::new(AtomicBool::new(false)),
+                fail_advance_at: AtomicUsize::new(usize::MAX),
+                wrong_seed: Arc::new(AtomicBool::new(false)),
+                wrong_position: Arc::new(AtomicBool::new(false)),
+                advance_gate: None,
             }
         }
 
@@ -431,6 +571,9 @@ mod tests {
     impl MtpDriver for FakeDriver {
         type Cursor = FakeCursor;
 
+        fn seed(&self, cursor: &Self::Cursor) -> Result<u32> {
+            Ok((cursor.history.iter().sum::<u32>() + 1) % 1000)
+        }
         fn start(&self, prompt: Vec<u32>) -> DriverFuture<'_, Self::Cursor> {
             Box::pin(async move {
                 ensure!(!prompt.is_empty() && prompt.len() < 512, "prompt cap");
@@ -445,13 +588,27 @@ mod tests {
             _eos: &'a [u32],
         ) -> DriverFuture<'a, DriverReceipt<Self::Cursor>> {
             Box::pin(async move {
-                self.no_drafts.fetch_add(1, Ordering::SeqCst);
+                let call = self.no_drafts.fetch_add(1, Ordering::SeqCst) + 1;
+                if let Some(gate) = &self.advance_gate {
+                    gate.acquire().await?.forget();
+                }
+                ensure!(
+                    !self.fail_advance.load(Ordering::SeqCst)
+                        && call != self.fail_advance_at.load(Ordering::SeqCst),
+                    "injected advance failure"
+                );
                 let mut h = cursor.history.clone();
                 let tok = (h.iter().sum::<u32>() + 1) % 1000;
-                h.push(tok);
+                if !self.wrong_position.load(Ordering::SeqCst) {
+                    h.push(tok);
+                }
                 Ok(DriverReceipt {
                     cursor: self.cursor(h),
-                    emitted: vec![tok],
+                    emitted: vec![if self.wrong_seed.load(Ordering::SeqCst) {
+                        tok + 1
+                    } else {
+                        tok
+                    }],
                 })
             })
         }
@@ -518,12 +675,186 @@ mod tests {
 
     fn fake_core(width: usize) -> Core<FakeDriver> {
         Core {
+            started: false,
+            deferred_seed: false,
+            seed_metrics: SeedMetrics::default(),
             driver: FakeDriver::new(),
             rows: BTreeMap::new(),
             width,
             eos: vec![999],
             identity: format!("FAKE-MTP-width{width}"),
         }
+    }
+
+    fn input(kind: StepKind, position: usize, tokens: Vec<u32>, remaining: usize) -> StepInput {
+        StepInput {
+            sequence: 1,
+            kind,
+            position,
+            tokens,
+            remaining_output_tokens: remaining,
+            prompt_complete: true,
+            history: vec![],
+            allowed_tokens: None,
+        }
+    }
+    #[tokio::test]
+    async fn deferred_seed_matches_eager_without_duplicate_output_or_maintenance() -> Result<()> {
+        for cap in [1, 2, 4, 8, 64] {
+            let mut eager = fake_core(4);
+            let mut deferred = fake_core(4);
+            deferred.deferred_seed = true;
+            let mut outputs = [Vec::new(), Vec::new()];
+            for (index, core) in [&mut eager, &mut deferred].into_iter().enumerate() {
+                let first = core
+                    .step(vec![input(StepKind::Prefill, 0, vec![1, 2, 3], cap)])
+                    .await?[0]
+                    .next_token
+                    .unwrap();
+                outputs[index].push(first);
+                assert_eq!(
+                    core.driver.no_drafts.load(Ordering::SeqCst),
+                    if index == 0 { 1 } else { 0 }
+                );
+                for n in 1..cap {
+                    let last = *outputs[index].last().unwrap();
+                    let next = core
+                        .step(vec![input(
+                            StepKind::Decode,
+                            3 + n - 1,
+                            vec![last],
+                            cap - n,
+                        )])
+                        .await?[0]
+                        .next_token
+                        .unwrap();
+                    outputs[index].push(next);
+                }
+            }
+            assert_eq!(outputs[0], outputs[1]);
+            if cap > 1 {
+                assert_eq!(
+                    eager.rows[&1].cursor.as_ref().unwrap().history,
+                    deferred.rows[&1].cursor.as_ref().unwrap().history
+                );
+            }
+            let stats = deferred.seed_metrics.snapshot();
+            assert_eq!(stats.prefill_seed_receipts, 1);
+            assert_eq!(stats.advance_completed, u64::from(cap > 1));
+            assert_eq!(stats.advance_attempts, stats.advance_completed);
+            eager.shutdown().await?;
+            deferred.shutdown().await?;
+            assert_eq!(
+                deferred.seed_metrics.snapshot().pending_releases,
+                u64::from(cap == 1)
+            );
+        }
+        Ok(())
+    }
+    #[tokio::test]
+    async fn deferred_seed_eos_and_failed_advancement_preserve_old_snapshot() -> Result<()> {
+        let mut eos = fake_core(4);
+        eos.deferred_seed = true;
+        eos.eos = vec![7];
+        assert_eq!(
+            eos.step(vec![input(StepKind::Prefill, 0, vec![1, 2, 3], 8)])
+                .await?[0]
+                .next_token,
+            Some(7)
+        );
+        assert!(eos
+            .step(vec![input(StepKind::Decode, 3, vec![7], 7)])
+            .await
+            .is_err());
+        eos.shutdown().await?;
+        assert_eq!(eos.seed_metrics.snapshot().advance_attempts, 0);
+        assert_eq!(eos.seed_metrics.snapshot().pending_releases, 1);
+        for wrong in 0..3 {
+            let mut core = fake_core(4);
+            core.deferred_seed = true;
+            core.step(vec![input(StepKind::Prefill, 0, vec![1, 2, 3], 8)])
+                .await?;
+            if wrong == 1 {
+                core.driver.wrong_seed.store(true, Ordering::SeqCst)
+            } else if wrong == 0 {
+                core.driver.fail_advance.store(true, Ordering::SeqCst)
+            } else {
+                core.driver.wrong_position.store(true, Ordering::SeqCst)
+            };
+            assert!(core
+                .step(vec![input(StepKind::Decode, 3, vec![7], 7)])
+                .await
+                .is_err());
+            assert_eq!(core.rows[&1].consumed, 3);
+            assert_eq!(core.rows[&1].seed, SeedState::SeedPending(7));
+            assert_eq!(core.driver.next_calls.load(Ordering::SeqCst), 0);
+            assert_eq!(core.seed_metrics.snapshot().advance_completed, 0);
+            core.shutdown().await?;
+        }
+        Ok(())
+    }
+    #[tokio::test]
+    async fn later_row_failure_keeps_all_old_pending_seed_snapshots() -> Result<()> {
+        let mut core = fake_core(4);
+        core.deferred_seed = true;
+        let first = input(StepKind::Prefill, 0, vec![1, 2, 3], 8);
+        let mut second = input(StepKind::Prefill, 0, vec![1, 2, 3], 8);
+        second.sequence = 2;
+        core.step(vec![first, second]).await?;
+        core.driver.fail_advance_at.store(2, Ordering::SeqCst);
+        let first = input(StepKind::Decode, 3, vec![7], 7);
+        let mut second = input(StepKind::Decode, 3, vec![7], 7);
+        second.sequence = 2;
+        assert!(core.step(vec![first, second]).await.is_err());
+        for row in core.rows.values() {
+            assert_eq!(row.consumed, 3);
+            assert_eq!(row.seed, SeedState::SeedPending(7));
+            assert_eq!(row.cursor.as_ref().unwrap().history, vec![1, 2, 3]);
+        }
+        let metrics = core.seed_metrics.clone();
+        assert_eq!(metrics.snapshot().advance_completed, 1);
+        assert_eq!(metrics.snapshot().advance_attempts, 2);
+        core.shutdown().await?;
+        assert_eq!(metrics.snapshot().pending_releases, 2);
+        Ok(())
+    }
+
+    #[tokio::test]
+    async fn canceled_deferred_advance_remains_owned_until_completion() -> Result<()> {
+        let mut core = fake_core(4);
+        core.deferred_seed = true;
+        let gate = Arc::new(tokio::sync::Semaphore::new(0));
+        core.driver.advance_gate = Some(gate.clone());
+        let calls = core.driver.no_drafts.clone();
+        let metrics = core.seed_metrics.clone();
+        let cfg = Config {
+            version: 1,
+            max_queued: 3,
+            max_sequences: 3,
+            max_batch_tokens: 24,
+            prefill_chunk_tokens: 8,
+            max_context_tokens: 511,
+            max_new_tokens: 128,
+            model_memory_bytes: 1024 * 1024 * 1024,
+            max_in_flight: 3,
+        };
+        let engine = Engine::new(cfg, core.storage(), core)?;
+        let mut request = engine.submit_stream(vec![1, 2, 3], 8, 1)?;
+        assert_eq!(request.next_token().await.context("first seed")?.token, 7);
+        tokio::time::timeout(std::time::Duration::from_secs(1), async {
+            while calls.load(Ordering::SeqCst) == 0 {
+                tokio::task::yield_now().await;
+            }
+        })
+        .await?;
+        drop(request);
+        assert_eq!(metrics.snapshot().advance_completed, 0);
+        gate.add_permits(1);
+        let drained = engine.shutdown().await?;
+        assert_eq!(drained.cancelled, 1);
+        assert_eq!(drained.memory_used, 0);
+        assert_eq!(metrics.snapshot().advance_completed, 1);
+        Ok(())
     }
 
     #[tokio::test]

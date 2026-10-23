@@ -9,6 +9,7 @@ impl AutomatonMtpCursor {
     pub fn resident_bytes(&self) -> usize {
         self.inner.resident_bytes()
     }
+    pub fn draft_state(&self) -> &super::MtpState { self.inner.draft_state() }
     pub fn target(&self) -> &GreedyCursor {
         self.inner.target()
     }

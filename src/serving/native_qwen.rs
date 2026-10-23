@@ -691,4 +691,4 @@ pub use automaton::{
 
 #[path = "native_mtp_scheduler.rs"]
 mod mtp_scheduler;
-pub use mtp_scheduler::ScheduledMtp;
+pub use mtp_scheduler::{ScheduledMtp, SeedMetrics, SeedSnapshot};

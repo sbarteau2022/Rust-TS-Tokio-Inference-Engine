@@ -11,6 +11,11 @@ pub struct GreedyCursor {
     terminal: bool,
 }
 impl GreedyCursor {
+    /// Validated deterministic next token; does not advance materialized state.
+    pub fn next_greedy_token(&self) -> Result<u32> {
+        ensure!(!self.terminal, "terminal greedy cursor");
+        winner(&self.logits)
+    }
     pub fn state(&self) -> &DeviceState {
         &self.state
     }

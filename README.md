@@ -1,7 +1,7 @@
 ---
 title: "Rust Server — Apple native kernel compiler and runtime"
 document_type: "implementation"
-version: "1.37.0"
+version: "1.38.0"
 date: "2026-10-23T12:43:42Z"
 implementation_date: null
 author: "Codex for Stewart Barteau"
@@ -15,7 +15,7 @@ related_files:
     lines: "1-1148"
     role: "config"
   - path: "Cargo.toml"
-    lines: "1-94"
+    lines: "1-98"
     role: "config"
   - path: "backend/rapid_worker.py"
     lines: "1-165"
@@ -55,6 +55,9 @@ related_files:
     role: "primary"
   - path: "examples/native_mtp_smoke.rs"
     lines: "1-186"
+    role: "primary"
+  - path: "examples/native_seed_qualification.rs"
+    lines: "1-271"
     role: "primary"
   - path: "examples/native_speculative_smoke.rs"
     lines: "1-370"
@@ -163,6 +166,9 @@ related_files:
     role: "test"
   - path: "judges/native_http_smoke.py"
     lines: "1-81"
+    role: "test"
+  - path: "judges/native_seed_http.py"
+    lines: "1-84"
     role: "test"
   - path: "judges/native_stream_disconnect.py"
     lines: "1-36"
@@ -345,7 +351,7 @@ related_files:
     lines: "1-214"
     role: "primary"
   - path: "src/serving/native_http.rs"
-    lines: "1-217"
+    lines: "1-267"
     role: "primary"
   - path: "src/serving/native_ingestion.rs"
     lines: "1-272"
@@ -360,19 +366,19 @@ related_files:
     lines: "1-468"
     role: "primary"
   - path: "src/serving/native_mtp_automaton.rs"
-    lines: "1-206"
+    lines: "1-207"
     role: "primary"
   - path: "src/serving/native_mtp_cli.rs"
     lines: "1-344"
     role: "primary"
   - path: "src/serving/native_mtp_decode.rs"
-    lines: "1-273"
+    lines: "1-275"
     role: "primary"
   - path: "src/serving/native_mtp_device.rs"
     lines: "1-436"
     role: "primary"
   - path: "src/serving/native_mtp_scheduler.rs"
-    lines: "1-726"
+    lines: "1-1057"
     role: "primary"
   - path: "src/serving/native_ops.rs"
     lines: "1-273"
@@ -384,7 +390,7 @@ related_files:
     lines: "1-100"
     role: "primary"
   - path: "src/serving/native_speculative.rs"
-    lines: "1-386"
+    lines: "1-391"
     role: "primary"
   - path: "src/serving/native_state.rs"
     lines: "1-194"
@@ -1318,3 +1324,24 @@ All admitted work matched the target references and finished; independent valida
 Validation: **167 default / 167 debug / 111 minimal Rust tests**, 22 TS tests, both TS 7.1 compiler gates, strict Clippy, schema/native/GPU judges and independent verifier corruption controls passed. [Bound control evidence](evidence/native-http-controls/qualification.json).
 
 Audit-off is an automaton-clock ablation: it changes trust/admission behavior too, so small speed differences do not isolate audit CPU overhead. Acceptance files include warmup and both traffic types. Compiler/file caches remain shared and unreset; this is one reverse-order repetition. Continuous arrivals were exercised, but physical tensor batching, standalone queue-time telemetry, deep context and broad held-out agent/model quality remain unqualified. Next optimize first-token MTP initialization and burst-tail latency under exact-state rollback gates, then state-safe physical batching.
+
+## Experimental deferred seed
+
+Eager MTP remains the default. `ScheduledMtp::with_deferred_seed()` and optional HTTP `--seed-mode deferred` publish the validated seed from prompt logits before its materialization. A typed SeedPending state retains the actual prefix; the next decode advances that exact seed through existing no_draft, verifies its identity and suppresses duplicate delivery before speculation. `--seed-mode eager` selects existing behavior explicitly. Deferred is rejected for target-only execution before weights load.
+
+A one-token/EOS/canceled pending row can release without seed maintenance. Diagnostic SEED_METRICS distinguish backend prefill receipts (not end-user acknowledgement), advance attempts/completions and pending releases. Controller baseline maintenance is recorded once when it runs; it may lag the earlier seed receipt, so Engine token counts remain authoritative. Shifted MTP prefill still runs eagerly. Native state, cancellation and bounded HTTP smoke gates now pass; it remains experimental because the measured latency tradeoff does not justify changing the default. Lower TTFT alone is not a promotion gate.
+
+Native deferred-seed qualification: `cargo run --locked --release --example native_seed_qualification -- NEW_DIRECTORY` (parent must exist). It checks bitwise target/draft state after identical seed advancement, then four prompts × output lengths 1/2/4/8/64 under alternating eager/deferred ordering and one/three bounded streams, plus forced EOS and post-seed cancellation. Its timing is Rust scheduler publication timing, not HTTP arrival timing; it cannot by itself promote an HTTP speed claim.
+
+Seed advance-completed counts physical maintenance even if a later row failure discards that batch. In such failed batches it may overlap pending releases; these diagnostic categories are not a global token partition. The Engine's validated output/finish accounting remains authoritative.
+
+Deferred-seed results: **2,528 exact-reference tokens / 160 streams**, four bitwise target/draft primitive comparisons, forced EOS, post-seed cancellation and bounded HTTP parity/deadline/disconnect/recovery passed. These Rust publication measurements pool two alternating orders with lengths 1/2/4/8/64; they are separate from the earlier fixed-length HTTP throughput matrix.
+
+| Streams | Seed mode | Aggregate tok/s | Rust TTFT mean ms | First-to-second mean ms | Mean of cell ITL p95 ms |
+| --- | --- | --- | --- | --- | --- |
+| 1 | eager | 13.343 | 717.80 | 108.40 | 138.84 |
+| 1 | deferred | 13.431 | 664.61 | 164.25 | 145.65 |
+| 3 | eager | 13.374 | 2001.78 | 259.53 | 187.59 |
+| 3 | deferred | 13.469 | 1855.15 | 379.60 | 271.68 |
+
+TTFT falls roughly 7%, but the first-to-second gap and tail worsen; aggregate throughput changes by less than 1%. **Keep eager as default.** Deferred HTTP smoke is functional evidence, not a network speed claim. Current regression gates: **172 default / 172 debug / 111 minimal Rust tests**, 22 TS tests, TS 7.1/tsrs, strict Clippy, schema/native/GPU judges. [Bound seed evidence](evidence/native-seed/qualification.json). Next design state-safe physical batching, then native paging/KV and custom Dspark; broad held-out quality remains unqualified.

@@ -15,7 +15,7 @@ related_files:
     lines: "1-1148"
     role: "config"
   - path: "Cargo.toml"
-    lines: "1-94"
+    lines: "1-98"
     role: "config"
   - path: "backend/rapid_worker.py"
     lines: "1-165"
@@ -55,6 +55,9 @@ related_files:
     role: "primary"
   - path: "examples/native_mtp_smoke.rs"
     lines: "1-186"
+    role: "primary"
+  - path: "examples/native_seed_qualification.rs"
+    lines: "1-271"
     role: "primary"
   - path: "examples/native_speculative_smoke.rs"
     lines: "1-370"
@@ -163,6 +166,9 @@ related_files:
     role: "test"
   - path: "judges/native_http_smoke.py"
     lines: "1-81"
+    role: "test"
+  - path: "judges/native_seed_http.py"
+    lines: "1-84"
     role: "test"
   - path: "judges/native_stream_disconnect.py"
     lines: "1-36"
@@ -345,7 +351,7 @@ related_files:
     lines: "1-214"
     role: "primary"
   - path: "src/serving/native_http.rs"
-    lines: "1-217"
+    lines: "1-267"
     role: "primary"
   - path: "src/serving/native_ingestion.rs"
     lines: "1-272"
@@ -360,19 +366,19 @@ related_files:
     lines: "1-468"
     role: "primary"
   - path: "src/serving/native_mtp_automaton.rs"
-    lines: "1-206"
+    lines: "1-207"
     role: "primary"
   - path: "src/serving/native_mtp_cli.rs"
     lines: "1-344"
     role: "primary"
   - path: "src/serving/native_mtp_decode.rs"
-    lines: "1-273"
+    lines: "1-275"
     role: "primary"
   - path: "src/serving/native_mtp_device.rs"
     lines: "1-436"
     role: "primary"
   - path: "src/serving/native_mtp_scheduler.rs"
-    lines: "1-726"
+    lines: "1-1057"
     role: "primary"
   - path: "src/serving/native_ops.rs"
     lines: "1-273"
@@ -384,7 +390,7 @@ related_files:
     lines: "1-100"
     role: "primary"
   - path: "src/serving/native_speculative.rs"
-    lines: "1-386"
+    lines: "1-391"
     role: "primary"
   - path: "src/serving/native_state.rs"
     lines: "1-194"
@@ -842,3 +848,15 @@ The native binary is byte-identical to the first HTTP pilot. The new offline dri
 An independent offline verifier does not reuse the TS measurement formulas: it recomputes request envelopes, TTFT/ITL percentiles, decode rates and exact macro windows, reconstructs outstanding-client high-water from attempt timestamps, and reconciles every connection, rejection, admitted request, completed receipt and queued Finish against shutdown counters. Successful normalized frame archives must pass the Rust production verifier, then independently extracted IDs must match both recorded observations and immutable target references. Successful sequence IDs may not be reused within one profile process; rejected archives must be empty. Native state bytes, active producers/connections, failed/canceled model work and unfinished proposer accounting must all drain cleanly. Synthetic corruption checks reject retained bytes, missing completions, closed admission, producer/model failures, duplicate drain records and regressed clocks.
 
 Limitations: all control traffic uses short prompts, shared caches and one reverse-order repetition. Open-loop attempts arrive continuously, but the fixed 16-attempt overload burst does not establish sustained production SLA, physical tensor batching or long-context quality. Clock removal changes automaton trust/admission semantics as well as work, so no-audit differences cannot be assigned solely to audit CPU overhead. Metadata arrival is not a pure queue-time measurement; server connections and client outstanding attempts are not native active-lane telemetry. Known held-out model-quality gates remain open.
+
+## Deferred prefill seed review
+
+The eager default is preserved and the target-only HTTP backend refuses deferred mode before loading weights. SeedPending records the unconsumed seed without changing the cursor's materialized position. A later advance must return the identical sole seed and increment materialized position exactly once before speculation; a mismatched seed/position or failed advance cannot update the old row snapshot. The synthetic wrong-position test initially caught a missing position check; it now fails closed alongside wrong-token and injected-failure cases. Deferred mode cannot be enabled after the backend has begun processing.
+
+Counters distinguish backend seed receipts from actual advancement attempts/completions and pending release. They are observed coherently after drain, not described as end-user acknowledgement. Controller baseline maintenance is recorded only when executed and does not create another Engine output token. One-token/EOS releases intentionally omit maintenance. A gated fake backend holds advancement pending across request cancellation, proving the Engine retains completion ownership and only releases charged state after completion. The native qualification separately checks bitwise target/draft primitive state and full scheduler output parity; snapshots are offline qualification work, not synchronous CPU validation on the production hot path.
+
+A later-row failure test also completes one deferred maintenance before failing the second row, then proves *all* stored rows retain their old pending snapshots. The completed-maintenance counter records physical work even when a later batch failure discards it, so it can overlap pending releases in failed batches; these are not a partition of delivered tokens. Engine receipts remain authoritative, and equality of completed advances plus pending releases is asserted only in failure-free/cancellation qualification cases.
+
+The real Combined gate passed four bitwise target/draft primitive comparisons and 160 exact-reference mixed-length streams across two seed orders and one/three lanes, then forced EOS and cancellation. HTTP deferred mode passed parity, deadline, disconnect/recovery, native/TS readers and drained shutdown. Actual CLI negative controls reject unknown/duplicate seed modes and deferred target-only execution before startup. An additional rollback test initially failed to compile because StepInput is intentionally non-Clone; the fixture now builds independent inputs, without changing production behavior.
+
+The measured tradeoff is adverse for promotion: roughly 7% lower Rust publication TTFT accompanies longer first-to-second gaps and worse ITL tails, with less than 1% aggregate throughput change. This is not a server speed win. Preserve eager default and distinguish the native timing pilot from HTTP functional smoke. Bitwise state checks cover the native primitive sequence; complete scheduler output is separately checked against prior references. Neither establishes broad model quality, physical batching, sustained service latency or independently exposed complete scheduler row-state parity.

@@ -1,0 +1,93 @@
+{
+  "scope": "mixed-length Rust publication pilot, not HTTP arrival latency or sustained throughput",
+  "cells": [
+    {
+      "round": 0,
+      "lanes": 1,
+      "deferred": false,
+      "tokens": 316,
+      "wall_seconds": 23.634631667,
+      "aggregate_tokens_per_second": 13.370210479785769,
+      "rust_publication_ttft_mean_ms": 715.9349334,
+      "first_second_gap_mean_ms": 107.94327343750001,
+      "publication_itl_p95_ms": 138.21820900000012
+    },
+    {
+      "round": 0,
+      "lanes": 1,
+      "deferred": true,
+      "tokens": 316,
+      "wall_seconds": 23.484572042,
+      "aggregate_tokens_per_second": 13.455642258878,
+      "rust_publication_ttft_mean_ms": 663.9366938000001,
+      "first_second_gap_mean_ms": 163.65792962499998,
+      "publication_itl_p95_ms": 145.33441599999992
+    },
+    {
+      "round": 0,
+      "lanes": 3,
+      "deferred": false,
+      "tokens": 316,
+      "wall_seconds": 23.625022625,
+      "aggregate_tokens_per_second": 13.375648566177828,
+      "rust_publication_ttft_mean_ms": 2002.6140375,
+      "first_second_gap_mean_ms": 261.0994088125,
+      "publication_itl_p95_ms": 189.48174999999992
+    },
+    {
+      "round": 0,
+      "lanes": 3,
+      "deferred": true,
+      "tokens": 316,
+      "wall_seconds": 23.482446458,
+      "aggregate_tokens_per_second": 13.456860236653288,
+      "rust_publication_ttft_mean_ms": 1855.87289365,
+      "first_second_gap_mean_ms": 376.7590026250001,
+      "publication_itl_p95_ms": 272.50566700000036
+    },
+    {
+      "round": 1,
+      "lanes": 1,
+      "deferred": true,
+      "tokens": 316,
+      "wall_seconds": 23.572204458,
+      "aggregate_tokens_per_second": 13.405619341332118,
+      "rust_publication_ttft_mean_ms": 665.2833707,
+      "first_second_gap_mean_ms": 164.839062625,
+      "publication_itl_p95_ms": 145.96341699999994
+    },
+    {
+      "round": 1,
+      "lanes": 1,
+      "deferred": false,
+      "tokens": 316,
+      "wall_seconds": 23.731029208,
+      "aggregate_tokens_per_second": 13.315899501462534,
+      "rust_publication_ttft_mean_ms": 719.65653535,
+      "first_second_gap_mean_ms": 108.8610808125,
+      "publication_itl_p95_ms": 139.46095800000012
+    },
+    {
+      "round": 1,
+      "lanes": 3,
+      "deferred": true,
+      "tokens": 316,
+      "wall_seconds": 23.440089833,
+      "aggregate_tokens_per_second": 13.481177002791226,
+      "rust_publication_ttft_mean_ms": 1854.4362582,
+      "first_second_gap_mean_ms": 382.4456146874999,
+      "publication_itl_p95_ms": 270.85187499999984
+    },
+    {
+      "round": 1,
+      "lanes": 3,
+      "deferred": false,
+      "tokens": 316,
+      "wall_seconds": 23.631283209,
+      "aggregate_tokens_per_second": 13.37210498495702,
+      "rust_publication_ttft_mean_ms": 2000.9451543,
+      "first_second_gap_mean_ms": 257.96192693750004,
+      "publication_itl_p95_ms": 185.69929200000024
+    }
+  ]
+}

@@ -15,7 +15,7 @@ related_files:
     lines: "1-1148"
     role: "config"
   - path: "Cargo.toml"
-    lines: "1-94"
+    lines: "1-98"
     role: "config"
   - path: "backend/rapid_worker.py"
     lines: "1-165"
@@ -55,6 +55,9 @@ related_files:
     role: "primary"
   - path: "examples/native_mtp_smoke.rs"
     lines: "1-186"
+    role: "primary"
+  - path: "examples/native_seed_qualification.rs"
+    lines: "1-271"
     role: "primary"
   - path: "examples/native_speculative_smoke.rs"
     lines: "1-370"
@@ -163,6 +166,9 @@ related_files:
     role: "test"
   - path: "judges/native_http_smoke.py"
     lines: "1-81"
+    role: "test"
+  - path: "judges/native_seed_http.py"
+    lines: "1-84"
     role: "test"
   - path: "judges/native_stream_disconnect.py"
     lines: "1-36"
@@ -345,7 +351,7 @@ related_files:
     lines: "1-214"
     role: "primary"
   - path: "src/serving/native_http.rs"
-    lines: "1-217"
+    lines: "1-267"
     role: "primary"
   - path: "src/serving/native_ingestion.rs"
     lines: "1-272"
@@ -360,19 +366,19 @@ related_files:
     lines: "1-468"
     role: "primary"
   - path: "src/serving/native_mtp_automaton.rs"
-    lines: "1-206"
+    lines: "1-207"
     role: "primary"
   - path: "src/serving/native_mtp_cli.rs"
     lines: "1-344"
     role: "primary"
   - path: "src/serving/native_mtp_decode.rs"
-    lines: "1-273"
+    lines: "1-275"
     role: "primary"
   - path: "src/serving/native_mtp_device.rs"
     lines: "1-436"
     role: "primary"
   - path: "src/serving/native_mtp_scheduler.rs"
-    lines: "1-726"
+    lines: "1-1057"
     role: "primary"
   - path: "src/serving/native_ops.rs"
     lines: "1-273"
@@ -384,7 +390,7 @@ related_files:
     lines: "1-100"
     role: "primary"
   - path: "src/serving/native_speculative.rs"
-    lines: "1-386"
+    lines: "1-391"
     role: "primary"
   - path: "src/serving/native_state.rs"
     lines: "1-194"
@@ -879,3 +885,11 @@ The HTTP CLI now exposes explicit target, MTP/no-audit and MTP/live-audit profil
 Bind the new control evidence and retain the first pilot as historical. Next implement the preregistered SeedPending/Ready experiment: deliver the validated prefill seed, defer its exact target/draft advancement until needed, and prevent duplicate delivery or progress accounting. Compare eager/deferred state and full output under EOS, length-one, cancellation, failed advancement, backpressure and multi-lane rollback; then alternate timing profiles and measure first-to-second gaps as well as TTFT and request throughput. Do not promote a cosmetic first-token win. The proposal and falsifiers are in NATIVE_TUNING_PLAN.md; it is still design-only at this checkpoint.
 
 After that, implement the typed per-row physical-batching state contract with exact scalar controls, then native paging/compressed KV and the model-associated custom Dspark proposer. Add sustained arrivals, direct queue-time telemetry and deeper contexts. A burst with explicit 503s proves bounded overload accounting, not a general continuous-batching, production SLA or held-out agent-quality result.
+
+## After deferred-seed qualification
+
+The SeedPending/Ready experiment is implemented behind `--seed-mode deferred`; eager remains the default. Native target/draft primitive snapshots are bitwise equal after seed advancement, 160 mixed-length streams match prior token references, and EOS/cancellation drain native state. Deferred HTTP passes bounded single/three-lane parity, deadline, disconnect/recovery and Rust/TS framing checks. These are functional gates, not broad quality qualification.
+
+Two alternating orders show roughly 7% lower Rust publication TTFT, but first-to-second gaps worsen substantially while mixed-length aggregate throughput changes by less than 1%. Do not promote this as a throughput optimization or change the default. HTTP timing A/B at fixed 1k/1500/2k windows is still required for a network latency claim. A useful next design must remove or overlap initialization work rather than merely postpone it; deferring shifted draft prefill requires independently leased hidden windows and exact state/cancellation gates.
+
+Next design the typed per-row physical-batching contract against the scalar executor: input geometry, model/config identity, unified KV/convolution/recurrent ownership, cancellation, partial failure and transactional rollback must be explicit before fusion. Then implement and compare one/three lanes, mixed lengths and sustained arrivals with exact output/state controls. Native paging/compressed KV and the custom Dspark target taps/backbone remain subsequent integrations. Queue-time instrumentation, deep-context testing and broad held-out agent/model qualification remain open; no production sampling values have been activated.
