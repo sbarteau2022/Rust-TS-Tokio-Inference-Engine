@@ -1,0 +1,517 @@
+{
+  "inspection": "header and configuration only; no inference performed",
+  "model_directory": "/Users/stewartbarteau/models/fused/Qwen3.6-MoE-Combined",
+  "file": "model-mtp.safetensors",
+  "file_bytes": 491319646,
+  "header_sha256": "231867bc50804aa05e7eb08648ec34e7162398be4aee0400c0d3afd55285cec5",
+  "tensor_count": 42,
+  "tensors": {
+    "language_model.mtp.fc.weight": {
+      "data_offsets": [
+        473488512,
+        490265728
+      ],
+      "dtype": "BF16",
+      "shape": [
+        2048,
+        4096
+      ]
+    },
+    "language_model.mtp.layers.0.input_layernorm.weight": {
+      "data_offsets": [
+        56050688,
+        56054784
+      ],
+      "dtype": "BF16",
+      "shape": [
+        2048
+      ]
+    },
+    "language_model.mtp.layers.0.mlp.gate.weight": {
+      "data_offsets": [
+        490265728,
+        491314304
+      ],
+      "dtype": "BF16",
+      "shape": [
+        256,
+        2048
+      ]
+    },
+    "language_model.mtp.layers.0.mlp.shared_expert.down_proj.biases": {
+      "data_offsets": [
+        56054784,
+        56071168
+      ],
+      "dtype": "BF16",
+      "shape": [
+        2048,
+        4
+      ]
+    },
+    "language_model.mtp.layers.0.mlp.shared_expert.down_proj.scales": {
+      "data_offsets": [
+        473472128,
+        473488512
+      ],
+      "dtype": "BF16",
+      "shape": [
+        2048,
+        4
+      ]
+    },
+    "language_model.mtp.layers.0.mlp.shared_expert.down_proj.weight": {
+      "data_offsets": [
+        338189440,
+        339238016
+      ],
+      "dtype": "U32",
+      "shape": [
+        2048,
+        128
+      ]
+    },
+    "language_model.mtp.layers.0.mlp.shared_expert.gate_proj.biases": {
+      "data_offsets": [
+        338173056,
+        338189440
+      ],
+      "dtype": "BF16",
+      "shape": [
+        512,
+        16
+      ]
+    },
+    "language_model.mtp.layers.0.mlp.shared_expert.gate_proj.scales": {
+      "data_offsets": [
+        473455744,
+        473472128
+      ],
+      "dtype": "BF16",
+      "shape": [
+        512,
+        16
+      ]
+    },
+    "language_model.mtp.layers.0.mlp.shared_expert.gate_proj.weight": {
+      "data_offsets": [
+        328703104,
+        329751680
+      ],
+      "dtype": "U32",
+      "shape": [
+        512,
+        512
+      ]
+    },
+    "language_model.mtp.layers.0.mlp.shared_expert.up_proj.biases": {
+      "data_offsets": [
+        329751680,
+        329768064
+      ],
+      "dtype": "BF16",
+      "shape": [
+        512,
+        16
+      ]
+    },
+    "language_model.mtp.layers.0.mlp.shared_expert.up_proj.scales": {
+      "data_offsets": [
+        329768064,
+        329784448
+      ],
+      "dtype": "BF16",
+      "shape": [
+        512,
+        16
+      ]
+    },
+    "language_model.mtp.layers.0.mlp.shared_expert.up_proj.weight": {
+      "data_offsets": [
+        29836288,
+        30884864
+      ],
+      "dtype": "U32",
+      "shape": [
+        512,
+        512
+      ]
+    },
+    "language_model.mtp.layers.0.mlp.shared_expert_gate.biases": {
+      "data_offsets": [
+        324506624,
+        324506688
+      ],
+      "dtype": "BF16",
+      "shape": [
+        1,
+        32
+      ]
+    },
+    "language_model.mtp.layers.0.mlp.shared_expert_gate.scales": {
+      "data_offsets": [
+        324506688,
+        324506752
+      ],
+      "dtype": "BF16",
+      "shape": [
+        1,
+        32
+      ]
+    },
+    "language_model.mtp.layers.0.mlp.shared_expert_gate.weight": {
+      "data_offsets": [
+        324506752,
+        324508800
+      ],
+      "dtype": "U32",
+      "shape": [
+        1,
+        512
+      ]
+    },
+    "language_model.mtp.layers.0.mlp.switch_mlp.down_proj.biases": {
+      "data_offsets": [
+        47662080,
+        56050688
+      ],
+      "dtype": "BF16",
+      "shape": [
+        256,
+        2048,
+        8
+      ]
+    },
+    "language_model.mtp.layers.0.mlp.switch_mlp.down_proj.scales": {
+      "data_offsets": [
+        329784448,
+        338173056
+      ],
+      "dtype": "BF16",
+      "shape": [
+        256,
+        2048,
+        8
+      ]
+    },
+    "language_model.mtp.layers.0.mlp.switch_mlp.down_proj.weight": {
+      "data_offsets": [
+        190288896,
+        324506624
+      ],
+      "dtype": "U32",
+      "shape": [
+        256,
+        2048,
+        64
+      ]
+    },
+    "language_model.mtp.layers.0.mlp.switch_mlp.gate_proj.biases": {
+      "data_offsets": [
+        21447680,
+        29836288
+      ],
+      "dtype": "BF16",
+      "shape": [
+        256,
+        512,
+        32
+      ]
+    },
+    "language_model.mtp.layers.0.mlp.switch_mlp.gate_proj.scales": {
+      "data_offsets": [
+        39273472,
+        47662080
+      ],
+      "dtype": "BF16",
+      "shape": [
+        256,
+        512,
+        32
+      ]
+    },
+    "language_model.mtp.layers.0.mlp.switch_mlp.gate_proj.weight": {
+      "data_offsets": [
+        56071168,
+        190288896
+      ],
+      "dtype": "U32",
+      "shape": [
+        256,
+        512,
+        256
+      ]
+    },
+    "language_model.mtp.layers.0.mlp.switch_mlp.up_proj.biases": {
+      "data_offsets": [
+        13059072,
+        21447680
+      ],
+      "dtype": "BF16",
+      "shape": [
+        256,
+        512,
+        32
+      ]
+    },
+    "language_model.mtp.layers.0.mlp.switch_mlp.up_proj.scales": {
+      "data_offsets": [
+        30884864,
+        39273472
+      ],
+      "dtype": "BF16",
+      "shape": [
+        256,
+        512,
+        32
+      ]
+    },
+    "language_model.mtp.layers.0.mlp.switch_mlp.up_proj.weight": {
+      "data_offsets": [
+        339238016,
+        473455744
+      ],
+      "dtype": "U32",
+      "shape": [
+        256,
+        512,
+        256
+      ]
+    },
+    "language_model.mtp.layers.0.post_attention_layernorm.weight": {
+      "data_offsets": [
+        13054976,
+        13059072
+      ],
+      "dtype": "BF16",
+      "shape": [
+        2048
+      ]
+    },
+    "language_model.mtp.layers.0.self_attn.k_norm.weight": {
+      "data_offsets": [
+        13054464,
+        13054976
+      ],
+      "dtype": "BF16",
+      "shape": [
+        256
+      ]
+    },
+    "language_model.mtp.layers.0.self_attn.k_proj.biases": {
+      "data_offsets": [
+        12366336,
+        12382720
+      ],
+      "dtype": "BF16",
+      "shape": [
+        512,
+        16
+      ]
+    },
+    "language_model.mtp.layers.0.self_attn.k_proj.scales": {
+      "data_offsets": [
+        12382720,
+        12399104
+      ],
+      "dtype": "BF16",
+      "shape": [
+        512,
+        16
+      ]
+    },
+    "language_model.mtp.layers.0.self_attn.k_proj.weight": {
+      "data_offsets": [
+        12399104,
+        13054464
+      ],
+      "dtype": "U32",
+      "shape": [
+        512,
+        320
+      ]
+    },
+    "language_model.mtp.layers.0.self_attn.o_proj.biases": {
+      "data_offsets": [
+        11842048,
+        12104192
+      ],
+      "dtype": "BF16",
+      "shape": [
+        2048,
+        64
+      ]
+    },
+    "language_model.mtp.layers.0.self_attn.o_proj.scales": {
+      "data_offsets": [
+        12104192,
+        12366336
+      ],
+      "dtype": "BF16",
+      "shape": [
+        2048,
+        64
+      ]
+    },
+    "language_model.mtp.layers.0.self_attn.o_proj.weight": {
+      "data_offsets": [
+        324508800,
+        328703104
+      ],
+      "dtype": "U32",
+      "shape": [
+        2048,
+        512
+      ]
+    },
+    "language_model.mtp.layers.0.self_attn.q_norm.weight": {
+      "data_offsets": [
+        1355776,
+        1356288
+      ],
+      "dtype": "BF16",
+      "shape": [
+        256
+      ]
+    },
+    "language_model.mtp.layers.0.self_attn.q_proj.biases": {
+      "data_offsets": [
+        827392,
+        1089536
+      ],
+      "dtype": "BF16",
+      "shape": [
+        8192,
+        16
+      ]
+    },
+    "language_model.mtp.layers.0.self_attn.q_proj.scales": {
+      "data_offsets": [
+        1093632,
+        1355776
+      ],
+      "dtype": "BF16",
+      "shape": [
+        8192,
+        16
+      ]
+    },
+    "language_model.mtp.layers.0.self_attn.q_proj.weight": {
+      "data_offsets": [
+        1356288,
+        11842048
+      ],
+      "dtype": "U32",
+      "shape": [
+        8192,
+        320
+      ]
+    },
+    "language_model.mtp.layers.0.self_attn.v_proj.biases": {
+      "data_offsets": [
+        4096,
+        20480
+      ],
+      "dtype": "BF16",
+      "shape": [
+        512,
+        16
+      ]
+    },
+    "language_model.mtp.layers.0.self_attn.v_proj.scales": {
+      "data_offsets": [
+        24576,
+        40960
+      ],
+      "dtype": "BF16",
+      "shape": [
+        512,
+        16
+      ]
+    },
+    "language_model.mtp.layers.0.self_attn.v_proj.weight": {
+      "data_offsets": [
+        40960,
+        827392
+      ],
+      "dtype": "U32",
+      "shape": [
+        512,
+        384
+      ]
+    },
+    "language_model.mtp.norm.weight": {
+      "data_offsets": [
+        1089536,
+        1093632
+      ],
+      "dtype": "BF16",
+      "shape": [
+        2048
+      ]
+    },
+    "language_model.mtp.pre_fc_norm_embedding.weight": {
+      "data_offsets": [
+        20480,
+        24576
+      ],
+      "dtype": "BF16",
+      "shape": [
+        2048
+      ]
+    },
+    "language_model.mtp.pre_fc_norm_hidden.weight": {
+      "data_offsets": [
+        0,
+        4096
+      ],
+      "dtype": "BF16",
+      "shape": [
+        2048
+      ]
+    }
+  },
+  "quantization_default": {
+    "group_size": 64,
+    "bits": 4,
+    "mode": "affine"
+  },
+  "mtp_quantization_overrides": {
+    "language_model.mtp.layers.0.mlp.shared_expert.down_proj": {
+      "bits": 8,
+      "group_size": 128,
+      "mode": "affine"
+    },
+    "language_model.mtp.layers.0.mlp.shared_expert.gate_proj": {
+      "bits": 8,
+      "group_size": 128,
+      "mode": "affine"
+    },
+    "language_model.mtp.layers.0.mlp.shared_expert.up_proj": {
+      "bits": 8,
+      "group_size": 128,
+      "mode": "affine"
+    },
+    "language_model.mtp.layers.0.mlp.shared_expert_gate": {
+      "bits": 8,
+      "group_size": 64,
+      "mode": "affine"
+    },
+    "language_model.mtp.layers.0.self_attn.k_proj": {
+      "bits": 5,
+      "group_size": 128,
+      "mode": "affine"
+    },
+    "language_model.mtp.layers.0.self_attn.q_proj": {
+      "bits": 5,
+      "group_size": 128,
+      "mode": "affine"
+    },
+    "language_model.mtp.layers.0.self_attn.v_proj": {
+      "bits": 6,
+      "group_size": 128,
+      "mode": "affine"
+    }
+  },
+  "native_mtp_execution_qualified": false
+}

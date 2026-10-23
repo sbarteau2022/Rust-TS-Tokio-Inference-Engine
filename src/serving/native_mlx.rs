@@ -636,6 +636,31 @@ unsafe extern "C" {
 }
 pub(super) struct NativeWeights(pub(super) *mut c_void);
 impl NativeWeights {
+    pub(super) fn open_mtp(
+        manifest: &Manifest,
+        sidecar: &super::native_mtp::MtpSidecar,
+    ) -> Result<Self> {
+        manifest.verify_stamps()?;
+        ensure!(
+            sidecar.identity == manifest.identity
+                && sidecar.path == manifest.directory.join("model-mtp.safetensors"),
+            "foreign MTP sidecar"
+        );
+        let mut error = [0 as c_char; 1024];
+        let pointer = unsafe { rs_mlx_weights_create(error.as_mut_ptr(), error.len()) };
+        if pointer.is_null() {
+            status(-1, &error)?;
+            unreachable!();
+        }
+        let store = Self(pointer);
+        let path = CString::new(sidecar.path.to_str().context("non-UTF8 MTP path")?)?;
+        status(
+            unsafe { rs_mlx_weights_load(store.0, path.as_ptr(), error.as_mut_ptr(), error.len()) },
+            &error,
+        )?;
+        manifest.verify_stamps()?;
+        Ok(store)
+    }
     pub(super) fn open(manifest: &Manifest) -> Result<Self> {
         manifest.verify_stamps()?;
         let mut error = [0 as c_char; 1024];

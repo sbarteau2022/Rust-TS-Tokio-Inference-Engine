@@ -1,0 +1,9 @@
+{
+  "command": [
+    "native-mtp-inspect",
+    "--draft"
+  ],
+  "exit": 1,
+  "stderr": "Error: native-mtp-inspect takes no arguments\n",
+  "pass": true
+}

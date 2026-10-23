@@ -13,6 +13,8 @@ async fn main() -> Result<()> {
     let args: Vec<_> = std::env::args().collect();
     match args.get(1).map(String::as_str) {
         #[cfg(feature = "native-mlx")]
+        Some("native-mtp-inspect") => { ensure!(args.len()==2,"native-mtp-inspect takes no arguments");rust_server::serving::native_mtp::inspect_selected().await?; }
+        #[cfg(feature = "native-mlx")]
         Some("native-device-smoke") => {ensure!(args.len()==3,"native-device-smoke NEW_DIRECTORY");rust_server::serving::native_device_smoke::run(Path::new(&args[2])).await?;}
         #[cfg(feature = "native-mlx")]
         Some("native-layer-reference") => {ensure!(args.len()==3,"native-layer-reference NEW_SCRATCH_DIRECTORY");rust_server::serving::native_layer_reference::run(Path::new(&args[2])).await?;}

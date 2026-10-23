@@ -1,7 +1,7 @@
 ---
 title: "Rust Server — Apple native kernel compiler and runtime"
 document_type: "implementation"
-version: "1.23.0"
+version: "1.24.0"
 date: "2026-10-23T04:28:10Z"
 implementation_date: null
 author: "Codex for Stewart Barteau"
@@ -246,7 +246,7 @@ related_files:
     lines: "1-81"
     role: "primary"
   - path: "src/main.rs"
-    lines: "1-451"
+    lines: "1-453"
     role: "primary"
   - path: "src/runtime.rs"
     lines: "1-366"
@@ -267,7 +267,7 @@ related_files:
     lines: "1-280"
     role: "primary"
   - path: "src/serving/mod.rs"
-    lines: "1-104"
+    lines: "1-107"
     role: "primary"
   - path: "src/serving/model_ir.rs"
     lines: "1-244"
@@ -300,7 +300,10 @@ related_files:
     lines: "1-93"
     role: "primary"
   - path: "src/serving/native_mlx.rs"
-    lines: "1-925"
+    lines: "1-950"
+    role: "primary"
+  - path: "src/serving/native_mtp.rs"
+    lines: "1-468"
     role: "primary"
   - path: "src/serving/native_ops.rs"
     lines: "1-273"
@@ -999,3 +1002,13 @@ On the Combined checkpoint, four cap64 probes preserve all 256 output IDs. Decod
 
 
 Spec 15 phase validation: **136 default / 136 debug-validation / 96 minimal-feature Rust tests**, 10,000 audit cycles, TS 7.1/tsrs and native numerical/pressure gates passed. Default preservation remains bitwise over 60 cases / 360 steps; speculative replay is numerically qualified and does not claim bitwise equivalence. Original quality misses remain unchanged. Source, binaries, configuration and raw results are bound in [the evidence manifest](evidence/spec15-drafts/manifest.sha256).
+
+## Native MTP artifact and tuning plan
+
+The Combined checkpoint contains a 42-tensor mixed-quantization MTP sidecar; it is not yet executed by the native server. [The tuning plan](docs/NATIVE_TUNING_PLAN.md) records actual CLI controls, proposed unified native configuration, integration order and matched Dspark(2) qualification. The 25.31% result belongs to suffix retrieval, not this MTP head.
+
+Native sidecar ingestion is now available with `cargo run --release --locked -- native-mtp-inspect`. It validates the supported layout and mixed packing, then opens a separate MLX store. This is ingestion only; MTP forward execution and acceptance remain unqualified.
+
+1.24.0 — Native MTP sidecar ingestion: strict supported layout, mixed quantization validation, isolated MLX store and explicit ingestion-only CLI. MTP forward execution remains pending.
+
+MTP ingestion checks passed: **141 default / 141 debug-validation / 96 minimal-feature Rust tests**, strict Clippy/format, TS 7.1/tsrs and the ordered native/kernel judges. [Bound evidence](evidence/mtp-inventory/manifest.sha256) records the real sidecar load; no new throughput result is claimed.

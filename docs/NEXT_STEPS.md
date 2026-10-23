@@ -246,7 +246,7 @@ related_files:
     lines: "1-81"
     role: "primary"
   - path: "src/main.rs"
-    lines: "1-451"
+    lines: "1-453"
     role: "primary"
   - path: "src/runtime.rs"
     lines: "1-366"
@@ -267,7 +267,7 @@ related_files:
     lines: "1-280"
     role: "primary"
   - path: "src/serving/mod.rs"
-    lines: "1-104"
+    lines: "1-107"
     role: "primary"
   - path: "src/serving/model_ir.rs"
     lines: "1-244"
@@ -300,7 +300,10 @@ related_files:
     lines: "1-93"
     role: "primary"
   - path: "src/serving/native_mlx.rs"
-    lines: "1-925"
+    lines: "1-950"
+    role: "primary"
+  - path: "src/serving/native_mtp.rs"
+    lines: "1-468"
     role: "primary"
   - path: "src/serving/native_ops.rs"
     lines: "1-273"
@@ -698,3 +701,7 @@ The shared admission/arbitration interface and native completion guards are impl
 
 
 The next proposer needs a worker-confined hidden-state tap bound to the same native state version, a checkpoint-bound head artifact and separate training/calibration/qualification data. Implement it through DraftProposer with the completion guard, then compare held-out output preservation and total proposal/verification/replay cost. The plugin interface alone does not supply hidden features or trained weights. Before production admission, qualify observation-window length and a justified gain margin using sustained alternating windows; the current strict empirical cost comparison can change verdict on timing noise.
+
+## Native MTP continuation — 2026-10-23
+
+Completed strict 42-tensor sidecar validation and isolated MLX ingestion via native-mtp-inspect. Next implement device-owned post-normalized target hidden handles, shifted-token MTP prefill and its separate attention state; apply per-module quantization explicitly. Then register the native proposer under Spec 15, verify rejection/cancellation/state recovery and qualify matched workloads before exposing operational tuning controls. The head has not yet generated a draft.

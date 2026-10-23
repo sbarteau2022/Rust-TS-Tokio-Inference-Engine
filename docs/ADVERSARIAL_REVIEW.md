@@ -246,7 +246,7 @@ related_files:
     lines: "1-81"
     role: "primary"
   - path: "src/main.rs"
-    lines: "1-451"
+    lines: "1-453"
     role: "primary"
   - path: "src/runtime.rs"
     lines: "1-366"
@@ -267,7 +267,7 @@ related_files:
     lines: "1-280"
     role: "primary"
   - path: "src/serving/mod.rs"
-    lines: "1-104"
+    lines: "1-107"
     role: "primary"
   - path: "src/serving/model_ir.rs"
     lines: "1-244"
@@ -300,7 +300,10 @@ related_files:
     lines: "1-93"
     role: "primary"
   - path: "src/serving/native_mlx.rs"
-    lines: "1-925"
+    lines: "1-950"
+    role: "primary"
+  - path: "src/serving/native_mtp.rs"
+    lines: "1-468"
     role: "primary"
   - path: "src/serving/native_ops.rs"
     lines: "1-273"
@@ -643,3 +646,7 @@ Challenged acceptance-only admission, forged outcome counts, cumulative overflow
 Challenged caller cancellation before proposal completion, command lifetime after cancelled verification, runtime abort, proposer panic, oversize output and invalid token IDs. Each native command owns the completion guard independently of its waiter. A cancelled result channel records zero internal published progress and preserves the immutable parent. The actual native smoke and default preservation tests remain model-specific evidence, not general bitwise speculative equivalence. Plugin code is trusted and must obey the completion contract. Benchmark ordering, limited cold trials and namespace cost mixing can bias profitability, so this adapter remains experimental. No trained MTP, true continuous batching, client latency or production gain is claimed.
 
 A further fault control exhausts the native state table after block verification and before bonus replay. Both admitted target calls remain charged even though the transaction fails and publishes zero tokens; parent state and residency must recover. Target-call accounting counts admitted native commands, not successful full forward graphs.
+
+## Native MTP ingestion review — 2026-10-23
+
+The sidecar is accepted only for the explicit 42-tensor Combined layout. Validation checks mixed packing using each module override, not a global four-bit assumption. All required tensors are removed in turn by tests; malformed geometry, dtype, offsets, extras, truncation, trailing payload and symlinks are rejected. Metadata tests use sparse files and do not establish numerical correctness. The native MLX store is separate from the target store because target norm sanitization currently reacts to MTP keys. Artifact identity and stamp checks bind opening to the same checkpoint; this follows the existing local immutable-file trust boundary, not protection against a malicious local writer preserving timestamps. Loading establishes ingestion only: MTP forward, quantization application during projections, hidden-state alignment, transactional draft cache and profitability remain open.

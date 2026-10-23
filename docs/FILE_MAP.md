@@ -2,7 +2,7 @@
 title: "Implementation file map and evidence index"
 document_type: "implementation"
 version: "1.0.0"
-date: "2026-10-23T04:35:40Z"
+date: "2026-10-23T05:11:39Z"
 implementation_date: null
 author: "Codex for Stewart Barteau"
 reviewers: []
@@ -246,7 +246,7 @@ related_files:
     lines: "1-81"
     role: "primary"
   - path: "src/main.rs"
-    lines: "1-451"
+    lines: "1-453"
     role: "primary"
   - path: "src/runtime.rs"
     lines: "1-366"
@@ -267,7 +267,7 @@ related_files:
     lines: "1-280"
     role: "primary"
   - path: "src/serving/mod.rs"
-    lines: "1-104"
+    lines: "1-107"
     role: "primary"
   - path: "src/serving/model_ir.rs"
     lines: "1-244"
@@ -300,7 +300,10 @@ related_files:
     lines: "1-93"
     role: "primary"
   - path: "src/serving/native_mlx.rs"
-    lines: "1-925"
+    lines: "1-950"
+    role: "primary"
+  - path: "src/serving/native_mtp.rs"
+    lines: "1-468"
     role: "primary"
   - path: "src/serving/native_ops.rs"
     lines: "1-273"
@@ -517,14 +520,14 @@ Exact text line references for this local implementation. Binary fixtures have n
 | `src/ir.rs` | 1–646 | primary |
 | `src/lib.rs` | 1–30 | primary |
 | `src/macro_bench.rs` | 1–81 | primary |
-| `src/main.rs` | 1–451 | primary |
+| `src/main.rs` | 1–453 | primary |
 | `src/runtime.rs` | 1–366 | primary |
 | `src/sampled.rs` | 1–193 | primary |
 | `src/serving/choices.rs` | 1–123 | primary |
 | `src/serving/completion_ledger.rs` | 1–100 | primary |
 | `src/serving/config.rs` | 1–51 | primary |
 | `src/serving/kv.rs` | 1–280 | primary |
-| `src/serving/mod.rs` | 1–104 | primary |
+| `src/serving/mod.rs` | 1–107 | primary |
 | `src/serving/model_ir.rs` | 1–244 | primary |
 | `src/serving/native_automaton.rs` | 1–324 | primary |
 | `src/serving/native_boundary.rs` | 1–193 | primary |
@@ -535,7 +538,8 @@ Exact text line references for this local implementation. Binary fixtures have n
 | `src/serving/native_extended.rs` | 1–214 | primary |
 | `src/serving/native_ingestion.rs` | 1–272 | primary |
 | `src/serving/native_layer_reference.rs` | 1–93 | primary |
-| `src/serving/native_mlx.rs` | 1–925 | primary |
+| `src/serving/native_mlx.rs` | 1–950 | primary |
+| `src/serving/native_mtp.rs` | 1–468 | primary |
 | `src/serving/native_ops.rs` | 1–273 | primary |
 | `src/serving/native_qwen.rs` | 1–688 | primary |
 | `src/serving/native_reference.rs` | 1–100 | primary |
@@ -578,37 +582,38 @@ Exact text line references for this local implementation. Binary fixtures have n
 | `ts/trace.test.ts` | 1–45 | test |
 | `ts/trace.ts` | 1–73 | primary |
 | `tsconfig.json` | 1–1 | config |
-| `README.md` | 1–1001 | primary |
-| `docs/ACCELERATOR_ROADMAP.md` | 1–483 | primary |
-| `docs/ADVERSARIAL_REVIEW.md` | 1–645 | primary |
-| `docs/ASYNC_COMPLETION.md` | 1–516 | primary |
-| `docs/DESIGN.md` | 1–470 | primary |
-| `docs/DEVICE_STATE_IMPLEMENTATION.md` | 1–608 | primary |
-| `docs/DEVICE_STATE_OWNERSHIP.md` | 1–607 | primary |
-| `docs/FILE_MAP.md` | 1–619 | primary |
-| `docs/FIXED_POINT.md` | 1–540 | primary |
-| `docs/Failures.md` | 1–468 | primary |
-| `docs/GRID_THROUGHPUT.md` | 1–499 | primary |
-| `docs/MODEL_ADVERSARIAL_REVIEW.md` | 1–481 | primary |
-| `docs/MODEL_INTEGRATION.md` | 1–588 | primary |
-| `docs/NATIVE_DISCRIMINATORS.md` | 1–527 | primary |
-| `docs/NATIVE_LAYER_REFERENCE.md` | 1–615 | primary |
-| `docs/NATIVE_MLX_BACKEND.md` | 1–553 | primary |
-| `docs/NATIVE_QWEN_GENERATION.md` | 1–836 | primary |
-| `docs/NATIVE_SPECULATIVE_VERIFIER.md` | 1–554 | primary |
-| `docs/NATIVE_SUITE_REFERENCE.md` | 1–567 | primary |
-| `docs/NATIVE_WEIGHTS_EXECUTION.md` | 1–493 | primary |
-| `docs/NEXT_STEPS.md` | 1–700 | primary |
-| `docs/PRODUCTION_PIPELINE.md` | 1–500 | primary |
-| `docs/RESOURCE_BACKEND_DESIGN.md` | 1–480 | primary |
-| `docs/RESOURCE_IMPLEMENTATION.md` | 1–537 | primary |
-| `docs/SAMPLING_POLICY_STATUS.md` | 1–461 | primary |
-| `docs/SERVING_ARCHITECTURE.md` | 1–605 | primary |
-| `docs/SOURCE_SPEC.md` | 1–656 | primary |
-| `docs/SPEC15_DRAFT_ADMISSION.md` | 1–511 | primary |
-| `docs/SPEC15_IMPLEMENTATION.md` | 1–535 | primary |
-| `docs/SPEC15_SOURCE.md` | 1–693 | primary |
-| `docs/SPECULATIVE_RESEARCH_2026_10.md` | 1–560 | primary |
+| `README.md` | 1–1014 | primary |
+| `docs/ACCELERATOR_ROADMAP.md` | 1–486 | primary |
+| `docs/ADVERSARIAL_REVIEW.md` | 1–652 | primary |
+| `docs/ASYNC_COMPLETION.md` | 1–519 | primary |
+| `docs/DESIGN.md` | 1–473 | primary |
+| `docs/DEVICE_STATE_IMPLEMENTATION.md` | 1–611 | primary |
+| `docs/DEVICE_STATE_OWNERSHIP.md` | 1–610 | primary |
+| `docs/FILE_MAP.md` | 1–624 | primary |
+| `docs/FIXED_POINT.md` | 1–543 | primary |
+| `docs/Failures.md` | 1–471 | primary |
+| `docs/GRID_THROUGHPUT.md` | 1–502 | primary |
+| `docs/MODEL_ADVERSARIAL_REVIEW.md` | 1–484 | primary |
+| `docs/MODEL_INTEGRATION.md` | 1–591 | primary |
+| `docs/NATIVE_DISCRIMINATORS.md` | 1–530 | primary |
+| `docs/NATIVE_LAYER_REFERENCE.md` | 1–618 | primary |
+| `docs/NATIVE_MLX_BACKEND.md` | 1–556 | primary |
+| `docs/NATIVE_QWEN_GENERATION.md` | 1–839 | primary |
+| `docs/NATIVE_SPECULATIVE_VERIFIER.md` | 1–557 | primary |
+| `docs/NATIVE_SUITE_REFERENCE.md` | 1–570 | primary |
+| `docs/NATIVE_TUNING_PLAN.md` | 1–510 | primary |
+| `docs/NATIVE_WEIGHTS_EXECUTION.md` | 1–496 | primary |
+| `docs/NEXT_STEPS.md` | 1–707 | primary |
+| `docs/PRODUCTION_PIPELINE.md` | 1–503 | primary |
+| `docs/RESOURCE_BACKEND_DESIGN.md` | 1–483 | primary |
+| `docs/RESOURCE_IMPLEMENTATION.md` | 1–540 | primary |
+| `docs/SAMPLING_POLICY_STATUS.md` | 1–464 | primary |
+| `docs/SERVING_ARCHITECTURE.md` | 1–608 | primary |
+| `docs/SOURCE_SPEC.md` | 1–659 | primary |
+| `docs/SPEC15_DRAFT_ADMISSION.md` | 1–514 | primary |
+| `docs/SPEC15_IMPLEMENTATION.md` | 1–538 | primary |
+| `docs/SPEC15_SOURCE.md` | 1–696 | primary |
+| `docs/SPECULATIVE_RESEARCH_2026_10.md` | 1–563 | primary |
 
 # Evidence
 
