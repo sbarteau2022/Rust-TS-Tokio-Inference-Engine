@@ -2,27 +2,33 @@
 > apple-native-rust-server@0.1.0 test
 > tsx --test ts/*.test.ts
 
-✔ HTTP client validates origin and bounds before network (0.426167ms)
-✔ HTTP client accepts fragmented binary finish and rejects error or truncated EOF (11.081042ms)
-✔ HTTP timing separates TTFT, burst gaps, request envelope and per-lane decode (0.589416ms)
-✔ HTTP macro windows count globally delivered tokens, not request completion (0.848959ms)
-✔ HTTP timing rejects empty, regressed and mismatched observations (0.143042ms)
-✔ offline artifacts preserve exact u64 metadata (0.06275ms)
-✔ Rust fixture and all chunk sizes agree, BOM and Unicode preserved (15.083916ms)
-✔ unknown controls, ordering, exact terminal and EOF refusal (3.718834ms)
-✔ malformed structural mutations fail without permitting poisoned reuse (15.7265ms)
-✔ typed errors terminate partial and empty streams (0.185458ms)
-✔ timestamp, token and aggregate text caps fail closed (15.268583ms)
-✔ MVK records exact dependency order (1.235917ms)
-✔ invalid shapes and unsafe names rejected (0.128208ms)
-✔ undefined and invalid handles rejected (0.074625ms)
-✔ second kernel family records row-bias fusion (0.209ms)
-✔ CORDIC functions serialize stable version-3 operation codes (0.30625ms)
-ℹ tests 16
+✔ benchmark flags preserve order and fail before side effects (0.667209ms)
+✔ closed waves reserve exact final token budget (0.100791ms)
+✔ absolute arrivals proceed while earlier work is unfinished and retain failures (0.168083ms)
+✔ shutdown timer is bounded and canceled on normal process exit (92.414625ms)
+✔ HTTP client validates origin and bounds before network (0.429167ms)
+✔ HTTP client accepts fragmented binary finish and rejects error or truncated EOF (11.003666ms)
+✔ HTTP overload remains typed and cancels its non-AMST body (0.306292ms)
+✔ HTTP timing separates TTFT, burst gaps, request envelope and per-lane decode (0.596875ms)
+✔ HTTP macro windows count globally delivered tokens, not request completion (0.960375ms)
+✔ HTTP timing rejects empty, regressed and mismatched observations (0.11975ms)
+✔ offline artifacts preserve exact u64 metadata (0.054541ms)
+✔ nonfinite request envelopes and zero-duration macro bursts are explicit (0.1705ms)
+✔ Rust fixture and all chunk sizes agree, BOM and Unicode preserved (14.987583ms)
+✔ unknown controls, ordering, exact terminal and EOF refusal (3.780084ms)
+✔ malformed structural mutations fail without permitting poisoned reuse (15.81625ms)
+✔ typed errors terminate partial and empty streams (0.192375ms)
+✔ timestamp, token and aggregate text caps fail closed (14.724ms)
+✔ MVK records exact dependency order (1.203084ms)
+✔ invalid shapes and unsafe names rejected (0.133917ms)
+✔ undefined and invalid handles rejected (0.079291ms)
+✔ second kernel family records row-bias fusion (0.192833ms)
+✔ CORDIC functions serialize stable version-3 operation codes (0.420791ms)
+ℹ tests 22
 ℹ suites 0
-ℹ pass 16
+ℹ pass 22
 ℹ fail 0
 ℹ cancelled 0
 ℹ skipped 0
 ℹ todo 0
-ℹ duration_ms 156.758833
+ℹ duration_ms 197.223

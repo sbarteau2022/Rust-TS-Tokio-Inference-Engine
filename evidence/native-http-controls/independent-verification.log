@@ -1,0 +1,426 @@
+STREAM frames=10 tokens=8 terminal=2
+TEXT ```rust\npub fn add_0
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\npub fn add_0(a: i32, b: i32) -> i32 { a + b }\npub fn add_1(a: i32, b: i32) -> i32 { a + b }\npub fn add_2(a:
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\n#[test]\nfn identity_0() {\n    assert_eq!(identity(0), 0);\n}\n\n#[test]\nfn identity_1() {\n    assert_eq!(identity(1), 1);\n}\n\n#[test]\nfn identity_2() {\n
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\n// Declare an array of integers from 0 to 15\nlet numbers: [i32; 16] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+STREAM frames=66 tokens=64 terminal=2
+TEXT The core lifetime bug is that the server mutates the KV buffer while a GPU command still holds a reference to it. When the client disconnects, the server may clear or overwrite the buffer, but the GPU command\'s `Arc` still points to the old data. This creates a use-after-free or data-race
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\npub fn add_0(a: i32, b: i32) -> i32 { a + b }\npub fn add_1(a: i32, b: i32) -> i32 { a + b }\npub fn add_2(a:
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\n#[test]\nfn identity_0() {\n    assert_eq!(identity(0), 0);\n}\n\n#[test]\nfn identity_1() {\n    assert_eq!(identity(1), 1);\n}\n\n#[test]\nfn identity_2() {\n
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\n// Declare an array of integers from 0 to 15\nlet numbers: [i32; 16] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+STREAM frames=66 tokens=64 terminal=2
+TEXT The core lifetime bug is that the server mutates the KV buffer while a GPU command still holds a reference to it. When the client disconnects, the server may clear or overwrite the buffer, but the GPU command\'s `Arc` still points to the old data. This creates a use-after-free or data-race
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\npub fn add_0(a: i32, b: i32) -> i32 { a + b }\npub fn add_1(a: i32, b: i32) -> i32 { a + b }\npub fn add_2(a:
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\n#[test]\nfn identity_0() {\n    assert_eq!(identity(0), 0);\n}\n\n#[test]\nfn identity_1() {\n    assert_eq!(identity(1), 1);\n}\n\n#[test]\nfn identity_2() {\n
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\n// Declare an array of integers from 0 to 15\nlet numbers: [i32; 16] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+STREAM frames=66 tokens=64 terminal=2
+TEXT The core lifetime bug is that the server mutates the KV buffer while a GPU command still holds a reference to it. When the client disconnects, the server may clear or overwrite the buffer, but the GPU command\'s `Arc` still points to the old data. This creates a use-after-free or data-race
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\npub fn add_0(a: i32, b: i32) -> i32 { a + b }\npub fn add_1(a: i32, b: i32) -> i32 { a + b }\npub fn add_2(a:
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\n#[test]\nfn identity_0() {\n    assert_eq!(identity(0), 0);\n}\n\n#[test]\nfn identity_1() {\n    assert_eq!(identity(1), 1);\n}\n\n#[test]\nfn identity_2() {\n
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\n// Declare an array of integers from 0 to 15\nlet numbers: [i32; 16] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+STREAM frames=66 tokens=64 terminal=2
+TEXT The core lifetime bug is that the server mutates the KV buffer while a GPU command still holds a reference to it. When the client disconnects, the server may clear or overwrite the buffer, but the GPU command\'s `Arc` still points to the old data. This creates a use-after-free or data-race
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\npub fn add_0(a: i32, b: i32) -> i32 { a + b }\npub fn add_1(a: i32, b: i32) -> i32 { a + b }\npub fn add_2(a:
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\n#[test]\nfn identity_0() {\n    assert_eq!(identity(0), 0);\n}\n\n#[test]\nfn identity_1() {\n    assert_eq!(identity(1), 1);\n}\n\n#[test]\nfn identity_2() {\n
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\n// Declare an array of integers from 0 to 15\nlet numbers: [i32; 16] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+STREAM frames=66 tokens=64 terminal=2
+TEXT The core lifetime bug is that the server mutates the KV buffer while a GPU command still holds a reference to it. When the client disconnects, the server may clear or overwrite the buffer, but the GPU command\'s `Arc` still points to the old data. This creates a use-after-free or data-race
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\npub fn add_0(a: i32, b: i32) -> i32 { a + b }\npub fn add_1(a: i32, b: i32) -> i32 { a + b }\npub fn add_2(a:
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\n#[test]\nfn identity_0() {\n    assert_eq!(identity(0), 0);\n}\n\n#[test]\nfn identity_1() {\n    assert_eq!(identity(1), 1);\n}\n\n#[test]\nfn identity_2() {\n
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\n// Declare an array of integers from 0 to 15\nlet numbers: [i32; 16] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+STREAM frames=66 tokens=64 terminal=2
+TEXT The core lifetime bug is that the server mutates the KV buffer while a GPU command still holds a reference to it. When the client disconnects, the server may clear or overwrite the buffer, but the GPU command\'s `Arc` still points to the old data. This creates a use-after-free or data-race
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\npub fn add_0(a: i32, b: i32) -> i32 { a + b }\npub fn add_1(a: i32, b: i32) -> i32 { a + b }\npub fn add_2(a:
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\n#[test]\nfn identity_0() {\n    assert_eq!(identity(0), 0);\n}\n\n#[test]\nfn identity_1() {\n    assert_eq!(identity(1), 1);\n}\n\n#[test]\nfn identity_2() {\n
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\n// Declare an array of integers from 0 to 15\nlet numbers: [i32; 16] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+STREAM frames=66 tokens=64 terminal=2
+TEXT The core lifetime bug is that the server mutates the KV buffer while a GPU command still holds a reference to it. When the client disconnects, the server may clear or overwrite the buffer, but the GPU command\'s `Arc` still points to the old data. This creates a use-after-free or data-race
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\npub fn add_0(a: i32, b: i32) -> i32 { a + b }\npub fn add_1(a: i32, b: i32) -> i32 { a + b }\npub fn add_2(a:
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\n#[test]\nfn identity_0() {\n    assert_eq!(identity(0), 0);\n}\n\n#[test]\nfn identity_1() {\n    assert_eq!(identity(1), 1);\n}\n\n#[test]\nfn identity_2() {\n
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\n// Declare an array of integers from 0 to 15\nlet numbers: [i32; 16] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+STREAM frames=18 tokens=16 terminal=2
+TEXT The core lifetime bug is that the server mutates the KV buffer while a GPU
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\npub fn add_0(a: i32, b: i32) -> i32 { a + b }\npub fn add_1(a: i32, b: i32) -> i32 { a + b }\npub fn add_2(a:
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\n#[test]\nfn identity_0() {\n    assert_eq!(identity(0), 0);\n}\n\n#[test]\nfn identity_1() {\n    assert_eq!(identity(1), 1);\n}\n\n#[test]\nfn identity_2() {\n
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\n// Declare an array of integers from 0 to 15\nlet numbers: [i32; 16] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+STREAM frames=66 tokens=64 terminal=2
+TEXT The core lifetime bug is that the server mutates the KV buffer while a GPU command still holds a reference to it. When the client disconnects, the server may clear or overwrite the buffer, but the GPU command\'s `Arc` still points to the old data. This creates a use-after-free or data-race
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\npub fn add_0(a: i32, b: i32) -> i32 { a + b }\npub fn add_1(a: i32, b: i32) -> i32 { a + b }\npub fn add_2(a:
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\n#[test]\nfn identity_0() {\n    assert_eq!(identity(0), 0);\n}\n\n#[test]\nfn identity_1() {\n    assert_eq!(identity(1), 1);\n}\n\n#[test]\nfn identity_2() {\n
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\n// Declare an array of integers from 0 to 15\nlet numbers: [i32; 16] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+STREAM frames=66 tokens=64 terminal=2
+TEXT The core lifetime bug is that the server mutates the KV buffer while a GPU command still holds a reference to it. When the client disconnects, the server may clear or overwrite the buffer, but the GPU command\'s `Arc` still points to the old data. This creates a use-after-free or data-race
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\npub fn add_0(a: i32, b: i32) -> i32 { a + b }\npub fn add_1(a: i32, b: i32) -> i32 { a + b }\npub fn add_2(a:
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\n#[test]\nfn identity_0() {\n    assert_eq!(identity(0), 0);\n}\n\n#[test]\nfn identity_1() {\n    assert_eq!(identity(1), 1);\n}\n\n#[test]\nfn identity_2() {\n
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\n// Declare an array of integers from 0 to 15\nlet numbers: [i32; 16] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+STREAM frames=66 tokens=64 terminal=2
+TEXT The core lifetime bug is that the server mutates the KV buffer while a GPU command still holds a reference to it. When the client disconnects, the server may clear or overwrite the buffer, but the GPU command\'s `Arc` still points to the old data. This creates a use-after-free or data-race
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\npub fn add_0(a: i32, b: i32) -> i32 { a + b }\npub fn add_1(a: i32, b: i32) -> i32 { a + b }\npub fn add_2(a:
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\n#[test]\nfn identity_0() {\n    assert_eq!(identity(0), 0);\n}\n\n#[test]\nfn identity_1() {\n    assert_eq!(identity(1), 1);\n}\n\n#[test]\nfn identity_2() {\n
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\n// Declare an array of integers from 0 to 15\nlet numbers: [i32; 16] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+STREAM frames=66 tokens=64 terminal=2
+TEXT The core lifetime bug is that the server mutates the KV buffer while a GPU command still holds a reference to it. When the client disconnects, the server may clear or overwrite the buffer, but the GPU command\'s `Arc` still points to the old data. This creates a use-after-free or data-race
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\npub fn add_0(a: i32, b: i32) -> i32 { a + b }\npub fn add_1(a: i32, b: i32) -> i32 { a + b }\npub fn add_2(a:
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\n#[test]\nfn identity_0() {\n    assert_eq!(identity(0), 0);\n}\n\n#[test]\nfn identity_1() {\n    assert_eq!(identity(1), 1);\n}\n\n#[test]\nfn identity_2() {\n
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\n// Declare an array of integers from 0 to 15\nlet numbers: [i32; 16] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+STREAM frames=66 tokens=64 terminal=2
+TEXT The core lifetime bug is that the server mutates the KV buffer while a GPU command still holds a reference to it. When the client disconnects, the server may clear or overwrite the buffer, but the GPU command\'s `Arc` still points to the old data. This creates a use-after-free or data-race
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\npub fn add_0(a: i32, b: i32) -> i32 { a + b }\npub fn add_1(a: i32, b: i32) -> i32 { a + b }\npub fn add_2(a:
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\n#[test]\nfn identity_0() {\n    assert_eq!(identity(0), 0);\n}\n\n#[test]\nfn identity_1() {\n    assert_eq!(identity(1), 1);\n}\n\n#[test]\nfn identity_2() {\n
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\n// Declare an array of integers from 0 to 15\nlet numbers: [i32; 16] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+STREAM frames=66 tokens=64 terminal=2
+TEXT The core lifetime bug is that the server mutates the KV buffer while a GPU command still holds a reference to it. When the client disconnects, the server may clear or overwrite the buffer, but the GPU command\'s `Arc` still points to the old data. This creates a use-after-free or data-race
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\npub fn add_0(a: i32, b: i32) -> i32 { a + b }\npub fn add_1(a: i32, b: i32) -> i32 { a + b }\npub fn add_2(a:
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\n#[test]\nfn identity_0() {\n    assert_eq!(identity(0), 0);\n}\n\n#[test]\nfn identity_1() {\n    assert_eq!(identity(1), 1);\n}\n\n#[test]\nfn identity_2() {\n
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\n// Declare an array of integers from 0 to 15\nlet numbers: [i32; 16] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+STREAM frames=66 tokens=64 terminal=2
+TEXT The core lifetime bug is that the server mutates the KV buffer while a GPU command still holds a reference to it. When the client disconnects, the server may clear or overwrite the buffer, but the GPU command\'s `Arc` still points to the old data. This creates a use-after-free or data-race
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\npub fn add_0(a: i32, b: i32) -> i32 { a + b }\npub fn add_1(a: i32, b: i32) -> i32 { a + b }\npub fn add_2(a:
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\n#[test]\nfn identity_0() {\n    assert_eq!(identity(0), 0);\n}\n\n#[test]\nfn identity_1() {\n    assert_eq!(identity(1), 1);\n}\n\n#[test]\nfn identity_2() {\n
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\n// Declare an array of integers from 0 to 15\nlet numbers: [i32; 16] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+STREAM frames=18 tokens=16 terminal=2
+TEXT The core lifetime bug is that the server mutates the KV buffer while a GPU
+STREAM frames=34 tokens=32 terminal=2
+TEXT ```rust\npub fn add_0(a: i32, b: i32) -> i32 { a + b }\npub fn
+STREAM frames=34 tokens=32 terminal=2
+TEXT ```rust\n#[test]\nfn identity_0() {\n    assert_eq!(identity(0), 0);\n}\n\n#[test]\n
+STREAM frames=34 tokens=32 terminal=2
+TEXT ```rust\n// Declare an array of integers from 0 to 15\nlet numbers: [i32; 16] = [0
+STREAM frames=34 tokens=32 terminal=2
+TEXT The core lifetime bug is that the server mutates the KV buffer while a GPU command still holds a reference to it. When the client disconnects, the server
+STREAM frames=34 tokens=32 terminal=2
+TEXT ```rust\npub fn add_0(a: i32, b: i32) -> i32 { a + b }\npub fn
+STREAM frames=34 tokens=32 terminal=2
+TEXT ```rust\n#[test]\nfn identity_0() {\n    assert_eq!(identity(0), 0);\n}\n\n#[test]\n
+STREAM frames=10 tokens=8 terminal=2
+TEXT ```rust\npub fn add_0
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\npub fn add_0(a: i32, b: i32) -> i32 { a + b }\npub fn add_1(a: i32, b: i32) -> i32 { a + b }\npub fn add_2(a:
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\n#[test]\nfn identity_0() {\n    assert_eq!(identity(0), 0);\n}\n\n#[test]\nfn identity_1() {\n    assert_eq!(identity(1), 1);\n}\n\n#[test]\nfn identity_2() {\n
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\n// Declare an array of integers from 0 to 15\nlet numbers: [i32; 16] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+STREAM frames=66 tokens=64 terminal=2
+TEXT The core lifetime bug is that the server mutates the KV buffer while a GPU command still holds a reference to it. When the client disconnects, the server may clear or overwrite the buffer, but the GPU command\'s `Arc` still points to the old data. This creates a use-after-free or data-race
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\npub fn add_0(a: i32, b: i32) -> i32 { a + b }\npub fn add_1(a: i32, b: i32) -> i32 { a + b }\npub fn add_2(a:
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\n#[test]\nfn identity_0() {\n    assert_eq!(identity(0), 0);\n}\n\n#[test]\nfn identity_1() {\n    assert_eq!(identity(1), 1);\n}\n\n#[test]\nfn identity_2() {\n
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\n// Declare an array of integers from 0 to 15\nlet numbers: [i32; 16] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+STREAM frames=66 tokens=64 terminal=2
+TEXT The core lifetime bug is that the server mutates the KV buffer while a GPU command still holds a reference to it. When the client disconnects, the server may clear or overwrite the buffer, but the GPU command\'s `Arc` still points to the old data. This creates a use-after-free or data-race
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\npub fn add_0(a: i32, b: i32) -> i32 { a + b }\npub fn add_1(a: i32, b: i32) -> i32 { a + b }\npub fn add_2(a:
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\n#[test]\nfn identity_0() {\n    assert_eq!(identity(0), 0);\n}\n\n#[test]\nfn identity_1() {\n    assert_eq!(identity(1), 1);\n}\n\n#[test]\nfn identity_2() {\n
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\n// Declare an array of integers from 0 to 15\nlet numbers: [i32; 16] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+STREAM frames=66 tokens=64 terminal=2
+TEXT The core lifetime bug is that the server mutates the KV buffer while a GPU command still holds a reference to it. When the client disconnects, the server may clear or overwrite the buffer, but the GPU command\'s `Arc` still points to the old data. This creates a use-after-free or data-race
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\npub fn add_0(a: i32, b: i32) -> i32 { a + b }\npub fn add_1(a: i32, b: i32) -> i32 { a + b }\npub fn add_2(a:
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\n#[test]\nfn identity_0() {\n    assert_eq!(identity(0), 0);\n}\n\n#[test]\nfn identity_1() {\n    assert_eq!(identity(1), 1);\n}\n\n#[test]\nfn identity_2() {\n
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\n// Declare an array of integers from 0 to 15\nlet numbers: [i32; 16] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+STREAM frames=66 tokens=64 terminal=2
+TEXT The core lifetime bug is that the server mutates the KV buffer while a GPU command still holds a reference to it. When the client disconnects, the server may clear or overwrite the buffer, but the GPU command\'s `Arc` still points to the old data. This creates a use-after-free or data-race
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\npub fn add_0(a: i32, b: i32) -> i32 { a + b }\npub fn add_1(a: i32, b: i32) -> i32 { a + b }\npub fn add_2(a:
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\n#[test]\nfn identity_0() {\n    assert_eq!(identity(0), 0);\n}\n\n#[test]\nfn identity_1() {\n    assert_eq!(identity(1), 1);\n}\n\n#[test]\nfn identity_2() {\n
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\n// Declare an array of integers from 0 to 15\nlet numbers: [i32; 16] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+STREAM frames=66 tokens=64 terminal=2
+TEXT The core lifetime bug is that the server mutates the KV buffer while a GPU command still holds a reference to it. When the client disconnects, the server may clear or overwrite the buffer, but the GPU command\'s `Arc` still points to the old data. This creates a use-after-free or data-race
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\npub fn add_0(a: i32, b: i32) -> i32 { a + b }\npub fn add_1(a: i32, b: i32) -> i32 { a + b }\npub fn add_2(a:
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\n#[test]\nfn identity_0() {\n    assert_eq!(identity(0), 0);\n}\n\n#[test]\nfn identity_1() {\n    assert_eq!(identity(1), 1);\n}\n\n#[test]\nfn identity_2() {\n
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\n// Declare an array of integers from 0 to 15\nlet numbers: [i32; 16] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+STREAM frames=66 tokens=64 terminal=2
+TEXT The core lifetime bug is that the server mutates the KV buffer while a GPU command still holds a reference to it. When the client disconnects, the server may clear or overwrite the buffer, but the GPU command\'s `Arc` still points to the old data. This creates a use-after-free or data-race
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\npub fn add_0(a: i32, b: i32) -> i32 { a + b }\npub fn add_1(a: i32, b: i32) -> i32 { a + b }\npub fn add_2(a:
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\n#[test]\nfn identity_0() {\n    assert_eq!(identity(0), 0);\n}\n\n#[test]\nfn identity_1() {\n    assert_eq!(identity(1), 1);\n}\n\n#[test]\nfn identity_2() {\n
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\n// Declare an array of integers from 0 to 15\nlet numbers: [i32; 16] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+STREAM frames=66 tokens=64 terminal=2
+TEXT The core lifetime bug is that the server mutates the KV buffer while a GPU command still holds a reference to it. When the client disconnects, the server may clear or overwrite the buffer, but the GPU command\'s `Arc` still points to the old data. This creates a use-after-free or data-race
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\npub fn add_0(a: i32, b: i32) -> i32 { a + b }\npub fn add_1(a: i32, b: i32) -> i32 { a + b }\npub fn add_2(a:
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\n#[test]\nfn identity_0() {\n    assert_eq!(identity(0), 0);\n}\n\n#[test]\nfn identity_1() {\n    assert_eq!(identity(1), 1);\n}\n\n#[test]\nfn identity_2() {\n
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\n// Declare an array of integers from 0 to 15\nlet numbers: [i32; 16] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+STREAM frames=18 tokens=16 terminal=2
+TEXT The core lifetime bug is that the server mutates the KV buffer while a GPU
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\npub fn add_0(a: i32, b: i32) -> i32 { a + b }\npub fn add_1(a: i32, b: i32) -> i32 { a + b }\npub fn add_2(a:
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\n#[test]\nfn identity_0() {\n    assert_eq!(identity(0), 0);\n}\n\n#[test]\nfn identity_1() {\n    assert_eq!(identity(1), 1);\n}\n\n#[test]\nfn identity_2() {\n
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\n// Declare an array of integers from 0 to 15\nlet numbers: [i32; 16] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+STREAM frames=66 tokens=64 terminal=2
+TEXT The core lifetime bug is that the server mutates the KV buffer while a GPU command still holds a reference to it. When the client disconnects, the server may clear or overwrite the buffer, but the GPU command\'s `Arc` still points to the old data. This creates a use-after-free or data-race
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\npub fn add_0(a: i32, b: i32) -> i32 { a + b }\npub fn add_1(a: i32, b: i32) -> i32 { a + b }\npub fn add_2(a:
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\n#[test]\nfn identity_0() {\n    assert_eq!(identity(0), 0);\n}\n\n#[test]\nfn identity_1() {\n    assert_eq!(identity(1), 1);\n}\n\n#[test]\nfn identity_2() {\n
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\n// Declare an array of integers from 0 to 15\nlet numbers: [i32; 16] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+STREAM frames=66 tokens=64 terminal=2
+TEXT The core lifetime bug is that the server mutates the KV buffer while a GPU command still holds a reference to it. When the client disconnects, the server may clear or overwrite the buffer, but the GPU command\'s `Arc` still points to the old data. This creates a use-after-free or data-race
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\npub fn add_0(a: i32, b: i32) -> i32 { a + b }\npub fn add_1(a: i32, b: i32) -> i32 { a + b }\npub fn add_2(a:
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\n#[test]\nfn identity_0() {\n    assert_eq!(identity(0), 0);\n}\n\n#[test]\nfn identity_1() {\n    assert_eq!(identity(1), 1);\n}\n\n#[test]\nfn identity_2() {\n
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\n// Declare an array of integers from 0 to 15\nlet numbers: [i32; 16] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+STREAM frames=66 tokens=64 terminal=2
+TEXT The core lifetime bug is that the server mutates the KV buffer while a GPU command still holds a reference to it. When the client disconnects, the server may clear or overwrite the buffer, but the GPU command\'s `Arc` still points to the old data. This creates a use-after-free or data-race
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\npub fn add_0(a: i32, b: i32) -> i32 { a + b }\npub fn add_1(a: i32, b: i32) -> i32 { a + b }\npub fn add_2(a:
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\n#[test]\nfn identity_0() {\n    assert_eq!(identity(0), 0);\n}\n\n#[test]\nfn identity_1() {\n    assert_eq!(identity(1), 1);\n}\n\n#[test]\nfn identity_2() {\n
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\n// Declare an array of integers from 0 to 15\nlet numbers: [i32; 16] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+STREAM frames=66 tokens=64 terminal=2
+TEXT The core lifetime bug is that the server mutates the KV buffer while a GPU command still holds a reference to it. When the client disconnects, the server may clear or overwrite the buffer, but the GPU command\'s `Arc` still points to the old data. This creates a use-after-free or data-race
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\npub fn add_0(a: i32, b: i32) -> i32 { a + b }\npub fn add_1(a: i32, b: i32) -> i32 { a + b }\npub fn add_2(a:
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\n#[test]\nfn identity_0() {\n    assert_eq!(identity(0), 0);\n}\n\n#[test]\nfn identity_1() {\n    assert_eq!(identity(1), 1);\n}\n\n#[test]\nfn identity_2() {\n
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\n// Declare an array of integers from 0 to 15\nlet numbers: [i32; 16] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+STREAM frames=66 tokens=64 terminal=2
+TEXT The core lifetime bug is that the server mutates the KV buffer while a GPU command still holds a reference to it. When the client disconnects, the server may clear or overwrite the buffer, but the GPU command\'s `Arc` still points to the old data. This creates a use-after-free or data-race
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\npub fn add_0(a: i32, b: i32) -> i32 { a + b }\npub fn add_1(a: i32, b: i32) -> i32 { a + b }\npub fn add_2(a:
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\n#[test]\nfn identity_0() {\n    assert_eq!(identity(0), 0);\n}\n\n#[test]\nfn identity_1() {\n    assert_eq!(identity(1), 1);\n}\n\n#[test]\nfn identity_2() {\n
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\n// Declare an array of integers from 0 to 15\nlet numbers: [i32; 16] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+STREAM frames=66 tokens=64 terminal=2
+TEXT The core lifetime bug is that the server mutates the KV buffer while a GPU command still holds a reference to it. When the client disconnects, the server may clear or overwrite the buffer, but the GPU command\'s `Arc` still points to the old data. This creates a use-after-free or data-race
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\npub fn add_0(a: i32, b: i32) -> i32 { a + b }\npub fn add_1(a: i32, b: i32) -> i32 { a + b }\npub fn add_2(a:
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\n#[test]\nfn identity_0() {\n    assert_eq!(identity(0), 0);\n}\n\n#[test]\nfn identity_1() {\n    assert_eq!(identity(1), 1);\n}\n\n#[test]\nfn identity_2() {\n
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\n// Declare an array of integers from 0 to 15\nlet numbers: [i32; 16] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+STREAM frames=66 tokens=64 terminal=2
+TEXT The core lifetime bug is that the server mutates the KV buffer while a GPU command still holds a reference to it. When the client disconnects, the server may clear or overwrite the buffer, but the GPU command\'s `Arc` still points to the old data. This creates a use-after-free or data-race
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\npub fn add_0(a: i32, b: i32) -> i32 { a + b }\npub fn add_1(a: i32, b: i32) -> i32 { a + b }\npub fn add_2(a:
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\n#[test]\nfn identity_0() {\n    assert_eq!(identity(0), 0);\n}\n\n#[test]\nfn identity_1() {\n    assert_eq!(identity(1), 1);\n}\n\n#[test]\nfn identity_2() {\n
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\n// Declare an array of integers from 0 to 15\nlet numbers: [i32; 16] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+STREAM frames=18 tokens=16 terminal=2
+TEXT The core lifetime bug is that the server mutates the KV buffer while a GPU
+STREAM frames=34 tokens=32 terminal=2
+TEXT ```rust\npub fn add_0(a: i32, b: i32) -> i32 { a + b }\npub fn
+STREAM frames=34 tokens=32 terminal=2
+TEXT ```rust\n#[test]\nfn identity_0() {\n    assert_eq!(identity(0), 0);\n}\n\n#[test]\n
+STREAM frames=34 tokens=32 terminal=2
+TEXT ```rust\n// Declare an array of integers from 0 to 15\nlet numbers: [i32; 16] = [0
+STREAM frames=34 tokens=32 terminal=2
+TEXT The core lifetime bug is that the server mutates the KV buffer while a GPU command still holds a reference to it. When the client disconnects, the server
+STREAM frames=34 tokens=32 terminal=2
+TEXT ```rust\npub fn add_0(a: i32, b: i32) -> i32 { a + b }\npub fn
+STREAM frames=34 tokens=32 terminal=2
+TEXT ```rust\n#[test]\nfn identity_0() {\n    assert_eq!(identity(0), 0);\n}\n\n#[test]\n
+STREAM frames=10 tokens=8 terminal=2
+TEXT ```rust\npub fn add_0
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\npub fn add_0(a: i32, b: i32) -> i32 { a + b }\npub fn add_1(a: i32, b: i32) -> i32 { a + b }\npub fn add_2(a:
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\n#[test]\nfn identity_0() {\n    assert_eq!(identity(0), 0);\n}\n\n#[test]\nfn identity_1() {\n    assert_eq!(identity(1), 1);\n}\n\n#[test]\nfn identity_2() {\n
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\n// Declare an array of integers from 0 to 15\nlet numbers: [i32; 16] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+STREAM frames=66 tokens=64 terminal=2
+TEXT The core lifetime bug is that the server mutates the KV buffer while a GPU command still holds a reference to it. When the client disconnects, the server may clear or overwrite the buffer, but the GPU command\'s `Arc` still points to the old data. This creates a use-after-free or data-race
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\npub fn add_0(a: i32, b: i32) -> i32 { a + b }\npub fn add_1(a: i32, b: i32) -> i32 { a + b }\npub fn add_2(a:
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\n#[test]\nfn identity_0() {\n    assert_eq!(identity(0), 0);\n}\n\n#[test]\nfn identity_1() {\n    assert_eq!(identity(1), 1);\n}\n\n#[test]\nfn identity_2() {\n
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\n// Declare an array of integers from 0 to 15\nlet numbers: [i32; 16] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+STREAM frames=66 tokens=64 terminal=2
+TEXT The core lifetime bug is that the server mutates the KV buffer while a GPU command still holds a reference to it. When the client disconnects, the server may clear or overwrite the buffer, but the GPU command\'s `Arc` still points to the old data. This creates a use-after-free or data-race
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\npub fn add_0(a: i32, b: i32) -> i32 { a + b }\npub fn add_1(a: i32, b: i32) -> i32 { a + b }\npub fn add_2(a:
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\n#[test]\nfn identity_0() {\n    assert_eq!(identity(0), 0);\n}\n\n#[test]\nfn identity_1() {\n    assert_eq!(identity(1), 1);\n}\n\n#[test]\nfn identity_2() {\n
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\n// Declare an array of integers from 0 to 15\nlet numbers: [i32; 16] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+STREAM frames=66 tokens=64 terminal=2
+TEXT The core lifetime bug is that the server mutates the KV buffer while a GPU command still holds a reference to it. When the client disconnects, the server may clear or overwrite the buffer, but the GPU command\'s `Arc` still points to the old data. This creates a use-after-free or data-race
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\npub fn add_0(a: i32, b: i32) -> i32 { a + b }\npub fn add_1(a: i32, b: i32) -> i32 { a + b }\npub fn add_2(a:
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\n#[test]\nfn identity_0() {\n    assert_eq!(identity(0), 0);\n}\n\n#[test]\nfn identity_1() {\n    assert_eq!(identity(1), 1);\n}\n\n#[test]\nfn identity_2() {\n
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\n// Declare an array of integers from 0 to 15\nlet numbers: [i32; 16] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+STREAM frames=66 tokens=64 terminal=2
+TEXT The core lifetime bug is that the server mutates the KV buffer while a GPU command still holds a reference to it. When the client disconnects, the server may clear or overwrite the buffer, but the GPU command\'s `Arc` still points to the old data. This creates a use-after-free or data-race
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\npub fn add_0(a: i32, b: i32) -> i32 { a + b }\npub fn add_1(a: i32, b: i32) -> i32 { a + b }\npub fn add_2(a:
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\n#[test]\nfn identity_0() {\n    assert_eq!(identity(0), 0);\n}\n\n#[test]\nfn identity_1() {\n    assert_eq!(identity(1), 1);\n}\n\n#[test]\nfn identity_2() {\n
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\n// Declare an array of integers from 0 to 15\nlet numbers: [i32; 16] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+STREAM frames=66 tokens=64 terminal=2
+TEXT The core lifetime bug is that the server mutates the KV buffer while a GPU command still holds a reference to it. When the client disconnects, the server may clear or overwrite the buffer, but the GPU command\'s `Arc` still points to the old data. This creates a use-after-free or data-race
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\npub fn add_0(a: i32, b: i32) -> i32 { a + b }\npub fn add_1(a: i32, b: i32) -> i32 { a + b }\npub fn add_2(a:
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\n#[test]\nfn identity_0() {\n    assert_eq!(identity(0), 0);\n}\n\n#[test]\nfn identity_1() {\n    assert_eq!(identity(1), 1);\n}\n\n#[test]\nfn identity_2() {\n
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\n// Declare an array of integers from 0 to 15\nlet numbers: [i32; 16] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+STREAM frames=66 tokens=64 terminal=2
+TEXT The core lifetime bug is that the server mutates the KV buffer while a GPU command still holds a reference to it. When the client disconnects, the server may clear or overwrite the buffer, but the GPU command\'s `Arc` still points to the old data. This creates a use-after-free or data-race
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\npub fn add_0(a: i32, b: i32) -> i32 { a + b }\npub fn add_1(a: i32, b: i32) -> i32 { a + b }\npub fn add_2(a:
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\n#[test]\nfn identity_0() {\n    assert_eq!(identity(0), 0);\n}\n\n#[test]\nfn identity_1() {\n    assert_eq!(identity(1), 1);\n}\n\n#[test]\nfn identity_2() {\n
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\n// Declare an array of integers from 0 to 15\nlet numbers: [i32; 16] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+STREAM frames=66 tokens=64 terminal=2
+TEXT The core lifetime bug is that the server mutates the KV buffer while a GPU command still holds a reference to it. When the client disconnects, the server may clear or overwrite the buffer, but the GPU command\'s `Arc` still points to the old data. This creates a use-after-free or data-race
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\npub fn add_0(a: i32, b: i32) -> i32 { a + b }\npub fn add_1(a: i32, b: i32) -> i32 { a + b }\npub fn add_2(a:
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\n#[test]\nfn identity_0() {\n    assert_eq!(identity(0), 0);\n}\n\n#[test]\nfn identity_1() {\n    assert_eq!(identity(1), 1);\n}\n\n#[test]\nfn identity_2() {\n
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\n// Declare an array of integers from 0 to 15\nlet numbers: [i32; 16] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+STREAM frames=18 tokens=16 terminal=2
+TEXT The core lifetime bug is that the server mutates the KV buffer while a GPU
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\npub fn add_0(a: i32, b: i32) -> i32 { a + b }\npub fn add_1(a: i32, b: i32) -> i32 { a + b }\npub fn add_2(a:
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\n#[test]\nfn identity_0() {\n    assert_eq!(identity(0), 0);\n}\n\n#[test]\nfn identity_1() {\n    assert_eq!(identity(1), 1);\n}\n\n#[test]\nfn identity_2() {\n
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\n// Declare an array of integers from 0 to 15\nlet numbers: [i32; 16] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+STREAM frames=66 tokens=64 terminal=2
+TEXT The core lifetime bug is that the server mutates the KV buffer while a GPU command still holds a reference to it. When the client disconnects, the server may clear or overwrite the buffer, but the GPU command\'s `Arc` still points to the old data. This creates a use-after-free or data-race
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\npub fn add_0(a: i32, b: i32) -> i32 { a + b }\npub fn add_1(a: i32, b: i32) -> i32 { a + b }\npub fn add_2(a:
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\n#[test]\nfn identity_0() {\n    assert_eq!(identity(0), 0);\n}\n\n#[test]\nfn identity_1() {\n    assert_eq!(identity(1), 1);\n}\n\n#[test]\nfn identity_2() {\n
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\n// Declare an array of integers from 0 to 15\nlet numbers: [i32; 16] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+STREAM frames=66 tokens=64 terminal=2
+TEXT The core lifetime bug is that the server mutates the KV buffer while a GPU command still holds a reference to it. When the client disconnects, the server may clear or overwrite the buffer, but the GPU command\'s `Arc` still points to the old data. This creates a use-after-free or data-race
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\npub fn add_0(a: i32, b: i32) -> i32 { a + b }\npub fn add_1(a: i32, b: i32) -> i32 { a + b }\npub fn add_2(a:
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\n#[test]\nfn identity_0() {\n    assert_eq!(identity(0), 0);\n}\n\n#[test]\nfn identity_1() {\n    assert_eq!(identity(1), 1);\n}\n\n#[test]\nfn identity_2() {\n
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\n// Declare an array of integers from 0 to 15\nlet numbers: [i32; 16] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+STREAM frames=66 tokens=64 terminal=2
+TEXT The core lifetime bug is that the server mutates the KV buffer while a GPU command still holds a reference to it. When the client disconnects, the server may clear or overwrite the buffer, but the GPU command\'s `Arc` still points to the old data. This creates a use-after-free or data-race
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\npub fn add_0(a: i32, b: i32) -> i32 { a + b }\npub fn add_1(a: i32, b: i32) -> i32 { a + b }\npub fn add_2(a:
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\n#[test]\nfn identity_0() {\n    assert_eq!(identity(0), 0);\n}\n\n#[test]\nfn identity_1() {\n    assert_eq!(identity(1), 1);\n}\n\n#[test]\nfn identity_2() {\n
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\n// Declare an array of integers from 0 to 15\nlet numbers: [i32; 16] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+STREAM frames=66 tokens=64 terminal=2
+TEXT The core lifetime bug is that the server mutates the KV buffer while a GPU command still holds a reference to it. When the client disconnects, the server may clear or overwrite the buffer, but the GPU command\'s `Arc` still points to the old data. This creates a use-after-free or data-race
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\npub fn add_0(a: i32, b: i32) -> i32 { a + b }\npub fn add_1(a: i32, b: i32) -> i32 { a + b }\npub fn add_2(a:
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\n#[test]\nfn identity_0() {\n    assert_eq!(identity(0), 0);\n}\n\n#[test]\nfn identity_1() {\n    assert_eq!(identity(1), 1);\n}\n\n#[test]\nfn identity_2() {\n
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\n// Declare an array of integers from 0 to 15\nlet numbers: [i32; 16] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+STREAM frames=66 tokens=64 terminal=2
+TEXT The core lifetime bug is that the server mutates the KV buffer while a GPU command still holds a reference to it. When the client disconnects, the server may clear or overwrite the buffer, but the GPU command\'s `Arc` still points to the old data. This creates a use-after-free or data-race
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\npub fn add_0(a: i32, b: i32) -> i32 { a + b }\npub fn add_1(a: i32, b: i32) -> i32 { a + b }\npub fn add_2(a:
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\n#[test]\nfn identity_0() {\n    assert_eq!(identity(0), 0);\n}\n\n#[test]\nfn identity_1() {\n    assert_eq!(identity(1), 1);\n}\n\n#[test]\nfn identity_2() {\n
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\n// Declare an array of integers from 0 to 15\nlet numbers: [i32; 16] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+STREAM frames=66 tokens=64 terminal=2
+TEXT The core lifetime bug is that the server mutates the KV buffer while a GPU command still holds a reference to it. When the client disconnects, the server may clear or overwrite the buffer, but the GPU command\'s `Arc` still points to the old data. This creates a use-after-free or data-race
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\npub fn add_0(a: i32, b: i32) -> i32 { a + b }\npub fn add_1(a: i32, b: i32) -> i32 { a + b }\npub fn add_2(a:
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\n#[test]\nfn identity_0() {\n    assert_eq!(identity(0), 0);\n}\n\n#[test]\nfn identity_1() {\n    assert_eq!(identity(1), 1);\n}\n\n#[test]\nfn identity_2() {\n
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\n// Declare an array of integers from 0 to 15\nlet numbers: [i32; 16] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+STREAM frames=66 tokens=64 terminal=2
+TEXT The core lifetime bug is that the server mutates the KV buffer while a GPU command still holds a reference to it. When the client disconnects, the server may clear or overwrite the buffer, but the GPU command\'s `Arc` still points to the old data. This creates a use-after-free or data-race
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\npub fn add_0(a: i32, b: i32) -> i32 { a + b }\npub fn add_1(a: i32, b: i32) -> i32 { a + b }\npub fn add_2(a:
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\n#[test]\nfn identity_0() {\n    assert_eq!(identity(0), 0);\n}\n\n#[test]\nfn identity_1() {\n    assert_eq!(identity(1), 1);\n}\n\n#[test]\nfn identity_2() {\n
+STREAM frames=66 tokens=64 terminal=2
+TEXT ```rust\n// Declare an array of integers from 0 to 15\nlet numbers: [i32; 16] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+STREAM frames=18 tokens=16 terminal=2
+TEXT The core lifetime bug is that the server mutates the KV buffer while a GPU
+STREAM frames=34 tokens=32 terminal=2
+TEXT ```rust\npub fn add_0(a: i32, b: i32) -> i32 { a + b }\npub fn
+STREAM frames=34 tokens=32 terminal=2
+TEXT ```rust\n#[test]\nfn identity_0() {\n    assert_eq!(identity(0), 0);\n}\n\n#[test]\n
+STREAM frames=34 tokens=32 terminal=2
+TEXT ```rust\n// Declare an array of integers from 0 to 15\nlet numbers: [i32; 16] = [0
+STREAM frames=34 tokens=32 terminal=2
+TEXT The core lifetime bug is that the server mutates the KV buffer while a GPU command still holds a reference to it. When the client disconnects, the server
+STREAM frames=34 tokens=32 terminal=2
+TEXT ```rust\npub fn add_0(a: i32, b: i32) -> i32 { a + b }\npub fn
+STREAM frames=34 tokens=32 terminal=2
+TEXT ```rust\n#[test]\nfn identity_0() {\n    assert_eq!(identity(0), 0);\n}\n\n#[test]\n

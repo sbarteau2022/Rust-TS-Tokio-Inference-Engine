@@ -2,7 +2,7 @@
 title: "Native MTP integration and tuning control plan"
 document_type: "architecture"
 version: "1.3.0"
-date: "2026-10-23T12:19:54Z"
+date: "2026-10-23T12:43:42Z"
 implementation_date: null
 author: "Codex for Stewart Barteau"
 reviewers: []
@@ -148,6 +148,9 @@ related_files:
     role: "test"
   - path: "judges/generate_cordic.py"
     lines: "1-44"
+    role: "test"
+  - path: "judges/http_controls_verify.py"
+    lines: "1-140"
     role: "test"
   - path: "judges/layer_reference.py"
     lines: "1-185"
@@ -512,17 +515,23 @@ related_files:
   - path: "ts/generated/wire.ts"
     lines: "1-13"
     role: "primary"
+  - path: "ts/http-bench-config.test.ts"
+    lines: "1-6"
+    role: "test"
+  - path: "ts/http-bench-config.ts"
+    lines: "1-21"
+    role: "primary"
   - path: "ts/http-bench.ts"
-    lines: "1-32"
+    lines: "1-48"
     role: "primary"
   - path: "ts/http-client.test.ts"
-    lines: "1-16"
+    lines: "1-18"
     role: "test"
   - path: "ts/http-client.ts"
-    lines: "1-11"
+    lines: "1-12"
     role: "primary"
   - path: "ts/http-metrics.test.ts"
-    lines: "1-6"
+    lines: "1-8"
     role: "test"
   - path: "ts/http-metrics.ts"
     lines: "1-15"
@@ -791,3 +800,21 @@ Gates: parser rejects malformed profile controls before load; the TS client/benc
 Current ScheduledDevice and ScheduledMtp iterate rows and invoke the native executor per row. HTTP stream concurrency therefore does not establish batched tensor execution. Before replacing that loop, introduce a typed per-row transaction descriptor containing sequence/parent cursor, positions, committed-length and provisional draft span, with immutable model/tokenizer/quant identity. Pack compatible rows only; different positions require explicit per-row masks, and attention KV, convolution history and recurrent state must advance or roll back together. No shared mutable view may outlive a native completion fence or cross into another row after cancellation.
 
 Qualification must compare batched versus scalar target tokens/state across heterogeneous prompt lengths, partial draft acceptance and rejected-draft rollback; inject one-row failure, cancellation and output backpressure while native work remains in flight. Verify row permutation invariance, no cross-lane contamination and zero charged state after shutdown. Record actual packed-row counts, padding cost, completion ownership and fairness. This is a preregistered next gate, not an implemented batch API or a claim from the current HTTP pilot. Native paging/compressed KV and Dspark target taps remain separate integrations after this state contract is proven.
+
+## Reverse-order, audit-off and open-loop preregistration
+
+Keep the Rust/native binary unchanged from the first HTTP pilot. Extend the offline TS driver with required explicit `--profiles` (ordered unique target/mtp/mtp-audited list), `--arrival closed|closed+open` and `--tokens-per-cell 1000..2000` controls, validated before creating files or spawning a process. Run `mtp-audited,mtp,target`, each with the same eight-token warmup and 2,000 exact-reference tokens at one/three synchronized closed-loop streams. Stamp all benchmark controls and the benchmark source hash separately from the native binary command. Preserve explicit cell start/end clocks and normalize host-capture trailing whitespace before sealing.
+
+With closed+open, follow each profile's closed-loop cells with exactly 16 independent client attempts scheduled at absolute 250-ms intervals, each requesting 32 tokens. No attempt waits for a previous completion; all 16 remain accounted for and are awaited before shutdown. The server's existing limits remain three native lanes, bounded admission, eight accepted connections, and a 30-second request deadline. Count HTTP 503 as expected overload rejection using a typed status error; any other failure (including a valid binary Error, missing Finish, parity mismatch or unexpected HTTP status) fails qualification after every attempt settles. Require both successful work and rejection, and zero unfinished native ownership at drain. Preserve empty/prefix archives for rejected/failed attempts without calling them valid generation streams.
+
+Report offered versus successful requests/tokens, per-attempt schedule/start/end and dispatch jitter, end-to-end completion latency, client TTFT/ITL and exact-output parity for successful work. Metadata arrival includes transport/tokenization/admission and is not a pure queue-time measurement. Client outstanding attempts are not native active lanes. Continuous arrivals under bounded admission do not prove physical tensor batching or a qualified continuous-batching implementation. Cumulative shutdown acceptance includes warmup, closed-loop and open-loop traffic and must not be mislabeled as a per-cell rate.
+
+Synthetic gates must prove strict parser/ordering limits, absolute arrival scheduling independent of completion, exact final-window token budgets, typed overload recognition, bounded shutdown timeout ownership and finite timing arithmetic. Cancel the losing shutdown timer rather than retaining a referenced 60-second timer after a clean process exit. Retain the old fixed-order evidence as historical; reverse-order/no-audit results are new measurements, not replacements. Shared native/file compiler caches are not reset, and this remains one reverse-order repetition on a shared host with short prompts and unqualified broader model quality.
+
+## Candidate first-token scheduling experiment — design only
+
+The current MTP prefill path stages the prompt, runs `mtp_start` (target hidden blocks plus shifted draft prefill), then runs `no_draft` before publishing the first token. That token is already determined by final prompt logits, but `no_draft` also consumes it into target/draft state before delivery. Candidate: publish the validated prefill seed first and represent its not-yet-consumed state explicitly, then perform the exact existing seed advance before any later speculative transaction. This moves work, not eliminates all of it; the next gap may worsen, so TTFT alone is not a promotion gate.
+
+Use a typed SeedPending/Ready row state rather than pretending the cursor's materialized position already includes the published seed. Retain immutable completion-owned prompt state; the next input token must equal the published seed and virtual position must match. Advancing that seed may not publish it again, increment committed output twice, or open a speculative branch on a stale parent. A one-token/EOS request must release safely without unnecessary advancement. Explicit counters must separate prefill-derived seed delivery from deferred target/draft maintenance, avoiding fabricated target calls or double-counted controller progress.
+
+Before enabling this candidate: compare old/eager and deferred full outputs and unified target/draft state; cover all four prompts, output lengths 1/2/4/8/64, EOS, cancellation immediately after seed, bounded backpressure, three lanes, failed deferred advance, repeated parents and rejected-draft rollback. Require unchanged native ownership/accounting and target parity. Benchmark both TTFT and first-to-second/p95 gaps and full request throughput in alternating order; reject a cosmetic TTFT win that causes unacceptable tail or total-throughput regression. Deferring *all* MTP prefill would additionally require independently leased hidden windows rather than retaining complete historical KV/recurrent states; that is a separate unimplemented design, not assumed safe by this seed experiment.

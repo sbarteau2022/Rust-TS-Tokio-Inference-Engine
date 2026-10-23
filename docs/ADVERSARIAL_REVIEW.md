@@ -2,7 +2,7 @@
 title: "Adversarial review of the native kernel prototype"
 document_type: "research"
 version: "1.1.0"
-date: "2026-10-23T12:19:54Z"
+date: "2026-10-23T12:43:42Z"
 implementation_date: null
 author: "Codex for Stewart Barteau"
 reviewers: []
@@ -148,6 +148,9 @@ related_files:
     role: "test"
   - path: "judges/generate_cordic.py"
     lines: "1-44"
+    role: "test"
+  - path: "judges/http_controls_verify.py"
+    lines: "1-140"
     role: "test"
   - path: "judges/layer_reference.py"
     lines: "1-185"
@@ -512,17 +515,23 @@ related_files:
   - path: "ts/generated/wire.ts"
     lines: "1-13"
     role: "primary"
+  - path: "ts/http-bench-config.test.ts"
+    lines: "1-6"
+    role: "test"
+  - path: "ts/http-bench-config.ts"
+    lines: "1-21"
+    role: "primary"
   - path: "ts/http-bench.ts"
-    lines: "1-32"
+    lines: "1-48"
     role: "primary"
   - path: "ts/http-client.test.ts"
-    lines: "1-16"
+    lines: "1-18"
     role: "test"
   - path: "ts/http-client.ts"
-    lines: "1-11"
+    lines: "1-12"
     role: "primary"
   - path: "ts/http-metrics.test.ts"
-    lines: "1-6"
+    lines: "1-8"
     role: "test"
   - path: "ts/http-metrics.ts"
     lines: "1-15"
@@ -825,3 +834,11 @@ Execution profile selection fails before loading weights on missing, duplicate, 
 Offline timing tests separate TTFT, request envelope, burst callbacks, native publication deltas and post-first per-lane decode arithmetic; synthetic 1k/1.5k/2k windows count global arrival order. An initial exact floating-point assertion failed because algebraically equivalent throughput expressions differed by one final bit; the assertion now uses an explicit 1e-9 numerical tolerance without changing measured values. Native benchmark tokens must match immutable target references, and every stream must Finish. Partial observations and normalized frame archives remain on failure; successful summary is written only after owned-process drain. Fixed profile order, one warmup prompt and synchronized waves are explicit confounds, not evidence of continuous batching or production superiority.
 
 The first pilot launch completed its real target warmup with parity and a clean drain, then failed offline artifact serialization because AMST metadata contains BigInt u64 fields. The failed attempt is retained under `native-http-pilot/initial-artifact-serialization/`. Offline serialization now preserves BigInts as decimal strings, with an explicit full-u64 regression test; no server protocol or model computation was changed by this fix.
+
+## Reverse-order and overload control review
+
+The native binary is byte-identical to the first HTTP pilot. The new offline driver validates explicit profile order/arrival/budget flags before directory creation or process startup. A manually advanced synthetic clock proves later requests launch while an earlier attempt is still unfinished, and a failed attempt is retained by allSettled rather than dropping later work. A subprocess-exit test proves the losing shutdown timer is canceled. Typed HttpStatusError distinguishes intentional 503 rejection from malformed AMST, a valid binary Error, EOF, parity or transport failure; only the 503 class is accepted as overload.
+
+An independent offline verifier does not reuse the TS measurement formulas: it recomputes request envelopes, TTFT/ITL percentiles, decode rates and exact macro windows, reconstructs outstanding-client high-water from attempt timestamps, and reconciles every connection, rejection, admitted request, completed receipt and queued Finish against shutdown counters. Successful normalized frame archives must pass the Rust production verifier, then independently extracted IDs must match both recorded observations and immutable target references. Successful sequence IDs may not be reused within one profile process; rejected archives must be empty. Native state bytes, active producers/connections, failed/canceled model work and unfinished proposer accounting must all drain cleanly. Synthetic corruption checks reject retained bytes, missing completions, closed admission, producer/model failures, duplicate drain records and regressed clocks.
+
+Limitations: all control traffic uses short prompts, shared caches and one reverse-order repetition. Open-loop attempts arrive continuously, but the fixed 16-attempt overload burst does not establish sustained production SLA, physical tensor batching or long-context quality. Clock removal changes automaton trust/admission semantics as well as work, so no-audit differences cannot be assigned solely to audit CPU overhead. Metadata arrival is not a pure queue-time measurement; server connections and client outstanding attempts are not native active-lane telemetry. Known held-out model-quality gates remain open.

@@ -1,0 +1,10 @@
+CELL profile=mtp-audited lanes=1 tokens=2000 tps=24.020
+CELL profile=mtp-audited lanes=3 tokens=2000 tps=23.778
+OPEN profile=mtp-audited accepted=6 rejected=10 tokens=192
+CELL profile=mtp lanes=1 tokens=2000 tps=24.058
+CELL profile=mtp lanes=3 tokens=2000 tps=24.030
+OPEN profile=mtp accepted=6 rejected=10 tokens=192
+CELL profile=target lanes=1 tokens=2000 tps=17.297
+CELL profile=target lanes=3 tokens=2000 tps=17.296
+OPEN profile=target accepted=6 rejected=10 tokens=192
+PASS HTTP controls 12000 exact-reference closed-loop tokens

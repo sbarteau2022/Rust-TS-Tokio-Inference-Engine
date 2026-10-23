@@ -2,7 +2,7 @@
 title: "Next stages toward an Apple native inference server"
 document_type: "architecture"
 version: "1.1.0"
-date: "2026-10-23T12:19:54Z"
+date: "2026-10-23T12:43:42Z"
 implementation_date: null
 author: "Codex for Stewart Barteau"
 reviewers: []
@@ -148,6 +148,9 @@ related_files:
     role: "test"
   - path: "judges/generate_cordic.py"
     lines: "1-44"
+    role: "test"
+  - path: "judges/http_controls_verify.py"
+    lines: "1-140"
     role: "test"
   - path: "judges/layer_reference.py"
     lines: "1-185"
@@ -512,17 +515,23 @@ related_files:
   - path: "ts/generated/wire.ts"
     lines: "1-13"
     role: "primary"
+  - path: "ts/http-bench-config.test.ts"
+    lines: "1-6"
+    role: "test"
+  - path: "ts/http-bench-config.ts"
+    lines: "1-21"
+    role: "primary"
   - path: "ts/http-bench.ts"
-    lines: "1-32"
+    lines: "1-48"
     role: "primary"
   - path: "ts/http-client.test.ts"
-    lines: "1-16"
+    lines: "1-18"
     role: "test"
   - path: "ts/http-client.ts"
-    lines: "1-11"
+    lines: "1-12"
     role: "primary"
   - path: "ts/http-metrics.test.ts"
-    lines: "1-6"
+    lines: "1-8"
     role: "test"
   - path: "ts/http-metrics.ts"
     lines: "1-15"
@@ -864,3 +873,9 @@ The Desktop OPS_BOARD documentation standard path supplied in the instructions i
 ## After HTTP fixed-order pilot
 
 The HTTP CLI now exposes explicit target, MTP/no-audit and MTP/live-audit profiles. Bind the current fixed-order pilot before making network performance claims. Follow it with reverse-order/no-audit controls, mixed context lengths and open-loop arrivals, reporting rejection/queue latency and fairness. Do not call synchronized request waves continuous batching. Improve first-token MTP initialization and burst-tail latency before state-safe physical tensor batching; then native paging/KV and custom Dspark remain the next integration gates. Broad held-out model qualification is still open.
+
+## After reverse-order and bounded open-loop controls
+
+Bind the new control evidence and retain the first pilot as historical. Next implement the preregistered SeedPending/Ready experiment: deliver the validated prefill seed, defer its exact target/draft advancement until needed, and prevent duplicate delivery or progress accounting. Compare eager/deferred state and full output under EOS, length-one, cancellation, failed advancement, backpressure and multi-lane rollback; then alternate timing profiles and measure first-to-second gaps as well as TTFT and request throughput. Do not promote a cosmetic first-token win. The proposal and falsifiers are in NATIVE_TUNING_PLAN.md; it is still design-only at this checkpoint.
+
+After that, implement the typed per-row physical-batching state contract with exact scalar controls, then native paging/compressed KV and the model-associated custom Dspark proposer. Add sustained arrivals, direct queue-time telemetry and deeper contexts. A burst with explicit 503s proves bounded overload accounting, not a general continuous-batching, production SLA or held-out agent-quality result.

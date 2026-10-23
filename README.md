@@ -1,8 +1,8 @@
 ---
 title: "Rust Server — Apple native kernel compiler and runtime"
 document_type: "implementation"
-version: "1.36.0"
-date: "2026-10-23T12:19:54Z"
+version: "1.37.0"
+date: "2026-10-23T12:43:42Z"
 implementation_date: null
 author: "Codex for Stewart Barteau"
 reviewers: []
@@ -148,6 +148,9 @@ related_files:
     role: "test"
   - path: "judges/generate_cordic.py"
     lines: "1-44"
+    role: "test"
+  - path: "judges/http_controls_verify.py"
+    lines: "1-140"
     role: "test"
   - path: "judges/layer_reference.py"
     lines: "1-185"
@@ -512,17 +515,23 @@ related_files:
   - path: "ts/generated/wire.ts"
     lines: "1-13"
     role: "primary"
+  - path: "ts/http-bench-config.test.ts"
+    lines: "1-6"
+    role: "test"
+  - path: "ts/http-bench-config.ts"
+    lines: "1-21"
+    role: "primary"
   - path: "ts/http-bench.ts"
-    lines: "1-32"
+    lines: "1-48"
     role: "primary"
   - path: "ts/http-client.test.ts"
-    lines: "1-16"
+    lines: "1-18"
     role: "test"
   - path: "ts/http-client.ts"
-    lines: "1-11"
+    lines: "1-12"
     role: "primary"
   - path: "ts/http-metrics.test.ts"
-    lines: "1-6"
+    lines: "1-8"
     role: "test"
   - path: "ts/http-metrics.ts"
     lines: "1-15"
@@ -1253,7 +1262,7 @@ HTTP startup now requires `--execution-profile target|mtp|mtp-audited` alongside
 
 ## Client-observed HTTP pilot
 
-After `cargo build --locked --release`, run `node --import tsx ts/http-bench.ts NEW_DIRECTORY` with no other project GPU judges running. The offline TS driver starts and drains only its own loopback server processes; it never changes the user's Dspark service. It records command/binary identity, host process names/CPU/RSS, metadata, every validated frame (reencoded as AMST), per-token monotonic callback arrival and native publication times, exact-reference parity and each request envelope. JSON files are offline qualification artifacts, not a runtime transport or model worker.
+After `cargo build --locked --release`, run `node --import tsx ts/http-bench.ts NEW_DIRECTORY --profiles target,mtp-audited --arrival closed --tokens-per-cell 2000` with no other project GPU judges running. The offline TS driver starts and drains only its own loopback server processes; it never changes the user's Dspark service. It records command/binary identity, host process names/CPU/RSS, metadata, every validated frame (reencoded as AMST), per-token monotonic callback arrival and native publication times, exact-reference parity and each request envelope. JSON files are offline qualification artifacts, not a runtime transport or model worker.
 
 The fixed-order pilot runs target then audited MTP, each with one eight-token warmup and 2,000 tokens at one/three synchronized closed-loop lanes using the four existing short prompts. Final requests truncate to reach 2,000 exactly. Cumulative 1k/1.5k/2k checkpoints count delivered tokens across all streams. Aggregate throughput includes connection/HTTP completion, client framing and between-wave artifact writes. TTFT starts before fetch; post-first rate divides output tokens after each first token by summed per-request first-to-last callback duration. ITL includes tiny gaps between callbacks for coalesced draft bursts, not estimated uniform token timing. Report nearest-rank p50/p95 and native publication ITL separately.
 
@@ -1271,3 +1280,41 @@ HTTP pilot results (one fixed order, shared host, short contexts):
 Learned acceptance: **2179/2574 (84.65%)**, excluding 868 known-seed attempts; cumulative across warmup and both audited cells. Each cell produced 2,000 exact-reference tokens, with saved 1k/1.5k/2k windows. Both profiles drained zero charged scheduler/native state bytes. **167 default / 167 debug / 111 minimal Rust tests**, 16 TS tests, TS 7.1/tsrs, strict Clippy, schema/native/GPU judges passed. [Bound pilot evidence](evidence/native-http-pilot/qualification.json). These measurements supersede no earlier benchmark scope; continuous batching, deep-context and production quality remain open.
 
 Native compiler/file caches were not reset across profile processes; the preserved failed target warmup may also have warmed those caches. Treat the fixed-order speedup as a pilot observation. Audited MTP worsens single-stream TTFT and p95 token gaps despite improving aggregate throughput; first-token initialization and burst-tail latency remain optimization gates. Three concurrent streams do not demonstrate physical tensor batching or continuous-arrival qualification.
+
+## Reverse-order and open-loop controls
+
+The offline driver now requires explicit ordered `--profiles`, `--arrival closed|closed+open`, and `--tokens-per-cell 1000..2000`. Unknown/duplicate profiles, flags and malformed bounds fail before filesystem or process effects. Run the reverse-order control with:
+
+```sh
+node --import tsx ts/http-bench.ts NEW_DIRECTORY \
+  --profiles mtp-audited,mtp,target --arrival closed+open --tokens-per-cell 2000
+```
+
+Each profile retains the existing warmup and one/three-stream closed-loop cells, then closed+open adds 16 attempts scheduled independently at 250-ms intervals, each requesting 32 tokens. The offered load is 4 requests/s and 128 requested tokens/s; accepted throughput and HTTP 503 rejections are reported separately. The existing Rust/native binary, model, request deadline and connection/admission limits remain unchanged. Every successful stream must match the target reference; every attempt settles before shutdown. Unexpected status, binary Error, missing Finish, transport or parity failure fails the control. Client outstanding requests and metadata-arrival latency are not native lane counts or pure queue time.
+
+`HttpStatusError.status` exposes non-success HTTP status to TS callers; a 503 is not a successful AMST generation. Failed/rejected attempts retain their empty or partial archives without claiming valid Finish. Benchmark controls, exact cell clocks and source hashes are recorded, and shutdown cancels its losing timeout timer. Acceptance counters include warmup, closed-loop and open-loop traffic. No production, general agent quality or physical tensor-batching claim follows from an open-loop smoke.
+
+Reverse-order control results (12,000 exact-reference closed-loop tokens):
+
+| Profile | Streams | Aggregate tok/s | Client TTFT mean ms | Callback ITL mean / p95 ms | Post-first per-lane tok/s |
+| --- | --- | --- | --- | --- | --- |
+| mtp-audited | 1 | 24.020 | 719.32 | 30.60 / 138.69 | 32.683 |
+| mtp-audited | 3 | 23.778 | 1735.76 | 95.99 / 277.61 | 10.418 |
+| mtp | 1 | 24.058 | 718.42 | 30.54 / 138.65 | 32.741 |
+| mtp | 3 | 24.030 | 1667.05 | 96.96 / 276.73 | 10.313 |
+| target | 1 | 17.297 | 601.92 | 48.95 / 49.30 | 20.429 |
+| target | 3 | 17.296 | 1752.75 | 143.45 / 147.76 | 6.971 |
+
+Open-loop load was 16 independent attempts/profile at 4 requests/s, 32 tokens/request; these are deliberate overload outcomes, not successful throughput at the offered rate.
+
+| Profile | Completed | Rejected 503 | Successful tokens | Observed tok/s | Successful TTFT mean ms | Client outstanding high-water |
+| --- | --- | --- | --- | --- | --- | --- |
+| mtp-audited | 6 | 10 | 192 | 19.270 | 3472.19 | 7 |
+| mtp | 6 | 10 | 192 | 19.236 | 3497.51 | 7 |
+| target | 6 | 10 | 192 | 15.058 | 4269.71 | 7 |
+
+All admitted work matched the target references and finished; independent validation reconciled archives, monotonic clocks, receipt/rejection counters, audit epochs and zero charged scheduler/native state at shutdown. Audited MTP gain at 1 stream(s): first pilot 39.09%, reverse order 38.87%. Audited MTP gain at 3 stream(s): first pilot 37.31%, reverse order 37.48%.
+
+Validation: **167 default / 167 debug / 111 minimal Rust tests**, 22 TS tests, both TS 7.1 compiler gates, strict Clippy, schema/native/GPU judges and independent verifier corruption controls passed. [Bound control evidence](evidence/native-http-controls/qualification.json).
+
+Audit-off is an automaton-clock ablation: it changes trust/admission behavior too, so small speed differences do not isolate audit CPU overhead. Acceptance files include warmup and both traffic types. Compiler/file caches remain shared and unreset; this is one reverse-order repetition. Continuous arrivals were exercised, but physical tensor batching, standalone queue-time telemetry, deep context and broad held-out agent/model quality remain unqualified. Next optimize first-token MTP initialization and burst-tail latency under exact-state rollback gates, then state-safe physical batching.

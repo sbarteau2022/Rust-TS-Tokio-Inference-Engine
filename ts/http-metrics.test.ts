@@ -4,3 +4,5 @@ test('HTTP macro windows count globally delivered tokens, not request completion
 test('HTTP timing rejects empty, regressed and mismatched observations',()=>{assert.throws(()=>summarize([],0,1));for(const row of [{start:0,end:4,arrivals:[2,1],publication:[1,2]},{start:0,end:4,arrivals:[1,2],publication:[2,1]},{start:0,end:4,arrivals:[1],publication:[]}])assert.throws(()=>summarize([row],0,5));assert.throws(()=>distribution([NaN]));});
 
 test('offline artifacts preserve exact u64 metadata',()=>{const v=18446744073709551615n;assert.equal(JSON.parse(artifactJson({v})).v,v.toString());});
+
+test('nonfinite request envelopes and zero-duration macro bursts are explicit',()=>{assert.throws(()=>summarize([{start:0,end:NaN,arrivals:[1],publication:[1]}],0,2));const a=Array(1000).fill(0) as number[];const m=summarize([{start:0,end:1,arrivals:a,publication:a}],0,1);assert.equal(m.windows[0]!.tokens_per_second,null);assert.equal(m.post_first_tokens_per_lane_second,null);});

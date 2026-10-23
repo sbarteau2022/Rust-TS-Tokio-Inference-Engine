@@ -1,6 +1,6 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {generate} from './http-client.js';
+import {generate,HttpStatusError} from './http-client.js';
 import {encode,frame} from './stream.js';
 test('HTTP client validates origin and bounds before network',async()=>{
  for(const url of ['https://127.0.0.1:1','http://example.com','http://127.0.0.1/x','http://user@127.0.0.1','http://127.0.0.1/?x'])await assert.rejects(generate(url,'hello',1,1,()=>{}));
@@ -14,3 +14,5 @@ test('HTTP client accepts fragmented binary finish and rejects error or truncate
   const seen:number[]=[];const work=generate('http://127.0.0.1:8080','hello',1,100,f=>seen.push(f.kind));if(mode==='finish'){await work;assert.deepEqual(seen,[0,1,2]);}else await assert.rejects(work);
  }}finally{globalThis.fetch=original;}
 });
+
+test('HTTP overload remains typed and cancels its non-AMST body',async()=>{const original=globalThis.fetch;let canceled=false;try{globalThis.fetch=async()=>new Response(new ReadableStream({cancel(){canceled=true;}}),{status:503});await assert.rejects(generate('http://127.0.0.1:8080','hello',1,100,()=>{throw Error('unexpected frame')}),(e:unknown)=>e instanceof HttpStatusError&&e.status===503);assert.equal(canceled,true);}finally{globalThis.fetch=original;}});
