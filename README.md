@@ -1,7 +1,7 @@
 ---
 title: "Rust Server — Apple native kernel compiler and runtime"
 document_type: "implementation"
-version: "1.39.0"
+version: "1.40.0"
 date: "2026-10-23T12:43:42Z"
 implementation_date: null
 author: "Codex for Stewart Barteau"
@@ -15,13 +15,13 @@ related_files:
     lines: "1-1148"
     role: "config"
   - path: "Cargo.toml"
-    lines: "1-98"
+    lines: "1-102"
     role: "config"
   - path: "backend/rapid_worker.py"
     lines: "1-165"
     role: "primary"
   - path: "build.rs"
-    lines: "1-63"
+    lines: "1-64"
     role: "primary"
   - path: "examples/native_automaton_smoke.rs"
     lines: "1-394"
@@ -55,6 +55,9 @@ related_files:
     role: "primary"
   - path: "examples/native_mtp_smoke.rs"
     lines: "1-186"
+    role: "primary"
+  - path: "examples/native_physical_batch.rs"
+    lines: "1-213"
     role: "primary"
   - path: "examples/native_seed_qualification.rs"
     lines: "1-271"
@@ -144,7 +147,7 @@ related_files:
     lines: "1-21"
     role: "test"
   - path: "judges/device_abi.cpp"
-    lines: "1-49"
+    lines: "1-64"
     role: "test"
   - path: "judges/device_smoke_report.py"
     lines: "1-38"
@@ -219,7 +222,7 @@ related_files:
     lines: "1-178"
     role: "primary"
   - path: "native/mlx_bridge.h"
-    lines: "1-112"
+    lines: "1-113"
     role: "primary"
   - path: "native/operator_probe.inc"
     lines: "1-28"
@@ -233,8 +236,11 @@ related_files:
   - path: "native/projection_reference.h"
     lines: "1-30"
     role: "primary"
+  - path: "native/qwen_batch.inc"
+    lines: "1-40"
+    role: "primary"
   - path: "native/qwen_device.inc"
-    lines: "1-59"
+    lines: "1-61"
     role: "primary"
   - path: "native/qwen_model.inc"
     lines: "1-173"
@@ -342,7 +348,7 @@ related_files:
     lines: "1-193"
     role: "primary"
   - path: "src/serving/native_device.rs"
-    lines: "1-809"
+    lines: "1-1001"
     role: "primary"
   - path: "src/serving/native_device_scheduler.rs"
     lines: "1-131"
@@ -1359,3 +1365,15 @@ TTFT falls roughly 7%, but the first-to-second gap and tail worsen; aggregate th
 Geometry cohorts describe compatible kind/position/token-count rows without changing scalar input order. They are planning metadata, not packed GPU rows. No physical tensor batching or speed gain is claimed, no tuning flag is added, and the MTP/SeedPending path is unchanged. Native graph batch-one reshapes and unified attention/convolution/recurrent state still require a separate graph/ABI implementation before physical mode can be enabled. See the stage-1 preregistration and stage-2 gates in [the tuning plan](docs/NATIVE_TUNING_PLAN.md).
 
 Transaction checkpoint validation: **180 default / 180 debug Rust checks** (including the exclusive-map-borrow compile-fail gate), **118 minimal Rust tests**, 22 TS tests, TS 7.1/tsrs, strict Clippy and schema/native/GPU judges passed. Native target HTTP passed 48 archived exact-reference tokens plus the eight-token TS client, one/three lanes, deadline, disconnect/recovery and zero charged native state at drain. [Bound transaction evidence](evidence/native-batch-contract/qualification.json). No throughput improvement or physical tensor execution is claimed.
+
+## Native physical decode prototype
+
+The explicit Rust `QwenDeviceExecutor::decode_batch` API runs one batch-shaped target graph for 1–3 equal-position, one-token device rows. `submit_decode_batch` queues owned work synchronously and returns a completion future; dropping that future does not release in-flight parents or native permits before completion. Every child conservatively charges the entire packed B-row state backing, including after sibling release. The limit is logical state accounting; weights and transient workspace are reported separately through MLX memory counters.
+
+The scalar target scheduler and HTTP profiles retain their existing selection; this prototype has **no server flag yet**, and MTP/SeedPending rows are excluded. The first native gate compares all logits and all 80 unified state arrays against scalar calls across four prompts, sizes 1/2/3 and four continuations, plus reverse ordering, pressure recovery and dropped-result cleanup. Controlled first-token branch perturbations exercise different lane states; this is numerical/state qualification, not held-out text quality or throughput qualification.
+
+Reproduce with `cargo run --locked --release --example native_physical_batch -- NEW_DIRECTORY` (parent must exist). The gate uses the designated Combined checkpoint, 32 native slots and an explicit 2 GiB conservative logical-state budget; this does not change server defaults. [Design, charge model and promotion gates](docs/NATIVE_TUNING_PLAN.md).
+
+Native prototype gate passed **96 full-logit/unified-state row comparisons** with exact selected-token parity. Maximum absolute drift: **1.2397766e-05 logits / 1.9073486e-05 state**; maximum NRMSE: 1.2277146e-06 / 4.1213842e-07. All 16 B=1 comparisons were bitwise equal; B>1 uses the explicitly preregistered FP32 bounds, not bitwise equality. Reverse-row state/logits, pressure recovery, sibling charge and dropped-receiver drain passed. Native MTP widths 1/2/4/8 retained transactional controls across 62 emitted tokens.
+
+Final gates: **181 default / 181 debug Rust checks**, **118 minimal tests**, 22 TS tests, TS 7.1/tsrs, strict Clippy and full schema/native/GPU judges; **120,035 C ABI checks** under ASan/UBSan (upstream MLX uninstrumented). [Bound native batch evidence](evidence/native-physical-batch/qualification.json). The scheduler/HTTP path remains scalar; next wire explicit physical routing and telemetry, then measure performance.

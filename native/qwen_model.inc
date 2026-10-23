@@ -46,23 +46,23 @@ struct Qwen {
   return mx::reshape(merged,x.shape(),s);
  }
  mx::array attention(const mx::array& x,const std::string& p,int offset,mx::array old_k,mx::array old_v,std::vector<mx::array>& next,bool diagnose=false){
-  int t=x.shape(1);auto qg=mx::split(mx::reshape(linear(x,p+".q_proj"),{1,t,c.q_heads,2*c.head_dim},s),2,-1,s);
+  int batch=x.shape(0),t=x.shape(1);auto qg=mx::split(mx::reshape(linear(x,p+".q_proj"),{batch,t,c.q_heads,2*c.head_dim},s),2,-1,s);
   auto q=mx::transpose(norm(qg[0],p+".q_norm.weight"),{0,2,1,3},s);
-  auto k=mx::transpose(norm(mx::reshape(linear(x,p+".k_proj"),{1,t,c.kv_heads,c.head_dim},s),p+".k_norm.weight"),{0,2,1,3},s);
-  auto v=mx::transpose(mx::reshape(linear(x,p+".v_proj"),{1,t,c.kv_heads,c.head_dim},s),{0,2,1,3},s);
+  auto k=mx::transpose(norm(mx::reshape(linear(x,p+".k_proj"),{batch,t,c.kv_heads,c.head_dim},s),p+".k_norm.weight"),{0,2,1,3},s);
+  auto v=mx::transpose(mx::reshape(linear(x,p+".v_proj"),{batch,t,c.kv_heads,c.head_dim},s),{0,2,1,3},s);
   q=rope_checked(q,offset,p+"/q-rope");k=rope_checked(k,offset,p+"/k-rope");
   if(offset){k=mx::concatenate({old_k,k},2,s);v=mx::concatenate({old_v,v},2,s);}
   next.push_back(k);next.push_back(v);
   std::vector<mx::array> rows;
   for(int row=0;row<t;++row){
-   auto qr=mx::slice(q,{0,0,row,0},{1,c.q_heads,row+1,c.head_dim},s);
-   auto kr=mx::slice(k,{0,0,0,0},{1,c.kv_heads,offset+row+1,c.head_dim},s);
-   auto vr=mx::slice(v,{0,0,0,0},{1,c.kv_heads,offset+row+1,c.head_dim},s);
-   auto grouped=mx::reshape(mx::astype(qr,mx::float32,s),{1,c.kv_heads,c.q_heads/c.kv_heads,1,c.head_dim},s);
+   auto qr=mx::slice(q,{0,0,row,0},{batch,c.q_heads,row+1,c.head_dim},s);
+   auto kr=mx::slice(k,{0,0,0,0},{batch,c.kv_heads,offset+row+1,c.head_dim},s);
+   auto vr=mx::slice(v,{0,0,0,0},{batch,c.kv_heads,offset+row+1,c.head_dim},s);
+   auto grouped=mx::reshape(mx::astype(qr,mx::float32,s),{batch,c.kv_heads,c.q_heads/c.kv_heads,1,c.head_dim},s);
    auto keys=mx::expand_dims(mx::astype(kr,mx::float32,s),2,s),values=mx::expand_dims(mx::astype(vr,mx::float32,s),2,s);
    auto scores=mx::multiply(mx::sum(mx::multiply(grouped,keys,s),-1,false,s),mx::array(1.f/std::sqrt(float(c.head_dim))),s);
    auto probabilities=mx::expand_dims(mx::softmax(scores,-1,true,s),-1,s);
-   rows.push_back(mx::reshape(mx::sum(mx::multiply(probabilities,values,s),-2,false,s),{1,c.q_heads,1,c.head_dim},s));
+   rows.push_back(mx::reshape(mx::sum(mx::multiply(probabilities,values,s),-2,false,s),{batch,c.q_heads,1,c.head_dim},s));
   }
   auto y=mx::concatenate(rows,2,s);
   if(diagnose){
@@ -75,18 +75,18 @@ struct Qwen {
    std::fprintf(stderr,"ATTENTION-ORACLE layer=%s offset=%d tokens=%d nrmse=%.9g max_abs=%.9g\n",p.c_str(),offset,t,std::sqrt(square/std::max(reference,1e-30)),maximum);
    if(!std::isfinite(square)||std::sqrt(square/std::max(reference,1e-30))>1e-5)throw std::runtime_error("attention differs from scalar FP64 oracle");
   }
-  y=mx::reshape(mx::transpose(y,{0,2,1,3},s),{1,t,c.q_heads*c.head_dim},s);
-  auto gate=mx::reshape(qg[1],{1,t,c.q_heads*c.head_dim},s);auto gated=mx::multiply(y,mx::sigmoid(gate,s),s);if(operators)check_gate(y,gate,gated,p+"/output-gate");return linear(gated,p+".o_proj");
+  y=mx::reshape(mx::transpose(y,{0,2,1,3},s),{batch,t,c.q_heads*c.head_dim},s);
+  auto gate=mx::reshape(qg[1],{batch,t,c.q_heads*c.head_dim},s);auto gated=mx::multiply(y,mx::sigmoid(gate,s),s);if(operators)check_gate(y,gate,gated,p+"/output-gate");return linear(gated,p+".o_proj");
  }
  mx::array recurrent(const mx::array& x,const std::string& p,mx::array conv,mx::array state,std::vector<mx::array>& next){
-  int t=x.shape(1),kd=c.key_heads*c.key_dim,vd=c.value_heads*c.value_dim,cd=2*kd+vd;
-  auto qkv=linear(x,p+".in_proj_qkv"),z=mx::reshape(linear(x,p+".in_proj_z"),{1,t,c.value_heads,c.value_dim},s);
+  int batch=x.shape(0),t=x.shape(1),kd=c.key_heads*c.key_dim,vd=c.value_heads*c.value_dim,cd=2*kd+vd;
+  auto qkv=linear(x,p+".in_proj_qkv"),z=mx::reshape(linear(x,p+".in_proj_z"),{batch,t,c.value_heads,c.value_dim},s);
   auto a=linear(x,p+".in_proj_a"),b=linear(x,p+".in_proj_b");
   auto input=mx::concatenate({conv,qkv},1,s);
-  next.push_back(mx::contiguous(mx::slice(input,{0,t,0},{1,t+c.conv-1,cd},s),false,s));
+  next.push_back(mx::contiguous(mx::slice(input,{0,t,0},{batch,t+c.conv-1,cd},s),false,s));
   auto cw=mx::astype(w(p+".conv1d.weight"),x.dtype(),s);if(cw.shape(-1)!=1)cw=mx::transpose(cw,{0,2,1},s);
   auto activated=silu(mx::conv1d(input,cw,1,0,1,cd,s));auto parts=mx::split(activated,{kd,2*kd},-1,s);
-  auto q=mx::reshape(parts[0],{1,t,c.key_heads,c.key_dim},s),k=mx::reshape(parts[1],{1,t,c.key_heads,c.key_dim},s),v=mx::reshape(parts[2],{1,t,c.value_heads,c.value_dim},s);
+  auto q=mx::reshape(parts[0],{batch,t,c.key_heads,c.key_dim},s),k=mx::reshape(parts[1],{batch,t,c.key_heads,c.key_dim},s),v=mx::reshape(parts[2],{batch,t,c.value_heads,c.value_dim},s);
   q=mx::multiply(mx::fast::rms_norm(q,{},1e-6,s),mx::array(1.f/c.key_dim),s);
   k=mx::multiply(mx::fast::rms_norm(k,{},1e-6,s),mx::array(1.f/std::sqrt(float(c.key_dim))),s);
   auto beta=mx::sigmoid(b,s);auto softplus=mx::logaddexp(mx::add(a,w(p+".dt_bias"),s),mx::array(0.f),s);
@@ -104,7 +104,7 @@ struct Qwen {
   auto readout=mx::stack(out,1,s);if(operators)check_delta(qkv,conv,cw,a,b,initial_state,activated,readout,state,next[0],p);
   next.push_back(state);auto y=norm(readout,p+".norm.weight",false);
   auto ungated=y;y=mx::astype(mx::multiply(mx::astype(y,mx::float32,s),silu(mx::astype(z,mx::float32,s)),s),x.dtype(),s);if(operators)check_gate(ungated,z,y,p+"/output-gate",true);
-  return linear(mx::reshape(y,{1,t,vd},s),p+".out_proj");
+  return linear(mx::reshape(y,{batch,t,vd},s),p+".out_proj");
  }
 };
 size_t qwen_state_count(const rs_qwen_config& c,size_t offset){

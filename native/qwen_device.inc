@@ -57,3 +57,5 @@ extern "C" int rs_qwen_device_hidden_snapshot(void* handle,const StateId* id,flo
 });}
 
 #include "qwen_mtp.inc"
+
+#include "qwen_batch.inc"

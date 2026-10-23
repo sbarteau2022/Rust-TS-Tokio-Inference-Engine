@@ -1,0 +1,2315 @@
+{
+  "identity": "509cc92543203798f2db08b6fb6cbb38a80942fc0437ae81a3ef9ff27720915b",
+  "mlx_active_bytes": 19508787456,
+  "mlx_peak_bytes": 21743903208,
+  "native_bytes": 0,
+  "native_residents": 0,
+  "observations": [
+    {
+      "batch": 1,
+      "expected": 34602,
+      "logits": {
+        "elements": 248320,
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "pass": true,
+      "position": 59,
+      "prompt": 0,
+      "row": 0,
+      "state": {
+        "elements": 17070080,
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "step": 0,
+      "token": 34602
+    },
+    {
+      "batch": 1,
+      "expected": 198,
+      "logits": {
+        "elements": 248320,
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "pass": true,
+      "position": 60,
+      "prompt": 0,
+      "row": 0,
+      "state": {
+        "elements": 17080320,
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "step": 1,
+      "token": 198
+    },
+    {
+      "batch": 1,
+      "expected": 9299,
+      "logits": {
+        "elements": 248320,
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "pass": true,
+      "position": 61,
+      "prompt": 0,
+      "row": 0,
+      "state": {
+        "elements": 17090560,
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "step": 2,
+      "token": 9299
+    },
+    {
+      "batch": 1,
+      "expected": 5003,
+      "logits": {
+        "elements": 248320,
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "pass": true,
+      "position": 62,
+      "prompt": 0,
+      "row": 0,
+      "state": {
+        "elements": 17100800,
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "step": 3,
+      "token": 5003
+    },
+    {
+      "batch": 2,
+      "expected": 34602,
+      "logits": {
+        "elements": 248320,
+        "max_abs": 7.152557373046875e-6,
+        "nrmse": 6.966208604346373e-7,
+        "pass": true,
+        "unequal_bits": 237726
+      },
+      "pass": true,
+      "position": 59,
+      "prompt": 0,
+      "row": 0,
+      "state": {
+        "elements": 17070080,
+        "max_abs": 0.0000133514404296875,
+        "nrmse": 1.944698264162663e-7,
+        "pass": true,
+        "unequal_bits": 11740277
+      },
+      "step": 0,
+      "token": 34602
+    },
+    {
+      "batch": 2,
+      "expected": 3508,
+      "logits": {
+        "elements": 248320,
+        "max_abs": 0.000011444091796875,
+        "nrmse": 9.089062979966253e-7,
+        "pass": true,
+        "unequal_bits": 239125
+      },
+      "pass": true,
+      "position": 59,
+      "prompt": 0,
+      "row": 1,
+      "state": {
+        "elements": 17070080,
+        "max_abs": 0.0000152587890625,
+        "nrmse": 2.582955528865357e-7,
+        "pass": true,
+        "unequal_bits": 12697313
+      },
+      "step": 0,
+      "token": 3508
+    },
+    {
+      "batch": 2,
+      "expected": 198,
+      "logits": {
+        "elements": 248320,
+        "max_abs": 5.841255187988281e-6,
+        "nrmse": 5.576621236204494e-7,
+        "pass": true,
+        "unequal_bits": 233401
+      },
+      "pass": true,
+      "position": 60,
+      "prompt": 0,
+      "row": 0,
+      "state": {
+        "elements": 17080320,
+        "max_abs": 0.0000133514404296875,
+        "nrmse": 2.503986254799246e-7,
+        "pass": true,
+        "unequal_bits": 14169695
+      },
+      "step": 1,
+      "token": 198
+    },
+    {
+      "batch": 2,
+      "expected": 513,
+      "logits": {
+        "elements": 248320,
+        "max_abs": 0.00001049041748046875,
+        "nrmse": 8.80561458386861e-7,
+        "pass": true,
+        "unequal_bits": 239384
+      },
+      "pass": true,
+      "position": 60,
+      "prompt": 0,
+      "row": 1,
+      "state": {
+        "elements": 17080320,
+        "max_abs": 0.0000152587890625,
+        "nrmse": 3.579754654806117e-7,
+        "pass": true,
+        "unequal_bits": 14494648
+      },
+      "step": 1,
+      "token": 513
+    },
+    {
+      "batch": 2,
+      "expected": 9299,
+      "logits": {
+        "elements": 248320,
+        "max_abs": 5.7220458984375e-6,
+        "nrmse": 6.183280960129532e-7,
+        "pass": true,
+        "unequal_bits": 235821
+      },
+      "pass": true,
+      "position": 61,
+      "prompt": 0,
+      "row": 0,
+      "state": {
+        "elements": 17090560,
+        "max_abs": 0.0000133514404296875,
+        "nrmse": 2.9644223559548924e-7,
+        "pass": true,
+        "unequal_bits": 14996358
+      },
+      "step": 2,
+      "token": 9299
+    },
+    {
+      "batch": 2,
+      "expected": 524,
+      "logits": {
+        "elements": 248320,
+        "max_abs": 8.344650268554688e-6,
+        "nrmse": 6.659612597811794e-7,
+        "pass": true,
+        "unequal_bits": 237364
+      },
+      "pass": true,
+      "position": 61,
+      "prompt": 0,
+      "row": 1,
+      "state": {
+        "elements": 17090560,
+        "max_abs": 0.0000152587890625,
+        "nrmse": 4.121384197843105e-7,
+        "pass": true,
+        "unequal_bits": 15192688
+      },
+      "step": 2,
+      "token": 524
+    },
+    {
+      "batch": 2,
+      "expected": 5003,
+      "logits": {
+        "elements": 248320,
+        "max_abs": 6.198883056640625e-6,
+        "nrmse": 4.376406795734522e-7,
+        "pass": true,
+        "unequal_bits": 229667
+      },
+      "pass": true,
+      "position": 62,
+      "prompt": 0,
+      "row": 0,
+      "state": {
+        "elements": 17100800,
+        "max_abs": 9.059906005859375e-6,
+        "nrmse": 2.7141283717347313e-7,
+        "pass": true,
+        "unequal_bits": 15201914
+      },
+      "step": 3,
+      "token": 5003
+    },
+    {
+      "batch": 2,
+      "expected": 5568,
+      "logits": {
+        "elements": 248320,
+        "max_abs": 7.867813110351562e-6,
+        "nrmse": 6.185352168722701e-7,
+        "pass": true,
+        "unequal_bits": 236493
+      },
+      "pass": true,
+      "position": 62,
+      "prompt": 0,
+      "row": 1,
+      "state": {
+        "elements": 17100800,
+        "max_abs": 0.000010013580322265625,
+        "nrmse": 3.775163705391668e-7,
+        "pass": true,
+        "unequal_bits": 15326556
+      },
+      "step": 3,
+      "token": 5568
+    },
+    {
+      "batch": 3,
+      "expected": 34602,
+      "logits": {
+        "elements": 248320,
+        "max_abs": 7.152557373046875e-6,
+        "nrmse": 6.966208604346373e-7,
+        "pass": true,
+        "unequal_bits": 237726
+      },
+      "pass": true,
+      "position": 59,
+      "prompt": 0,
+      "row": 0,
+      "state": {
+        "elements": 17070080,
+        "max_abs": 0.0000133514404296875,
+        "nrmse": 1.944698264162663e-7,
+        "pass": true,
+        "unequal_bits": 11740277
+      },
+      "step": 0,
+      "token": 34602
+    },
+    {
+      "batch": 3,
+      "expected": 3508,
+      "logits": {
+        "elements": 248320,
+        "max_abs": 0.000011444091796875,
+        "nrmse": 9.089062979966253e-7,
+        "pass": true,
+        "unequal_bits": 239125
+      },
+      "pass": true,
+      "position": 59,
+      "prompt": 0,
+      "row": 1,
+      "state": {
+        "elements": 17070080,
+        "max_abs": 0.0000152587890625,
+        "nrmse": 2.582955528865357e-7,
+        "pass": true,
+        "unequal_bits": 12697313
+      },
+      "step": 0,
+      "token": 3508
+    },
+    {
+      "batch": 3,
+      "expected": 1,
+      "logits": {
+        "elements": 248320,
+        "max_abs": 7.3909759521484375e-6,
+        "nrmse": 6.019273155795508e-7,
+        "pass": true,
+        "unequal_bits": 234777
+      },
+      "pass": true,
+      "position": 59,
+      "prompt": 0,
+      "row": 2,
+      "state": {
+        "elements": 17070080,
+        "max_abs": 7.867813110351562e-6,
+        "nrmse": 1.7644028838769322e-7,
+        "pass": true,
+        "unequal_bits": 12009257
+      },
+      "step": 0,
+      "token": 1
+    },
+    {
+      "batch": 3,
+      "expected": 198,
+      "logits": {
+        "elements": 248320,
+        "max_abs": 5.841255187988281e-6,
+        "nrmse": 5.576621236204494e-7,
+        "pass": true,
+        "unequal_bits": 233401
+      },
+      "pass": true,
+      "position": 60,
+      "prompt": 0,
+      "row": 0,
+      "state": {
+        "elements": 17080320,
+        "max_abs": 0.0000133514404296875,
+        "nrmse": 2.503986254799246e-7,
+        "pass": true,
+        "unequal_bits": 14169695
+      },
+      "step": 1,
+      "token": 198
+    },
+    {
+      "batch": 3,
+      "expected": 513,
+      "logits": {
+        "elements": 248320,
+        "max_abs": 0.00001049041748046875,
+        "nrmse": 8.80561458386861e-7,
+        "pass": true,
+        "unequal_bits": 239384
+      },
+      "pass": true,
+      "position": 60,
+      "prompt": 0,
+      "row": 1,
+      "state": {
+        "elements": 17080320,
+        "max_abs": 0.0000152587890625,
+        "nrmse": 3.579754654806117e-7,
+        "pass": true,
+        "unequal_bits": 14494648
+      },
+      "step": 1,
+      "token": 513
+    },
+    {
+      "batch": 3,
+      "expected": 198,
+      "logits": {
+        "elements": 248320,
+        "max_abs": 8.106231689453125e-6,
+        "nrmse": 7.998808921285634e-7,
+        "pass": true,
+        "unequal_bits": 238973
+      },
+      "pass": true,
+      "position": 60,
+      "prompt": 0,
+      "row": 2,
+      "state": {
+        "elements": 17080320,
+        "max_abs": 0.000011444091796875,
+        "nrmse": 2.9503823783567734e-7,
+        "pass": true,
+        "unequal_bits": 14452527
+      },
+      "step": 1,
+      "token": 198
+    },
+    {
+      "batch": 3,
+      "expected": 9299,
+      "logits": {
+        "elements": 248320,
+        "max_abs": 5.7220458984375e-6,
+        "nrmse": 6.183280960129532e-7,
+        "pass": true,
+        "unequal_bits": 235821
+      },
+      "pass": true,
+      "position": 61,
+      "prompt": 0,
+      "row": 0,
+      "state": {
+        "elements": 17090560,
+        "max_abs": 0.0000133514404296875,
+        "nrmse": 2.9644223559548924e-7,
+        "pass": true,
+        "unequal_bits": 14996358
+      },
+      "step": 2,
+      "token": 9299
+    },
+    {
+      "batch": 3,
+      "expected": 524,
+      "logits": {
+        "elements": 248320,
+        "max_abs": 8.344650268554688e-6,
+        "nrmse": 6.659612597811794e-7,
+        "pass": true,
+        "unequal_bits": 237364
+      },
+      "pass": true,
+      "position": 61,
+      "prompt": 0,
+      "row": 1,
+      "state": {
+        "elements": 17090560,
+        "max_abs": 0.0000152587890625,
+        "nrmse": 4.121384197843105e-7,
+        "pass": true,
+        "unequal_bits": 15192688
+      },
+      "step": 2,
+      "token": 524
+    },
+    {
+      "batch": 3,
+      "expected": 1,
+      "logits": {
+        "elements": 248320,
+        "max_abs": 5.9604644775390625e-6,
+        "nrmse": 5.932380600305892e-7,
+        "pass": true,
+        "unequal_bits": 235282
+      },
+      "pass": true,
+      "position": 61,
+      "prompt": 0,
+      "row": 2,
+      "state": {
+        "elements": 17090560,
+        "max_abs": 0.000011444091796875,
+        "nrmse": 3.5216342028394526e-7,
+        "pass": true,
+        "unequal_bits": 15177291
+      },
+      "step": 2,
+      "token": 1
+    },
+    {
+      "batch": 3,
+      "expected": 5003,
+      "logits": {
+        "elements": 248320,
+        "max_abs": 6.198883056640625e-6,
+        "nrmse": 4.376406795734522e-7,
+        "pass": true,
+        "unequal_bits": 229667
+      },
+      "pass": true,
+      "position": 62,
+      "prompt": 0,
+      "row": 0,
+      "state": {
+        "elements": 17100800,
+        "max_abs": 9.059906005859375e-6,
+        "nrmse": 2.7141283717347313e-7,
+        "pass": true,
+        "unequal_bits": 15201914
+      },
+      "step": 3,
+      "token": 5003
+    },
+    {
+      "batch": 3,
+      "expected": 5568,
+      "logits": {
+        "elements": 248320,
+        "max_abs": 7.867813110351562e-6,
+        "nrmse": 6.185352168722701e-7,
+        "pass": true,
+        "unequal_bits": 236493
+      },
+      "pass": true,
+      "position": 62,
+      "prompt": 0,
+      "row": 1,
+      "state": {
+        "elements": 17100800,
+        "max_abs": 0.000010013580322265625,
+        "nrmse": 3.775163705391668e-7,
+        "pass": true,
+        "unequal_bits": 15326556
+      },
+      "step": 3,
+      "token": 5568
+    },
+    {
+      "batch": 3,
+      "expected": 8556,
+      "logits": {
+        "elements": 248320,
+        "max_abs": 8.344650268554688e-6,
+        "nrmse": 5.819480762795993e-7,
+        "pass": true,
+        "unequal_bits": 234375
+      },
+      "pass": true,
+      "position": 62,
+      "prompt": 0,
+      "row": 2,
+      "state": {
+        "elements": 17100800,
+        "max_abs": 0.000013828277587890625,
+        "nrmse": 3.5704618032150443e-7,
+        "pass": true,
+        "unequal_bits": 15345299
+      },
+      "step": 3,
+      "token": 8556
+    },
+    {
+      "batch": 1,
+      "expected": 34602,
+      "logits": {
+        "elements": 248320,
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "pass": true,
+      "position": 58,
+      "prompt": 1,
+      "row": 0,
+      "state": {
+        "elements": 17059840,
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "step": 0,
+      "token": 34602
+    },
+    {
+      "batch": 1,
+      "expected": 198,
+      "logits": {
+        "elements": 248320,
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "pass": true,
+      "position": 59,
+      "prompt": 1,
+      "row": 0,
+      "state": {
+        "elements": 17070080,
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "step": 1,
+      "token": 198
+    },
+    {
+      "batch": 1,
+      "expected": 12966,
+      "logits": {
+        "elements": 248320,
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "pass": true,
+      "position": 60,
+      "prompt": 1,
+      "row": 0,
+      "state": {
+        "elements": 17080320,
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "step": 2,
+      "token": 12966
+    },
+    {
+      "batch": 1,
+      "expected": 1877,
+      "logits": {
+        "elements": 248320,
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "pass": true,
+      "position": 61,
+      "prompt": 1,
+      "row": 0,
+      "state": {
+        "elements": 17090560,
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "step": 3,
+      "token": 1877
+    },
+    {
+      "batch": 2,
+      "expected": 34602,
+      "logits": {
+        "elements": 248320,
+        "max_abs": 7.62939453125e-6,
+        "nrmse": 6.290832212634199e-7,
+        "pass": true,
+        "unequal_bits": 236375
+      },
+      "pass": true,
+      "position": 58,
+      "prompt": 1,
+      "row": 0,
+      "state": {
+        "elements": 17059840,
+        "max_abs": 0.000011444091796875,
+        "nrmse": 1.9683046417543014e-7,
+        "pass": true,
+        "unequal_bits": 11501713
+      },
+      "step": 0,
+      "token": 34602
+    },
+    {
+      "batch": 2,
+      "expected": 3508,
+      "logits": {
+        "elements": 248320,
+        "max_abs": 7.867813110351562e-6,
+        "nrmse": 7.281205392990325e-7,
+        "pass": true,
+        "unequal_bits": 237243
+      },
+      "pass": true,
+      "position": 58,
+      "prompt": 1,
+      "row": 1,
+      "state": {
+        "elements": 17059840,
+        "max_abs": 8.344650268554688e-6,
+        "nrmse": 1.767803609989325e-7,
+        "pass": true,
+        "unequal_bits": 11699073
+      },
+      "step": 0,
+      "token": 3508
+    },
+    {
+      "batch": 2,
+      "expected": 198,
+      "logits": {
+        "elements": 248320,
+        "max_abs": 5.9604644775390625e-6,
+        "nrmse": 6.001726529714521e-7,
+        "pass": true,
+        "unequal_bits": 234988
+      },
+      "pass": true,
+      "position": 59,
+      "prompt": 1,
+      "row": 0,
+      "state": {
+        "elements": 17070080,
+        "max_abs": 0.000011444091796875,
+        "nrmse": 2.4717858733523926e-7,
+        "pass": true,
+        "unequal_bits": 14078247
+      },
+      "step": 1,
+      "token": 198
+    },
+    {
+      "batch": 2,
+      "expected": 513,
+      "logits": {
+        "elements": 248320,
+        "max_abs": 9.5367431640625e-6,
+        "nrmse": 8.822779980105151e-7,
+        "pass": true,
+        "unequal_bits": 239580
+      },
+      "pass": true,
+      "position": 59,
+      "prompt": 1,
+      "row": 1,
+      "state": {
+        "elements": 17070080,
+        "max_abs": 0.0000133514404296875,
+        "nrmse": 2.615236822330785e-7,
+        "pass": true,
+        "unequal_bits": 14045512
+      },
+      "step": 1,
+      "token": 513
+    },
+    {
+      "batch": 2,
+      "expected": 12966,
+      "logits": {
+        "elements": 248320,
+        "max_abs": 7.62939453125e-6,
+        "nrmse": 6.34044634335874e-7,
+        "pass": true,
+        "unequal_bits": 236496
+      },
+      "pass": true,
+      "position": 60,
+      "prompt": 1,
+      "row": 0,
+      "state": {
+        "elements": 17080320,
+        "max_abs": 0.000011444091796875,
+        "nrmse": 3.020240235361937e-7,
+        "pass": true,
+        "unequal_bits": 14948212
+      },
+      "step": 2,
+      "token": 12966
+    },
+    {
+      "batch": 2,
+      "expected": 524,
+      "logits": {
+        "elements": 248320,
+        "max_abs": 7.152557373046875e-6,
+        "nrmse": 5.973509065670779e-7,
+        "pass": true,
+        "unequal_bits": 236475
+      },
+      "pass": true,
+      "position": 60,
+      "prompt": 1,
+      "row": 1,
+      "state": {
+        "elements": 17080320,
+        "max_abs": 0.0000133514404296875,
+        "nrmse": 3.1399473651268035e-7,
+        "pass": true,
+        "unequal_bits": 14922414
+      },
+      "step": 2,
+      "token": 524
+    },
+    {
+      "batch": 2,
+      "expected": 1877,
+      "logits": {
+        "elements": 248320,
+        "max_abs": 0.000010728836059570312,
+        "nrmse": 1.2277146049125771e-6,
+        "pass": true,
+        "unequal_bits": 244305
+      },
+      "pass": true,
+      "position": 61,
+      "prompt": 1,
+      "row": 0,
+      "state": {
+        "elements": 17090560,
+        "max_abs": 7.62939453125e-6,
+        "nrmse": 2.751937264036665e-7,
+        "pass": true,
+        "unequal_bits": 15179055
+      },
+      "step": 3,
+      "token": 1877
+    },
+    {
+      "batch": 2,
+      "expected": 5252,
+      "logits": {
+        "elements": 248320,
+        "max_abs": 6.67572021484375e-6,
+        "nrmse": 6.22295262356027e-7,
+        "pass": true,
+        "unequal_bits": 236733
+      },
+      "pass": true,
+      "position": 61,
+      "prompt": 1,
+      "row": 1,
+      "state": {
+        "elements": 17090560,
+        "max_abs": 0.0000133514404296875,
+        "nrmse": 3.2031872996453213e-7,
+        "pass": true,
+        "unequal_bits": 15134075
+      },
+      "step": 3,
+      "token": 5252
+    },
+    {
+      "batch": 3,
+      "expected": 34602,
+      "logits": {
+        "elements": 248320,
+        "max_abs": 7.62939453125e-6,
+        "nrmse": 6.290832212634199e-7,
+        "pass": true,
+        "unequal_bits": 236375
+      },
+      "pass": true,
+      "position": 58,
+      "prompt": 1,
+      "row": 0,
+      "state": {
+        "elements": 17059840,
+        "max_abs": 0.000011444091796875,
+        "nrmse": 1.9683046417543014e-7,
+        "pass": true,
+        "unequal_bits": 11501713
+      },
+      "step": 0,
+      "token": 34602
+    },
+    {
+      "batch": 3,
+      "expected": 3508,
+      "logits": {
+        "elements": 248320,
+        "max_abs": 7.867813110351562e-6,
+        "nrmse": 7.281205392990325e-7,
+        "pass": true,
+        "unequal_bits": 237243
+      },
+      "pass": true,
+      "position": 58,
+      "prompt": 1,
+      "row": 1,
+      "state": {
+        "elements": 17059840,
+        "max_abs": 8.344650268554688e-6,
+        "nrmse": 1.767803609989325e-7,
+        "pass": true,
+        "unequal_bits": 11699073
+      },
+      "step": 0,
+      "token": 3508
+    },
+    {
+      "batch": 3,
+      "expected": 1367,
+      "logits": {
+        "elements": 248320,
+        "max_abs": 6.67572021484375e-6,
+        "nrmse": 6.05581005239317e-7,
+        "pass": true,
+        "unequal_bits": 235056
+      },
+      "pass": true,
+      "position": 58,
+      "prompt": 1,
+      "row": 2,
+      "state": {
+        "elements": 17059840,
+        "max_abs": 0.000011444091796875,
+        "nrmse": 1.7700287470495498e-7,
+        "pass": true,
+        "unequal_bits": 11890078
+      },
+      "step": 0,
+      "token": 1367
+    },
+    {
+      "batch": 3,
+      "expected": 198,
+      "logits": {
+        "elements": 248320,
+        "max_abs": 5.9604644775390625e-6,
+        "nrmse": 6.001726529714521e-7,
+        "pass": true,
+        "unequal_bits": 234988
+      },
+      "pass": true,
+      "position": 59,
+      "prompt": 1,
+      "row": 0,
+      "state": {
+        "elements": 17070080,
+        "max_abs": 0.000011444091796875,
+        "nrmse": 2.4717858733523926e-7,
+        "pass": true,
+        "unequal_bits": 14078247
+      },
+      "step": 1,
+      "token": 198
+    },
+    {
+      "batch": 3,
+      "expected": 513,
+      "logits": {
+        "elements": 248320,
+        "max_abs": 9.5367431640625e-6,
+        "nrmse": 8.822779980105151e-7,
+        "pass": true,
+        "unequal_bits": 239580
+      },
+      "pass": true,
+      "position": 59,
+      "prompt": 1,
+      "row": 1,
+      "state": {
+        "elements": 17070080,
+        "max_abs": 0.0000133514404296875,
+        "nrmse": 2.615236822330785e-7,
+        "pass": true,
+        "unequal_bits": 14045512
+      },
+      "step": 1,
+      "token": 513
+    },
+    {
+      "batch": 3,
+      "expected": 1683,
+      "logits": {
+        "elements": 248320,
+        "max_abs": 9.894371032714844e-6,
+        "nrmse": 9.029910273134435e-7,
+        "pass": true,
+        "unequal_bits": 240468
+      },
+      "pass": true,
+      "position": 59,
+      "prompt": 1,
+      "row": 2,
+      "state": {
+        "elements": 17070080,
+        "max_abs": 0.0000171661376953125,
+        "nrmse": 2.692417606911576e-7,
+        "pass": true,
+        "unequal_bits": 14376601
+      },
+      "step": 1,
+      "token": 1683
+    },
+    {
+      "batch": 3,
+      "expected": 12966,
+      "logits": {
+        "elements": 248320,
+        "max_abs": 7.62939453125e-6,
+        "nrmse": 6.34044634335874e-7,
+        "pass": true,
+        "unequal_bits": 236496
+      },
+      "pass": true,
+      "position": 60,
+      "prompt": 1,
+      "row": 0,
+      "state": {
+        "elements": 17080320,
+        "max_abs": 0.000011444091796875,
+        "nrmse": 3.020240235361937e-7,
+        "pass": true,
+        "unequal_bits": 14948212
+      },
+      "step": 2,
+      "token": 12966
+    },
+    {
+      "batch": 3,
+      "expected": 524,
+      "logits": {
+        "elements": 248320,
+        "max_abs": 7.152557373046875e-6,
+        "nrmse": 5.973509065670779e-7,
+        "pass": true,
+        "unequal_bits": 236475
+      },
+      "pass": true,
+      "position": 60,
+      "prompt": 1,
+      "row": 1,
+      "state": {
+        "elements": 17080320,
+        "max_abs": 0.0000133514404296875,
+        "nrmse": 3.1399473651268035e-7,
+        "pass": true,
+        "unequal_bits": 14922414
+      },
+      "step": 2,
+      "token": 524
+    },
+    {
+      "batch": 3,
+      "expected": 883,
+      "logits": {
+        "elements": 248320,
+        "max_abs": 0.00001049041748046875,
+        "nrmse": 7.987282853003058e-7,
+        "pass": true,
+        "unequal_bits": 238336
+      },
+      "pass": true,
+      "position": 60,
+      "prompt": 1,
+      "row": 2,
+      "state": {
+        "elements": 17080320,
+        "max_abs": 0.0000171661376953125,
+        "nrmse": 3.382417878718627e-7,
+        "pass": true,
+        "unequal_bits": 15094575
+      },
+      "step": 2,
+      "token": 883
+    },
+    {
+      "batch": 3,
+      "expected": 1877,
+      "logits": {
+        "elements": 248320,
+        "max_abs": 0.000010728836059570312,
+        "nrmse": 1.2277146049125771e-6,
+        "pass": true,
+        "unequal_bits": 244305
+      },
+      "pass": true,
+      "position": 61,
+      "prompt": 1,
+      "row": 0,
+      "state": {
+        "elements": 17090560,
+        "max_abs": 7.62939453125e-6,
+        "nrmse": 2.751937264036665e-7,
+        "pass": true,
+        "unequal_bits": 15179055
+      },
+      "step": 3,
+      "token": 1877
+    },
+    {
+      "batch": 3,
+      "expected": 5252,
+      "logits": {
+        "elements": 248320,
+        "max_abs": 6.67572021484375e-6,
+        "nrmse": 6.22295262356027e-7,
+        "pass": true,
+        "unequal_bits": 236733
+      },
+      "pass": true,
+      "position": 61,
+      "prompt": 1,
+      "row": 1,
+      "state": {
+        "elements": 17090560,
+        "max_abs": 0.0000133514404296875,
+        "nrmse": 3.2031872996453213e-7,
+        "pass": true,
+        "unequal_bits": 15134075
+      },
+      "step": 3,
+      "token": 5252
+    },
+    {
+      "batch": 3,
+      "expected": 1092,
+      "logits": {
+        "elements": 248320,
+        "max_abs": 7.3909759521484375e-6,
+        "nrmse": 6.553021388487953e-7,
+        "pass": true,
+        "unequal_bits": 236914
+      },
+      "pass": true,
+      "position": 61,
+      "prompt": 1,
+      "row": 2,
+      "state": {
+        "elements": 17090560,
+        "max_abs": 0.0000171661376953125,
+        "nrmse": 3.376954331973445e-7,
+        "pass": true,
+        "unequal_bits": 15257540
+      },
+      "step": 3,
+      "token": 1092
+    },
+    {
+      "batch": 1,
+      "expected": 34602,
+      "logits": {
+        "elements": 248320,
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "pass": true,
+      "position": 57,
+      "prompt": 2,
+      "row": 0,
+      "state": {
+        "elements": 17049600,
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "step": 0,
+      "token": 34602
+    },
+    {
+      "batch": 1,
+      "expected": 198,
+      "logits": {
+        "elements": 248320,
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "pass": true,
+      "position": 58,
+      "prompt": 2,
+      "row": 0,
+      "state": {
+        "elements": 17059840,
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "step": 1,
+      "token": 198
+    },
+    {
+      "batch": 1,
+      "expected": 320,
+      "logits": {
+        "elements": 248320,
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "pass": true,
+      "position": 59,
+      "prompt": 2,
+      "row": 0,
+      "state": {
+        "elements": 17070080,
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "step": 2,
+      "token": 320
+    },
+    {
+      "batch": 1,
+      "expected": 59240,
+      "logits": {
+        "elements": 248320,
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "pass": true,
+      "position": 60,
+      "prompt": 2,
+      "row": 0,
+      "state": {
+        "elements": 17080320,
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "step": 3,
+      "token": 59240
+    },
+    {
+      "batch": 2,
+      "expected": 34602,
+      "logits": {
+        "elements": 248320,
+        "max_abs": 8.225440979003906e-6,
+        "nrmse": 7.696430068891444e-7,
+        "pass": true,
+        "unequal_bits": 238621
+      },
+      "pass": true,
+      "position": 57,
+      "prompt": 2,
+      "row": 0,
+      "state": {
+        "elements": 17049600,
+        "max_abs": 0.000019073486328125,
+        "nrmse": 1.894649860587954e-7,
+        "pass": true,
+        "unequal_bits": 11836960
+      },
+      "step": 0,
+      "token": 34602
+    },
+    {
+      "batch": 2,
+      "expected": 3508,
+      "logits": {
+        "elements": 248320,
+        "max_abs": 0.000010013580322265625,
+        "nrmse": 8.526150281746062e-7,
+        "pass": true,
+        "unequal_bits": 239084
+      },
+      "pass": true,
+      "position": 57,
+      "prompt": 2,
+      "row": 1,
+      "state": {
+        "elements": 17049600,
+        "max_abs": 9.5367431640625e-6,
+        "nrmse": 2.0273454465266965e-7,
+        "pass": true,
+        "unequal_bits": 12048495
+      },
+      "step": 0,
+      "token": 3508
+    },
+    {
+      "batch": 2,
+      "expected": 198,
+      "logits": {
+        "elements": 248320,
+        "max_abs": 8.58306884765625e-6,
+        "nrmse": 6.076370949464977e-7,
+        "pass": true,
+        "unequal_bits": 234471
+      },
+      "pass": true,
+      "position": 58,
+      "prompt": 2,
+      "row": 0,
+      "state": {
+        "elements": 17059840,
+        "max_abs": 0.000019073486328125,
+        "nrmse": 2.4989828206929703e-7,
+        "pass": true,
+        "unequal_bits": 14228761
+      },
+      "step": 1,
+      "token": 198
+    },
+    {
+      "batch": 2,
+      "expected": 513,
+      "logits": {
+        "elements": 248320,
+        "max_abs": 7.62939453125e-6,
+        "nrmse": 7.196805876359291e-7,
+        "pass": true,
+        "unequal_bits": 237729
+      },
+      "pass": true,
+      "position": 58,
+      "prompt": 2,
+      "row": 1,
+      "state": {
+        "elements": 17059840,
+        "max_abs": 0.000011444091796875,
+        "nrmse": 2.684962081475706e-7,
+        "pass": true,
+        "unequal_bits": 14240265
+      },
+      "step": 1,
+      "token": 513
+    },
+    {
+      "batch": 2,
+      "expected": 320,
+      "logits": {
+        "elements": 248320,
+        "max_abs": 6.198883056640625e-6,
+        "nrmse": 6.981908678335787e-7,
+        "pass": true,
+        "unequal_bits": 237425
+      },
+      "pass": true,
+      "position": 59,
+      "prompt": 2,
+      "row": 0,
+      "state": {
+        "elements": 17070080,
+        "max_abs": 0.000019073486328125,
+        "nrmse": 3.087449510358883e-7,
+        "pass": true,
+        "unequal_bits": 15084247
+      },
+      "step": 2,
+      "token": 320
+    },
+    {
+      "batch": 2,
+      "expected": 524,
+      "logits": {
+        "elements": 248320,
+        "max_abs": 7.62939453125e-6,
+        "nrmse": 5.674233868488005e-7,
+        "pass": true,
+        "unequal_bits": 235602
+      },
+      "pass": true,
+      "position": 59,
+      "prompt": 2,
+      "row": 1,
+      "state": {
+        "elements": 17070080,
+        "max_abs": 0.000011444091796875,
+        "nrmse": 3.23680487677873e-7,
+        "pass": true,
+        "unequal_bits": 15014173
+      },
+      "step": 2,
+      "token": 524
+    },
+    {
+      "batch": 2,
+      "expected": 59240,
+      "logits": {
+        "elements": 248320,
+        "max_abs": 9.5367431640625e-6,
+        "nrmse": 4.5924868793586843e-7,
+        "pass": true,
+        "unequal_bits": 229890
+      },
+      "pass": true,
+      "position": 60,
+      "prompt": 2,
+      "row": 0,
+      "state": {
+        "elements": 17080320,
+        "max_abs": 0.000011444091796875,
+        "nrmse": 2.879184384651215e-7,
+        "pass": true,
+        "unequal_bits": 15304223
+      },
+      "step": 3,
+      "token": 59240
+    },
+    {
+      "batch": 2,
+      "expected": 5252,
+      "logits": {
+        "elements": 248320,
+        "max_abs": 6.4373016357421875e-6,
+        "nrmse": 5.674157375607019e-7,
+        "pass": true,
+        "unequal_bits": 235906
+      },
+      "pass": true,
+      "position": 60,
+      "prompt": 2,
+      "row": 1,
+      "state": {
+        "elements": 17080320,
+        "max_abs": 0.00001239776611328125,
+        "nrmse": 3.087534628941258e-7,
+        "pass": true,
+        "unequal_bits": 15174863
+      },
+      "step": 3,
+      "token": 5252
+    },
+    {
+      "batch": 3,
+      "expected": 34602,
+      "logits": {
+        "elements": 248320,
+        "max_abs": 8.225440979003906e-6,
+        "nrmse": 7.696430068891444e-7,
+        "pass": true,
+        "unequal_bits": 238621
+      },
+      "pass": true,
+      "position": 57,
+      "prompt": 2,
+      "row": 0,
+      "state": {
+        "elements": 17049600,
+        "max_abs": 0.000019073486328125,
+        "nrmse": 1.894649860587954e-7,
+        "pass": true,
+        "unequal_bits": 11836960
+      },
+      "step": 0,
+      "token": 34602
+    },
+    {
+      "batch": 3,
+      "expected": 3508,
+      "logits": {
+        "elements": 248320,
+        "max_abs": 0.000010013580322265625,
+        "nrmse": 8.526150281746062e-7,
+        "pass": true,
+        "unequal_bits": 239084
+      },
+      "pass": true,
+      "position": 57,
+      "prompt": 2,
+      "row": 1,
+      "state": {
+        "elements": 17049600,
+        "max_abs": 9.5367431640625e-6,
+        "nrmse": 2.0273454465266965e-7,
+        "pass": true,
+        "unequal_bits": 12048495
+      },
+      "step": 0,
+      "token": 3508
+    },
+    {
+      "batch": 3,
+      "expected": 40138,
+      "logits": {
+        "elements": 248320,
+        "max_abs": 6.9141387939453125e-6,
+        "nrmse": 5.966467557482943e-7,
+        "pass": true,
+        "unequal_bits": 234742
+      },
+      "pass": true,
+      "position": 57,
+      "prompt": 2,
+      "row": 2,
+      "state": {
+        "elements": 17049600,
+        "max_abs": 9.5367431640625e-6,
+        "nrmse": 1.8740327243024587e-7,
+        "pass": true,
+        "unequal_bits": 12050628
+      },
+      "step": 0,
+      "token": 40138
+    },
+    {
+      "batch": 3,
+      "expected": 198,
+      "logits": {
+        "elements": 248320,
+        "max_abs": 8.58306884765625e-6,
+        "nrmse": 6.076370949464977e-7,
+        "pass": true,
+        "unequal_bits": 234471
+      },
+      "pass": true,
+      "position": 58,
+      "prompt": 2,
+      "row": 0,
+      "state": {
+        "elements": 17059840,
+        "max_abs": 0.000019073486328125,
+        "nrmse": 2.4989828206929703e-7,
+        "pass": true,
+        "unequal_bits": 14228761
+      },
+      "step": 1,
+      "token": 198
+    },
+    {
+      "batch": 3,
+      "expected": 513,
+      "logits": {
+        "elements": 248320,
+        "max_abs": 7.62939453125e-6,
+        "nrmse": 7.196805876359291e-7,
+        "pass": true,
+        "unequal_bits": 237729
+      },
+      "pass": true,
+      "position": 58,
+      "prompt": 2,
+      "row": 1,
+      "state": {
+        "elements": 17059840,
+        "max_abs": 0.000011444091796875,
+        "nrmse": 2.684962081475706e-7,
+        "pass": true,
+        "unequal_bits": 14240265
+      },
+      "step": 1,
+      "token": 513
+    },
+    {
+      "batch": 3,
+      "expected": 1,
+      "logits": {
+        "elements": 248320,
+        "max_abs": 9.5367431640625e-6,
+        "nrmse": 8.668967573576251e-7,
+        "pass": true,
+        "unequal_bits": 239790
+      },
+      "pass": true,
+      "position": 58,
+      "prompt": 2,
+      "row": 2,
+      "state": {
+        "elements": 17059840,
+        "max_abs": 0.000011444091796875,
+        "nrmse": 2.541075578652379e-7,
+        "pass": true,
+        "unequal_bits": 14373560
+      },
+      "step": 1,
+      "token": 1
+    },
+    {
+      "batch": 3,
+      "expected": 320,
+      "logits": {
+        "elements": 248320,
+        "max_abs": 6.198883056640625e-6,
+        "nrmse": 6.981908678335787e-7,
+        "pass": true,
+        "unequal_bits": 237425
+      },
+      "pass": true,
+      "position": 59,
+      "prompt": 2,
+      "row": 0,
+      "state": {
+        "elements": 17070080,
+        "max_abs": 0.000019073486328125,
+        "nrmse": 3.087449510358883e-7,
+        "pass": true,
+        "unequal_bits": 15084247
+      },
+      "step": 2,
+      "token": 320
+    },
+    {
+      "batch": 3,
+      "expected": 524,
+      "logits": {
+        "elements": 248320,
+        "max_abs": 7.62939453125e-6,
+        "nrmse": 5.674233868488005e-7,
+        "pass": true,
+        "unequal_bits": 235602
+      },
+      "pass": true,
+      "position": 59,
+      "prompt": 2,
+      "row": 1,
+      "state": {
+        "elements": 17070080,
+        "max_abs": 0.000011444091796875,
+        "nrmse": 3.23680487677873e-7,
+        "pass": true,
+        "unequal_bits": 15014173
+      },
+      "step": 2,
+      "token": 524
+    },
+    {
+      "batch": 3,
+      "expected": 32671,
+      "logits": {
+        "elements": 248320,
+        "max_abs": 8.58306884765625e-6,
+        "nrmse": 7.426156970451408e-7,
+        "pass": true,
+        "unequal_bits": 238397
+      },
+      "pass": true,
+      "position": 59,
+      "prompt": 2,
+      "row": 2,
+      "state": {
+        "elements": 17070080,
+        "max_abs": 0.000011444091796875,
+        "nrmse": 3.2199103564642646e-7,
+        "pass": true,
+        "unequal_bits": 15074398
+      },
+      "step": 2,
+      "token": 32671
+    },
+    {
+      "batch": 3,
+      "expected": 59240,
+      "logits": {
+        "elements": 248320,
+        "max_abs": 9.5367431640625e-6,
+        "nrmse": 4.5924868793586843e-7,
+        "pass": true,
+        "unequal_bits": 229890
+      },
+      "pass": true,
+      "position": 60,
+      "prompt": 2,
+      "row": 0,
+      "state": {
+        "elements": 17080320,
+        "max_abs": 0.000011444091796875,
+        "nrmse": 2.879184384651215e-7,
+        "pass": true,
+        "unequal_bits": 15304223
+      },
+      "step": 3,
+      "token": 59240
+    },
+    {
+      "batch": 3,
+      "expected": 5252,
+      "logits": {
+        "elements": 248320,
+        "max_abs": 6.4373016357421875e-6,
+        "nrmse": 5.674157375607019e-7,
+        "pass": true,
+        "unequal_bits": 235906
+      },
+      "pass": true,
+      "position": 60,
+      "prompt": 2,
+      "row": 1,
+      "state": {
+        "elements": 17080320,
+        "max_abs": 0.00001239776611328125,
+        "nrmse": 3.087534628941258e-7,
+        "pass": true,
+        "unequal_bits": 15174863
+      },
+      "step": 3,
+      "token": 5252
+    },
+    {
+      "batch": 3,
+      "expected": 1970,
+      "logits": {
+        "elements": 248320,
+        "max_abs": 0.00001239776611328125,
+        "nrmse": 8.46970324234982e-7,
+        "pass": true,
+        "unequal_bits": 239320
+      },
+      "pass": true,
+      "position": 60,
+      "prompt": 2,
+      "row": 2,
+      "state": {
+        "elements": 17080320,
+        "max_abs": 0.000011444091796875,
+        "nrmse": 3.100365925210308e-7,
+        "pass": true,
+        "unequal_bits": 15266328
+      },
+      "step": 3,
+      "token": 1970
+    },
+    {
+      "batch": 1,
+      "expected": 6007,
+      "logits": {
+        "elements": 248320,
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "pass": true,
+      "position": 65,
+      "prompt": 3,
+      "row": 0,
+      "state": {
+        "elements": 17131520,
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "step": 0,
+      "token": 6007
+    },
+    {
+      "batch": 1,
+      "expected": 18458,
+      "logits": {
+        "elements": 248320,
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "pass": true,
+      "position": 66,
+      "prompt": 3,
+      "row": 0,
+      "state": {
+        "elements": 17141760,
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "step": 1,
+      "token": 18458
+    },
+    {
+      "batch": 1,
+      "expected": 9584,
+      "logits": {
+        "elements": 248320,
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "pass": true,
+      "position": 67,
+      "prompt": 3,
+      "row": 0,
+      "state": {
+        "elements": 17152000,
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "step": 2,
+      "token": 9584
+    },
+    {
+      "batch": 1,
+      "expected": 369,
+      "logits": {
+        "elements": 248320,
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "pass": true,
+      "position": 68,
+      "prompt": 3,
+      "row": 0,
+      "state": {
+        "elements": 17162240,
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "step": 3,
+      "token": 369
+    },
+    {
+      "batch": 2,
+      "expected": 6007,
+      "logits": {
+        "elements": 248320,
+        "max_abs": 5.7220458984375e-6,
+        "nrmse": 4.995166241552063e-7,
+        "pass": true,
+        "unequal_bits": 234111
+      },
+      "pass": true,
+      "position": 65,
+      "prompt": 3,
+      "row": 0,
+      "state": {
+        "elements": 17131520,
+        "max_abs": 6.67572021484375e-6,
+        "nrmse": 1.5161974546236946e-7,
+        "pass": true,
+        "unequal_bits": 11396799
+      },
+      "step": 0,
+      "token": 6007
+    },
+    {
+      "batch": 2,
+      "expected": 1056,
+      "logits": {
+        "elements": 248320,
+        "max_abs": 6.67572021484375e-6,
+        "nrmse": 5.966654741696777e-7,
+        "pass": true,
+        "unequal_bits": 236117
+      },
+      "pass": true,
+      "position": 65,
+      "prompt": 3,
+      "row": 1,
+      "state": {
+        "elements": 17131520,
+        "max_abs": 8.58306884765625e-6,
+        "nrmse": 1.772760972762223e-7,
+        "pass": true,
+        "unequal_bits": 11749307
+      },
+      "step": 0,
+      "token": 1056
+    },
+    {
+      "batch": 2,
+      "expected": 18458,
+      "logits": {
+        "elements": 248320,
+        "max_abs": 6.198883056640625e-6,
+        "nrmse": 4.962333297454956e-7,
+        "pass": true,
+        "unequal_bits": 233428
+      },
+      "pass": true,
+      "position": 66,
+      "prompt": 3,
+      "row": 0,
+      "state": {
+        "elements": 17141760,
+        "max_abs": 8.58306884765625e-6,
+        "nrmse": 2.042477692600316e-7,
+        "pass": true,
+        "unequal_bits": 13929258
+      },
+      "step": 1,
+      "token": 18458
+    },
+    {
+      "batch": 2,
+      "expected": 220,
+      "logits": {
+        "elements": 248320,
+        "max_abs": 6.67572021484375e-6,
+        "nrmse": 5.506225052184771e-7,
+        "pass": true,
+        "unequal_bits": 235442
+      },
+      "pass": true,
+      "position": 66,
+      "prompt": 3,
+      "row": 1,
+      "state": {
+        "elements": 17141760,
+        "max_abs": 9.775161743164062e-6,
+        "nrmse": 2.6161219546395837e-7,
+        "pass": true,
+        "unequal_bits": 13919374
+      },
+      "step": 1,
+      "token": 220
+    },
+    {
+      "batch": 2,
+      "expected": 9584,
+      "logits": {
+        "elements": 248320,
+        "max_abs": 7.152557373046875e-6,
+        "nrmse": 5.02312042169789e-7,
+        "pass": true,
+        "unequal_bits": 233140
+      },
+      "pass": true,
+      "position": 67,
+      "prompt": 3,
+      "row": 0,
+      "state": {
+        "elements": 17152000,
+        "max_abs": 8.58306884765625e-6,
+        "nrmse": 2.532309754568536e-7,
+        "pass": true,
+        "unequal_bits": 14698519
+      },
+      "step": 2,
+      "token": 9584
+    },
+    {
+      "batch": 2,
+      "expected": 16,
+      "logits": {
+        "elements": 248320,
+        "max_abs": 7.62939453125e-6,
+        "nrmse": 8.304043136091697e-7,
+        "pass": true,
+        "unequal_bits": 238620
+      },
+      "pass": true,
+      "position": 67,
+      "prompt": 3,
+      "row": 1,
+      "state": {
+        "elements": 17152000,
+        "max_abs": 0.000011444091796875,
+        "nrmse": 3.27723662052087e-7,
+        "pass": true,
+        "unequal_bits": 14606022
+      },
+      "step": 2,
+      "token": 16
+    },
+    {
+      "batch": 2,
+      "expected": 369,
+      "logits": {
+        "elements": 248320,
+        "max_abs": 6.973743438720703e-6,
+        "nrmse": 5.131272400568191e-7,
+        "pass": true,
+        "unequal_bits": 232952
+      },
+      "pass": true,
+      "position": 68,
+      "prompt": 3,
+      "row": 0,
+      "state": {
+        "elements": 17162240,
+        "max_abs": 8.58306884765625e-6,
+        "nrmse": 2.458085879662152e-7,
+        "pass": true,
+        "unequal_bits": 14950709
+      },
+      "step": 3,
+      "token": 369
+    },
+    {
+      "batch": 2,
+      "expected": 15,
+      "logits": {
+        "elements": 248320,
+        "max_abs": 8.106231689453125e-6,
+        "nrmse": 5.79437709462259e-7,
+        "pass": true,
+        "unequal_bits": 234344
+      },
+      "pass": true,
+      "position": 68,
+      "prompt": 3,
+      "row": 1,
+      "state": {
+        "elements": 17162240,
+        "max_abs": 0.000011444091796875,
+        "nrmse": 3.541091654945675e-7,
+        "pass": true,
+        "unequal_bits": 14851735
+      },
+      "step": 3,
+      "token": 15
+    },
+    {
+      "batch": 3,
+      "expected": 6007,
+      "logits": {
+        "elements": 248320,
+        "max_abs": 5.7220458984375e-6,
+        "nrmse": 4.995166241552063e-7,
+        "pass": true,
+        "unequal_bits": 234111
+      },
+      "pass": true,
+      "position": 65,
+      "prompt": 3,
+      "row": 0,
+      "state": {
+        "elements": 17131520,
+        "max_abs": 6.67572021484375e-6,
+        "nrmse": 1.5161974546236946e-7,
+        "pass": true,
+        "unequal_bits": 11396799
+      },
+      "step": 0,
+      "token": 6007
+    },
+    {
+      "batch": 3,
+      "expected": 1056,
+      "logits": {
+        "elements": 248320,
+        "max_abs": 6.67572021484375e-6,
+        "nrmse": 5.966654741696777e-7,
+        "pass": true,
+        "unequal_bits": 236117
+      },
+      "pass": true,
+      "position": 65,
+      "prompt": 3,
+      "row": 1,
+      "state": {
+        "elements": 17131520,
+        "max_abs": 8.58306884765625e-6,
+        "nrmse": 1.772760972762223e-7,
+        "pass": true,
+        "unequal_bits": 11749307
+      },
+      "step": 0,
+      "token": 1056
+    },
+    {
+      "batch": 3,
+      "expected": 561,
+      "logits": {
+        "elements": 248320,
+        "max_abs": 5.7220458984375e-6,
+        "nrmse": 4.5932671793191753e-7,
+        "pass": true,
+        "unequal_bits": 231826
+      },
+      "pass": true,
+      "position": 65,
+      "prompt": 3,
+      "row": 2,
+      "state": {
+        "elements": 17131520,
+        "max_abs": 7.3909759521484375e-6,
+        "nrmse": 1.4961529829892653e-7,
+        "pass": true,
+        "unequal_bits": 11451820
+      },
+      "step": 0,
+      "token": 561
+    },
+    {
+      "batch": 3,
+      "expected": 18458,
+      "logits": {
+        "elements": 248320,
+        "max_abs": 6.198883056640625e-6,
+        "nrmse": 4.962333297454956e-7,
+        "pass": true,
+        "unequal_bits": 233428
+      },
+      "pass": true,
+      "position": 66,
+      "prompt": 3,
+      "row": 0,
+      "state": {
+        "elements": 17141760,
+        "max_abs": 8.58306884765625e-6,
+        "nrmse": 2.042477692600316e-7,
+        "pass": true,
+        "unequal_bits": 13929258
+      },
+      "step": 1,
+      "token": 18458
+    },
+    {
+      "batch": 3,
+      "expected": 220,
+      "logits": {
+        "elements": 248320,
+        "max_abs": 6.67572021484375e-6,
+        "nrmse": 5.506225052184771e-7,
+        "pass": true,
+        "unequal_bits": 235442
+      },
+      "pass": true,
+      "position": 66,
+      "prompt": 3,
+      "row": 1,
+      "state": {
+        "elements": 17141760,
+        "max_abs": 9.775161743164062e-6,
+        "nrmse": 2.6161219546395837e-7,
+        "pass": true,
+        "unequal_bits": 13919374
+      },
+      "step": 1,
+      "token": 220
+    },
+    {
+      "batch": 3,
+      "expected": 62180,
+      "logits": {
+        "elements": 248320,
+        "max_abs": 6.079673767089844e-6,
+        "nrmse": 5.185101735270953e-7,
+        "pass": true,
+        "unequal_bits": 234090
+      },
+      "pass": true,
+      "position": 66,
+      "prompt": 3,
+      "row": 2,
+      "state": {
+        "elements": 17141760,
+        "max_abs": 7.3909759521484375e-6,
+        "nrmse": 2.040807333899186e-7,
+        "pass": true,
+        "unequal_bits": 13911500
+      },
+      "step": 1,
+      "token": 62180
+    },
+    {
+      "batch": 3,
+      "expected": 9584,
+      "logits": {
+        "elements": 248320,
+        "max_abs": 7.152557373046875e-6,
+        "nrmse": 5.02312042169789e-7,
+        "pass": true,
+        "unequal_bits": 233140
+      },
+      "pass": true,
+      "position": 67,
+      "prompt": 3,
+      "row": 0,
+      "state": {
+        "elements": 17152000,
+        "max_abs": 8.58306884765625e-6,
+        "nrmse": 2.532309754568536e-7,
+        "pass": true,
+        "unequal_bits": 14698519
+      },
+      "step": 2,
+      "token": 9584
+    },
+    {
+      "batch": 3,
+      "expected": 16,
+      "logits": {
+        "elements": 248320,
+        "max_abs": 7.62939453125e-6,
+        "nrmse": 8.304043136091697e-7,
+        "pass": true,
+        "unequal_bits": 238620
+      },
+      "pass": true,
+      "position": 67,
+      "prompt": 3,
+      "row": 1,
+      "state": {
+        "elements": 17152000,
+        "max_abs": 0.000011444091796875,
+        "nrmse": 3.27723662052087e-7,
+        "pass": true,
+        "unequal_bits": 14606022
+      },
+      "step": 2,
+      "token": 16
+    },
+    {
+      "batch": 3,
+      "expected": 29505,
+      "logits": {
+        "elements": 248320,
+        "max_abs": 7.152557373046875e-6,
+        "nrmse": 4.320275807611783e-7,
+        "pass": true,
+        "unequal_bits": 229355
+      },
+      "pass": true,
+      "position": 67,
+      "prompt": 3,
+      "row": 2,
+      "state": {
+        "elements": 17152000,
+        "max_abs": 9.5367431640625e-6,
+        "nrmse": 2.628084301172389e-7,
+        "pass": true,
+        "unequal_bits": 14779951
+      },
+      "step": 2,
+      "token": 29505
+    },
+    {
+      "batch": 3,
+      "expected": 369,
+      "logits": {
+        "elements": 248320,
+        "max_abs": 6.973743438720703e-6,
+        "nrmse": 5.131272400568191e-7,
+        "pass": true,
+        "unequal_bits": 232952
+      },
+      "pass": true,
+      "position": 68,
+      "prompt": 3,
+      "row": 0,
+      "state": {
+        "elements": 17162240,
+        "max_abs": 8.58306884765625e-6,
+        "nrmse": 2.458085879662152e-7,
+        "pass": true,
+        "unequal_bits": 14950709
+      },
+      "step": 3,
+      "token": 369
+    },
+    {
+      "batch": 3,
+      "expected": 15,
+      "logits": {
+        "elements": 248320,
+        "max_abs": 8.106231689453125e-6,
+        "nrmse": 5.79437709462259e-7,
+        "pass": true,
+        "unequal_bits": 234344
+      },
+      "pass": true,
+      "position": 68,
+      "prompt": 3,
+      "row": 1,
+      "state": {
+        "elements": 17162240,
+        "max_abs": 0.000011444091796875,
+        "nrmse": 3.541091654945675e-7,
+        "pass": true,
+        "unequal_bits": 14851735
+      },
+      "step": 3,
+      "token": 15
+    },
+    {
+      "batch": 3,
+      "expected": 271,
+      "logits": {
+        "elements": 248320,
+        "max_abs": 7.62939453125e-6,
+        "nrmse": 4.952269194264966e-7,
+        "pass": true,
+        "unequal_bits": 231934
+      },
+      "pass": true,
+      "position": 68,
+      "prompt": 3,
+      "row": 2,
+      "state": {
+        "elements": 17162240,
+        "max_abs": 9.5367431640625e-6,
+        "nrmse": 2.595948244457297e-7,
+        "pass": true,
+        "unequal_bits": 15043895
+      },
+      "step": 3,
+      "token": 271
+    }
+  ],
+  "pass": true,
+  "scope": "native equal-position batch graph, controlled branches then greedy; no HTTP/throughput claim"
+}

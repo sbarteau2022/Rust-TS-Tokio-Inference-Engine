@@ -96,3 +96,7 @@ hyper = { version = "=1.12.0", default-features = false, features = ["client", "
 [[example]]
 name = "native_seed_qualification"
 required-features = ["native-mlx"]
+
+[[example]]
+name = "native_physical_batch"
+required-features = ["native-mlx"]

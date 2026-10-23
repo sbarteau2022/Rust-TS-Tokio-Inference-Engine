@@ -15,13 +15,13 @@ related_files:
     lines: "1-1148"
     role: "config"
   - path: "Cargo.toml"
-    lines: "1-98"
+    lines: "1-102"
     role: "config"
   - path: "backend/rapid_worker.py"
     lines: "1-165"
     role: "primary"
   - path: "build.rs"
-    lines: "1-63"
+    lines: "1-64"
     role: "primary"
   - path: "examples/native_automaton_smoke.rs"
     lines: "1-394"
@@ -55,6 +55,9 @@ related_files:
     role: "primary"
   - path: "examples/native_mtp_smoke.rs"
     lines: "1-186"
+    role: "primary"
+  - path: "examples/native_physical_batch.rs"
+    lines: "1-213"
     role: "primary"
   - path: "examples/native_seed_qualification.rs"
     lines: "1-271"
@@ -144,7 +147,7 @@ related_files:
     lines: "1-21"
     role: "test"
   - path: "judges/device_abi.cpp"
-    lines: "1-49"
+    lines: "1-64"
     role: "test"
   - path: "judges/device_smoke_report.py"
     lines: "1-38"
@@ -219,7 +222,7 @@ related_files:
     lines: "1-178"
     role: "primary"
   - path: "native/mlx_bridge.h"
-    lines: "1-112"
+    lines: "1-113"
     role: "primary"
   - path: "native/operator_probe.inc"
     lines: "1-28"
@@ -233,8 +236,11 @@ related_files:
   - path: "native/projection_reference.h"
     lines: "1-30"
     role: "primary"
+  - path: "native/qwen_batch.inc"
+    lines: "1-40"
+    role: "primary"
   - path: "native/qwen_device.inc"
-    lines: "1-59"
+    lines: "1-61"
     role: "primary"
   - path: "native/qwen_model.inc"
     lines: "1-173"
@@ -342,7 +348,7 @@ related_files:
     lines: "1-193"
     role: "primary"
   - path: "src/serving/native_device.rs"
-    lines: "1-809"
+    lines: "1-1001"
     role: "primary"
   - path: "src/serving/native_device_scheduler.rs"
     lines: "1-131"
@@ -905,3 +911,9 @@ Next design the typed per-row physical-batching contract against the scalar exec
 The target scheduler now uses PreparedBatch → CompletedBatch → commit, with the exact state map exclusively borrowed across execution. Parent leases, all-row validation, provisional rollback and compatible geometry cohorts are explicit. Execution remains scalar and MTP still uses its existing transaction path. No physical-batching flag or performance claim follows from this foundation.
 
 Next preregister the batch-shaped native ABI/graph: define state gather/scatter for all 80 arrays, per-row offsets/masks, mixed-length policy, MoE routing geometry, immutable parent/child leases and atomic publication after complete evaluation. Start with equal-position one-token target decode behind an explicit opt-in; keep heterogeneous rows on scalar fallback until masks/state layout qualify. Compare tokens and unified state against scalar execution under row permutations, cancellation, failure, resident pressure and backpressure. Do not fuse MTP branches or SeedPending rows until their parent/rollback semantics are represented explicitly. Only then measure actual physical rows, per-lane fairness, HTTP TTFT/ITL and aggregate throughput at fixed windows and sustained arrivals. Paging/compressed KV, the custom Dspark proposer and broad held-out qualification remain subsequent gates.
+
+## After native physical decode prototype
+
+An explicit completion-owned Rust/native batch graph now accepts equal-position target decode rows. Qualification compares scalar tokens, logits and all unified state for sizes 1/2/3; the server still selects scalar execution. Next wire successful compatible target cohorts through PreparedBatch with a required opt-in physical mode, independent native packed-call/row telemetry and conservative backing-aware admission. All ineligible geometry, snapshot mode, MTP branches and SeedPending rows must stay on scalar execution or be refused explicitly.
+
+Before promotion, test scheduler atomic commit under mixed eligible/ineligible cohorts, cancellation, output pressure and injected later-row native failure, with zero residual leases. Then run alternating scalar/physical HTTP 1k/1500/2k windows at one/three lanes and sustained arrivals, reporting TTFT, first-to-second/p95 gaps, total/decode throughput, packing ratio, rejection, fairness and physical/logical memory separately. No speed claim follows from native numerical parity. Per-layer synchronization removal is a separate ablation; native paging/compressed KV, custom Dspark and broad held-out qualification remain open.

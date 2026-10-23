@@ -30,6 +30,7 @@ fn main() {
         println!("cargo:rerun-if-changed=native/mlx_bridge.h");
         println!("cargo:rerun-if-changed=native/qwen_model.inc");
         println!("cargo:rerun-if-changed=native/qwen_device.inc");
+        println!("cargo:rerun-if-changed=native/qwen_batch.inc");
         println!("cargo:rerun-if-changed=native/state_table.h");
         println!("cargo:rerun-if-changed=native/qwen_mtp.inc");
         for item in [

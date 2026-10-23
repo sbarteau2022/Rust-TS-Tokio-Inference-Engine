@@ -1,0 +1,1 @@
+PASS native physical batch graph: scalar token/state parity, row permutations, sibling leases, canceled result drain

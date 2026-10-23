@@ -15,13 +15,13 @@ related_files:
     lines: "1-1148"
     role: "config"
   - path: "Cargo.toml"
-    lines: "1-98"
+    lines: "1-102"
     role: "config"
   - path: "backend/rapid_worker.py"
     lines: "1-165"
     role: "primary"
   - path: "build.rs"
-    lines: "1-63"
+    lines: "1-64"
     role: "primary"
   - path: "examples/native_automaton_smoke.rs"
     lines: "1-394"
@@ -55,6 +55,9 @@ related_files:
     role: "primary"
   - path: "examples/native_mtp_smoke.rs"
     lines: "1-186"
+    role: "primary"
+  - path: "examples/native_physical_batch.rs"
+    lines: "1-213"
     role: "primary"
   - path: "examples/native_seed_qualification.rs"
     lines: "1-271"
@@ -144,7 +147,7 @@ related_files:
     lines: "1-21"
     role: "test"
   - path: "judges/device_abi.cpp"
-    lines: "1-49"
+    lines: "1-64"
     role: "test"
   - path: "judges/device_smoke_report.py"
     lines: "1-38"
@@ -219,7 +222,7 @@ related_files:
     lines: "1-178"
     role: "primary"
   - path: "native/mlx_bridge.h"
-    lines: "1-112"
+    lines: "1-113"
     role: "primary"
   - path: "native/operator_probe.inc"
     lines: "1-28"
@@ -233,8 +236,11 @@ related_files:
   - path: "native/projection_reference.h"
     lines: "1-30"
     role: "primary"
+  - path: "native/qwen_batch.inc"
+    lines: "1-40"
+    role: "primary"
   - path: "native/qwen_device.inc"
-    lines: "1-59"
+    lines: "1-61"
     role: "primary"
   - path: "native/qwen_model.inc"
     lines: "1-173"
@@ -342,7 +348,7 @@ related_files:
     lines: "1-193"
     role: "primary"
   - path: "src/serving/native_device.rs"
-    lines: "1-809"
+    lines: "1-1001"
     role: "primary"
   - path: "src/serving/native_device_scheduler.rs"
     lines: "1-131"
@@ -872,3 +878,11 @@ The measured tradeoff is adverse for promotion: roughly 7% lower Rust publicatio
 The first batching stage refactors the target scalar adapter; it does not alter native kernels or claim physical batching. PreparedBatch owns parent clones and exclusively borrows the exact destination map. CompletedBatch cannot be redirected to another map; the borrow prevents concurrent mutation until failure, drop or commit. Every input is validated before an execute callback. All result positions, vocabulary lengths and finite logits must pass before a commit exists. Full-token greedy selection reuses its existing finite check rather than adding a second scan. Partial-prefill logits are checked for finite values without independent CPU model recomputation.
 
 Synthetic gates cover duplicate/invalid later rows, resident-row overflow, geometry cohorts with retained input order, failed second-row work, wrong-position/nonfinite/truncated results, explicit rollback by dropping completed work, sequence permutations and exact lease release at commit. These prove the generic transaction discipline, not native bitwise tensor batching. The existing Engine cancellation contract still owns in-flight native completion; dropping an arbitrary public transaction future is not itself a GPU cancellation mechanism. Native target HTTP smoke is the integration gate for this adapter change; physical graph parity, native multi-row failure injection and MTP transaction integration remain future gates.
+
+## Native equal-position graph prototype review
+
+The Rust batch descriptor rejects empty/oversized batches, length mismatch, foreign wrapper owners, empty/exhausted contexts, unequal positions and out-of-vocabulary tokens before queue submission. Native descriptors independently validate state-table generation/ownership/inventory before reserving children. All child reservations roll back on a failed graph or publication; output handles are assigned only after every payload is published. Rust acquires retirement ownership for all returned children before post-completion manifest/receipt validation. Pressure rejection preserves admission, computation failures latch it closed, and a dropped result receiver retires all successful children after completion.
+
+The Qwen attention/recurrent methods now obtain B from the activation shape; B=1 scalar behavior remains independently controlled. The batch graph uses batch-shaped projections/MoE and preserves per-layer synchronization for this trial. Children use immutable row views, each charged for the full packed backing. This intentionally overcounts logical storage; it does not claim a physical process-memory cap or detached row allocations. The real gate exercises actual packed children through multiple continuations and reversed row order. ABI malformed/foreign descriptors use sentinel weights under ASan/UBSan to prove rejection without weight access or output mutation.
+
+Native numerical qualification requires exact selected-token parity and independently measured full-logit/unified-state errors within the preregistered FP32 thresholds. Numerical equality is not claimed bitwise for B>1. The native prototype is not automatically called by the scheduler or HTTP path; broader model quality, actual service batching telemetry and throughput remain unqualified. A separately rerun native MTP transaction smoke protects shared scalar graph behavior. No production sampling policy or integer Metal arithmetic changes are included.

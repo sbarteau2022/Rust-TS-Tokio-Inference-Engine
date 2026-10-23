@@ -15,13 +15,13 @@ related_files:
     lines: "1-1148"
     role: "config"
   - path: "Cargo.toml"
-    lines: "1-98"
+    lines: "1-102"
     role: "config"
   - path: "backend/rapid_worker.py"
     lines: "1-165"
     role: "primary"
   - path: "build.rs"
-    lines: "1-63"
+    lines: "1-64"
     role: "primary"
   - path: "examples/native_automaton_smoke.rs"
     lines: "1-394"
@@ -55,6 +55,9 @@ related_files:
     role: "primary"
   - path: "examples/native_mtp_smoke.rs"
     lines: "1-186"
+    role: "primary"
+  - path: "examples/native_physical_batch.rs"
+    lines: "1-213"
     role: "primary"
   - path: "examples/native_seed_qualification.rs"
     lines: "1-271"
@@ -144,7 +147,7 @@ related_files:
     lines: "1-21"
     role: "test"
   - path: "judges/device_abi.cpp"
-    lines: "1-49"
+    lines: "1-64"
     role: "test"
   - path: "judges/device_smoke_report.py"
     lines: "1-38"
@@ -219,7 +222,7 @@ related_files:
     lines: "1-178"
     role: "primary"
   - path: "native/mlx_bridge.h"
-    lines: "1-112"
+    lines: "1-113"
     role: "primary"
   - path: "native/operator_probe.inc"
     lines: "1-28"
@@ -233,8 +236,11 @@ related_files:
   - path: "native/projection_reference.h"
     lines: "1-30"
     role: "primary"
+  - path: "native/qwen_batch.inc"
+    lines: "1-40"
+    role: "primary"
   - path: "native/qwen_device.inc"
-    lines: "1-59"
+    lines: "1-61"
     role: "primary"
   - path: "native/qwen_model.inc"
     lines: "1-173"
@@ -342,7 +348,7 @@ related_files:
     lines: "1-193"
     role: "primary"
   - path: "src/serving/native_device.rs"
-    lines: "1-809"
+    lines: "1-1001"
     role: "primary"
   - path: "src/serving/native_device_scheduler.rs"
     lines: "1-131"
@@ -858,3 +864,11 @@ The actual architecture has 30 recurrent layers and 10 full-attention layers, tw
 Memory gate: slicing one row from a packed child may retain the complete packed allocation. A view's logical row size cannot be used as proof of owned physical bytes. Choose and qualify either explicitly detached row storage or a completion-safe shared backing lease with a charge retained until the final row releases it. Include gathered inputs, packed intermediates, output splitting and cancellation-retained backing in peak/budget telemetry. Do not assume contiguous() guarantees detachment. Native reserve rollback and ownership tests must cover one surviving row after siblings cancel.
 
 A separate source-audit finding is the current per-layer eval+synchronize in qwen_forward_core. Deferring those boundaries could reduce host waits but grows the lazy graph and changes memory liveness. Treat that as a separate ablation with native state/finite-output/peak-memory/cancellation gates; do not combine it with the first batching trial and attribute a combined speed change solely to tensor packing. No gain is established by this audit.
+
+### Native batch prototype implementation gate
+
+Implement an explicit Rust decode_batch API and completion-owned worker command first; keep HTTP/scheduler selection scalar until native qualification passes. Accept 1..3 nonempty device parents with equal P in 1..511, one vocabulary-valid token per parent, matching executor ownership, and no diagnostic/hidden/MTP request. Execute one batch-shaped Qwen graph, preserving the existing per-layer completion boundaries. Do not change scalar default or introduce an unqualified server flag.
+
+Child row views deliberately charge each surviving handle for the *entire* B-row packed state backing: bytes = B × scalar_state_bytes(P+1), with B such child charges reserved upfront. This conservatively overcounts by up to B and keeps the full backing charged after sibling release without relying on contiguous() detachment. The native resident limit remains a logical-state limit, not a process/weights/workspace physical-memory ceiling; report MLX active/peak separately. Validate every parent and token before reservation, roll back all reservations on any failure, and assign output handles only after all payloads publish. Rust installs retirement ownership for all returned handles before fallible receipt checks; dropped result receivers must retire all children after completion. Invalid descriptors/budget pressure must not poison admission; native computation failures do.
+
+Native qualification uses the designated Combined checkpoint and unchanged prompts. Compare B=1/2/3 children against independent scalar calls from the identical parents, then repeated greedy advancement, reverse row order, unequal-position/foreign-owner/invalid-token rejection, bounded resident pressure and sibling release. Require exact selected-token parity at every comparison. Report bitwise equality and per-row full-logit/full-unified-state max absolute and NRMSE errors; numerical gate is NRMSE ≤1e-5 and max absolute ≤1e-3 for both logits and state (FP32 model lane, not the integer-only Metal contract). Any token or numeric failure blocks scheduler promotion. Drain all state, and retain failed observations. This native gate does not establish HTTP batching, MTP integration or throughput gains; benchmark only after it passes.

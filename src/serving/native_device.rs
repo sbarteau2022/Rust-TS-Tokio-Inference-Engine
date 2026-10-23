@@ -1,5 +1,6 @@
 //! Opt-in, worker-confined evaluated MLX state; snapshot serving remains the default.
 use super::*;
+use std::future::Future;
 #[repr(C)]
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
 struct StateId {
@@ -64,6 +65,12 @@ pub struct DeviceStats {
 mod mtp;
 pub use mtp::{MtpState, MtpStep};
 enum Work {
+    DecodeBatch {
+        parents: Vec<DeviceState>,
+        tokens: Vec<u32>,
+        reply: oneshot::Sender<Result<Vec<DeviceStep>>>,
+        _permit: OwnedSemaphorePermit,
+    },
     Mtp(mtp::MtpWork),
     MtpSnapshot(MtpState, oneshot::Sender<Result<Vec<f32>>>),
     Reference(
@@ -193,6 +200,15 @@ impl QwenDeviceExecutor {
                             work = rx.recv() => {
                                 let Some(work)=work else { break; };
                                 match work {
+                                    Work::DecodeBatch { parents,tokens,reply,_permit } => {
+                                        let usage=session.stats()?;
+                                        let b=parents.len() as u64;
+                                        let charge=b*b*architecture.state_len(parents[0].position()+1) as u64*4;
+                                        let result=if faulted {Err(anyhow::anyhow!("device admission closed"))}
+                                        else if usage.residents+b>slots as u64 || charge>limit.saturating_sub(usage.logical_bytes) {Err(anyhow::anyhow!("batch resident budget exhausted"))}
+                                        else {let result=batch_forward(&session,&manifest,architecture,owner,&worker_releases,&parents,&tokens);if result.is_err(){faulted=true;worker_closed.store(true,Ordering::Release);}result};
+                                        drop(_permit);let _=reply.send(result);
+                                    }
                                     Work::MtpSnapshot(state,reply)=>{let _=reply.send(mtp::snapshot(&session,&state));}
                                     Work::Mtp(work)=>{
                                         let usage=session.stats()?;
@@ -296,6 +312,43 @@ impl QwenDeviceExecutor {
     }
     pub async fn execute(&self, state: &DeviceState, ir: ModelStepIr) -> Result<DeviceStep> {
         self.execute_mode(state, ir, false, false, None, None).await
+    }
+    /// Explicit prototype: one batch-shaped graph, equal-position target decode only.
+    /// Each child conservatively charges the entire packed backing until its release.
+    pub fn submit_decode_batch(
+        &self,
+        parents: &[DeviceState],
+        tokens: Vec<u32>,
+    ) -> Result<impl Future<Output = Result<Vec<DeviceStep>>> + Send + 'static> {
+        ensure!(
+            !self.closed.load(Ordering::Acquire),
+            "device admission closed"
+        );
+        validate_batch(self.owner, parents, &tokens, self.architecture.vocab as u32)?;
+        let permit = self
+            .permit
+            .clone()
+            .try_acquire_owned()
+            .context("device in-flight limit reached")?;
+        let (reply, received) = oneshot::channel();
+        self.tx
+            .as_ref()
+            .context("device stopped")?
+            .try_send(Work::DecodeBatch {
+                parents: parents.to_vec(),
+                tokens,
+                reply,
+                _permit: permit,
+            })
+            .map_err(|_| anyhow::anyhow!("device work queue full/closed"))?;
+        Ok(async move { received.await.context("device worker stopped")? })
+    }
+    pub async fn decode_batch(
+        &self,
+        parents: &[DeviceState],
+        tokens: Vec<u32>,
+    ) -> Result<Vec<DeviceStep>> {
+        self.submit_decode_batch(parents, tokens)?.await
     }
     /// Experimental verifier ABI; no candidate is committed by this call.
     pub async fn verify_block(&self, state: &DeviceState, tokens: Vec<u32>) -> Result<DeviceBlock> {
@@ -601,7 +654,146 @@ fn device_forward(
         trace,
     })
 }
+fn validate_batch(
+    owner: u64,
+    parents: &[DeviceState],
+    tokens: &[u32],
+    vocabulary: u32,
+) -> Result<()> {
+    ensure!(
+        !parents.is_empty() && parents.len() <= 3 && parents.len() == tokens.len(),
+        "batch row geometry"
+    );
+    let position = parents[0].position();
+    ensure!((1..512).contains(&position), "batch decode position");
+    ensure!(
+        parents
+            .iter()
+            .zip(tokens)
+            .all(|(p, t)| p.owner == owner && p.position() == position && *t < vocabulary),
+        "batch parent owner/token geometry"
+    );
+    Ok(())
+}
+
+#[cfg(test)]
+mod batch_tests {
+    use super::*;
+    fn parent(owner: u64, position: u64) -> DeviceState {
+        let (releases, _) = mpsc::unbounded_channel();
+        DeviceState {
+            owner,
+            hidden_rows: 0,
+            token: Some(Arc::new(Lifetime {
+                id: StateId {
+                    owner,
+                    position,
+                    slot: 0,
+                    generation: 1,
+                    bytes: 4,
+                },
+                releases,
+            })),
+        }
+    }
+    #[test]
+    fn batch_descriptor_rejects_foreign_owner_geometry_and_vocabulary_before_submission() {
+        assert!(validate_batch(1, &[parent(1, 8), parent(1, 8)], &[1, 2], 16).is_ok());
+        for (parents, tokens) in [
+            (vec![], vec![]),
+            (vec![parent(1, 8)], vec![]),
+            (vec![parent(2, 8)], vec![1]),
+            (vec![parent(1, 0)], vec![1]),
+            (vec![parent(1, 512)], vec![1]),
+            (vec![parent(1, 8)], vec![16]),
+            (vec![parent(1, 8), parent(1, 9)], vec![1, 2]),
+            (vec![parent(1, 8); 4], vec![1; 4]),
+        ] {
+            assert!(validate_batch(1, &parents, &tokens, 16).is_err());
+        }
+    }
+}
+
+fn batch_forward(
+    session: &Session,
+    manifest: &Manifest,
+    c: Architecture,
+    owner: u64,
+    releases: &mpsc::UnboundedSender<StateId>,
+    parents: &[DeviceState],
+    tokens: &[u32],
+) -> Result<Vec<DeviceStep>> {
+    manifest.verify_stamps()?;
+    let old: Vec<_> = parents
+        .iter()
+        .map(|p| {
+            p.token
+                .as_ref()
+                .expect("validated nonempty batch parent")
+                .id
+        })
+        .collect();
+    let mut ids = vec![StateId::default(); parents.len()];
+    let mut logits = vec![0.; parents.len() * c.vocab as usize];
+    let mut e = [0; 1024];
+    native_status(
+        unsafe {
+            rs_qwen_device_decode_batch(
+                session.0,
+                old.as_ptr(),
+                tokens.as_ptr(),
+                parents.len(),
+                ids.as_mut_ptr(),
+                logits.as_mut_ptr(),
+                logits.len(),
+                e.as_mut_ptr(),
+                e.len(),
+            )
+        },
+        &e,
+    )?;
+    // Acquire retirement ownership for every child before any fallible receipt validation.
+    let states: Vec<_> = ids
+        .iter()
+        .map(|id| DeviceState {
+            owner,
+            hidden_rows: 0,
+            token: Some(Arc::new(Lifetime {
+                id: *id,
+                releases: releases.clone(),
+            })),
+        })
+        .collect();
+    manifest.verify_stamps()?;
+    let position = parents[0].position() + 1;
+    ensure!(
+        ids.iter().all(|id| id.position == position as u64
+            && id.bytes == (parents.len() * c.state_len(position) * 4) as u64)
+            && logits.iter().all(|v| v.is_finite()),
+        "invalid batch receipt"
+    );
+    Ok(states
+        .into_iter()
+        .zip(logits.chunks_exact(c.vocab as usize))
+        .map(|(state, logits)| DeviceStep {
+            state,
+            logits: logits.to_vec(),
+            trace: Vec::new(),
+        })
+        .collect())
+}
 unsafe extern "C" {
+    fn rs_qwen_device_decode_batch(
+        session: *mut c_void,
+        parents: *const StateId,
+        tokens: *const u32,
+        batch: usize,
+        outputs: *mut StateId,
+        logits: *mut f32,
+        logits_count: usize,
+        error: *mut c_char,
+        cap: usize,
+    ) -> i32;
     fn rs_qwen_device_create(
         weights: *mut c_void,
         gpu: i32,

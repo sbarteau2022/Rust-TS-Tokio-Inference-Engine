@@ -44,6 +44,21 @@ int main(){
  assert(rs_qwen_device_block(session,&forged,1,&valid,1,&output,logits.data(),logits.size(),error,sizeof(error))!=0);++checks;
  assert(rs_qwen_device_block(session,nullptr,0,&valid,1,nullptr,logits.data(),logits.size(),error,sizeof(error))!=0);++checks;
  assert(rs_qwen_device_stats(session,stats,7,error,sizeof(error))==0&&stats[0]==0&&stats[1]==0&&stats[4]==0);++checks;
+ // Batch descriptors reject before any weight access/reservation; output sentinels remain intact.
+ StateId batch_outputs[3]={{9,9,9,9,9},{9,9,9,9,9},{9,9,9,9,9}};
+ uint32_t batch_tokens[3]={0,0,0};StateId batch_parents[3]={{999,0,1,1,4},{999,1,1,1,4},{999,2,1,1,4}};
+ std::vector<float> batch_logits(size_t(c.vocab)*3);
+ for(size_t iteration=0;iteration<10000;++iteration){
+  for(size_t count=0;count<=4;++count){
+   assert(rs_qwen_device_decode_batch(session,batch_parents,batch_tokens,count,batch_outputs,batch_logits.data(),size_t(c.vocab)*std::min(count,size_t(3)),error,sizeof(error))!=0);++checks;
+  }
+  assert(batch_outputs[0].owner==9&&batch_outputs[1].owner==9&&batch_outputs[2].owner==9);
+ }
+ assert(rs_qwen_device_decode_batch(session,nullptr,batch_tokens,3,batch_outputs,batch_logits.data(),batch_logits.size(),error,sizeof(error))!=0);++checks;
+ assert(rs_qwen_device_decode_batch(session,batch_parents,nullptr,3,batch_outputs,batch_logits.data(),batch_logits.size(),error,sizeof(error))!=0);++checks;
+ assert(rs_qwen_device_decode_batch(session,batch_parents,batch_tokens,3,nullptr,batch_logits.data(),batch_logits.size(),error,sizeof(error))!=0);++checks;
+ assert(rs_qwen_device_decode_batch(session,batch_parents,batch_tokens,3,batch_outputs,batch_logits.data(),1,error,sizeof(error))!=0);++checks;
+ assert(rs_qwen_device_stats(session,stats,7,error,sizeof(error))==0&&stats[0]==0&&stats[1]==0&&stats[4]==0);++checks;
  rs_qwen_device_destroy(session);rs_qwen_device_destroy(nullptr);rs_mlx_cleanup();
  std::cout<<"PASS device ABI checks="<<checks+2<<" ASan/UBSan (upstream MLX uninstrumented)\n";
 }
