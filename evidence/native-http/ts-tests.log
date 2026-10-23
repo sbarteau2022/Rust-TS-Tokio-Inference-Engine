@@ -1,0 +1,24 @@
+
+> apple-native-rust-server@0.1.0 test
+> tsx --test ts/*.test.ts
+
+✔ HTTP client validates origin and bounds before network (0.449042ms)
+✔ HTTP client accepts fragmented binary finish and rejects error or truncated EOF (11.517417ms)
+✔ Rust fixture and all chunk sizes agree, BOM and Unicode preserved (15.037833ms)
+✔ unknown controls, ordering, exact terminal and EOF refusal (3.565625ms)
+✔ malformed structural mutations fail without permitting poisoned reuse (16.27175ms)
+✔ typed errors terminate partial and empty streams (0.18725ms)
+✔ timestamp, token and aggregate text caps fail closed (15.679875ms)
+✔ MVK records exact dependency order (1.187125ms)
+✔ invalid shapes and unsafe names rejected (0.125958ms)
+✔ undefined and invalid handles rejected (0.074291ms)
+✔ second kernel family records row-bias fusion (0.181667ms)
+✔ CORDIC functions serialize stable version-3 operation codes (0.31125ms)
+ℹ tests 12
+ℹ suites 0
+ℹ pass 12
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 156.54475

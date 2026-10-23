@@ -109,6 +109,9 @@ pub mod native_mtp;
 #[cfg(feature = "native-mlx")]
 pub mod native_mtp_cli;
 
+pub mod http;
+#[cfg(feature = "native-mlx")]
+pub mod native_http;
 #[cfg(feature = "native-mlx")]
 pub mod native_text_stream;
 pub mod stream_wire;

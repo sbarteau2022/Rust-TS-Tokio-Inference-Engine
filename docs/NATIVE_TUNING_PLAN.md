@@ -2,7 +2,7 @@
 title: "Native MTP integration and tuning control plan"
 document_type: "architecture"
 version: "1.3.0"
-date: "2026-10-23T05:04:01Z"
+date: "2026-10-23T11:59:19Z"
 implementation_date: null
 author: "Codex for Stewart Barteau"
 reviewers: []
@@ -12,10 +12,10 @@ related_files:
     lines: "1-9"
     role: "config"
   - path: "Cargo.lock"
-    lines: "1-1015"
+    lines: "1-1148"
     role: "config"
   - path: "Cargo.toml"
-    lines: "1-85"
+    lines: "1-94"
     role: "config"
   - path: "backend/rapid_worker.py"
     lines: "1-165"
@@ -158,6 +158,9 @@ related_files:
   - path: "judges/model_ab.py"
     lines: "1-93"
     role: "test"
+  - path: "judges/native_http_smoke.py"
+    lines: "1-81"
+    role: "test"
   - path: "judges/native_stream_disconnect.py"
     lines: "1-36"
     role: "test"
@@ -288,7 +291,7 @@ related_files:
     lines: "1-81"
     role: "primary"
   - path: "src/main.rs"
-    lines: "1-467"
+    lines: "1-472"
     role: "primary"
   - path: "src/runtime.rs"
     lines: "1-366"
@@ -305,11 +308,14 @@ related_files:
   - path: "src/serving/config.rs"
     lines: "1-51"
     role: "primary"
+  - path: "src/serving/http.rs"
+    lines: "1-685"
+    role: "primary"
   - path: "src/serving/kv.rs"
     lines: "1-280"
     role: "primary"
   - path: "src/serving/mod.rs"
-    lines: "1-114"
+    lines: "1-117"
     role: "primary"
   - path: "src/serving/model_ir.rs"
     lines: "1-244"
@@ -334,6 +340,9 @@ related_files:
     role: "primary"
   - path: "src/serving/native_extended.rs"
     lines: "1-214"
+    role: "primary"
+  - path: "src/serving/native_http.rs"
+    lines: "1-147"
     role: "primary"
   - path: "src/serving/native_ingestion.rs"
     lines: "1-272"
@@ -431,6 +440,9 @@ related_files:
   - path: "tests/grid.rs"
     lines: "1-41"
     role: "test"
+  - path: "tests/http.rs"
+    lines: "1-345"
+    role: "test"
   - path: "tests/native_execution.rs"
     lines: "1-486"
     role: "test"
@@ -499,6 +511,12 @@ related_files:
     role: "primary"
   - path: "ts/generated/wire.ts"
     lines: "1-13"
+    role: "primary"
+  - path: "ts/http-client.test.ts"
+    lines: "1-16"
+    role: "test"
+  - path: "ts/http-client.ts"
+    lines: "1-11"
     role: "primary"
   - path: "ts/smoke.ts"
     lines: "1-1"
@@ -742,3 +760,11 @@ Implement the HTTP prerequisite as size-prefixed FlatBuffers, identifier AMST, v
 Rust verifies FlatBuffers structurally before semantic use. TypeScript must independently preflight vtable/object/scalar/string bounds and fatal UTF-8 before generated accessors, because generated JS accessors are not verifiers. Both incremental parsers bound their pending buffer before allocation, handle arbitrary fragmentation/coalescing, reject unknown enums/versions, sequence/index/timestamp regressions, duplicate/trailing terminals, missing metadata, excess tokens and unfinished EOF; errors poison parser reuse. Bindings regenerate under existing flatc and TS 7.1/tsrs gates. Cross-language binary fixture/CLI round trips and deterministic malformed-input mutation tests precede any transport claim.
 
 Wire the same frames into a separate `native-mtp-stream` command, retaining existing human-readable `native-mtp-generate`. Binary stdout must contain frames only; configuration/audit diagnostics go to stderr. A completed native receipt and canonical text equality precede Finish. Error/pipe failure must cancel the Request and drain scheduler/native state before returning when possible. HTTP sockets, deadlines and disconnect-specific behavior remain a separate unqualified step, not implied by a working file/pipe protocol.
+
+## Preregistered HTTP/1 implementation
+
+Use installed Hyper HTTP/1 with Tokio I/O/timers, one request per connection, a 16 KiB header buffer/32-header cap and explicit loopback socket. Configure 1..64 concurrent connections and a 1..30,000 ms header/body-read timeout; no default CLI socket or port. `POST /v1/generate` requires singleton `x-rust-max-new-tokens` (1..128), `x-rust-deadline-ms` (1..300,000) and `Content-Type: text/plain[; charset=utf-8]`. Deadline starts at handler entry and includes body/preparation; bounded synchronous tokenization is checked again before admission. Body cap 64 KiB. Reject query/absolute targets, nonnumeric/mismatched Host, Origin, content encoding, unknown x-rust controls and duplicate controls before native admission. `GET /health` and `/v1/info` expose readiness and AMST metadata.
+
+Response uses existing AMST bytes, with one pending output slot plus HTTP/TCP buffers. Reserve network-channel capacity before receiving another scheduler token. Body drop wakes the producer and drops/cancels Request; native work remains executor-owned. Deadline/shutdown sends a typed Error if its bounded terminal-delivery grace (100 ms) succeeds; otherwise EOF is an explicit unfinished gap. Never discard a queued token to insert an Error and never claim channel acceptance is end-user acknowledgement. Finish follows final receipt and canonical text equality. HTTP/1 keepalive/pipelined reuse is disabled in this first local profile.
+
+Shutdown stops accepts, wakes producers and closes connections within a configured grace; wait for producer ownership to end before shutting down Engine/native stores. Test with a synthetic gated backend that proves deadline/disconnect do not abandon an in-progress step, and then the actual Combined model. Gates include body/header pressure, malformed controls/UTF-8/context, numeric loopback authority, deadline before first token, disconnect after token, bounded slow-output stall, three concurrent streams, shutdown with outstanding work and zero resident drain. Existing AMST Rust/TS/parser/native checks remain required. No TLS, remote/authenticated service, OpenAI compatibility or HTTP throughput claim follows from these local qualification gates.

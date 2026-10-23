@@ -1,0 +1,131 @@
+warning: rust-server@0.1.0: In file included from native/mlx_bridge.cpp:2:
+warning: rust-server@0.1.0: In file included from /Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/vendor/mlx/include/mlx/mlx.h:5:
+warning: rust-server@0.1.0: In file included from /Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/vendor/mlx/include/mlx/array.h:11:
+warning: rust-server@0.1.0: /Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/vendor/mlx/include/mlx/allocator.h:50:36: warning: unused parameter 'ptr' [-Wunused-parameter]
+warning: rust-server@0.1.0:    50 |   virtual Buffer make_buffer(void* ptr, size_t size) {
+warning: rust-server@0.1.0:       |                                    ^
+warning: rust-server@0.1.0: /Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/vendor/mlx/include/mlx/allocator.h:50:48: warning: unused parameter 'size' [-Wunused-parameter]
+warning: rust-server@0.1.0:    50 |   virtual Buffer make_buffer(void* ptr, size_t size) {
+warning: rust-server@0.1.0:       |                                                ^
+warning: rust-server@0.1.0: /Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/vendor/mlx/include/mlx/allocator.h:53:31: warning: unused parameter 'buffer' [-Wunused-parameter]
+warning: rust-server@0.1.0:    53 |   virtual void release(Buffer buffer) {}
+warning: rust-server@0.1.0:       |                               ^
+warning: rust-server@0.1.0: In file included from native/mlx_bridge.cpp:2:
+warning: rust-server@0.1.0: In file included from /Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/vendor/mlx/include/mlx/mlx.h:5:
+warning: rust-server@0.1.0: In file included from /Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/vendor/mlx/include/mlx/array.h:13:
+warning: rust-server@0.1.0: In file included from /Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/vendor/mlx/include/mlx/dtype.h:9:
+warning: rust-server@0.1.0: In file included from /Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/vendor/mlx/include/mlx/types/complex.h:5:
+warning: rust-server@0.1.0: In file included from /Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/vendor/mlx/include/mlx/types/half_types.h:32:
+warning: rust-server@0.1.0: /Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/vendor/mlx/include/mlx/types/bf16.h:29:3: warning: definition of implicit copy assignment operator for '_MLX_BFloat16' is deprecated because it has a user-declared copy constructor [-Wdeprecated-copy]
+warning: rust-server@0.1.0:    29 |   _MLX_BFloat16(_MLX_BFloat16 const&) = default;
+warning: rust-server@0.1.0:       |   ^
+warning: rust-server@0.1.0: /Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/vendor/mlx/include/mlx/types/bf16.h:38:19: note: in implicit copy assignment operator for 'mlx::core::_MLX_BFloat16' first required here
+warning: rust-server@0.1.0:    38 |     return (*this = _MLX_BFloat16(x));
+warning: rust-server@0.1.0:       |                   ^
+warning: rust-server@0.1.0: 4 warnings generated.
+   Compiling rust-server v0.1.0 (/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 6.31s
+warning: the following packages contain code that will be rejected by a future version of Rust: block v0.1.6
+note: to see what the problems were, use the option `--future-incompat-report`, or run `cargo report future-incompatibilities --id 1`
+     Running unittests src/lib.rs (target/debug/deps/rust_server-70876e776d2def72)
+
+running 1 test
+test serving::http::tests::full_network_slot_stops_receiving_scheduler_tokens ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 52 filtered out; finished in 0.13s
+
+     Running unittests src/main.rs (target/debug/deps/rust_server-e2de3ed44aaf02c4)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/adversarial.rs (target/debug/deps/adversarial-e037bcc806a992e4)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 13 filtered out; finished in 0.00s
+
+     Running tests/async_completion.rs (target/debug/deps/async_completion-2e5808f390131a2b)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.00s
+
+     Running tests/cache_control.rs (target/debug/deps/cache_control-8a7f6f49a9e99ff5)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 12 filtered out; finished in 0.00s
+
+     Running tests/cordic.rs (target/debug/deps/cordic-b8a25743d4e06add)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.00s
+
+     Running tests/draft_admission.rs (target/debug/deps/draft_admission-974cc20b8d4efcd4)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 11 filtered out; finished in 0.00s
+
+     Running tests/fixed_point.rs (target/debug/deps/fixed_point-5cf91d5f9987231e)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 4 filtered out; finished in 0.00s
+
+     Running tests/grid.rs (target/debug/deps/grid-f99c220f37d946bb)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 0.00s
+
+     Running tests/http.rs (target/debug/deps/http-0b92e3dbede6a43d)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 4 filtered out; finished in 0.00s
+
+     Running tests/native_execution.rs (target/debug/deps/native_execution-3ca55ba3a0868a48)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 12 filtered out; finished in 0.00s
+
+     Running tests/native_mlx.rs (target/debug/deps/native_mlx-13db238546b76147)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 8 filtered out; finished in 0.00s
+
+     Running tests/output_choices.rs (target/debug/deps/output_choices-2a536a07181155cf)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 0.00s
+
+     Running tests/production_pipeline.rs (target/debug/deps/production_pipeline-a567ff3c62392a7b)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 7 filtered out; finished in 0.00s
+
+     Running tests/rapid_rpc.rs (target/debug/deps/rapid_rpc-9b6768e5d771f4ff)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/resources.rs (target/debug/deps/resources-d9d853f6b1af11b0)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 10 filtered out; finished in 0.00s
+
+     Running tests/serving.rs (target/debug/deps/serving-11f7920363eea87d)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 18 filtered out; finished in 0.00s

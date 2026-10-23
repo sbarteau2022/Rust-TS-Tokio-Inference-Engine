@@ -2,7 +2,7 @@
 title: "Adversarial review of the native kernel prototype"
 document_type: "research"
 version: "1.1.0"
-date: "2026-10-23T00:42:45Z"
+date: "2026-10-23T11:59:19Z"
 implementation_date: null
 author: "Codex for Stewart Barteau"
 reviewers: []
@@ -12,10 +12,10 @@ related_files:
     lines: "1-9"
     role: "config"
   - path: "Cargo.lock"
-    lines: "1-1015"
+    lines: "1-1148"
     role: "config"
   - path: "Cargo.toml"
-    lines: "1-85"
+    lines: "1-94"
     role: "config"
   - path: "backend/rapid_worker.py"
     lines: "1-165"
@@ -158,6 +158,9 @@ related_files:
   - path: "judges/model_ab.py"
     lines: "1-93"
     role: "test"
+  - path: "judges/native_http_smoke.py"
+    lines: "1-81"
+    role: "test"
   - path: "judges/native_stream_disconnect.py"
     lines: "1-36"
     role: "test"
@@ -288,7 +291,7 @@ related_files:
     lines: "1-81"
     role: "primary"
   - path: "src/main.rs"
-    lines: "1-467"
+    lines: "1-472"
     role: "primary"
   - path: "src/runtime.rs"
     lines: "1-366"
@@ -305,11 +308,14 @@ related_files:
   - path: "src/serving/config.rs"
     lines: "1-51"
     role: "primary"
+  - path: "src/serving/http.rs"
+    lines: "1-685"
+    role: "primary"
   - path: "src/serving/kv.rs"
     lines: "1-280"
     role: "primary"
   - path: "src/serving/mod.rs"
-    lines: "1-114"
+    lines: "1-117"
     role: "primary"
   - path: "src/serving/model_ir.rs"
     lines: "1-244"
@@ -334,6 +340,9 @@ related_files:
     role: "primary"
   - path: "src/serving/native_extended.rs"
     lines: "1-214"
+    role: "primary"
+  - path: "src/serving/native_http.rs"
+    lines: "1-147"
     role: "primary"
   - path: "src/serving/native_ingestion.rs"
     lines: "1-272"
@@ -431,6 +440,9 @@ related_files:
   - path: "tests/grid.rs"
     lines: "1-41"
     role: "test"
+  - path: "tests/http.rs"
+    lines: "1-345"
+    role: "test"
   - path: "tests/native_execution.rs"
     lines: "1-486"
     role: "test"
@@ -499,6 +511,12 @@ related_files:
     role: "primary"
   - path: "ts/generated/wire.ts"
     lines: "1-13"
+    role: "primary"
+  - path: "ts/http-client.test.ts"
+    lines: "1-16"
+    role: "test"
+  - path: "ts/http-client.ts"
+    lines: "1-11"
     role: "primary"
   - path: "ts/smoke.ts"
     lines: "1-1"
@@ -780,3 +798,13 @@ Text boundary review: independently decoding tokens corrupts split UTF-8 and can
 AMST framing review: generated accessors alone are not a trust boundary. Deterministic byte mutation exposed an underflow panic in an additional Rust `vtable.num_fields` inspection despite root verification; that accessor was removed and explicit bounded vtable/object/string shape checks now precede verification. TS uses the equivalent byte preflight before generated access, fatal UTF-8 and byte-based string decoding to preserve leading BOM. Parsers cap pending frame storage, poison on failure and reject terminal gaps, stale sequence/index/time and aggregate limits. A writer that fails mid-frame cannot be reused or followed by success. Generated bindings regenerate from both schemas under flatc; Rust fixtures decode in TS and TS fixtures decode in Rust. File tools read through bounded chunks, avoiding unbounded whole-file allocation.
 
 CLI disconnect scope: a native stdout pipe is closed after metadata and the first token. The expected nonzero broken-pipe result must include successful scheduler/native drain diagnostics; the captured prefix remains intentionally unfinished and must fail a complete-stream check. This proves pipe cancellation ownership, not HTTP socket backpressure, deadlines, disconnect races or network throughput.
+
+## HTTP/1 boundary review — 2026-10-23
+
+Reviewed ownership and framing before the native smoke: request parsing precedes model admission; header/body/connection caps are independent of scheduler capacity; numeric authority and no Origin prevent incidental cross-origin browser use (not a remote authentication claim). Unknown/duplicate controls, invalid UTF-8, oversized bodies and nontext content fail closed. The response is explicitly AMST, and clients require Finish rather than treating HTTP 200 or a valid Error as success.
+
+Focused gated-backend tests hold a native step pending across deadline and disconnect, then release it and require zero charged bytes on shutdown. A separate full-output-slot control proves the producer stops consuming scheduler events; it does not assert that kernel/TCP buffers contain only one frame. Socket cutoffs bound stalled consumers independently of cancellation. Partial header/body and shutdown tests exercise idle connection ownership. TypeScript tests reject invalid origin/bounds before network and fragmented Error/unfinished EOF after metadata. Existing strict binary fuzz/mutation cases remain applicable.
+
+Accepted limitations: TCP send completion and queued Finish do not establish end-user delivery. Abrupt disconnect may expose an unfinished prefix, not an Error. Synchronous native calls are not forcibly interrupted; completion remains scheduler-owned. Header/HTTP connection errors are counted separately from generation errors. Native HTTP CLI uses one explicit experimental live-audit profile, with a 511-token scheduler context and at most three model lanes; neither a general agent quality claim nor physical tensor batching follows. Production sampling draft values remain inactive. TLS/authentication and remote/public serving are not implemented.
+
+The first real HTTP attempt completed and drained but failed its historical-reference assertion: the driver sent `Complete 1, 2, 3,` while the reference used `Complete: 1, 2, 3,`. Both binary readers decoded that first response successfully; it answered the different prompt. The failed attempt is retained under `evidence/native-http/initial-prompt-mismatch/`. The corrected rerun uses byte-identical prompt text; changing the expectation without matching input was rejected.

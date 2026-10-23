@@ -23,11 +23,10 @@ warning: rust-server@0.1.0: /Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-I
 warning: rust-server@0.1.0:    38 |     return (*this = _MLX_BFloat16(x));
 warning: rust-server@0.1.0:       |                   ^
 warning: rust-server@0.1.0: 4 warnings generated.
-   Compiling rust-server v0.1.0 (/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine)
-    Finished `test` profile [unoptimized + debuginfo] target(s) in 5.66s
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.06s
 warning: the following packages contain code that will be rejected by a future version of Rust: block v0.1.6
 note: to see what the problems were, use the option `--future-incompat-report`, or run `cargo report future-incompatibilities --id 1`
-     Running unittests src/lib.rs (target/debug/deps/rust_server-4df23d4033c5aec1)
+     Running unittests src/lib.rs (target/debug/deps/rust_server-70876e776d2def72)
 background Q1.31 validation failed: result length mismatch
 background Q1.31 validation failed: result length mismatch
 OPERATOR-ORACLE operation=language_model.model.embed_tokens/embedding elements=192 nrmse=0 max_abs=0
@@ -446,27 +445,28 @@ OPERATOR-ORACLE operation=language_model.model.layers.3.mlp/shared-gating-add el
 OPERATOR-ORACLE operation=language_model.model.layers.3/mlp-residual elements=192 nrmse=2.43754116e-08 max_abs=2.79396772e-08
 OPERATOR-ORACLE operation=language_model.model.norm.weight/rms elements=192 nrmse=5.63432196e-08 max_abs=2.03351399e-07
 PROJECTION-ORACLE module=language_model.lm_head bits=4 group=32 rows=1 channels=64 width=32 channel_start=0 nrmse=2.59296228e-07 max_abs=1.20397598e-07
-     Running unittests src/main.rs (target/debug/deps/rust_server-d6a1db3ce11ae82a)
-     Running tests/adversarial.rs (target/debug/deps/adversarial-d11ef729f27f5c14)
-     Running tests/async_completion.rs (target/debug/deps/async_completion-c5582de9a8887724)
-     Running tests/cache_control.rs (target/debug/deps/cache_control-6d22d00ddf45bfd9)
+     Running unittests src/main.rs (target/debug/deps/rust_server-e2de3ed44aaf02c4)
+     Running tests/adversarial.rs (target/debug/deps/adversarial-e037bcc806a992e4)
+     Running tests/async_completion.rs (target/debug/deps/async_completion-2e5808f390131a2b)
+     Running tests/cache_control.rs (target/debug/deps/cache_control-8a7f6f49a9e99ff5)
 
-thread 'prefix_inflight_is_deduplicated_and_producer_errors_release_reservations' (25344760) panicked at tests/cache_control.rs:211:26:
+thread 'prefix_inflight_is_deduplicated_and_producer_errors_release_reservations' (25392164) panicked at tests/cache_control.rs:211:26:
 injected producer panic
 note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
-     Running tests/cordic.rs (target/debug/deps/cordic-85cba7ab766a7ddd)
-     Running tests/draft_admission.rs (target/debug/deps/draft_admission-911e937cffc3cc22)
-     Running tests/fixed_point.rs (target/debug/deps/fixed_point-cd859f5ed5c5ecfc)
-     Running tests/grid.rs (target/debug/deps/grid-c359b10a81005b7e)
-     Running tests/native_execution.rs (target/debug/deps/native_execution-7df0c21fe475e2c3)
-     Running tests/native_mlx.rs (target/debug/deps/native_mlx-b803664b6eefd13a)
-     Running tests/output_choices.rs (target/debug/deps/output_choices-bf232fa0ea31ac90)
-     Running tests/production_pipeline.rs (target/debug/deps/production_pipeline-bf90ce07a69f790f)
-     Running tests/rapid_rpc.rs (target/debug/deps/rapid_rpc-cfbd05cf4ff5db49)
-     Running tests/resources.rs (target/debug/deps/resources-524c52de26d4179d)
-     Running tests/serving.rs (target/debug/deps/serving-e5c9b9f6fe8a55e6)
+     Running tests/cordic.rs (target/debug/deps/cordic-b8a25743d4e06add)
+     Running tests/draft_admission.rs (target/debug/deps/draft_admission-974cc20b8d4efcd4)
+     Running tests/fixed_point.rs (target/debug/deps/fixed_point-5cf91d5f9987231e)
+     Running tests/grid.rs (target/debug/deps/grid-f99c220f37d946bb)
+     Running tests/http.rs (target/debug/deps/http-0b92e3dbede6a43d)
+     Running tests/native_execution.rs (target/debug/deps/native_execution-3ca55ba3a0868a48)
+     Running tests/native_mlx.rs (target/debug/deps/native_mlx-13db238546b76147)
+     Running tests/output_choices.rs (target/debug/deps/output_choices-2a536a07181155cf)
+     Running tests/production_pipeline.rs (target/debug/deps/production_pipeline-a567ff3c62392a7b)
+     Running tests/rapid_rpc.rs (target/debug/deps/rapid_rpc-9b6768e5d771f4ff)
+     Running tests/resources.rs (target/debug/deps/resources-d9d853f6b1af11b0)
+     Running tests/serving.rs (target/debug/deps/serving-11f7920363eea87d)
 
-thread 'panicked_backend_closes_admission_and_reports_unfinished_work' (25345462) panicked at tests/serving.rs:228:27:
+thread 'panicked_backend_closes_admission_and_reports_unfinished_work' (25392540) panicked at tests/serving.rs:228:27:
 injected model backend panic
 note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
    Doc-tests rust_server

@@ -1,8 +1,8 @@
 ---
 title: "Rust Server — Apple native kernel compiler and runtime"
 document_type: "implementation"
-version: "1.34.0"
-date: "2026-10-23T05:21:07Z"
+version: "1.35.0"
+date: "2026-10-23T11:59:19Z"
 implementation_date: null
 author: "Codex for Stewart Barteau"
 reviewers: []
@@ -12,10 +12,10 @@ related_files:
     lines: "1-9"
     role: "config"
   - path: "Cargo.lock"
-    lines: "1-1015"
+    lines: "1-1148"
     role: "config"
   - path: "Cargo.toml"
-    lines: "1-85"
+    lines: "1-94"
     role: "config"
   - path: "backend/rapid_worker.py"
     lines: "1-165"
@@ -158,6 +158,9 @@ related_files:
   - path: "judges/model_ab.py"
     lines: "1-93"
     role: "test"
+  - path: "judges/native_http_smoke.py"
+    lines: "1-81"
+    role: "test"
   - path: "judges/native_stream_disconnect.py"
     lines: "1-36"
     role: "test"
@@ -288,7 +291,7 @@ related_files:
     lines: "1-81"
     role: "primary"
   - path: "src/main.rs"
-    lines: "1-467"
+    lines: "1-472"
     role: "primary"
   - path: "src/runtime.rs"
     lines: "1-366"
@@ -305,11 +308,14 @@ related_files:
   - path: "src/serving/config.rs"
     lines: "1-51"
     role: "primary"
+  - path: "src/serving/http.rs"
+    lines: "1-685"
+    role: "primary"
   - path: "src/serving/kv.rs"
     lines: "1-280"
     role: "primary"
   - path: "src/serving/mod.rs"
-    lines: "1-114"
+    lines: "1-117"
     role: "primary"
   - path: "src/serving/model_ir.rs"
     lines: "1-244"
@@ -334,6 +340,9 @@ related_files:
     role: "primary"
   - path: "src/serving/native_extended.rs"
     lines: "1-214"
+    role: "primary"
+  - path: "src/serving/native_http.rs"
+    lines: "1-147"
     role: "primary"
   - path: "src/serving/native_ingestion.rs"
     lines: "1-272"
@@ -431,6 +440,9 @@ related_files:
   - path: "tests/grid.rs"
     lines: "1-41"
     role: "test"
+  - path: "tests/http.rs"
+    lines: "1-345"
+    role: "test"
   - path: "tests/native_execution.rs"
     lines: "1-486"
     role: "test"
@@ -499,6 +511,12 @@ related_files:
     role: "primary"
   - path: "ts/generated/wire.ts"
     lines: "1-13"
+    role: "primary"
+  - path: "ts/http-client.test.ts"
+    lines: "1-16"
+    role: "test"
+  - path: "ts/http-client.ts"
+    lines: "1-11"
     role: "primary"
   - path: "ts/smoke.ts"
     lines: "1-1"
@@ -1196,3 +1214,27 @@ Both parsers enforce frame/string/token limits, strict versions/enums, metadata/
 `stream-check` and `stream-inspect` validate framing: a valid Error terminal is reported as kind 3 and does not establish inference success. Applications must require Finish (kind 2). Token counts describe complete frames accepted by the writer/reader boundary, not end-user acknowledgement. A truncated pipe/network prefix must fail complete-stream validation.
 
 AMST validation: **161 default / 161 debug-validation / 106 minimal-feature Rust tests**, 10 TS tests, TS 7.1/tsrs, strict all-target Clippy, schema regeneration and native/GPU judges passed. Native eight-token generation decoded identically in Rust/TS; a first-token pipe disconnect drained scheduler/native state and both readers rejected its unfinished prefix. The human-readable CLI regression also passed. [Bound evidence](evidence/native-stream-wire/qualification.json). No HTTP, deadline or network throughput claim follows.
+
+## Persistent native loopback HTTP — experimental
+
+The designated Combined model now has a persistent Rust/Hyper HTTP/1 server, native MLX execution, native incremental Unicode decoding and a TypeScript 7.1/tsrs binary client (`ts/http-client.ts`). No Python worker or JSON request/response transport participates. The existing binary CLI remains available. One HTTP request per connection is deliberate; remote serving, TLS/authentication, OpenAI compatibility and production qualification remain open.
+
+```sh
+# Run from this checkout; all policy values are explicit, experimental settings.
+target/release/rust-server native-mtp-serve 127.0.0.1:8097 1000 8 \
+  --draft-width 4 --stream-capacity 1 --qualification-trials 64 \
+  --probe-epochs 2 --initial-mass 2147483647 \
+  --admission-mass 268435455 --reward-mass 536870911
+```
+
+The positional controls are numeric loopback address/port, header/body timeout (1–30000 ms), and connection limit (1–64). POST `/v1/generate` accepts nonempty raw UTF-8 up to 64 KiB with `Content-Type: text/plain; charset=utf-8`, singleton `x-rust-max-new-tokens: 1..128` and `x-rust-deadline-ms: 1..300000`. Tokenized prompt plus requested output is bounded to 512 tokens (scheduler context 511). The deadline begins at handler entry, including body upload and tokenization; synchronous bounded tokenization is checked again before admission. Model preparation/startup is outside that per-request clock.
+
+Responses are `application/vnd.rust-server.amst; version=1`: one metadata frame, token frames, then Finish or Error. HTTP 200 alone never establishes generation success. `GET /health` reports readiness; `GET /v1/info` is exactly one metadata frame, intentionally not a complete generation stream. Host must exactly match the bound numeric authority; Origin, absolute/query targets, content encodings, unknown tuning headers, duplicates and invalid request bounds are rejected. HTTP parser failures may close before application framing starts.
+
+The transport reserves its one output channel slot before consuming another scheduler event; the scheduler token channel is separately bounded. Hyper/TCP add their own buffering, so this is not a claim of one total buffered frame or client acknowledgement. Slow sockets are bounded by request deadline plus 100 ms, and partial headers/bodies have a separate timeout. Disconnect/deadline cancels admission ownership while the scheduler retains in-flight native completion ownership. Errors attempt a bounded terminal send; a disconnected/stalled reader can instead observe an explicitly unfinished stream. SIGINT/SIGTERM stops admission, closes connections and drains producer, scheduler and native ownership before reporting `DRAIN`.
+
+`ts/http-client.ts` exports `generate(origin,prompt,maxNew,deadlineMs,onFrame,signal?)`; callbacks receive validated AMST frames and the promise succeeds only after Finish. AbortSignal cancellation closes the response body. Native publication timestamps in token frames are not HTTP arrival measurements. Existing scheduler throughput evidence cannot establish HTTP TTFT, ITL, acceptance or network throughput. Physical tensor batching, paged attention, native Dspark and broad held-out model qualification remain unfinished.
+
+Reproduce transport checks with `cargo test --locked --test http`, `cargo test --locked full_network_slot`, `npm test`, and, after release build and other GPU judges finish, `python3 judges/native_http_smoke.py`. This last Python program is an offline test driver, not part of model serving.
+
+HTTP validation: **166 default / 166 debug-validation / 111 minimal-feature Rust tests**, 12 TS tests, both TS 7.1 compiler gates, strict all-target Clippy, deterministic schema regeneration and native/GPU judges passed. The actual Combined model matched the prior 16-token reference, three concurrent eight-token streams, and recovery after deadline and disconnect after the first token. Rust/TS readers rejected the unfinished disconnect prefix; the actual TS HTTP client completed, and shutdown reported zero scheduler/native bytes. [Bound evidence](evidence/native-http/qualification.json). The initial driver prompt mismatch and an additional metadata-disconnect control are retained separately. HTTP throughput and broad model/agent quality remain unqualified.

@@ -1,0 +1,2 @@
+READY http://127.0.0.1:50843 identity=509cc92543203798f2db08b6fb6cbb38a80942fc0437ae81a3ef9ff27720915b
+DRAIN http=Stats { active_connections: 0, active_producers: 0, accepted_connections: 10, rejected_requests: 0, queued_finishes: 6, deadlines: 1, disconnected: 1, stopped: 0, producer_errors: 0, connection_errors: 1 } scheduler=Stats { admitted: 8, completed: 6, failed: 0, cancelled: 2, iterations: 52, memory_used: 0, memory_peak: 939524096, admission_closed: false } native_bytes=0 audit_epochs=52

@@ -2,21 +2,23 @@
 > apple-native-rust-server@0.1.0 test
 > tsx --test ts/*.test.ts
 
-✔ Rust fixture and all chunk sizes agree, BOM and Unicode preserved (14.6355ms)
-✔ unknown controls, ordering, exact terminal and EOF refusal (3.69375ms)
-✔ malformed structural mutations fail without permitting poisoned reuse (16.105625ms)
-✔ typed errors terminate partial and empty streams (0.18575ms)
-✔ timestamp, token and aggregate text caps fail closed (15.372708ms)
-✔ MVK records exact dependency order (1.162208ms)
-✔ invalid shapes and unsafe names rejected (0.125834ms)
-✔ undefined and invalid handles rejected (0.075416ms)
-✔ second kernel family records row-bias fusion (0.17875ms)
-✔ CORDIC functions serialize stable version-3 operation codes (0.306166ms)
-ℹ tests 10
+✔ HTTP client validates origin and bounds before network (0.439916ms)
+✔ HTTP client accepts fragmented binary finish and rejects error or truncated EOF (11.4055ms)
+✔ Rust fixture and all chunk sizes agree, BOM and Unicode preserved (14.780291ms)
+✔ unknown controls, ordering, exact terminal and EOF refusal (3.619541ms)
+✔ malformed structural mutations fail without permitting poisoned reuse (15.213916ms)
+✔ typed errors terminate partial and empty streams (0.199375ms)
+✔ timestamp, token and aggregate text caps fail closed (14.69525ms)
+✔ MVK records exact dependency order (1.173083ms)
+✔ invalid shapes and unsafe names rejected (0.143542ms)
+✔ undefined and invalid handles rejected (0.078459ms)
+✔ second kernel family records row-bias fusion (0.191417ms)
+✔ CORDIC functions serialize stable version-3 operation codes (0.306125ms)
+ℹ tests 12
 ℹ suites 0
-ℹ pass 10
+ℹ pass 12
 ℹ fail 0
 ℹ cancelled 0
 ℹ skipped 0
 ℹ todo 0
-ℹ duration_ms 154.069292
+ℹ duration_ms 152.887875

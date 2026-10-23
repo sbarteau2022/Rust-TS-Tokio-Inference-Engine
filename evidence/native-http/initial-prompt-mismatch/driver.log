@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/judges/native_http_smoke.py", line 48, in <module>
+    assert baseline['tokens']==reference, 'HTTP changed previously recorded native token reference'
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: HTTP changed previously recorded native token reference

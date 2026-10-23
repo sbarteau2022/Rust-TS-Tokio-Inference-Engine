@@ -11,13 +11,13 @@ use crate::cache::{Controller, DraftPolicy, MAX_MASS};
 use anyhow::{ensure, Context, Result};
 use std::{collections::BTreeMap, path::Path, sync::Arc};
 pub const USAGE:&str="native-mtp-generate PROMPT MAX_NEW --draft-width N --stream-capacity N --qualification-trials N --probe-epochs N --initial-mass N --admission-mass N --reward-mass N";
-struct Options {
-    width: usize,
-    capacity: usize,
-    policy: DraftPolicy,
+pub(super) struct Options {
+    pub(super) width: usize,
+    pub(super) capacity: usize,
+    pub(super) policy: DraftPolicy,
 }
 impl Options {
-    fn parse(flags: &[String]) -> Result<Self> {
+    pub(super) fn parse(flags: &[String]) -> Result<Self> {
         ensure!(flags.len().is_multiple_of(2), "{USAGE}");
         let mut values = BTreeMap::new();
         for pair in flags.as_chunks::<2>().0 {
@@ -68,7 +68,7 @@ impl Options {
             },
         })
     }
-    fn controller(&self) -> Result<Controller> {
+    pub(super) fn controller(&self) -> Result<Controller> {
         // Explicit bounded draft-metadata scaffold. It does not supply model KV payloads.
         let c = Controller::new(crate::cache::Config {
             capacity_blocks: 8,

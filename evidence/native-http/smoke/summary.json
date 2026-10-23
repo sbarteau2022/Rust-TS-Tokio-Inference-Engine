@@ -1,0 +1,645 @@
+{
+  "pass": true,
+  "scope": "bounded HTTP transport smoke, repeated short prompt; not throughput qualification",
+  "single": {
+    "status": 200,
+    "wall_seconds": 1.7067479169927537,
+    "frames": [
+      {
+        "kind": 0,
+        "sequence": 0,
+        "index": 0,
+        "token": 0,
+        "elapsed_us": 0,
+        "count": 0,
+        "error": 0
+      },
+      {
+        "kind": 1,
+        "sequence": 1,
+        "index": 0,
+        "token": 19,
+        "elapsed_us": 1295961,
+        "count": 0,
+        "error": 0
+      },
+      {
+        "kind": 1,
+        "sequence": 1,
+        "index": 1,
+        "token": 11,
+        "elapsed_us": 1431452,
+        "count": 0,
+        "error": 0
+      },
+      {
+        "kind": 1,
+        "sequence": 1,
+        "index": 2,
+        "token": 220,
+        "elapsed_us": 1431530,
+        "count": 0,
+        "error": 0
+      },
+      {
+        "kind": 1,
+        "sequence": 1,
+        "index": 3,
+        "token": 20,
+        "elapsed_us": 1431580,
+        "count": 0,
+        "error": 0
+      },
+      {
+        "kind": 1,
+        "sequence": 1,
+        "index": 4,
+        "token": 11,
+        "elapsed_us": 1431633,
+        "count": 0,
+        "error": 0
+      },
+      {
+        "kind": 1,
+        "sequence": 1,
+        "index": 5,
+        "token": 220,
+        "elapsed_us": 1431683,
+        "count": 0,
+        "error": 0
+      },
+      {
+        "kind": 1,
+        "sequence": 1,
+        "index": 6,
+        "token": 21,
+        "elapsed_us": 1569495,
+        "count": 0,
+        "error": 0
+      },
+      {
+        "kind": 1,
+        "sequence": 1,
+        "index": 7,
+        "token": 11,
+        "elapsed_us": 1569564,
+        "count": 0,
+        "error": 0
+      },
+      {
+        "kind": 1,
+        "sequence": 1,
+        "index": 8,
+        "token": 220,
+        "elapsed_us": 1569613,
+        "count": 0,
+        "error": 0
+      },
+      {
+        "kind": 1,
+        "sequence": 1,
+        "index": 9,
+        "token": 22,
+        "elapsed_us": 1569662,
+        "count": 0,
+        "error": 0
+      },
+      {
+        "kind": 1,
+        "sequence": 1,
+        "index": 10,
+        "token": 11,
+        "elapsed_us": 1569711,
+        "count": 0,
+        "error": 0
+      },
+      {
+        "kind": 1,
+        "sequence": 1,
+        "index": 11,
+        "token": 220,
+        "elapsed_us": 1705139,
+        "count": 0,
+        "error": 0
+      },
+      {
+        "kind": 1,
+        "sequence": 1,
+        "index": 12,
+        "token": 23,
+        "elapsed_us": 1705203,
+        "count": 0,
+        "error": 0
+      },
+      {
+        "kind": 1,
+        "sequence": 1,
+        "index": 13,
+        "token": 11,
+        "elapsed_us": 1705253,
+        "count": 0,
+        "error": 0
+      },
+      {
+        "kind": 1,
+        "sequence": 1,
+        "index": 14,
+        "token": 220,
+        "elapsed_us": 1705291,
+        "count": 0,
+        "error": 0
+      },
+      {
+        "kind": 1,
+        "sequence": 1,
+        "index": 15,
+        "token": 24,
+        "elapsed_us": 1705344,
+        "count": 0,
+        "error": 0
+      },
+      {
+        "kind": 2,
+        "sequence": 1,
+        "index": 0,
+        "token": 0,
+        "elapsed_us": 1705353,
+        "count": 16,
+        "error": 0
+      }
+    ],
+    "tokens": [
+      19,
+      11,
+      220,
+      20,
+      11,
+      220,
+      21,
+      11,
+      220,
+      22,
+      11,
+      220,
+      23,
+      11,
+      220,
+      24
+    ]
+  },
+  "three_lanes": [
+    {
+      "status": 200,
+      "wall_seconds": 1.5415349580580369,
+      "frames": [
+        {
+          "kind": 0,
+          "sequence": 0,
+          "index": 0,
+          "token": 0,
+          "elapsed_us": 0,
+          "count": 0,
+          "error": 0
+        },
+        {
+          "kind": 1,
+          "sequence": 3,
+          "index": 0,
+          "token": 19,
+          "elapsed_us": 1080434,
+          "count": 0,
+          "error": 0
+        },
+        {
+          "kind": 1,
+          "sequence": 3,
+          "index": 1,
+          "token": 11,
+          "elapsed_us": 1351414,
+          "count": 0,
+          "error": 0
+        },
+        {
+          "kind": 1,
+          "sequence": 3,
+          "index": 2,
+          "token": 220,
+          "elapsed_us": 1351526,
+          "count": 0,
+          "error": 0
+        },
+        {
+          "kind": 1,
+          "sequence": 3,
+          "index": 3,
+          "token": 20,
+          "elapsed_us": 1414319,
+          "count": 0,
+          "error": 0
+        },
+        {
+          "kind": 1,
+          "sequence": 3,
+          "index": 4,
+          "token": 11,
+          "elapsed_us": 1414422,
+          "count": 0,
+          "error": 0
+        },
+        {
+          "kind": 1,
+          "sequence": 3,
+          "index": 5,
+          "token": 220,
+          "elapsed_us": 1414481,
+          "count": 0,
+          "error": 0
+        },
+        {
+          "kind": 1,
+          "sequence": 3,
+          "index": 6,
+          "token": 21,
+          "elapsed_us": 1540253,
+          "count": 0,
+          "error": 0
+        },
+        {
+          "kind": 1,
+          "sequence": 3,
+          "index": 7,
+          "token": 11,
+          "elapsed_us": 1540339,
+          "count": 0,
+          "error": 0
+        },
+        {
+          "kind": 2,
+          "sequence": 3,
+          "index": 0,
+          "token": 0,
+          "elapsed_us": 1540342,
+          "count": 8,
+          "error": 0
+        }
+      ],
+      "tokens": [
+        19,
+        11,
+        220,
+        20,
+        11,
+        220,
+        21,
+        11
+      ]
+    },
+    {
+      "status": 200,
+      "wall_seconds": 1.4154047080082819,
+      "frames": [
+        {
+          "kind": 0,
+          "sequence": 0,
+          "index": 0,
+          "token": 0,
+          "elapsed_us": 0,
+          "count": 0,
+          "error": 0
+        },
+        {
+          "kind": 1,
+          "sequence": 2,
+          "index": 0,
+          "token": 19,
+          "elapsed_us": 311124,
+          "count": 0,
+          "error": 0
+        },
+        {
+          "kind": 1,
+          "sequence": 2,
+          "index": 1,
+          "token": 11,
+          "elapsed_us": 445807,
+          "count": 0,
+          "error": 0
+        },
+        {
+          "kind": 1,
+          "sequence": 2,
+          "index": 2,
+          "token": 220,
+          "elapsed_us": 445867,
+          "count": 0,
+          "error": 0
+        },
+        {
+          "kind": 1,
+          "sequence": 2,
+          "index": 3,
+          "token": 20,
+          "elapsed_us": 1080582,
+          "count": 0,
+          "error": 0
+        },
+        {
+          "kind": 1,
+          "sequence": 2,
+          "index": 4,
+          "token": 11,
+          "elapsed_us": 1351562,
+          "count": 0,
+          "error": 0
+        },
+        {
+          "kind": 1,
+          "sequence": 2,
+          "index": 5,
+          "token": 220,
+          "elapsed_us": 1351674,
+          "count": 0,
+          "error": 0
+        },
+        {
+          "kind": 1,
+          "sequence": 2,
+          "index": 6,
+          "token": 21,
+          "elapsed_us": 1414467,
+          "count": 0,
+          "error": 0
+        },
+        {
+          "kind": 1,
+          "sequence": 2,
+          "index": 7,
+          "token": 11,
+          "elapsed_us": 1414567,
+          "count": 0,
+          "error": 0
+        },
+        {
+          "kind": 2,
+          "sequence": 2,
+          "index": 0,
+          "token": 0,
+          "elapsed_us": 1414570,
+          "count": 8,
+          "error": 0
+        }
+      ],
+      "tokens": [
+        19,
+        11,
+        220,
+        20,
+        11,
+        220,
+        21,
+        11
+      ]
+    },
+    {
+      "status": 200,
+      "wall_seconds": 1.541302666068077,
+      "frames": [
+        {
+          "kind": 0,
+          "sequence": 0,
+          "index": 0,
+          "token": 0,
+          "elapsed_us": 0,
+          "count": 0,
+          "error": 0
+        },
+        {
+          "kind": 1,
+          "sequence": 4,
+          "index": 0,
+          "token": 19,
+          "elapsed_us": 1080434,
+          "count": 0,
+          "error": 0
+        },
+        {
+          "kind": 1,
+          "sequence": 4,
+          "index": 1,
+          "token": 11,
+          "elapsed_us": 1351414,
+          "count": 0,
+          "error": 0
+        },
+        {
+          "kind": 1,
+          "sequence": 4,
+          "index": 2,
+          "token": 220,
+          "elapsed_us": 1351526,
+          "count": 0,
+          "error": 0
+        },
+        {
+          "kind": 1,
+          "sequence": 4,
+          "index": 3,
+          "token": 20,
+          "elapsed_us": 1414318,
+          "count": 0,
+          "error": 0
+        },
+        {
+          "kind": 1,
+          "sequence": 4,
+          "index": 4,
+          "token": 11,
+          "elapsed_us": 1414422,
+          "count": 0,
+          "error": 0
+        },
+        {
+          "kind": 1,
+          "sequence": 4,
+          "index": 5,
+          "token": 220,
+          "elapsed_us": 1414479,
+          "count": 0,
+          "error": 0
+        },
+        {
+          "kind": 1,
+          "sequence": 4,
+          "index": 6,
+          "token": 21,
+          "elapsed_us": 1540251,
+          "count": 0,
+          "error": 0
+        },
+        {
+          "kind": 1,
+          "sequence": 4,
+          "index": 7,
+          "token": 11,
+          "elapsed_us": 1540340,
+          "count": 0,
+          "error": 0
+        },
+        {
+          "kind": 2,
+          "sequence": 4,
+          "index": 0,
+          "token": 0,
+          "elapsed_us": 1540342,
+          "count": 8,
+          "error": 0
+        }
+      ],
+      "tokens": [
+        19,
+        11,
+        220,
+        20,
+        11,
+        220,
+        21,
+        11
+      ]
+    }
+  ],
+  "deadline": {
+    "status": 200,
+    "wall_seconds": 0.01349283300805837,
+    "frames": [
+      {
+        "kind": 0,
+        "sequence": 0,
+        "index": 0,
+        "token": 0,
+        "elapsed_us": 0,
+        "count": 0,
+        "error": 0
+      },
+      {
+        "kind": 3,
+        "sequence": 0,
+        "index": 0,
+        "token": 0,
+        "elapsed_us": 0,
+        "count": 0,
+        "error": 2
+      }
+    ],
+    "tokens": []
+  },
+  "disconnect": {
+    "status": 200,
+    "disconnected_after_token": 19
+  },
+  "recovered": {
+    "status": 200,
+    "wall_seconds": 0.6431738330284134,
+    "frames": [
+      {
+        "kind": 0,
+        "sequence": 0,
+        "index": 0,
+        "token": 0,
+        "elapsed_us": 0,
+        "count": 0,
+        "error": 0
+      },
+      {
+        "kind": 1,
+        "sequence": 7,
+        "index": 0,
+        "token": 19,
+        "elapsed_us": 445290,
+        "count": 0,
+        "error": 0
+      },
+      {
+        "kind": 1,
+        "sequence": 7,
+        "index": 1,
+        "token": 11,
+        "elapsed_us": 579809,
+        "count": 0,
+        "error": 0
+      },
+      {
+        "kind": 1,
+        "sequence": 7,
+        "index": 2,
+        "token": 220,
+        "elapsed_us": 579871,
+        "count": 0,
+        "error": 0
+      },
+      {
+        "kind": 1,
+        "sequence": 7,
+        "index": 3,
+        "token": 20,
+        "elapsed_us": 579903,
+        "count": 0,
+        "error": 0
+      },
+      {
+        "kind": 1,
+        "sequence": 7,
+        "index": 4,
+        "token": 11,
+        "elapsed_us": 579949,
+        "count": 0,
+        "error": 0
+      },
+      {
+        "kind": 1,
+        "sequence": 7,
+        "index": 5,
+        "token": 220,
+        "elapsed_us": 580000,
+        "count": 0,
+        "error": 0
+      },
+      {
+        "kind": 1,
+        "sequence": 7,
+        "index": 6,
+        "token": 21,
+        "elapsed_us": 642561,
+        "count": 0,
+        "error": 0
+      },
+      {
+        "kind": 1,
+        "sequence": 7,
+        "index": 7,
+        "token": 11,
+        "elapsed_us": 642643,
+        "count": 0,
+        "error": 0
+      },
+      {
+        "kind": 2,
+        "sequence": 7,
+        "index": 0,
+        "token": 0,
+        "elapsed_us": 642648,
+        "count": 8,
+        "error": 0
+      }
+    ],
+    "tokens": [
+      19,
+      11,
+      220,
+      20,
+      11,
+      220,
+      21,
+      11
+    ]
+  }
+}

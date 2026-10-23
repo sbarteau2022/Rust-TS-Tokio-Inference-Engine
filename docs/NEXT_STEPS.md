@@ -2,7 +2,7 @@
 title: "Next stages toward an Apple native inference server"
 document_type: "architecture"
 version: "1.1.0"
-date: "2026-10-23T00:42:45Z"
+date: "2026-10-23T11:59:19Z"
 implementation_date: null
 author: "Codex for Stewart Barteau"
 reviewers: []
@@ -12,10 +12,10 @@ related_files:
     lines: "1-9"
     role: "config"
   - path: "Cargo.lock"
-    lines: "1-1015"
+    lines: "1-1148"
     role: "config"
   - path: "Cargo.toml"
-    lines: "1-85"
+    lines: "1-94"
     role: "config"
   - path: "backend/rapid_worker.py"
     lines: "1-165"
@@ -158,6 +158,9 @@ related_files:
   - path: "judges/model_ab.py"
     lines: "1-93"
     role: "test"
+  - path: "judges/native_http_smoke.py"
+    lines: "1-81"
+    role: "test"
   - path: "judges/native_stream_disconnect.py"
     lines: "1-36"
     role: "test"
@@ -288,7 +291,7 @@ related_files:
     lines: "1-81"
     role: "primary"
   - path: "src/main.rs"
-    lines: "1-467"
+    lines: "1-472"
     role: "primary"
   - path: "src/runtime.rs"
     lines: "1-366"
@@ -305,11 +308,14 @@ related_files:
   - path: "src/serving/config.rs"
     lines: "1-51"
     role: "primary"
+  - path: "src/serving/http.rs"
+    lines: "1-685"
+    role: "primary"
   - path: "src/serving/kv.rs"
     lines: "1-280"
     role: "primary"
   - path: "src/serving/mod.rs"
-    lines: "1-114"
+    lines: "1-117"
     role: "primary"
   - path: "src/serving/model_ir.rs"
     lines: "1-244"
@@ -334,6 +340,9 @@ related_files:
     role: "primary"
   - path: "src/serving/native_extended.rs"
     lines: "1-214"
+    role: "primary"
+  - path: "src/serving/native_http.rs"
+    lines: "1-147"
     role: "primary"
   - path: "src/serving/native_ingestion.rs"
     lines: "1-272"
@@ -431,6 +440,9 @@ related_files:
   - path: "tests/grid.rs"
     lines: "1-41"
     role: "test"
+  - path: "tests/http.rs"
+    lines: "1-345"
+    role: "test"
   - path: "tests/native_execution.rs"
     lines: "1-486"
     role: "test"
@@ -499,6 +511,12 @@ related_files:
     role: "primary"
   - path: "ts/generated/wire.ts"
     lines: "1-13"
+    role: "primary"
+  - path: "ts/http-client.test.ts"
+    lines: "1-16"
+    role: "test"
+  - path: "ts/http-client.ts"
+    lines: "1-11"
     role: "primary"
   - path: "ts/smoke.ts"
     lines: "1-1"
@@ -825,3 +843,11 @@ The shared Engine throughput matrix now has 24,000 exact-reference tokens across
 The native incremental text boundary now feeds CLI deltas and canonical final text. Implement the proposed bounded loopback HTTP + versioned FlatBuffers stream contract in the tuning plan next, including generated TS 7.1 bindings, disconnect/deadline propagation and slow-client pressure gates. Then measure transport TTFT/ITL against the retained Rust-stream matrix.
 
 AMST v1 framing and native file/pipe output now exist with strict Rust/TS parsers and Unicode deltas. Next put this exact contract behind the proposed maintained-library loopback HTTP endpoint: bound connections/body time and bytes, propagate disconnect/deadline cancellation, enforce bounded network output and qualify slow readers/shutdown. Reuse the actual model and pipe evidence as component controls; do not treat them as network qualification. Bind generated TS 7.1 clients to the endpoint, then rerun the throughput matrix over transport.
+
+## Persistent HTTP checkpoint and next gates
+
+Loopback HTTP implementation connects the existing native MTP scheduler and AMST stream to a persistent process. Keep transport smoke evidence separate from the older 24,000-token scheduler matrix. First qualify actual HTTP arrival TTFT, inter-token gaps, decode and total throughput at single/three lanes under fixed and open-loop arrivals, reporting errors, cancellation, queue time, acceptance, audit epochs and exact commands. Use controlled target/no-audit/live-audit profiles with exact token parity; current native HTTP CLI exposes the live-audit MTP profile only.
+
+Then reduce target-first-token initialization cost and scheduler row head-of-line delay; implement state-safe physical tensor batching with rollback tests. Next add native paged/compressed attention/state ownership, and port the custom model-associated Dspark artifact as a separate proposer only after validating its required target taps and backbone. Extend context and held-out tool/coding/semantic quality gates before promotion. The server smoke does not qualify a general agent workload or resolve the known held-out misses. Production sampling policy values remain inactive until explicitly configured and approved.
+
+The Desktop OPS_BOARD documentation standard path supplied in the instructions is absent on this host. This checkpoint follows the repository's existing front matter, file map, source hashes, design preregistration and bound evidence conventions.
