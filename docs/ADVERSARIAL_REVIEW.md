@@ -2,7 +2,7 @@
 title: "Adversarial review of the native kernel prototype"
 document_type: "research"
 version: "1.1.0"
-date: "2026-10-23T11:59:19Z"
+date: "2026-10-23T12:19:54Z"
 implementation_date: null
 author: "Codex for Stewart Barteau"
 reviewers: []
@@ -342,7 +342,7 @@ related_files:
     lines: "1-214"
     role: "primary"
   - path: "src/serving/native_http.rs"
-    lines: "1-147"
+    lines: "1-217"
     role: "primary"
   - path: "src/serving/native_ingestion.rs"
     lines: "1-272"
@@ -512,11 +512,20 @@ related_files:
   - path: "ts/generated/wire.ts"
     lines: "1-13"
     role: "primary"
+  - path: "ts/http-bench.ts"
+    lines: "1-32"
+    role: "primary"
   - path: "ts/http-client.test.ts"
     lines: "1-16"
     role: "test"
   - path: "ts/http-client.ts"
     lines: "1-11"
+    role: "primary"
+  - path: "ts/http-metrics.test.ts"
+    lines: "1-6"
+    role: "test"
+  - path: "ts/http-metrics.ts"
+    lines: "1-15"
     role: "primary"
   - path: "ts/smoke.ts"
     lines: "1-1"
@@ -808,3 +817,11 @@ Focused gated-backend tests hold a native step pending across deadline and disco
 Accepted limitations: TCP send completion and queued Finish do not establish end-user delivery. Abrupt disconnect may expose an unfinished prefix, not an Error. Synchronous native calls are not forcibly interrupted; completion remains scheduler-owned. Header/HTTP connection errors are counted separately from generation errors. Native HTTP CLI uses one explicit experimental live-audit profile, with a 511-token scheduler context and at most three model lanes; neither a general agent quality claim nor physical tensor batching follows. Production sampling draft values remain inactive. TLS/authentication and remote/public serving are not implemented.
 
 The first real HTTP attempt completed and drained but failed its historical-reference assertion: the driver sent `Complete 1, 2, 3,` while the reference used `Complete: 1, 2, 3,`. Both binary readers decoded that first response successfully; it answered the different prompt. The failed attempt is retained under `evidence/native-http/initial-prompt-mismatch/`. The corrected rerun uses byte-identical prompt text; changing the expectation without matching input was rejected.
+
+## HTTP timing and control review
+
+Execution profile selection fails before loading weights on missing, duplicate, malformed or unknown values; the existing policy parser still rejects unknown controls and requires all seven policy settings. The target profile uses ScheduledDevice, avoiding an unfair maintained-MTP fallback baseline; both profiles still load the same open_mtp executor artifact, so resident head weights are not removed from the target memory footprint. The audited path preserves its validated-batch clock; the no-audit profile disables that hook only.
+
+Offline timing tests separate TTFT, request envelope, burst callbacks, native publication deltas and post-first per-lane decode arithmetic; synthetic 1k/1.5k/2k windows count global arrival order. An initial exact floating-point assertion failed because algebraically equivalent throughput expressions differed by one final bit; the assertion now uses an explicit 1e-9 numerical tolerance without changing measured values. Native benchmark tokens must match immutable target references, and every stream must Finish. Partial observations and normalized frame archives remain on failure; successful summary is written only after owned-process drain. Fixed profile order, one warmup prompt and synchronized waves are explicit confounds, not evidence of continuous batching or production superiority.
+
+The first pilot launch completed its real target warmup with parity and a clean drain, then failed offline artifact serialization because AMST metadata contains BigInt u64 fields. The failed attempt is retained under `native-http-pilot/initial-artifact-serialization/`. Offline serialization now preserves BigInts as decimal strings, with an explicit full-u64 regression test; no server protocol or model computation was changed by this fix.

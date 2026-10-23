@@ -2,23 +2,27 @@
 > apple-native-rust-server@0.1.0 test
 > tsx --test ts/*.test.ts
 
-✔ HTTP client validates origin and bounds before network (0.439916ms)
-✔ HTTP client accepts fragmented binary finish and rejects error or truncated EOF (11.4055ms)
-✔ Rust fixture and all chunk sizes agree, BOM and Unicode preserved (14.780291ms)
-✔ unknown controls, ordering, exact terminal and EOF refusal (3.619541ms)
-✔ malformed structural mutations fail without permitting poisoned reuse (15.213916ms)
-✔ typed errors terminate partial and empty streams (0.199375ms)
-✔ timestamp, token and aggregate text caps fail closed (14.69525ms)
-✔ MVK records exact dependency order (1.173083ms)
-✔ invalid shapes and unsafe names rejected (0.143542ms)
-✔ undefined and invalid handles rejected (0.078459ms)
-✔ second kernel family records row-bias fusion (0.191417ms)
-✔ CORDIC functions serialize stable version-3 operation codes (0.306125ms)
-ℹ tests 12
+✔ HTTP client validates origin and bounds before network (0.426167ms)
+✔ HTTP client accepts fragmented binary finish and rejects error or truncated EOF (11.081042ms)
+✔ HTTP timing separates TTFT, burst gaps, request envelope and per-lane decode (0.589416ms)
+✔ HTTP macro windows count globally delivered tokens, not request completion (0.848959ms)
+✔ HTTP timing rejects empty, regressed and mismatched observations (0.143042ms)
+✔ offline artifacts preserve exact u64 metadata (0.06275ms)
+✔ Rust fixture and all chunk sizes agree, BOM and Unicode preserved (15.083916ms)
+✔ unknown controls, ordering, exact terminal and EOF refusal (3.718834ms)
+✔ malformed structural mutations fail without permitting poisoned reuse (15.7265ms)
+✔ typed errors terminate partial and empty streams (0.185458ms)
+✔ timestamp, token and aggregate text caps fail closed (15.268583ms)
+✔ MVK records exact dependency order (1.235917ms)
+✔ invalid shapes and unsafe names rejected (0.128208ms)
+✔ undefined and invalid handles rejected (0.074625ms)
+✔ second kernel family records row-bias fusion (0.209ms)
+✔ CORDIC functions serialize stable version-3 operation codes (0.30625ms)
+ℹ tests 16
 ℹ suites 0
-ℹ pass 12
+ℹ pass 16
 ℹ fail 0
 ℹ cancelled 0
 ℹ skipped 0
 ℹ todo 0
-ℹ duration_ms 152.887875
+ℹ duration_ms 156.758833

@@ -2,7 +2,7 @@
 title: "Native MTP integration and tuning control plan"
 document_type: "architecture"
 version: "1.3.0"
-date: "2026-10-23T11:59:19Z"
+date: "2026-10-23T12:19:54Z"
 implementation_date: null
 author: "Codex for Stewart Barteau"
 reviewers: []
@@ -342,7 +342,7 @@ related_files:
     lines: "1-214"
     role: "primary"
   - path: "src/serving/native_http.rs"
-    lines: "1-147"
+    lines: "1-217"
     role: "primary"
   - path: "src/serving/native_ingestion.rs"
     lines: "1-272"
@@ -512,11 +512,20 @@ related_files:
   - path: "ts/generated/wire.ts"
     lines: "1-13"
     role: "primary"
+  - path: "ts/http-bench.ts"
+    lines: "1-32"
+    role: "primary"
   - path: "ts/http-client.test.ts"
     lines: "1-16"
     role: "test"
   - path: "ts/http-client.ts"
     lines: "1-11"
+    role: "primary"
+  - path: "ts/http-metrics.test.ts"
+    lines: "1-6"
+    role: "test"
+  - path: "ts/http-metrics.ts"
+    lines: "1-15"
     role: "primary"
   - path: "ts/smoke.ts"
     lines: "1-1"
@@ -768,3 +777,17 @@ Use installed Hyper HTTP/1 with Tokio I/O/timers, one request per connection, a 
 Response uses existing AMST bytes, with one pending output slot plus HTTP/TCP buffers. Reserve network-channel capacity before receiving another scheduler token. Body drop wakes the producer and drops/cancels Request; native work remains executor-owned. Deadline/shutdown sends a typed Error if its bounded terminal-delivery grace (100 ms) succeeds; otherwise EOF is an explicit unfinished gap. Never discard a queued token to insert an Error and never claim channel acceptance is end-user acknowledgement. Finish follows final receipt and canonical text equality. HTTP/1 keepalive/pipelined reuse is disabled in this first local profile.
 
 Shutdown stops accepts, wakes producers and closes connections within a configured grace; wait for producer ownership to end before shutting down Engine/native stores. Test with a synthetic gated backend that proves deadline/disconnect do not abandon an in-progress step, and then the actual Combined model. Gates include body/header pressure, malformed controls/UTF-8/context, numeric loopback authority, deadline before first token, disconnect after token, bounded slow-output stall, three concurrent streams, shutdown with outstanding work and zero resident drain. Existing AMST Rust/TS/parser/native checks remain required. No TLS, remote/authenticated service, OpenAI compatibility or HTTP throughput claim follows from these local qualification gates.
+
+## HTTP performance qualification preregistration
+
+Expose a required HTTP-only `--execution-profile target|mtp|mtp-audited` flag before model load, reusing the seven explicit policy controls. `target` selects the existing ScheduledDevice/Device state backend, not maintained MTP fallback; `mtp` and `mtp-audited` differ only by the existing validated-batch metadata audit hook. Stamp the profile into AMST metadata and record the final proposer ledger as plain numeric diagnostic fields after draining. No request selects or changes server policy.
+
+First HTTP pilot: two separately started persistent profiles (target then mtp-audited), each with one warmup and 2,000 exact-reference tokens at one and three closed-loop lanes, cycling the four existing short prompts, 64 output tokens/request with final truncation to reach the exact budget. Preserve every validated frame and client monotonic arrival time, request start/end, metadata identity/profile and actual command/binary hash. Report client TTFT, frame arrival ITL distribution including burst zeros, post-first decode rate, aggregate request-envelope throughput and 1k/1500/2k cumulative windows. Native publication timings remain separate; HTTP metadata arrival is not TTFT. Learned acceptance excludes known seeds but cumulative shutdown ledger includes warmup and both lane cells, which must be stated. No physical tensor batching or continuous/open-loop claim follows. Prior immutable target token references provide exact-output controls; no prompt alteration is allowed.
+
+Gates: parser rejects malformed profile controls before load; the TS client/benchmark requires successful Finish and exact token parity. Save partial raw observations and nonzero driver status on failure; drain only the owned server. Validate measurement arithmetic on synthetic timestamps before timing native traffic. The pilot has fixed profile order, shared-host interference, short contexts and one repetition; reverse-order/no-audit/open-loop sweeps and broader quality remain necessary before a production performance claim.
+
+## Next physical batching design gate
+
+Current ScheduledDevice and ScheduledMtp iterate rows and invoke the native executor per row. HTTP stream concurrency therefore does not establish batched tensor execution. Before replacing that loop, introduce a typed per-row transaction descriptor containing sequence/parent cursor, positions, committed-length and provisional draft span, with immutable model/tokenizer/quant identity. Pack compatible rows only; different positions require explicit per-row masks, and attention KV, convolution history and recurrent state must advance or roll back together. No shared mutable view may outlive a native completion fence or cross into another row after cancellation.
+
+Qualification must compare batched versus scalar target tokens/state across heterogeneous prompt lengths, partial draft acceptance and rejected-draft rollback; inject one-row failure, cancellation and output backpressure while native work remains in flight. Verify row permutation invariance, no cross-lane contamination and zero charged state after shutdown. Record actual packed-row counts, padding cost, completion ownership and fairness. This is a preregistered next gate, not an implemented batch API or a claim from the current HTTP pilot. Native paging/compressed KV and Dspark target taps remain separate integrations after this state contract is proven.

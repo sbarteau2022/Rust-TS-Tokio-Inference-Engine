@@ -39,7 +39,7 @@ async fn main() -> Result<()> {
         }
         #[cfg(feature = "native-mlx")]
         Some("native-mtp-serve") => {
-            ensure!(args.len()>=5,"native-mtp-serve LOOPBACK:PORT BODY_TIMEOUT_MS MAX_CONNECTIONS [seven explicit policy flags]");
+            ensure!(args.len()>=5,"native-mtp-serve LOOPBACK:PORT BODY_TIMEOUT_MS MAX_CONNECTIONS --execution-profile target|mtp|mtp-audited [seven explicit policy flags]");
             rust_server::serving::native_http::serve(args[2].parse()?,args[3].parse()?,args[4].parse()?,&args[5..]).await?;
         }
         #[cfg(feature = "native-mlx")]
@@ -266,7 +266,7 @@ async fn main() -> Result<()> {
             println!("{}", serde_json::to_string(&wire::decode(&bytes)?)?);
         }
         Some("--help") | Some("help") => {
-            println!("rust-server: native-mtp-serve LOOPBACK:PORT BODY_TIMEOUT_MS MAX_CONNECTIONS [explicit policy flags] | stream-check FILE | native-mtp-stream PROMPT MAX_NEW [explicit policy flags] | native-mtp-generate PROMPT MAX_NEW [explicit policy flags; see README] | model-run CONFIG PROMPTS MAX_NEW [flags] | config check|print --config FILE | cache-judge CONFIG.json | run-chain INPUTS.json TRACE [TRACE ...] | macro-bench DIRECTORY THREADS LIMIT COUNT | capabilities | backend-judge DIRECTORY | idle | decode TRACE | uma-judge | kernel-judge DIRECTORY [ABS_CAPTURE_PATH] | runtime-judge | run TRACE INPUTS.json; runtime limit: RUST_SERVER_IN_FLIGHT=2|3 (default 3)");
+            println!("rust-server: native-mtp-serve LOOPBACK:PORT BODY_TIMEOUT_MS MAX_CONNECTIONS --execution-profile target|mtp|mtp-audited [explicit policy flags] | stream-check FILE | native-mtp-stream PROMPT MAX_NEW [explicit policy flags] | native-mtp-generate PROMPT MAX_NEW [explicit policy flags; see README] | model-run CONFIG PROMPTS MAX_NEW [flags] | config check|print --config FILE | cache-judge CONFIG.json | run-chain INPUTS.json TRACE [TRACE ...] | macro-bench DIRECTORY THREADS LIMIT COUNT | capabilities | backend-judge DIRECTORY | idle | decode TRACE | uma-judge | kernel-judge DIRECTORY [ABS_CAPTURE_PATH] | runtime-judge | run TRACE INPUTS.json; runtime limit: RUST_SERVER_IN_FLIGHT=2|3 (default 3)");
         }
         _ => bail!("use rust-server --help"),
     }

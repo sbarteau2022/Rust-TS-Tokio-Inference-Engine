@@ -1,0 +1,10 @@
+/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/ts/http-bench.ts:21
+  const warmup=await request(-1,0,8);writeFileSync(dir+'/warmup.json',JSON.stringify(warmup,null,2));
+                                                                           ^
+
+TypeError: Do not know how to serialize a BigInt
+    at JSON.stringify (<anonymous>)
+    at <anonymous> (/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/ts/http-bench.ts:21:76)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+Node.js v26.9.0

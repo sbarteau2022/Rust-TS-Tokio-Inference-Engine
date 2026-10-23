@@ -1,8 +1,8 @@
 ---
 title: "Rust Server — Apple native kernel compiler and runtime"
 document_type: "implementation"
-version: "1.35.0"
-date: "2026-10-23T11:59:19Z"
+version: "1.36.0"
+date: "2026-10-23T12:19:54Z"
 implementation_date: null
 author: "Codex for Stewart Barteau"
 reviewers: []
@@ -342,7 +342,7 @@ related_files:
     lines: "1-214"
     role: "primary"
   - path: "src/serving/native_http.rs"
-    lines: "1-147"
+    lines: "1-217"
     role: "primary"
   - path: "src/serving/native_ingestion.rs"
     lines: "1-272"
@@ -512,11 +512,20 @@ related_files:
   - path: "ts/generated/wire.ts"
     lines: "1-13"
     role: "primary"
+  - path: "ts/http-bench.ts"
+    lines: "1-32"
+    role: "primary"
   - path: "ts/http-client.test.ts"
     lines: "1-16"
     role: "test"
   - path: "ts/http-client.ts"
     lines: "1-11"
+    role: "primary"
+  - path: "ts/http-metrics.test.ts"
+    lines: "1-6"
+    role: "test"
+  - path: "ts/http-metrics.ts"
+    lines: "1-15"
     role: "primary"
   - path: "ts/smoke.ts"
     lines: "1-1"
@@ -1222,6 +1231,7 @@ The designated Combined model now has a persistent Rust/Hyper HTTP/1 server, nat
 ```sh
 # Run from this checkout; all policy values are explicit, experimental settings.
 target/release/rust-server native-mtp-serve 127.0.0.1:8097 1000 8 \
+  --execution-profile mtp-audited \
   --draft-width 4 --stream-capacity 1 --qualification-trials 64 \
   --probe-epochs 2 --initial-mass 2147483647 \
   --admission-mass 268435455 --reward-mass 536870911
@@ -1238,3 +1248,26 @@ The transport reserves its one output channel slot before consuming another sche
 Reproduce transport checks with `cargo test --locked --test http`, `cargo test --locked full_network_slot`, `npm test`, and, after release build and other GPU judges finish, `python3 judges/native_http_smoke.py`. This last Python program is an offline test driver, not part of model serving.
 
 HTTP validation: **166 default / 166 debug-validation / 111 minimal-feature Rust tests**, 12 TS tests, both TS 7.1 compiler gates, strict all-target Clippy, deterministic schema regeneration and native/GPU judges passed. The actual Combined model matched the prior 16-token reference, three concurrent eight-token streams, and recovery after deadline and disconnect after the first token. Rust/TS readers rejected the unfinished disconnect prefix; the actual TS HTTP client completed, and shutdown reported zero scheduler/native bytes. [Bound evidence](evidence/native-http/qualification.json). The initial driver prompt mismatch and an additional metadata-disconnect control are retained separately. HTTP throughput and broad model/agent quality remain unqualified.
+
+HTTP startup now requires `--execution-profile target|mtp|mtp-audited` alongside the seven existing controls. `target` is the existing native target-only device backend; `mtp` disables live audit; `mtp-audited` enables validated-batch metadata audits. Policies are fixed for the process. Final `DRAFT_LEDGER` diagnostic counters include warmup and all requests in that process; known-seed tokens are counted separately from learned proposals. Production sampling remains inactive.
+
+## Client-observed HTTP pilot
+
+After `cargo build --locked --release`, run `node --import tsx ts/http-bench.ts NEW_DIRECTORY` with no other project GPU judges running. The offline TS driver starts and drains only its own loopback server processes; it never changes the user's Dspark service. It records command/binary identity, host process names/CPU/RSS, metadata, every validated frame (reencoded as AMST), per-token monotonic callback arrival and native publication times, exact-reference parity and each request envelope. JSON files are offline qualification artifacts, not a runtime transport or model worker.
+
+The fixed-order pilot runs target then audited MTP, each with one eight-token warmup and 2,000 tokens at one/three synchronized closed-loop lanes using the four existing short prompts. Final requests truncate to reach 2,000 exactly. Cumulative 1k/1.5k/2k checkpoints count delivered tokens across all streams. Aggregate throughput includes connection/HTTP completion, client framing and between-wave artifact writes. TTFT starts before fetch; post-first rate divides output tokens after each first token by summed per-request first-to-last callback duration. ITL includes tiny gaps between callbacks for coalesced draft bursts, not estimated uniform token timing. Report nearest-rank p50/p95 and native publication ITL separately.
+
+Shutdown acceptance counters are cumulative across warmup and both lane cells. Learned `accepted/proposed` excludes known seeds, while seed attempts are separately recorded. This first pilot has one repetition, fixed profile order, shared-host contention and short contexts. It does not establish continuous batching, deep-context speed, Dspark parity, quality or production superiority. Reverse-order/no-audit and open-loop arrival runs remain necessary.
+
+HTTP pilot results (one fixed order, shared host, short contexts):
+
+| Profile | Streams | Aggregate tok/s | Client TTFT mean ms | Callback ITL mean / p95 ms | Post-first per-lane tok/s |
+| --- | --- | --- | --- | --- | --- |
+| target | 1 | 17.295 | 601.71 | 48.96 / 49.28 | 20.425 |
+| target | 3 | 17.313 | 1753.82 | 143.28 / 147.75 | 6.979 |
+| mtp-audited | 1 | 24.056 | 718.24 | 30.55 / 138.58 | 32.732 |
+| mtp-audited | 3 | 23.772 | 1726.30 | 96.13 / 279.79 | 10.403 |
+
+Learned acceptance: **2179/2574 (84.65%)**, excluding 868 known-seed attempts; cumulative across warmup and both audited cells. Each cell produced 2,000 exact-reference tokens, with saved 1k/1.5k/2k windows. Both profiles drained zero charged scheduler/native state bytes. **167 default / 167 debug / 111 minimal Rust tests**, 16 TS tests, TS 7.1/tsrs, strict Clippy, schema/native/GPU judges passed. [Bound pilot evidence](evidence/native-http-pilot/qualification.json). These measurements supersede no earlier benchmark scope; continuous batching, deep-context and production quality remain open.
+
+Native compiler/file caches were not reset across profile processes; the preserved failed target warmup may also have warmed those caches. Treat the fixed-order speedup as a pilot observation. Audited MTP worsens single-stream TTFT and p95 token gaps despite improving aggregate throughput; first-token initialization and burst-tail latency remain optimization gates. Three concurrent streams do not demonstrate physical tensor batching or continuous-arrival qualification.

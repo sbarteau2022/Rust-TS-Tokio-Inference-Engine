@@ -2,7 +2,7 @@
 title: "Next stages toward an Apple native inference server"
 document_type: "architecture"
 version: "1.1.0"
-date: "2026-10-23T11:59:19Z"
+date: "2026-10-23T12:19:54Z"
 implementation_date: null
 author: "Codex for Stewart Barteau"
 reviewers: []
@@ -342,7 +342,7 @@ related_files:
     lines: "1-214"
     role: "primary"
   - path: "src/serving/native_http.rs"
-    lines: "1-147"
+    lines: "1-217"
     role: "primary"
   - path: "src/serving/native_ingestion.rs"
     lines: "1-272"
@@ -512,11 +512,20 @@ related_files:
   - path: "ts/generated/wire.ts"
     lines: "1-13"
     role: "primary"
+  - path: "ts/http-bench.ts"
+    lines: "1-32"
+    role: "primary"
   - path: "ts/http-client.test.ts"
     lines: "1-16"
     role: "test"
   - path: "ts/http-client.ts"
     lines: "1-11"
+    role: "primary"
+  - path: "ts/http-metrics.test.ts"
+    lines: "1-6"
+    role: "test"
+  - path: "ts/http-metrics.ts"
+    lines: "1-15"
     role: "primary"
   - path: "ts/smoke.ts"
     lines: "1-1"
@@ -851,3 +860,7 @@ Loopback HTTP implementation connects the existing native MTP scheduler and AMST
 Then reduce target-first-token initialization cost and scheduler row head-of-line delay; implement state-safe physical tensor batching with rollback tests. Next add native paged/compressed attention/state ownership, and port the custom model-associated Dspark artifact as a separate proposer only after validating its required target taps and backbone. Extend context and held-out tool/coding/semantic quality gates before promotion. The server smoke does not qualify a general agent workload or resolve the known held-out misses. Production sampling policy values remain inactive until explicitly configured and approved.
 
 The Desktop OPS_BOARD documentation standard path supplied in the instructions is absent on this host. This checkpoint follows the repository's existing front matter, file map, source hashes, design preregistration and bound evidence conventions.
+
+## After HTTP fixed-order pilot
+
+The HTTP CLI now exposes explicit target, MTP/no-audit and MTP/live-audit profiles. Bind the current fixed-order pilot before making network performance claims. Follow it with reverse-order/no-audit controls, mixed context lengths and open-loop arrivals, reporting rejection/queue latency and fairness. Do not call synchronized request waves continuous batching. Improve first-token MTP initialization and burst-tail latency before state-safe physical tensor batching; then native paging/KV and custom Dspark remain the next integration gates. Broad held-out model qualification is still open.

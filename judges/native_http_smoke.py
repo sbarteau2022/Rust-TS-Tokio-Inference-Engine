@@ -21,7 +21,7 @@ def frames(raw):
         pos=end
     return result
 with socket.socket() as s:s.bind(('127.0.0.1',0));port=s.getsockname()[1]
-flags=['--draft-width','4','--stream-capacity','1','--qualification-trials','64','--probe-epochs','2','--initial-mass','2147483647','--admission-mass','268435455','--reward-mass','536870911']
+flags=['--execution-profile','mtp-audited','--draft-width','4','--stream-capacity','1','--qualification-trials','64','--probe-epochs','2','--initial-mass','2147483647','--admission-mass','268435455','--reward-mass','536870911']
 command=[str(ROOT/'target/release/rust-server'),'native-mtp-serve',f'127.0.0.1:{port}','1000','8',*flags]
 (OUT/'command.json').write_text(json.dumps({'command':command,'model':'/Users/stewartbarteau/models/fused/Qwen3.6-MoE-Combined','binary_sha256':hashlib.sha256(Path(command[0]).read_bytes()).hexdigest()},indent=2))
 log=(OUT/'server.log').open('w');proc=subprocess.Popen(command,cwd=ROOT,stdout=log,stderr=subprocess.STDOUT)

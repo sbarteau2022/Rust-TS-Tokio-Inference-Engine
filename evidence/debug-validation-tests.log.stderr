@@ -450,7 +450,7 @@ PROJECTION-ORACLE module=language_model.lm_head bits=4 group=32 rows=1 channels=
      Running tests/async_completion.rs (target/debug/deps/async_completion-a3f26e946e34aee3)
      Running tests/cache_control.rs (target/debug/deps/cache_control-fa0127fe13398c22)
 
-thread 'prefix_inflight_is_deduplicated_and_producer_errors_release_reservations' (25392884) panicked at tests/cache_control.rs:211:26:
+thread 'prefix_inflight_is_deduplicated_and_producer_errors_release_reservations' (25427670) panicked at tests/cache_control.rs:211:26:
 injected producer panic
 note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
      Running tests/cordic.rs (target/debug/deps/cordic-6280251da062db3f)
@@ -466,7 +466,7 @@ note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
      Running tests/resources.rs (target/debug/deps/resources-11ebf0d71942c6bf)
      Running tests/serving.rs (target/debug/deps/serving-ba673d35066067a4)
 
-thread 'panicked_backend_closes_admission_and_reports_unfinished_work' (25393453) panicked at tests/serving.rs:228:27:
+thread 'panicked_backend_closes_admission_and_reports_unfinished_work' (25428269) panicked at tests/serving.rs:228:27:
 injected model backend panic
 note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
    Doc-tests rust_server
