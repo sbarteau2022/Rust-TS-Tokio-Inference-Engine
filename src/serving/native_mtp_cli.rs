@@ -127,14 +127,24 @@ pub async fn run(prompt: &str, max_new: usize, flags: &[String]) -> Result<()> {
     println!("EXPERIMENTAL-NATIVE-MTP identity={} width={} stream_capacity={} policy={:?} context=511 in_flight=3 physical_tensor_batching=false http=false production_qualified=false audit_clock=validated-batches",executor.identity(),options.width,options.capacity,options.policy);
     let engine = Engine::new(config, backend.storage(), backend)?;
     let mut request = engine.submit_stream(ids, max_new, options.capacity)?;
+    let mut text_stream = tokenizer.text_stream()?;
     while let Some(event) = request.next_token().await {
+        if let Some(delta) = text_stream.push(event.token)? {
+            println!("TEXT_DELTA {}", delta.escape_debug());
+        }
         println!(
             "TOKEN sequence={} index={} id={} elapsed_ms={:.3}",
             event.sequence, event.index, event.token, event.elapsed_ms
         );
     }
     let generation = request.result().await?;
-    println!("TEXT {}", tokenizer.decode(&generation.tokens)?);
+    let tail = text_stream.finish()?;
+    if !tail.is_empty() {
+        println!("TEXT_DELTA {}", tail.escape_debug());
+    }
+    let text = tokenizer.decode(&generation.tokens)?;
+    ensure!(text_stream.text() == text, "stream/final text mismatch");
+    println!("TEXT {text}");
     println!(
         "FINISH tokens={} reason={} elapsed_ms={:.3}",
         generation.tokens.len(),

@@ -60,6 +60,7 @@ def main():
     run(["cargo", "test", "--locked", "--example", "native_mtp_automaton_smoke"], "native-mtp-automaton-example-tests.log")
     run(["cargo", "test", "--locked", "--example", "native_mtp_scheduler_smoke"], "native-mtp-scheduler-example-tests.log")
     run(["cargo", "test", "--locked", "--example", "native_mtp_scheduler_bench"], "native-mtp-scheduler-bench-tests.log")
+    run(["cargo", "test", "--locked", "--example", "native_text_stream_smoke"], "native-text-stream-example-tests.log")
     run(["c++", "-std=c++20", "-O2", "-Ivendor/mlx/include", "judges/dense_precision.cpp", "-Lvendor/mlx/lib", "-lmlx", "-Wl,-rpath,"+str(ROOT/"vendor/mlx/lib"), "-o", "artifacts/dense-precision-judge"], "dense-precision-build.log")
     run(["artifacts/dense-precision-judge"], "dense-precision-default.log")
     run(["artifacts/dense-precision-judge"], "dense-precision-disabled.log",env=dict(ENV,MLX_ENABLE_TF32="0"))

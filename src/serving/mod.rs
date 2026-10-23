@@ -108,3 +108,6 @@ pub mod native_mtp;
 
 #[cfg(feature = "native-mlx")]
 pub mod native_mtp_cli;
+
+#[cfg(feature = "native-mlx")]
+pub mod native_text_stream;

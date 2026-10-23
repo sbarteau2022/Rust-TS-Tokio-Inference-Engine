@@ -1,7 +1,7 @@
 ---
 title: "Rust Server — Apple native kernel compiler and runtime"
 document_type: "implementation"
-version: "1.32.0"
+version: "1.33.0"
 date: "2026-10-23T05:21:07Z"
 implementation_date: null
 author: "Codex for Stewart Barteau"
@@ -15,7 +15,7 @@ related_files:
     lines: "1-1015"
     role: "config"
   - path: "Cargo.toml"
-    lines: "1-81"
+    lines: "1-85"
     role: "config"
   - path: "backend/rapid_worker.py"
     lines: "1-165"
@@ -61,6 +61,9 @@ related_files:
     role: "primary"
   - path: "examples/native_suite_reference.rs"
     lines: "1-198"
+    role: "primary"
+  - path: "examples/native_text_stream_smoke.rs"
+    lines: "1-57"
     role: "primary"
   - path: "fixtures/atan2.amvk"
     lines: null
@@ -159,7 +162,7 @@ related_files:
     lines: "1-35"
     role: "test"
   - path: "judges/run.py"
-    lines: "1-232"
+    lines: "1-233"
     role: "test"
   - path: "judges/speculative_report.py"
     lines: "1-74"
@@ -294,7 +297,7 @@ related_files:
     lines: "1-280"
     role: "primary"
   - path: "src/serving/mod.rs"
-    lines: "1-110"
+    lines: "1-113"
     role: "primary"
   - path: "src/serving/model_ir.rs"
     lines: "1-244"
@@ -336,7 +339,7 @@ related_files:
     lines: "1-206"
     role: "primary"
   - path: "src/serving/native_mtp_cli.rs"
-    lines: "1-220"
+    lines: "1-230"
     role: "primary"
   - path: "src/serving/native_mtp_decode.rs"
     lines: "1-273"
@@ -362,8 +365,11 @@ related_files:
   - path: "src/serving/native_state.rs"
     lines: "1-194"
     role: "primary"
+  - path: "src/serving/native_text_stream.rs"
+    lines: "1-186"
+    role: "primary"
   - path: "src/serving/native_tokenizer.rs"
-    lines: "1-213"
+    lines: "1-220"
     role: "primary"
   - path: "src/serving/qwen_tests.rs"
     lines: "1-568"
@@ -1136,3 +1142,7 @@ Two reversed-order rounds, 2,000 tokens/cell, 24,000 measured tokens total. Repe
 MTP output is bursty: verified bundles drain through per-token streams, so low mean gaps do not establish uniform token execution. Multi-lane aggregate rate is shared across lanes. This is synchronized-group iteration scheduling, not HTTP, physical tensor batching or open-loop continuous-batching qualification. Macro checkpoints at 1,000/1,500/2,000 tokens, receiver timing, per-round variation and complete ledgers are retained in [raw evidence](evidence/native-mtp-stream-matrix/qualification.json). No speed/quality claim transfers to longer contexts or other models.
 
 Validation: 154 default / 154 debug-validation / 102 minimal-feature Rust tests, metric-unit and strict all-target Clippy, TS 7.1/tsrs and native/GPU judges passed.
+
+Native text streaming is now available through `NativeTokenizer::text_stream()`. It uses stateful decoding, holds incomplete UTF-8 across token IDs, bounds input to 512 IDs, rejects unknown IDs and refuses reuse after error/finalization. Finish checks the canonical complete decode and emits its remaining suffix, including canonical replacement for truncated terminal bytes. Native CLI logs escaped `TEXT_DELTA` records from verified token events and checks their concatenation against final text. These are local diagnostic records, not an HTTP/SSE protocol. HTTP framing, deadlines and disconnect integration remain unfinished.
+
+Text-stream validation: **157 default / 157 debug-validation / 102 minimal-feature Rust tests**, strict all-target Clippy, TS 7.1/tsrs and native/GPU judges passed. The designated tokenizer passed 57 multilingual token-prefix terminations; native CLI deltas matched final model text. [Source-bound evidence](evidence/native-text-stream/qualification.json). HTTP and post-integration throughput remain unqualified.

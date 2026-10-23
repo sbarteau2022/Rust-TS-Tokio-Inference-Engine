@@ -1,0 +1,1108 @@
+{
+  "cases": 57,
+  "pass": true,
+  "rows": [
+    {
+      "deltas": [],
+      "ids": [],
+      "prefix_tokens": 0,
+      "source": "résumé 😀 日本語 中文 العربية",
+      "tail": "",
+      "text": ""
+    },
+    {
+      "deltas": [
+        "ré"
+      ],
+      "ids": [
+        41196
+      ],
+      "prefix_tokens": 1,
+      "source": "résumé 😀 日本語 中文 العربية",
+      "tail": "",
+      "text": "ré"
+    },
+    {
+      "deltas": [
+        "ré",
+        "sumé"
+      ],
+      "ids": [
+        41196,
+        168699
+      ],
+      "prefix_tokens": 2,
+      "source": "résumé 😀 日本語 中文 العربية",
+      "tail": "",
+      "text": "résumé"
+    },
+    {
+      "deltas": [
+        "ré",
+        "sumé",
+        " 😀"
+      ],
+      "ids": [
+        41196,
+        168699,
+        87209
+      ],
+      "prefix_tokens": 3,
+      "source": "résumé 😀 日本語 中文 العربية",
+      "tail": "",
+      "text": "résumé 😀"
+    },
+    {
+      "deltas": [
+        "ré",
+        "sumé",
+        " 😀",
+        " "
+      ],
+      "ids": [
+        41196,
+        168699,
+        87209,
+        220
+      ],
+      "prefix_tokens": 4,
+      "source": "résumé 😀 日本語 中文 العربية",
+      "tail": "",
+      "text": "résumé 😀 "
+    },
+    {
+      "deltas": [
+        "ré",
+        "sumé",
+        " 😀",
+        " ",
+        "日本語"
+      ],
+      "ids": [
+        41196,
+        168699,
+        87209,
+        220,
+        247359
+      ],
+      "prefix_tokens": 5,
+      "source": "résumé 😀 日本語 中文 العربية",
+      "tail": "",
+      "text": "résumé 😀 日本語"
+    },
+    {
+      "deltas": [
+        "ré",
+        "sumé",
+        " 😀",
+        " ",
+        "日本語",
+        " "
+      ],
+      "ids": [
+        41196,
+        168699,
+        87209,
+        220,
+        247359,
+        220
+      ],
+      "prefix_tokens": 6,
+      "source": "résumé 😀 日本語 中文 العربية",
+      "tail": "",
+      "text": "résumé 😀 日本語 "
+    },
+    {
+      "deltas": [
+        "ré",
+        "sumé",
+        " 😀",
+        " ",
+        "日本語",
+        " ",
+        "中文"
+      ],
+      "ids": [
+        41196,
+        168699,
+        87209,
+        220,
+        247359,
+        220,
+        99986
+      ],
+      "prefix_tokens": 7,
+      "source": "résumé 😀 日本語 中文 العربية",
+      "tail": "",
+      "text": "résumé 😀 日本語 中文"
+    },
+    {
+      "deltas": [
+        "ré",
+        "sumé",
+        " 😀",
+        " ",
+        "日本語",
+        " ",
+        "中文",
+        " العربية"
+      ],
+      "ids": [
+        41196,
+        168699,
+        87209,
+        220,
+        247359,
+        220,
+        99986,
+        171405
+      ],
+      "prefix_tokens": 8,
+      "source": "résumé 😀 日本語 中文 العربية",
+      "tail": "",
+      "text": "résumé 😀 日本語 中文 العربية"
+    },
+    {
+      "deltas": [],
+      "ids": [],
+      "prefix_tokens": 0,
+      "source": "é 👩‍💻 \r\n\t end  ",
+      "tail": "",
+      "text": ""
+    },
+    {
+      "deltas": [
+        "é"
+      ],
+      "ids": [
+        933
+      ],
+      "prefix_tokens": 1,
+      "source": "é 👩‍💻 \r\n\t end  ",
+      "tail": "",
+      "text": "é"
+    },
+    {
+      "deltas": [
+        "é"
+      ],
+      "ids": [
+        933,
+        59720
+      ],
+      "prefix_tokens": 2,
+      "source": "é 👩‍💻 \r\n\t end  ",
+      "tail": " �",
+      "text": "é �"
+    },
+    {
+      "deltas": [
+        "é",
+        " 👩"
+      ],
+      "ids": [
+        933,
+        59720,
+        102
+      ],
+      "prefix_tokens": 3,
+      "source": "é 👩‍💻 \r\n\t end  ",
+      "tail": "",
+      "text": "é 👩"
+    },
+    {
+      "deltas": [
+        "é",
+        " 👩"
+      ],
+      "ids": [
+        933,
+        59720,
+        102,
+        373
+      ],
+      "prefix_tokens": 4,
+      "source": "é 👩‍💻 \r\n\t end  ",
+      "tail": "�",
+      "text": "é 👩�"
+    },
+    {
+      "deltas": [
+        "é",
+        " 👩",
+        "‍"
+      ],
+      "ids": [
+        933,
+        59720,
+        102,
+        373,
+        235
+      ],
+      "prefix_tokens": 5,
+      "source": "é 👩‍💻 \r\n\t end  ",
+      "tail": "",
+      "text": "é 👩‍"
+    },
+    {
+      "deltas": [
+        "é",
+        " 👩",
+        "‍"
+      ],
+      "ids": [
+        933,
+        59720,
+        102,
+        373,
+        235,
+        88995
+      ],
+      "prefix_tokens": 6,
+      "source": "é 👩‍💻 \r\n\t end  ",
+      "tail": "�",
+      "text": "é 👩‍�"
+    },
+    {
+      "deltas": [
+        "é",
+        " 👩",
+        "‍",
+        "💻"
+      ],
+      "ids": [
+        933,
+        59720,
+        102,
+        373,
+        235,
+        88995,
+        119
+      ],
+      "prefix_tokens": 7,
+      "source": "é 👩‍💻 \r\n\t end  ",
+      "tail": "",
+      "text": "é 👩‍💻"
+    },
+    {
+      "deltas": [
+        "é",
+        " 👩",
+        "‍",
+        "💻",
+        " \r\n"
+      ],
+      "ids": [
+        933,
+        59720,
+        102,
+        373,
+        235,
+        88995,
+        119,
+        2449
+      ],
+      "prefix_tokens": 8,
+      "source": "é 👩‍💻 \r\n\t end  ",
+      "tail": "",
+      "text": "é 👩‍💻 \r\n"
+    },
+    {
+      "deltas": [
+        "é",
+        " 👩",
+        "‍",
+        "💻",
+        " \r\n",
+        "\t"
+      ],
+      "ids": [
+        933,
+        59720,
+        102,
+        373,
+        235,
+        88995,
+        119,
+        2449,
+        197
+      ],
+      "prefix_tokens": 9,
+      "source": "é 👩‍💻 \r\n\t end  ",
+      "tail": "",
+      "text": "é 👩‍💻 \r\n\t"
+    },
+    {
+      "deltas": [
+        "é",
+        " 👩",
+        "‍",
+        "💻",
+        " \r\n",
+        "\t",
+        " end"
+      ],
+      "ids": [
+        933,
+        59720,
+        102,
+        373,
+        235,
+        88995,
+        119,
+        2449,
+        197,
+        809
+      ],
+      "prefix_tokens": 10,
+      "source": "é 👩‍💻 \r\n\t end  ",
+      "tail": "",
+      "text": "é 👩‍💻 \r\n\t end"
+    },
+    {
+      "deltas": [
+        "é",
+        " 👩",
+        "‍",
+        "💻",
+        " \r\n",
+        "\t",
+        " end",
+        "  "
+      ],
+      "ids": [
+        933,
+        59720,
+        102,
+        373,
+        235,
+        88995,
+        119,
+        2449,
+        197,
+        809,
+        256
+      ],
+      "prefix_tokens": 11,
+      "source": "é 👩‍💻 \r\n\t end  ",
+      "tail": "",
+      "text": "é 👩‍💻 \r\n\t end  "
+    },
+    {
+      "deltas": [],
+      "ids": [],
+      "prefix_tokens": 0,
+      "source": "literal replacement � followed by x",
+      "tail": "",
+      "text": ""
+    },
+    {
+      "deltas": [
+        "literal"
+      ],
+      "ids": [
+        34600
+      ],
+      "prefix_tokens": 1,
+      "source": "literal replacement � followed by x",
+      "tail": "",
+      "text": "literal"
+    },
+    {
+      "deltas": [
+        "literal",
+        " replacement"
+      ],
+      "ids": [
+        34600,
+        13329
+      ],
+      "prefix_tokens": 2,
+      "source": "literal replacement � followed by x",
+      "tail": "",
+      "text": "literal replacement"
+    },
+    {
+      "deltas": [
+        "literal",
+        " replacement"
+      ],
+      "ids": [
+        34600,
+        13329,
+        28373
+      ],
+      "prefix_tokens": 3,
+      "source": "literal replacement � followed by x",
+      "tail": " �",
+      "text": "literal replacement �"
+    },
+    {
+      "deltas": [
+        "literal",
+        " replacement",
+        " � followed"
+      ],
+      "ids": [
+        34600,
+        13329,
+        28373,
+        7854
+      ],
+      "prefix_tokens": 4,
+      "source": "literal replacement � followed by x",
+      "tail": "",
+      "text": "literal replacement � followed"
+    },
+    {
+      "deltas": [
+        "literal",
+        " replacement",
+        " � followed",
+        " by"
+      ],
+      "ids": [
+        34600,
+        13329,
+        28373,
+        7854,
+        539
+      ],
+      "prefix_tokens": 5,
+      "source": "literal replacement � followed by x",
+      "tail": "",
+      "text": "literal replacement � followed by"
+    },
+    {
+      "deltas": [
+        "literal",
+        " replacement",
+        " � followed",
+        " by",
+        " x"
+      ],
+      "ids": [
+        34600,
+        13329,
+        28373,
+        7854,
+        539,
+        830
+      ],
+      "prefix_tokens": 6,
+      "source": "literal replacement � followed by x",
+      "tail": "",
+      "text": "literal replacement � followed by x"
+    },
+    {
+      "deltas": [],
+      "ids": [],
+      "prefix_tokens": 0,
+      "source": "<|im_end|>résumé<|im_end|>",
+      "tail": "",
+      "text": ""
+    },
+    {
+      "deltas": [],
+      "ids": [
+        248046
+      ],
+      "prefix_tokens": 1,
+      "source": "<|im_end|>résumé<|im_end|>",
+      "tail": "",
+      "text": ""
+    },
+    {
+      "deltas": [
+        "ré"
+      ],
+      "ids": [
+        248046,
+        41196
+      ],
+      "prefix_tokens": 2,
+      "source": "<|im_end|>résumé<|im_end|>",
+      "tail": "",
+      "text": "ré"
+    },
+    {
+      "deltas": [
+        "ré",
+        "sumé"
+      ],
+      "ids": [
+        248046,
+        41196,
+        168699
+      ],
+      "prefix_tokens": 3,
+      "source": "<|im_end|>résumé<|im_end|>",
+      "tail": "",
+      "text": "résumé"
+    },
+    {
+      "deltas": [
+        "ré",
+        "sumé"
+      ],
+      "ids": [
+        248046,
+        41196,
+        168699,
+        248046
+      ],
+      "prefix_tokens": 4,
+      "source": "<|im_end|>résumé<|im_end|>",
+      "tail": "",
+      "text": "résumé"
+    },
+    {
+      "deltas": [],
+      "ids": [],
+      "prefix_tokens": 0,
+      "source": "",
+      "tail": "",
+      "text": ""
+    },
+    {
+      "deltas": [],
+      "ids": [],
+      "prefix_tokens": 0,
+      "source": "```rust\nfn main() { println!(\"hello 🌍\"); }\n```",
+      "tail": "",
+      "text": ""
+    },
+    {
+      "deltas": [
+        "```"
+      ],
+      "ids": [
+        71093
+      ],
+      "prefix_tokens": 1,
+      "source": "```rust\nfn main() { println!(\"hello 🌍\"); }\n```",
+      "tail": "",
+      "text": "```"
+    },
+    {
+      "deltas": [
+        "```",
+        "rust"
+      ],
+      "ids": [
+        71093,
+        34602
+      ],
+      "prefix_tokens": 2,
+      "source": "```rust\nfn main() { println!(\"hello 🌍\"); }\n```",
+      "tail": "",
+      "text": "```rust"
+    },
+    {
+      "deltas": [
+        "```",
+        "rust",
+        "\n"
+      ],
+      "ids": [
+        71093,
+        34602,
+        198
+      ],
+      "prefix_tokens": 3,
+      "source": "```rust\nfn main() { println!(\"hello 🌍\"); }\n```",
+      "tail": "",
+      "text": "```rust\n"
+    },
+    {
+      "deltas": [
+        "```",
+        "rust",
+        "\n",
+        "fn"
+      ],
+      "ids": [
+        71093,
+        34602,
+        198,
+        8556
+      ],
+      "prefix_tokens": 4,
+      "source": "```rust\nfn main() { println!(\"hello 🌍\"); }\n```",
+      "tail": "",
+      "text": "```rust\nfn"
+    },
+    {
+      "deltas": [
+        "```",
+        "rust",
+        "\n",
+        "fn",
+        " main"
+      ],
+      "ids": [
+        71093,
+        34602,
+        198,
+        8556,
+        1822
+      ],
+      "prefix_tokens": 5,
+      "source": "```rust\nfn main() { println!(\"hello 🌍\"); }\n```",
+      "tail": "",
+      "text": "```rust\nfn main"
+    },
+    {
+      "deltas": [
+        "```",
+        "rust",
+        "\n",
+        "fn",
+        " main",
+        "()"
+      ],
+      "ids": [
+        71093,
+        34602,
+        198,
+        8556,
+        1822,
+        363
+      ],
+      "prefix_tokens": 6,
+      "source": "```rust\nfn main() { println!(\"hello 🌍\"); }\n```",
+      "tail": "",
+      "text": "```rust\nfn main()"
+    },
+    {
+      "deltas": [
+        "```",
+        "rust",
+        "\n",
+        "fn",
+        " main",
+        "()",
+        " {"
+      ],
+      "ids": [
+        71093,
+        34602,
+        198,
+        8556,
+        1822,
+        363,
+        313
+      ],
+      "prefix_tokens": 7,
+      "source": "```rust\nfn main() { println!(\"hello 🌍\"); }\n```",
+      "tail": "",
+      "text": "```rust\nfn main() {"
+    },
+    {
+      "deltas": [
+        "```",
+        "rust",
+        "\n",
+        "fn",
+        " main",
+        "()",
+        " {",
+        " println"
+      ],
+      "ids": [
+        71093,
+        34602,
+        198,
+        8556,
+        1822,
+        363,
+        313,
+        13356
+      ],
+      "prefix_tokens": 8,
+      "source": "```rust\nfn main() { println!(\"hello 🌍\"); }\n```",
+      "tail": "",
+      "text": "```rust\nfn main() { println"
+    },
+    {
+      "deltas": [
+        "```",
+        "rust",
+        "\n",
+        "fn",
+        " main",
+        "()",
+        " {",
+        " println",
+        "!(\""
+      ],
+      "ids": [
+        71093,
+        34602,
+        198,
+        8556,
+        1822,
+        363,
+        313,
+        13356,
+        16715
+      ],
+      "prefix_tokens": 9,
+      "source": "```rust\nfn main() { println!(\"hello 🌍\"); }\n```",
+      "tail": "",
+      "text": "```rust\nfn main() { println!(\""
+    },
+    {
+      "deltas": [
+        "```",
+        "rust",
+        "\n",
+        "fn",
+        " main",
+        "()",
+        " {",
+        " println",
+        "!(\"",
+        "hello"
+      ],
+      "ids": [
+        71093,
+        34602,
+        198,
+        8556,
+        1822,
+        363,
+        313,
+        13356,
+        16715,
+        14556
+      ],
+      "prefix_tokens": 10,
+      "source": "```rust\nfn main() { println!(\"hello 🌍\"); }\n```",
+      "tail": "",
+      "text": "```rust\nfn main() { println!(\"hello"
+    },
+    {
+      "deltas": [
+        "```",
+        "rust",
+        "\n",
+        "fn",
+        " main",
+        "()",
+        " {",
+        " println",
+        "!(\"",
+        "hello"
+      ],
+      "ids": [
+        71093,
+        34602,
+        198,
+        8556,
+        1822,
+        363,
+        313,
+        13356,
+        16715,
+        14556,
+        10838
+      ],
+      "prefix_tokens": 11,
+      "source": "```rust\nfn main() { println!(\"hello 🌍\"); }\n```",
+      "tail": " �",
+      "text": "```rust\nfn main() { println!(\"hello �"
+    },
+    {
+      "deltas": [
+        "```",
+        "rust",
+        "\n",
+        "fn",
+        " main",
+        "()",
+        " {",
+        " println",
+        "!(\"",
+        "hello"
+      ],
+      "ids": [
+        71093,
+        34602,
+        198,
+        8556,
+        1822,
+        363,
+        313,
+        13356,
+        16715,
+        14556,
+        10838,
+        234
+      ],
+      "prefix_tokens": 12,
+      "source": "```rust\nfn main() { println!(\"hello 🌍\"); }\n```",
+      "tail": " �",
+      "text": "```rust\nfn main() { println!(\"hello �"
+    },
+    {
+      "deltas": [
+        "```",
+        "rust",
+        "\n",
+        "fn",
+        " main",
+        "()",
+        " {",
+        " println",
+        "!(\"",
+        "hello",
+        " 🌍"
+      ],
+      "ids": [
+        71093,
+        34602,
+        198,
+        8556,
+        1822,
+        363,
+        313,
+        13356,
+        16715,
+        14556,
+        10838,
+        234,
+        235
+      ],
+      "prefix_tokens": 13,
+      "source": "```rust\nfn main() { println!(\"hello 🌍\"); }\n```",
+      "tail": "",
+      "text": "```rust\nfn main() { println!(\"hello 🌍"
+    },
+    {
+      "deltas": [
+        "```",
+        "rust",
+        "\n",
+        "fn",
+        " main",
+        "()",
+        " {",
+        " println",
+        "!(\"",
+        "hello",
+        " 🌍",
+        "\");"
+      ],
+      "ids": [
+        71093,
+        34602,
+        198,
+        8556,
+        1822,
+        363,
+        313,
+        13356,
+        16715,
+        14556,
+        10838,
+        234,
+        235,
+        4876
+      ],
+      "prefix_tokens": 14,
+      "source": "```rust\nfn main() { println!(\"hello 🌍\"); }\n```",
+      "tail": "",
+      "text": "```rust\nfn main() { println!(\"hello 🌍\");"
+    },
+    {
+      "deltas": [
+        "```",
+        "rust",
+        "\n",
+        "fn",
+        " main",
+        "()",
+        " {",
+        " println",
+        "!(\"",
+        "hello",
+        " 🌍",
+        "\");",
+        " }"
+      ],
+      "ids": [
+        71093,
+        34602,
+        198,
+        8556,
+        1822,
+        363,
+        313,
+        13356,
+        16715,
+        14556,
+        10838,
+        234,
+        235,
+        4876,
+        333
+      ],
+      "prefix_tokens": 15,
+      "source": "```rust\nfn main() { println!(\"hello 🌍\"); }\n```",
+      "tail": "",
+      "text": "```rust\nfn main() { println!(\"hello 🌍\"); }"
+    },
+    {
+      "deltas": [
+        "```",
+        "rust",
+        "\n",
+        "fn",
+        " main",
+        "()",
+        " {",
+        " println",
+        "!(\"",
+        "hello",
+        " 🌍",
+        "\");",
+        " }",
+        "\n"
+      ],
+      "ids": [
+        71093,
+        34602,
+        198,
+        8556,
+        1822,
+        363,
+        313,
+        13356,
+        16715,
+        14556,
+        10838,
+        234,
+        235,
+        4876,
+        333,
+        198
+      ],
+      "prefix_tokens": 16,
+      "source": "```rust\nfn main() { println!(\"hello 🌍\"); }\n```",
+      "tail": "",
+      "text": "```rust\nfn main() { println!(\"hello 🌍\"); }\n"
+    },
+    {
+      "deltas": [
+        "```",
+        "rust",
+        "\n",
+        "fn",
+        " main",
+        "()",
+        " {",
+        " println",
+        "!(\"",
+        "hello",
+        " 🌍",
+        "\");",
+        " }",
+        "\n",
+        "```"
+      ],
+      "ids": [
+        71093,
+        34602,
+        198,
+        8556,
+        1822,
+        363,
+        313,
+        13356,
+        16715,
+        14556,
+        10838,
+        234,
+        235,
+        4876,
+        333,
+        198,
+        71093
+      ],
+      "prefix_tokens": 17,
+      "source": "```rust\nfn main() { println!(\"hello 🌍\"); }\n```",
+      "tail": "",
+      "text": "```rust\nfn main() { println!(\"hello 🌍\"); }\n```"
+    },
+    {
+      "deltas": [],
+      "ids": [],
+      "prefix_tokens": 0,
+      "source": "\u0000\u0001\\\"\n",
+      "tail": "",
+      "text": ""
+    },
+    {
+      "deltas": [
+        "\u0000"
+      ],
+      "ids": [
+        188
+      ],
+      "prefix_tokens": 1,
+      "source": "\u0000\u0001\\\"\n",
+      "tail": "",
+      "text": "\u0000"
+    },
+    {
+      "deltas": [
+        "\u0000",
+        "\u0001"
+      ],
+      "ids": [
+        188,
+        189
+      ],
+      "prefix_tokens": 2,
+      "source": "\u0000\u0001\\\"\n",
+      "tail": "",
+      "text": "\u0000\u0001"
+    },
+    {
+      "deltas": [
+        "\u0000",
+        "\u0001",
+        "\\\""
+      ],
+      "ids": [
+        188,
+        189,
+        2037
+      ],
+      "prefix_tokens": 3,
+      "source": "\u0000\u0001\\\"\n",
+      "tail": "",
+      "text": "\u0000\u0001\\\""
+    },
+    {
+      "deltas": [
+        "\u0000",
+        "\u0001",
+        "\\\"",
+        "\n"
+      ],
+      "ids": [
+        188,
+        189,
+        2037,
+        198
+      ],
+      "prefix_tokens": 4,
+      "source": "\u0000\u0001\\\"\n",
+      "tail": "",
+      "text": "\u0000\u0001\\\"\n"
+    }
+  ],
+  "scope": "designated checkpoint tokenizer incremental text, every token termination boundary; no GPU/HTTP qualification"
+}

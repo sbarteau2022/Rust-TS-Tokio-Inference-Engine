@@ -48,6 +48,13 @@ impl NativeTokenizer {
             eos,
         })
     }
+    pub fn text_stream(&self) -> Result<super::native_text_stream::NativeTextStream<'_>> {
+        self.manifest.verify_stamps()?;
+        Ok(
+            super::native_text_stream::NativeTextStream::new(&self.tokenizer)
+                .with_manifest(&self.manifest),
+        )
+    }
     pub fn eos(&self) -> Vec<u32> {
         self.eos.clone()
     }

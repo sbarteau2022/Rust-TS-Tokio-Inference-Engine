@@ -79,3 +79,7 @@ required-features = ["native-mlx"]
 [[example]]
 name = "native_mtp_scheduler_bench"
 required-features = ["native-mlx"]
+
+[[example]]
+name = "native_text_stream_smoke"
+required-features = ["native-mlx"]

@@ -15,7 +15,7 @@ related_files:
     lines: "1-1015"
     role: "config"
   - path: "Cargo.toml"
-    lines: "1-81"
+    lines: "1-85"
     role: "config"
   - path: "backend/rapid_worker.py"
     lines: "1-165"
@@ -61,6 +61,9 @@ related_files:
     role: "primary"
   - path: "examples/native_suite_reference.rs"
     lines: "1-198"
+    role: "primary"
+  - path: "examples/native_text_stream_smoke.rs"
+    lines: "1-57"
     role: "primary"
   - path: "fixtures/atan2.amvk"
     lines: null
@@ -159,7 +162,7 @@ related_files:
     lines: "1-35"
     role: "test"
   - path: "judges/run.py"
-    lines: "1-232"
+    lines: "1-233"
     role: "test"
   - path: "judges/speculative_report.py"
     lines: "1-74"
@@ -294,7 +297,7 @@ related_files:
     lines: "1-280"
     role: "primary"
   - path: "src/serving/mod.rs"
-    lines: "1-110"
+    lines: "1-113"
     role: "primary"
   - path: "src/serving/model_ir.rs"
     lines: "1-244"
@@ -336,7 +339,7 @@ related_files:
     lines: "1-206"
     role: "primary"
   - path: "src/serving/native_mtp_cli.rs"
-    lines: "1-220"
+    lines: "1-230"
     role: "primary"
   - path: "src/serving/native_mtp_decode.rs"
     lines: "1-273"
@@ -362,8 +365,11 @@ related_files:
   - path: "src/serving/native_state.rs"
     lines: "1-194"
     role: "primary"
+  - path: "src/serving/native_text_stream.rs"
+    lines: "1-186"
+    role: "primary"
   - path: "src/serving/native_tokenizer.rs"
-    lines: "1-213"
+    lines: "1-220"
     role: "primary"
   - path: "src/serving/qwen_tests.rs"
     lines: "1-568"
@@ -726,3 +732,5 @@ MTP rows hold a virtual consumed position distinct from the private ahead-of-pub
 Live audit boundary review: request-side event consumption cannot establish native quiescence. The scheduler now awaits the hook only after successful whole-batch validation; malformed batches skip it, and hook failure follows the poisoned-admission cleanup path before publication. Opt-in MTP metadata audits reject payload blocks, reservations and open branches, preserving the distinction from a shared KV cache planner. The API requires exclusive ownership of the controller audit clock; unrelated concurrent users can force explicit epoch/lease errors and are unsupported. Buffered receipts advance the declared batch clock even without a new target call. This can affect admission profitability and must be measured, not assumed beneficial.
 
 Scheduler matrix review: measured outputs must match independent sequential target prefixes, not merely one another. Group budgets reserve no more than the remaining 2,000-token cell limit; early EOS reduces actual delivered count and subsequent groups refill it, while empty completions fail explicitly. Each independent consumer checks event index, ID and publication timestamp congruence with the final receipt. Macro checkpoints sort receiver-observed times across lanes rather than adding per-lane rates. Warmup ledger counters are subtracted; acceptance excludes known seeds, and speculative-only target-call accounting is labeled. Synchronized groups limit arrival-model claims. Per-cell evidence persists before the next profile; final source and binary hashes bind the experiment. Two opposite profile orders expose but cannot eliminate shared-host thermal/load drift. Repeated prompts establish mechanical parity, not semantic quality or unseen-task generalization.
+
+Text boundary review: independently decoding tokens corrupts split UTF-8 and can emit irreversible replacement characters. Stateful DecodeStream holds pending bytes; finalization compares canonical full decode against all published text and fails if a decoder revised the prefix. A synthetic Fuse+Replace decoder exercises revision errors during subsequent pushes and finalization. Unknown IDs and cap errors permanently poison the stream, preventing ambiguous retries after decoder mutation. Manifest stamps are checked at stream creation and finish; no per-token filesystem checks are added. Every real-checkpoint Unicode prefix is compared with canonical decode, including early stop within a code point. Final terminal replacement follows the tokenizer's existing policy and is not represented as lossless recovery of missing bytes.

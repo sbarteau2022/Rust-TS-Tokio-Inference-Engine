@@ -15,7 +15,7 @@ related_files:
     lines: "1-1015"
     role: "config"
   - path: "Cargo.toml"
-    lines: "1-81"
+    lines: "1-85"
     role: "config"
   - path: "backend/rapid_worker.py"
     lines: "1-165"
@@ -61,6 +61,9 @@ related_files:
     role: "primary"
   - path: "examples/native_suite_reference.rs"
     lines: "1-198"
+    role: "primary"
+  - path: "examples/native_text_stream_smoke.rs"
+    lines: "1-57"
     role: "primary"
   - path: "fixtures/atan2.amvk"
     lines: null
@@ -159,7 +162,7 @@ related_files:
     lines: "1-35"
     role: "test"
   - path: "judges/run.py"
-    lines: "1-232"
+    lines: "1-233"
     role: "test"
   - path: "judges/speculative_report.py"
     lines: "1-74"
@@ -294,7 +297,7 @@ related_files:
     lines: "1-280"
     role: "primary"
   - path: "src/serving/mod.rs"
-    lines: "1-110"
+    lines: "1-113"
     role: "primary"
   - path: "src/serving/model_ir.rs"
     lines: "1-244"
@@ -336,7 +339,7 @@ related_files:
     lines: "1-206"
     role: "primary"
   - path: "src/serving/native_mtp_cli.rs"
-    lines: "1-220"
+    lines: "1-230"
     role: "primary"
   - path: "src/serving/native_mtp_decode.rs"
     lines: "1-273"
@@ -362,8 +365,11 @@ related_files:
   - path: "src/serving/native_state.rs"
     lines: "1-194"
     role: "primary"
+  - path: "src/serving/native_text_stream.rs"
+    lines: "1-186"
+    role: "primary"
   - path: "src/serving/native_tokenizer.rs"
-    lines: "1-213"
+    lines: "1-220"
     role: "primary"
   - path: "src/serving/qwen_tests.rs"
     lines: "1-568"
@@ -672,3 +678,17 @@ Macro windows include request turnover and host orchestration. TTFT is scheduler
 Matrix workload interpretation: request lanes are submitted in synchronized groups and replenished after the group completes. This measures bounded concurrent stream groups; it is not a Poisson/open-loop arrival test or sustained continuous-batching qualification. The target-only adapter predicts the final output without consuming it into state, while MTP maintains target/draft state through committed output; that extra work is included rather than subtracted. An existing external Dspark service is resident on the shared host; process inventory is retained and no service is restarted for the experiment.
 
 Observed audit-clock consequence: single-lane cells advanced 2,216 measured audit epochs; three-lane cells advanced 834/840. Output parity held, but controller decay exposure depends on row packing and consumer scheduling. Keep the no-live-audit profile as a control. Clock cadence and lane-normalized alternatives require explicit tuning/qualification rather than treating these per-batch rates as universal production settings.
+
+## Preregistered text streaming boundary
+
+Before HTTP transport, implement append-only incremental text at the existing native tokenizer I/O boundary using the installed tokenizers 0.23.2 DecodeStream primitive. Never decode each token independently: a UTF-8 code point may cross token boundaries. Bound each stream to 512 token IDs, reject unknown IDs, poison after a decoding error, and forbid push/finish after finalization. Hold incomplete UTF-8 until more tokens arrive. At finish, compare against canonical full-sequence decoding and emit only its remaining suffix; a truncated terminal byte sequence therefore follows the canonical decoder's replacement policy instead of silently dropping data. Do not emit speculative unverified tokens. Stamp checks occur on stream creation/finalization, not every token.
+
+Tests must cover split two/four-byte Unicode, legitimate replacement characters, special-token skipping, newline/whitespace, incomplete terminal bytes, unknown IDs, token cap, repeated finish and append-only prefix failure. The Combined tokenizer smoke compares concatenated deltas with full decode for multilingual/adversarial text and checks each published prefix against final output. Wire the same decoder into native CLI token consumption, retaining raw token event timing and final receipt equality. HTTP remains a separate unqualified transport until cancellation/deadline and wire framing are implemented and tested; no JSON worker/transport is introduced here.
+
+## Proposed native HTTP contract (not implemented)
+
+Use a maintained bounded HTTP library rather than a handwritten parser. Local experimental listener binds an explicitly supplied loopback socket, with no default port or restart of another service. `POST /v1/generate` accepts a bounded raw UTF-8 text body (64 KiB maximum) and explicit output-budget/deadline headers; no Python/JSON request worker is allowed. The configured native profile/policy and full model identity must be discoverable independently of request content. Fixed output caps/context/admission must be checked before encoding. Unknown control headers/parameters, malformed budgets, unsupported media types and oversize bodies fail before model work. Bound connection/body-read time separately from model execution deadline.
+
+Response contract should use versioned length-delimited FlatBuffers with generated Rust/TS bindings: verified token ID/index/sequence, publication elapsed time, optional decoded text delta, terminal finish/usage, and explicit partial-result error. Delta text stays at I/O only; inner scheduling uses typed IDs/state. No complete/finish frame may precede successful final receipt and canonical text check. The pending Unicode suffix must be represented in the terminal frame if final decoding needs it. One bounded network-output slot propagates backpressure to the existing request stream; socket close/deadline cancels the Request while the scheduler/native completion owner drains already-encoded work. Half-written frames never count as delivered tokens.
+
+Required gates before HTTP claims: binary framing limits/version rejection and TS/Rust round-trip; slow reader/body attack; disconnect before admission/during prefill/verification/Unicode suffix; deadline races; no duplicate finish; malformed text/IDs; simultaneous streams; orderly shutdown with a stalled connection; real Combined parity and full transport throughput. This design preserves the existing no-JSON transport request and makes no OpenAI API compatibility claim.

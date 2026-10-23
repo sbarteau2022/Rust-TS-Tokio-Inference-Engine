@@ -15,7 +15,7 @@ related_files:
     lines: "1-1015"
     role: "config"
   - path: "Cargo.toml"
-    lines: "1-81"
+    lines: "1-85"
     role: "config"
   - path: "backend/rapid_worker.py"
     lines: "1-165"
@@ -61,6 +61,9 @@ related_files:
     role: "primary"
   - path: "examples/native_suite_reference.rs"
     lines: "1-198"
+    role: "primary"
+  - path: "examples/native_text_stream_smoke.rs"
+    lines: "1-57"
     role: "primary"
   - path: "fixtures/atan2.amvk"
     lines: null
@@ -159,7 +162,7 @@ related_files:
     lines: "1-35"
     role: "test"
   - path: "judges/run.py"
-    lines: "1-232"
+    lines: "1-233"
     role: "test"
   - path: "judges/speculative_report.py"
     lines: "1-74"
@@ -294,7 +297,7 @@ related_files:
     lines: "1-280"
     role: "primary"
   - path: "src/serving/mod.rs"
-    lines: "1-110"
+    lines: "1-113"
     role: "primary"
   - path: "src/serving/model_ir.rs"
     lines: "1-244"
@@ -336,7 +339,7 @@ related_files:
     lines: "1-206"
     role: "primary"
   - path: "src/serving/native_mtp_cli.rs"
-    lines: "1-220"
+    lines: "1-230"
     role: "primary"
   - path: "src/serving/native_mtp_decode.rs"
     lines: "1-273"
@@ -362,8 +365,11 @@ related_files:
   - path: "src/serving/native_state.rs"
     lines: "1-194"
     role: "primary"
+  - path: "src/serving/native_text_stream.rs"
+    lines: "1-186"
+    role: "primary"
   - path: "src/serving/native_tokenizer.rs"
-    lines: "1-213"
+    lines: "1-220"
     role: "primary"
   - path: "src/serving/qwen_tests.rs"
     lines: "1-568"
@@ -773,3 +779,5 @@ The MTP adapter is connected to the shared Engine and bounded Rust token streams
 Live metadata audit clock is now wired at the scheduler's validated boundary. Next measure the complete path with this clock enabled against identical-output target-only and no-live-audit controls: report TTFT, publication ITL distributions, decode throughput, learned acceptance, controller epochs and per-lane fairness. Then integrate HTTP cancellation/deadlines and incremental text decoding. Shared payload-cache audit planning, unified policy fingerprints, adaptive pressure and sustained/model-quality qualification remain open.
 
 The shared Engine throughput matrix now has 24,000 exact-reference tokens across 12 cells (two orders × one/three lanes × target/no-live-audit/live-audit). Promote no broad quality claim from it. Next integrate native HTTP streaming with cancellation/deadlines and incremental tokenizer output, then replay the same timed workload over that transport. Optimize first-token initialization and burst-tail latency; physical tensor batching is necessary before claiming multi-lane compute scaling. Expose an explicit audit-clock cadence and unify policy/configuration fingerprints; batch-count trust decay varies with lane packing. Add open-loop/continuous-arrival sweeps, mixed prompt lengths, deep-context paging/KV and matched native/external controls before production promotion.
+
+The native incremental text boundary now feeds CLI deltas and canonical final text. Implement the proposed bounded loopback HTTP + versioned FlatBuffers stream contract in the tuning plan next, including generated TS 7.1 bindings, disconnect/deadline propagation and slow-client pressure gates. Then measure transport TTFT/ITL against the retained Rust-stream matrix.
