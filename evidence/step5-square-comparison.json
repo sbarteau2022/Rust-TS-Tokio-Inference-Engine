@@ -13,15 +13,15 @@
   "max_raw_error": 0,
   "rust_dispatch_wall": {
     "n": 50,
-    "median_ms": 0.24091649999999998,
-    "p95_ms": 0.6805,
-    "min_ms": 0.221084
+    "median_ms": 0.23672900000000002,
+    "p95_ms": 0.685375,
+    "min_ms": 0.215167
   },
   "rust_gpu": {
     "n": 50,
-    "median_ms": 0.10272912913933396,
-    "p95_ms": 0.10516657494008541,
-    "min_ms": 0.10208331514149904
+    "median_ms": 0.10256253881379962,
+    "p95_ms": 0.10475004091858864,
+    "min_ms": 0.10183337144553661
   },
   "scope": "Integer correctness and local dispatch timing only; no MLX float equivalence or throughput claim."
 }

@@ -69,10 +69,11 @@ def main():
     # Step 0: deterministic bindings and both requested compiler gates.
     with tempfile.TemporaryDirectory() as tmp:
         tmp = Path(tmp)
-        subprocess.run(["flatc", "--rust", "-o", str(tmp), "schema/trace.fbs"], cwd=ROOT, env=ENV, check=True)
-        subprocess.run(["rustfmt", "--edition", "2021", str(tmp / "trace_generated.rs")], env=ENV, check=True)
-        assert (tmp / "trace_generated.rs").read_bytes() == (ROOT / "src/trace_generated.rs").read_bytes()
-        subprocess.run(["flatc", "--ts", "-o", str(tmp / "ts"), "schema/trace.fbs"], cwd=ROOT, env=ENV, check=True)
+        for schema in ["trace", "stream"]:
+            subprocess.run(["flatc", "--rust", "-o", str(tmp), f"schema/{schema}.fbs"], cwd=ROOT, env=ENV, check=True)
+            subprocess.run(["rustfmt", "--edition", "2021", str(tmp / f"{schema}_generated.rs")], env=ENV, check=True)
+            assert (tmp / f"{schema}_generated.rs").read_bytes() == (ROOT / f"src/{schema}_generated.rs").read_bytes()
+            subprocess.run(["flatc", "--ts", "-o", str(tmp / "ts"), f"schema/{schema}.fbs"], cwd=ROOT, env=ENV, check=True)
         generated = list((tmp / "ts").rglob("*.ts"))
         assert len(generated) == len(list((ROOT / "ts/generated").rglob("*.ts")))
         for path in generated:
@@ -103,6 +104,13 @@ def main():
     assert (ROOT / "artifacts/trace.amvk").read_bytes() == (ROOT / "fixtures/square.amvk").read_bytes()
     (EVIDENCE / "step1-roundtrip.log").write_text("PASS: seven ordered operations identical\n")
     run(["cargo", "build", "--release", "--locked"], "release-build.log")
+    run(["target/release/rust-server", "stream-check", "fixtures/stream-v1.amst"], "stream-wire-rust-fixture.log")
+    with tempfile.TemporaryDirectory() as wire_tmp:
+        ts_path = str(Path(wire_tmp) / "typescript.amst")
+        run(["npx", "--no-install", "tsx", "ts/stream-inspect.ts", "--fixture", ts_path], "stream-wire-ts-fixture.log")
+        run(["target/release/rust-server", "stream-check", ts_path], "stream-wire-cross-rust.log")
+    run(["npx", "--no-install", "tsx", "ts/stream-inspect.ts", "fixtures/stream-v1.amst"], "stream-wire-cross-ts.log")
+
     binary = "target/release/rust-server"
     run([binary, "uma-judge"], "step2-uma.json")
     assert load("step2-uma.json")["pass"]

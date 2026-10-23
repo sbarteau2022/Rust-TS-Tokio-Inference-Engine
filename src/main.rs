@@ -38,9 +38,9 @@ async fn main() -> Result<()> {
             if args.get(2).is_some_and(|s|s=="--extended") {rust_server::serving::native_extended::run().await?;} else {rust_server::serving::native_boundary::qualify_cli(args.len()==3).await?;}
         }
         #[cfg(feature = "native-mlx")]
-        Some("native-mtp-generate") => {
+        Some("native-mtp-generate" | "native-mtp-stream") => {
             ensure!(args.len()>=4,"{}",rust_server::serving::native_mtp_cli::USAGE);
-            rust_server::serving::native_mtp_cli::run(&args[2],args[3].parse()?,&args[4..]).await?;
+            if args[1]=="native-mtp-stream" {rust_server::serving::native_mtp_cli::run_wire(&args[2],args[3].parse()?,&args[4..]).await?;}else{rust_server::serving::native_mtp_cli::run(&args[2],args[3].parse()?,&args[4..]).await?;}
         }
         #[cfg(feature = "native-mlx")]
         Some("native-generate") => {
@@ -213,6 +213,15 @@ async fn main() -> Result<()> {
             )
             .await?;
         }
+        Some("stream-check") => {
+            ensure!(args.len()==3,"stream-check FILE");
+            let bytes=read_bounded(&args[2],130*(72*1024+4))?;
+            let mut decoder=rust_server::serving::stream_wire::Decoder::default();
+            let mut frames=Vec::new();for chunk in bytes.chunks(7){frames.extend(decoder.push(chunk)?);}decoder.finish()?;
+            let tokens=frames.iter().filter(|f|f.kind==1).count();
+            println!("STREAM frames={} tokens={} terminal={}",frames.len(),tokens,frames.last().unwrap().kind);
+            let text:String=frames.iter().filter(|f|f.kind==1||f.kind==2).map(|f|f.text.as_str()).collect();println!("TEXT {}",text.escape_debug());
+        }
         Some("runtime-judge") => runtime_judge().await?,
         Some("kernel-judge") => {
             ensure!(
@@ -252,7 +261,7 @@ async fn main() -> Result<()> {
             println!("{}", serde_json::to_string(&wire::decode(&bytes)?)?);
         }
         Some("--help") | Some("help") => {
-            println!("rust-server: native-mtp-generate PROMPT MAX_NEW [explicit policy flags; see README] | model-run CONFIG PROMPTS MAX_NEW [flags] | config check|print --config FILE | cache-judge CONFIG.json | run-chain INPUTS.json TRACE [TRACE ...] | macro-bench DIRECTORY THREADS LIMIT COUNT | capabilities | backend-judge DIRECTORY | idle | decode TRACE | uma-judge | kernel-judge DIRECTORY [ABS_CAPTURE_PATH] | runtime-judge | run TRACE INPUTS.json; runtime limit: RUST_SERVER_IN_FLIGHT=2|3 (default 3)");
+            println!("rust-server: stream-check FILE | native-mtp-stream PROMPT MAX_NEW [explicit policy flags] | native-mtp-generate PROMPT MAX_NEW [explicit policy flags; see README] | model-run CONFIG PROMPTS MAX_NEW [flags] | config check|print --config FILE | cache-judge CONFIG.json | run-chain INPUTS.json TRACE [TRACE ...] | macro-bench DIRECTORY THREADS LIMIT COUNT | capabilities | backend-judge DIRECTORY | idle | decode TRACE | uma-judge | kernel-judge DIRECTORY [ABS_CAPTURE_PATH] | runtime-judge | run TRACE INPUTS.json; runtime limit: RUST_SERVER_IN_FLIGHT=2|3 (default 3)");
         }
         _ => bail!("use rust-server --help"),
     }

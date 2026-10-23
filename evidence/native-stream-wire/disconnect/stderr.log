@@ -1,0 +1,3 @@
+identity=509cc92543203798f2db08b6fb6cbb38a80942fc0437ae81a3ef9ff27720915b EXPERIMENTAL-NATIVE-MTP width=4 stream_capacity=1 policy=DraftPolicy { max_proposers: 1, work_limit: 3, initial_mass: 2147483647, admission_mass: 268435455, reward_mass: 536870911, qualification_trials: 64, probe_every_epochs: 2 } context=511 in_flight=3 physical_tensor_batching=false http=false production_qualified=false audit_clock=validated-batches
+DRAIN scheduler=true native=true
+Error: Broken pipe (os error 32)

@@ -88,6 +88,13 @@ impl Options {
     }
 }
 pub async fn run(prompt: &str, max_new: usize, flags: &[String]) -> Result<()> {
+    run_mode(prompt, max_new, flags, false).await
+}
+pub async fn run_wire(prompt: &str, max_new: usize, flags: &[String]) -> Result<()> {
+    run_mode(prompt, max_new, flags, true).await
+}
+async fn run_mode(prompt: &str, max_new: usize, flags: &[String], binary: bool) -> Result<()> {
+    use super::stream_wire::{Encoder, Frame};
     ensure!(
         !prompt.is_empty() && prompt.len() <= 65536 && (1..=128).contains(&max_new),
         "MTP prompt/output bounds"
@@ -124,49 +131,156 @@ pub async fn run(prompt: &str, max_new: usize, flags: &[String]) -> Result<()> {
         model_memory_bytes: 1024 * 1024 * 1024,
         max_in_flight: 3,
     };
-    println!("EXPERIMENTAL-NATIVE-MTP identity={} width={} stream_capacity={} policy={:?} context=511 in_flight=3 physical_tensor_batching=false http=false production_qualified=false audit_clock=validated-batches",executor.identity(),options.width,options.capacity,options.policy);
+    let identity = executor.identity().to_owned();
+    let profile=format!("EXPERIMENTAL-NATIVE-MTP width={} stream_capacity={} policy={:?} context=511 in_flight=3 physical_tensor_batching=false http=false production_qualified=false audit_clock=validated-batches",options.width,options.capacity,options.policy);
+    if binary {
+        eprintln!("identity={identity} {profile}");
+    } else {
+        println!("identity={identity} {profile}");
+    }
     let engine = Engine::new(config, backend.storage(), backend)?;
-    let mut request = engine.submit_stream(ids, max_new, options.capacity)?;
-    let mut text_stream = tokenizer.text_stream()?;
-    while let Some(event) = request.next_token().await {
-        if let Some(delta) = text_stream.push(event.token)? {
-            println!("TEXT_DELTA {}", delta.escape_debug());
+    let mut wire = if binary {
+        Some(Encoder::new(std::io::stdout()))
+    } else {
+        None
+    };
+    let (mut published, mut sequence, mut last_us) = (0u32, 0u64, 0u64);
+    let mut metadata_written = false;
+    let result: Result<_> = async {
+        if let Some(w) = &mut wire {
+            w.write(&Frame::metadata(identity, profile))?;
+            metadata_written = true;
         }
-        println!(
-            "TOKEN sequence={} index={} id={} elapsed_ms={:.3}",
-            event.sequence, event.index, event.token, event.elapsed_ms
+        let mut request = engine.submit_stream(ids, max_new, options.capacity)?;
+        let mut text_stream = tokenizer.text_stream()?;
+        while let Some(event) = request.next_token().await {
+            let delta = text_stream.push(event.token)?.unwrap_or_default();
+            let elapsed_us = (event.elapsed_ms * 1000.) as u64;
+            if let Some(w) = &mut wire {
+                w.write(&Frame {
+                    kind: 1,
+                    sequence: event.sequence,
+                    index: u32::try_from(event.index)?,
+                    token_id: event.token,
+                    elapsed_us,
+                    text: delta,
+                    ..Frame::default()
+                })?;
+            } else {
+                if !delta.is_empty() {
+                    println!("TEXT_DELTA {}", delta.escape_debug());
+                }
+                println!(
+                    "TOKEN sequence={} index={} id={} elapsed_ms={:.3}",
+                    event.sequence, event.index, event.token, event.elapsed_ms
+                );
+            }
+            published += 1;
+            sequence = event.sequence;
+            last_us = elapsed_us;
+        }
+        let generation = request.result().await?;
+        let tail = text_stream.finish()?;
+        let text = tokenizer.decode(&generation.tokens)?;
+        ensure!(
+            text_stream.text() == text && published as usize == generation.tokens.len(),
+            "stream/final text or token mismatch"
+        );
+        ensure!(
+            matches!(generation.finish_reason.as_str(), "length" | "eos"),
+            "unknown finish reason"
+        );
+        Ok((generation, tail, text))
+    }
+    .await;
+    // Every error above drops Request and therefore cancels admission while native
+    // completion ownership stays with the scheduler. Always await cleanup.
+    let scheduler = engine.shutdown().await.and_then(|s| {
+        ensure!(
+            s.memory_used == 0 && !s.admission_closed,
+            "MTP scheduler drain"
+        );
+        Ok(())
+    });
+    let native = match Arc::try_unwrap(executor) {
+        Ok(e) => e.shutdown().await.and_then(|s| {
+            ensure!(s.logical_bytes == 0, "MTP native drain");
+            Ok(())
+        }),
+        Err(_) => Err(anyhow::anyhow!("MTP executor retained")),
+    };
+    if binary {
+        eprintln!(
+            "DRAIN scheduler={} native={}",
+            scheduler.is_ok(),
+            native.is_ok()
         );
     }
-    let generation = request.result().await?;
-    let tail = text_stream.finish()?;
-    if !tail.is_empty() {
-        println!("TEXT_DELTA {}", tail.escape_debug());
+    let drain = scheduler.and(native);
+    let result = match (result, drain) {
+        (Ok(v), Ok(())) => Ok(v),
+        (Err(e), Ok(())) => Err(e),
+        (Ok(_), Err(e)) => Err(e),
+        (Err(e), Err(d)) => Err(e.context(format!("cleanup also failed: {d}"))),
+    };
+    match result {
+        Ok((generation, tail, text)) => {
+            if let Some(w) = &mut wire {
+                let stop = match generation.finish_reason.as_str() {
+                    "length" => 1,
+                    "eos" => 2,
+                    _ => anyhow::bail!("unknown finish reason"),
+                };
+                w.write(&Frame {
+                    kind: 2,
+                    sequence: generation.sequence,
+                    output_tokens: published,
+                    stop,
+                    elapsed_us: (generation.elapsed_ms * 1000.) as u64,
+                    text: tail,
+                    ..Frame::default()
+                })?;
+            } else {
+                if !tail.is_empty() {
+                    println!("TEXT_DELTA {}", tail.escape_debug());
+                }
+                println!("TEXT {text}");
+                println!(
+                    "FINISH tokens={} reason={} elapsed_ms={:.3}",
+                    generation.tokens.len(),
+                    generation.finish_reason,
+                    generation.elapsed_ms
+                );
+            }
+        }
+        Err(error) => {
+            if metadata_written {
+                if let Some(w) = &mut wire {
+                    let _ = w.write(&Frame {
+                        kind: 3,
+                        sequence,
+                        output_tokens: published,
+                        elapsed_us: last_us,
+                        error_code: 6,
+                        text: error.to_string().chars().take(1024).collect(),
+                        ..Frame::default()
+                    });
+                }
+            }
+            return Err(error);
+        }
     }
-    let text = tokenizer.decode(&generation.tokens)?;
-    ensure!(text_stream.text() == text, "stream/final text mismatch");
-    println!("TEXT {text}");
-    println!(
-        "FINISH tokens={} reason={} elapsed_ms={:.3}",
-        generation.tokens.len(),
-        generation.finish_reason,
-        generation.elapsed_ms
-    );
-    let stats = engine.shutdown().await?;
-    ensure!(
-        stats.memory_used == 0 && !stats.admission_closed,
-        "MTP scheduler drain"
-    );
-    println!(
-        "AUDIT epochs={} clock=validated-batches pressure=normal metadata_only=true",
-        controller.stats()?.epoch
-    );
-    let native = Arc::try_unwrap(executor)
-        .map_err(|_| anyhow::anyhow!("MTP executor retained"))?
-        .shutdown()
-        .await?;
-    ensure!(native.logical_bytes == 0, "MTP native drain");
+    if binary {
+        eprintln!("AUDIT epochs={}", controller.stats()?.epoch);
+    } else {
+        println!(
+            "AUDIT epochs={} clock=validated-batches pressure=normal metadata_only=true",
+            controller.stats()?.epoch
+        );
+    }
     Ok(())
 }
+
 #[cfg(test)]
 mod tests {
     use super::*;

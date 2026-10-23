@@ -1,0 +1,1 @@
+PASS disconnect after metadata + first token; exit=1; scheduler/native drain verified; no HTTP claim

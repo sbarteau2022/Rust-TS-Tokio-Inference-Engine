@@ -1,0 +1,22 @@
+
+> apple-native-rust-server@0.1.0 test
+> tsx --test ts/*.test.ts
+
+✔ Rust fixture and all chunk sizes agree, BOM and Unicode preserved (13.557958ms)
+✔ unknown controls, ordering, exact terminal and EOF refusal (3.647666ms)
+✔ malformed structural mutations fail without permitting poisoned reuse (15.361709ms)
+✔ typed errors terminate partial and empty streams (0.159333ms)
+✔ timestamp, token and aggregate text caps fail closed (15.518292ms)
+✔ MVK records exact dependency order (1.1375ms)
+✔ invalid shapes and unsafe names rejected (0.126375ms)
+✔ undefined and invalid handles rejected (0.075792ms)
+✔ second kernel family records row-bias fusion (0.187417ms)
+✔ CORDIC functions serialize stable version-3 operation codes (0.307333ms)
+ℹ tests 10
+ℹ suites 0
+ℹ pass 10
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 166.595542

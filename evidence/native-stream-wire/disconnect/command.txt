@@ -1,0 +1,1 @@
+target/release/rust-server native-mtp-stream Complete: 1, 2, 3, 32 --draft-width 4 --stream-capacity 1 --qualification-trials 64 --probe-epochs 2 --initial-mass 2147483647 --admission-mass 268435455 --reward-mass 536870911

@@ -1,0 +1,19 @@
+namespace StreamWire;
+enum Kind:ubyte { Metadata=0, Token=1, Finish=2, Error=3 }
+enum Stop:ubyte { None=0, Length=1, Eos=2 }
+table Frame {
+ version:ushort = 1;
+ kind:Kind;
+ sequence:ulong;
+ index:uint;
+ token_id:uint;
+ elapsed_us:ulong;
+ text:string;
+ model_identity:string;
+ profile:string;
+ output_tokens:uint;
+ stop:Stop;
+ error_code:uint;
+}
+root_type Frame;
+file_identifier "AMST";

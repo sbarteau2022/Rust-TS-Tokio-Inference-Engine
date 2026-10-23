@@ -28,3 +28,5 @@ pub mod sampled;
 pub mod cache;
 
 pub mod serving;
+#[allow(clippy::all, unused_imports)]
+pub mod stream_generated;

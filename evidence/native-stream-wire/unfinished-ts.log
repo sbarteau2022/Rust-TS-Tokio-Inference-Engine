@@ -1,0 +1,14 @@
+exit=1
+/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/ts/stream.ts:6
+function check(ok:unknown,message:string):asserts ok {if(!ok)throw Error(message);}
+                                                                   ^
+
+Error: unfinished/truncated stream
+    at check (/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/ts/stream.ts:6:68)
+    at Decoder.finish (/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/ts/stream.ts:46:70)
+    at <anonymous> (/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/ts/stream-inspect.ts:7:391)
+    at ModuleJob.run (node:internal/modules/esm/module_job:569:25)
+    at async node:internal/modules/esm/loader:650:26
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)
+
+Node.js v26.9.0

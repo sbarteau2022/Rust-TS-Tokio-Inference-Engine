@@ -12,16 +12,16 @@
     "subsystem": "engineering.atoma.rust-server",
     "category": "jobs",
     "personaType": -1,
-    "threadID": 25298600,
+    "threadID": 25340135,
     "launchPersonaType": -1,
-    "senderImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
+    "senderImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
     "signpostType": "begin",
     "launchPersonaID": 4294967295,
     "backtrace": {
       "frames": [
         {
-          "imageOffset": 2234556,
-          "imageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83"
+          "imageOffset": 2275260,
+          "imageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE"
         }
       ]
     },
@@ -29,15 +29,15 @@
     "processImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "senderImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "personaID": 4294967295,
-    "timestamp": "2026-10-23 06:18:13.817200-0500",
+    "timestamp": "2026-10-23 06:34:37.204663-0500",
     "signpostName": "Kernel Job",
-    "machTimestamp": 19531473937754,
+    "machTimestamp": 19555075236887,
     "personaName": "",
     "eventMessage": "job=1",
-    "processImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
-    "traceID": 22143612313829638,
-    "processID": 69389,
-    "senderProgramCounter": 2234556,
+    "processImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
+    "traceID": 22346180151378182,
+    "processID": 72933,
+    "senderProgramCounter": 2275260,
     "parentActivityIdentifier": 0
   },
   {
@@ -52,15 +52,15 @@
     "subsystem": "engineering.atoma.rust-server",
     "category": "jobs",
     "personaType": -1,
-    "threadID": 25298600,
+    "threadID": 25340135,
     "launchPersonaType": -1,
-    "senderImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
+    "senderImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
     "launchPersonaID": 4294967295,
     "backtrace": {
       "frames": [
         {
-          "imageOffset": 2234636,
-          "imageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83"
+          "imageOffset": 2275340,
+          "imageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE"
         }
       ]
     },
@@ -68,14 +68,14 @@
     "processImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "senderImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "personaID": 4294967295,
-    "timestamp": "2026-10-23 06:18:13.817202-0500",
-    "machTimestamp": 19531473937806,
+    "timestamp": "2026-10-23 06:34:37.204666-0500",
+    "machTimestamp": 19555075236941,
     "personaName": "",
     "eventMessage": "job_begin job=1 span=1",
-    "processImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
-    "traceID": 22143730425397252,
-    "processID": 69389,
-    "senderProgramCounter": 2234636,
+    "processImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
+    "traceID": 22346298262945796,
+    "processID": 72933,
+    "senderProgramCounter": 2275340,
     "parentActivityIdentifier": 0
   },
   {
@@ -91,16 +91,16 @@
     "subsystem": "engineering.atoma.rust-server",
     "category": "jobs",
     "personaType": -1,
-    "threadID": 25298600,
+    "threadID": 25340135,
     "launchPersonaType": -1,
-    "senderImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
+    "senderImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
     "signpostType": "begin",
     "launchPersonaID": 4294967295,
     "backtrace": {
       "frames": [
         {
-          "imageOffset": 2234556,
-          "imageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83"
+          "imageOffset": 2275260,
+          "imageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE"
         }
       ]
     },
@@ -108,15 +108,15 @@
     "processImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "senderImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "personaID": 4294967295,
-    "timestamp": "2026-10-23 06:18:13.817217-0500",
+    "timestamp": "2026-10-23 06:34:37.204681-0500",
     "signpostName": "Kernel Job",
-    "machTimestamp": 19531473938162,
+    "machTimestamp": 19555075237313,
     "personaName": "",
     "eventMessage": "job=2",
-    "processImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
-    "traceID": 22143612313829638,
-    "processID": 69389,
-    "senderProgramCounter": 2234556,
+    "processImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
+    "traceID": 22346180151378182,
+    "processID": 72933,
+    "senderProgramCounter": 2275260,
     "parentActivityIdentifier": 0
   },
   {
@@ -131,15 +131,15 @@
     "subsystem": "engineering.atoma.rust-server",
     "category": "jobs",
     "personaType": -1,
-    "threadID": 25298600,
+    "threadID": 25340135,
     "launchPersonaType": -1,
-    "senderImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
+    "senderImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
     "launchPersonaID": 4294967295,
     "backtrace": {
       "frames": [
         {
-          "imageOffset": 2234636,
-          "imageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83"
+          "imageOffset": 2275340,
+          "imageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE"
         }
       ]
     },
@@ -147,14 +147,14 @@
     "processImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "senderImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "personaID": 4294967295,
-    "timestamp": "2026-10-23 06:18:13.817217-0500",
-    "machTimestamp": 19531473938167,
+    "timestamp": "2026-10-23 06:34:37.204681-0500",
+    "machTimestamp": 19555075237317,
     "personaName": "",
     "eventMessage": "job_begin job=2 span=2",
-    "processImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
-    "traceID": 22143730425397252,
-    "processID": 69389,
-    "senderProgramCounter": 2234636,
+    "processImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
+    "traceID": 22346298262945796,
+    "processID": 72933,
+    "senderProgramCounter": 2275340,
     "parentActivityIdentifier": 0
   },
   {
@@ -170,16 +170,16 @@
     "subsystem": "engineering.atoma.rust-server",
     "category": "jobs",
     "personaType": -1,
-    "threadID": 25298600,
+    "threadID": 25340126,
     "launchPersonaType": -1,
-    "senderImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
+    "senderImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
     "signpostType": "end",
     "launchPersonaID": 4294967295,
     "backtrace": {
       "frames": [
         {
-          "imageOffset": 2234824,
-          "imageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83"
+          "imageOffset": 2275528,
+          "imageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE"
         }
       ]
     },
@@ -187,15 +187,15 @@
     "processImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "senderImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "personaID": 4294967295,
-    "timestamp": "2026-10-23 06:18:13.842511-0500",
+    "timestamp": "2026-10-23 06:34:37.230551-0500",
     "signpostName": "Kernel Job",
-    "machTimestamp": 19531474545229,
+    "machTimestamp": 19555075858196,
     "personaName": "",
     "eventMessage": "job=1 success=1",
-    "processImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
-    "traceID": 22143925846442502,
-    "processID": 69389,
-    "senderProgramCounter": 2234824,
+    "processImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
+    "traceID": 22346493683991046,
+    "processID": 72933,
+    "senderProgramCounter": 2275528,
     "parentActivityIdentifier": 0
   },
   {
@@ -210,15 +210,15 @@
     "subsystem": "engineering.atoma.rust-server",
     "category": "jobs",
     "personaType": -1,
-    "threadID": 25298600,
+    "threadID": 25340126,
     "launchPersonaType": -1,
-    "senderImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
+    "senderImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
     "launchPersonaID": 4294967295,
     "backtrace": {
       "frames": [
         {
-          "imageOffset": 2234916,
-          "imageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83"
+          "imageOffset": 2275620,
+          "imageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE"
         }
       ]
     },
@@ -226,14 +226,14 @@
     "processImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "senderImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "personaID": 4294967295,
-    "timestamp": "2026-10-23 06:18:13.842511-0500",
-    "machTimestamp": 19531474545236,
+    "timestamp": "2026-10-23 06:34:37.230552-0500",
+    "machTimestamp": 19555075858204,
     "personaName": "",
     "eventMessage": "job_end job=1 span=1 success=1",
-    "processImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
-    "traceID": 22144078317748228,
-    "processID": 69389,
-    "senderProgramCounter": 2234916,
+    "processImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
+    "traceID": 22346646155296772,
+    "processID": 72933,
+    "senderProgramCounter": 2275620,
     "parentActivityIdentifier": 0
   },
   {
@@ -249,16 +249,16 @@
     "subsystem": "engineering.atoma.rust-server",
     "category": "jobs",
     "personaType": -1,
-    "threadID": 25298600,
+    "threadID": 25340126,
     "launchPersonaType": -1,
-    "senderImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
+    "senderImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
     "signpostType": "begin",
     "launchPersonaID": 4294967295,
     "backtrace": {
       "frames": [
         {
-          "imageOffset": 2234556,
-          "imageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83"
+          "imageOffset": 2275260,
+          "imageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE"
         }
       ]
     },
@@ -266,15 +266,15 @@
     "processImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "senderImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "personaID": 4294967295,
-    "timestamp": "2026-10-23 06:18:13.842515-0500",
+    "timestamp": "2026-10-23 06:34:37.230554-0500",
     "signpostName": "Kernel Job",
-    "machTimestamp": 19531474545319,
+    "machTimestamp": 19555075858258,
     "personaName": "",
     "eventMessage": "job=3",
-    "processImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
-    "traceID": 22143612313829638,
-    "processID": 69389,
-    "senderProgramCounter": 2234556,
+    "processImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
+    "traceID": 22346180151378182,
+    "processID": 72933,
+    "senderProgramCounter": 2275260,
     "parentActivityIdentifier": 0
   },
   {
@@ -289,15 +289,15 @@
     "subsystem": "engineering.atoma.rust-server",
     "category": "jobs",
     "personaType": -1,
-    "threadID": 25298600,
+    "threadID": 25340126,
     "launchPersonaType": -1,
-    "senderImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
+    "senderImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
     "launchPersonaID": 4294967295,
     "backtrace": {
       "frames": [
         {
-          "imageOffset": 2234636,
-          "imageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83"
+          "imageOffset": 2275340,
+          "imageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE"
         }
       ]
     },
@@ -305,14 +305,14 @@
     "processImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "senderImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "personaID": 4294967295,
-    "timestamp": "2026-10-23 06:18:13.842515-0500",
-    "machTimestamp": 19531474545321,
+    "timestamp": "2026-10-23 06:34:37.230554-0500",
+    "machTimestamp": 19555075858259,
     "personaName": "",
     "eventMessage": "job_begin job=3 span=3",
-    "processImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
-    "traceID": 22143730425397252,
-    "processID": 69389,
-    "senderProgramCounter": 2234636,
+    "processImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
+    "traceID": 22346298262945796,
+    "processID": 72933,
+    "senderProgramCounter": 2275340,
     "parentActivityIdentifier": 0
   },
   {
@@ -328,16 +328,16 @@
     "subsystem": "engineering.atoma.rust-server",
     "category": "jobs",
     "personaType": -1,
-    "threadID": 25298599,
+    "threadID": 25340135,
     "launchPersonaType": -1,
-    "senderImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
+    "senderImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
     "signpostType": "end",
     "launchPersonaID": 4294967295,
     "backtrace": {
       "frames": [
         {
-          "imageOffset": 2234824,
-          "imageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83"
+          "imageOffset": 2275528,
+          "imageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE"
         }
       ]
     },
@@ -345,15 +345,15 @@
     "processImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "senderImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "personaID": 4294967295,
-    "timestamp": "2026-10-23 06:18:13.842517-0500",
+    "timestamp": "2026-10-23 06:34:37.230557-0500",
     "signpostName": "Kernel Job",
-    "machTimestamp": 19531474545369,
+    "machTimestamp": 19555075858332,
     "personaName": "",
     "eventMessage": "job=2 success=1",
-    "processImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
-    "traceID": 22143925846442502,
-    "processID": 69389,
-    "senderProgramCounter": 2234824,
+    "processImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
+    "traceID": 22346493683991046,
+    "processID": 72933,
+    "senderProgramCounter": 2275528,
     "parentActivityIdentifier": 0
   },
   {
@@ -368,15 +368,15 @@
     "subsystem": "engineering.atoma.rust-server",
     "category": "jobs",
     "personaType": -1,
-    "threadID": 25298599,
+    "threadID": 25340135,
     "launchPersonaType": -1,
-    "senderImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
+    "senderImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
     "launchPersonaID": 4294967295,
     "backtrace": {
       "frames": [
         {
-          "imageOffset": 2234916,
-          "imageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83"
+          "imageOffset": 2275620,
+          "imageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE"
         }
       ]
     },
@@ -384,14 +384,14 @@
     "processImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "senderImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "personaID": 4294967295,
-    "timestamp": "2026-10-23 06:18:13.842517-0500",
-    "machTimestamp": 19531474545376,
+    "timestamp": "2026-10-23 06:34:37.230557-0500",
+    "machTimestamp": 19555075858338,
     "personaName": "",
     "eventMessage": "job_end job=2 span=2 success=1",
-    "processImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
-    "traceID": 22144078317748228,
-    "processID": 69389,
-    "senderProgramCounter": 2234916,
+    "processImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
+    "traceID": 22346646155296772,
+    "processID": 72933,
+    "senderProgramCounter": 2275620,
     "parentActivityIdentifier": 0
   },
   {
@@ -407,16 +407,16 @@
     "subsystem": "engineering.atoma.rust-server",
     "category": "jobs",
     "personaType": -1,
-    "threadID": 25298599,
+    "threadID": 25340135,
     "launchPersonaType": -1,
-    "senderImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
+    "senderImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
     "signpostType": "begin",
     "launchPersonaID": 4294967295,
     "backtrace": {
       "frames": [
         {
-          "imageOffset": 2234556,
-          "imageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83"
+          "imageOffset": 2275260,
+          "imageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE"
         }
       ]
     },
@@ -424,15 +424,15 @@
     "processImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "senderImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "personaID": 4294967295,
-    "timestamp": "2026-10-23 06:18:13.842518-0500",
+    "timestamp": "2026-10-23 06:34:37.230558-0500",
     "signpostName": "Kernel Job",
-    "machTimestamp": 19531474545392,
+    "machTimestamp": 19555075858356,
     "personaName": "",
     "eventMessage": "job=4",
-    "processImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
-    "traceID": 22143612313829638,
-    "processID": 69389,
-    "senderProgramCounter": 2234556,
+    "processImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
+    "traceID": 22346180151378182,
+    "processID": 72933,
+    "senderProgramCounter": 2275260,
     "parentActivityIdentifier": 0
   },
   {
@@ -447,15 +447,15 @@
     "subsystem": "engineering.atoma.rust-server",
     "category": "jobs",
     "personaType": -1,
-    "threadID": 25298599,
+    "threadID": 25340135,
     "launchPersonaType": -1,
-    "senderImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
+    "senderImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
     "launchPersonaID": 4294967295,
     "backtrace": {
       "frames": [
         {
-          "imageOffset": 2234636,
-          "imageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83"
+          "imageOffset": 2275340,
+          "imageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE"
         }
       ]
     },
@@ -463,14 +463,14 @@
     "processImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "senderImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "personaID": 4294967295,
-    "timestamp": "2026-10-23 06:18:13.842518-0500",
-    "machTimestamp": 19531474545394,
+    "timestamp": "2026-10-23 06:34:37.230558-0500",
+    "machTimestamp": 19555075858358,
     "personaName": "",
     "eventMessage": "job_begin job=4 span=4",
-    "processImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
-    "traceID": 22143730425397252,
-    "processID": 69389,
-    "senderProgramCounter": 2234636,
+    "processImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
+    "traceID": 22346298262945796,
+    "processID": 72933,
+    "senderProgramCounter": 2275340,
     "parentActivityIdentifier": 0
   },
   {
@@ -486,16 +486,16 @@
     "subsystem": "engineering.atoma.rust-server",
     "category": "jobs",
     "personaType": -1,
-    "threadID": 25298599,
+    "threadID": 25340135,
     "launchPersonaType": -1,
-    "senderImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
+    "senderImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
     "signpostType": "end",
     "launchPersonaID": 4294967295,
     "backtrace": {
       "frames": [
         {
-          "imageOffset": 2234824,
-          "imageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83"
+          "imageOffset": 2275528,
+          "imageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE"
         }
       ]
     },
@@ -503,15 +503,15 @@
     "processImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "senderImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "personaID": 4294967295,
-    "timestamp": "2026-10-23 06:18:13.843173-0500",
+    "timestamp": "2026-10-23 06:34:37.231182-0500",
     "signpostName": "Kernel Job",
-    "machTimestamp": 19531474561129,
+    "machTimestamp": 19555075873337,
     "personaName": "",
     "eventMessage": "job=4 success=1",
-    "processImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
-    "traceID": 22143925846442502,
-    "processID": 69389,
-    "senderProgramCounter": 2234824,
+    "processImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
+    "traceID": 22346493683991046,
+    "processID": 72933,
+    "senderProgramCounter": 2275528,
     "parentActivityIdentifier": 0
   },
   {
@@ -526,15 +526,15 @@
     "subsystem": "engineering.atoma.rust-server",
     "category": "jobs",
     "personaType": -1,
-    "threadID": 25298599,
+    "threadID": 25340135,
     "launchPersonaType": -1,
-    "senderImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
+    "senderImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
     "launchPersonaID": 4294967295,
     "backtrace": {
       "frames": [
         {
-          "imageOffset": 2234916,
-          "imageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83"
+          "imageOffset": 2275620,
+          "imageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE"
         }
       ]
     },
@@ -542,14 +542,14 @@
     "processImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "senderImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "personaID": 4294967295,
-    "timestamp": "2026-10-23 06:18:13.843174-0500",
-    "machTimestamp": 19531474561137,
+    "timestamp": "2026-10-23 06:34:37.231182-0500",
+    "machTimestamp": 19555075873342,
     "personaName": "",
     "eventMessage": "job_end job=4 span=4 success=1",
-    "processImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
-    "traceID": 22144078317748228,
-    "processID": 69389,
-    "senderProgramCounter": 2234916,
+    "processImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
+    "traceID": 22346646155296772,
+    "processID": 72933,
+    "senderProgramCounter": 2275620,
     "parentActivityIdentifier": 0
   },
   {
@@ -565,16 +565,16 @@
     "subsystem": "engineering.atoma.rust-server",
     "category": "jobs",
     "personaType": -1,
-    "threadID": 25298599,
+    "threadID": 25340135,
     "launchPersonaType": -1,
-    "senderImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
+    "senderImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
     "signpostType": "begin",
     "launchPersonaID": 4294967295,
     "backtrace": {
       "frames": [
         {
-          "imageOffset": 2234556,
-          "imageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83"
+          "imageOffset": 2275260,
+          "imageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE"
         }
       ]
     },
@@ -582,15 +582,15 @@
     "processImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "senderImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "personaID": 4294967295,
-    "timestamp": "2026-10-23 06:18:13.843174-0500",
+    "timestamp": "2026-10-23 06:34:37.231183-0500",
     "signpostName": "Kernel Job",
-    "machTimestamp": 19531474561150,
+    "machTimestamp": 19555075873351,
     "personaName": "",
     "eventMessage": "job=5",
-    "processImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
-    "traceID": 22143612313829638,
-    "processID": 69389,
-    "senderProgramCounter": 2234556,
+    "processImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
+    "traceID": 22346180151378182,
+    "processID": 72933,
+    "senderProgramCounter": 2275260,
     "parentActivityIdentifier": 0
   },
   {
@@ -605,15 +605,15 @@
     "subsystem": "engineering.atoma.rust-server",
     "category": "jobs",
     "personaType": -1,
-    "threadID": 25298599,
+    "threadID": 25340135,
     "launchPersonaType": -1,
-    "senderImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
+    "senderImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
     "launchPersonaID": 4294967295,
     "backtrace": {
       "frames": [
         {
-          "imageOffset": 2234636,
-          "imageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83"
+          "imageOffset": 2275340,
+          "imageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE"
         }
       ]
     },
@@ -621,14 +621,14 @@
     "processImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "senderImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "personaID": 4294967295,
-    "timestamp": "2026-10-23 06:18:13.843174-0500",
-    "machTimestamp": 19531474561152,
+    "timestamp": "2026-10-23 06:34:37.231183-0500",
+    "machTimestamp": 19555075873352,
     "personaName": "",
     "eventMessage": "job_begin job=5 span=5",
-    "processImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
-    "traceID": 22143730425397252,
-    "processID": 69389,
-    "senderProgramCounter": 2234636,
+    "processImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
+    "traceID": 22346298262945796,
+    "processID": 72933,
+    "senderProgramCounter": 2275340,
     "parentActivityIdentifier": 0
   },
   {
@@ -644,16 +644,16 @@
     "subsystem": "engineering.atoma.rust-server",
     "category": "jobs",
     "personaType": -1,
-    "threadID": 25298593,
+    "threadID": 25340135,
     "launchPersonaType": -1,
-    "senderImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
+    "senderImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
     "signpostType": "end",
     "launchPersonaID": 4294967295,
     "backtrace": {
       "frames": [
         {
-          "imageOffset": 2234824,
-          "imageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83"
+          "imageOffset": 2275528,
+          "imageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE"
         }
       ]
     },
@@ -661,15 +661,15 @@
     "processImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "senderImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "personaID": 4294967295,
-    "timestamp": "2026-10-23 06:18:13.843188-0500",
+    "timestamp": "2026-10-23 06:34:37.231186-0500",
     "signpostName": "Kernel Job",
-    "machTimestamp": 19531474561469,
+    "machTimestamp": 19555075873422,
     "personaName": "",
     "eventMessage": "job=3 success=1",
-    "processImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
-    "traceID": 22143925846442502,
-    "processID": 69389,
-    "senderProgramCounter": 2234824,
+    "processImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
+    "traceID": 22346493683991046,
+    "processID": 72933,
+    "senderProgramCounter": 2275528,
     "parentActivityIdentifier": 0
   },
   {
@@ -684,15 +684,15 @@
     "subsystem": "engineering.atoma.rust-server",
     "category": "jobs",
     "personaType": -1,
-    "threadID": 25298593,
+    "threadID": 25340135,
     "launchPersonaType": -1,
-    "senderImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
+    "senderImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
     "launchPersonaID": 4294967295,
     "backtrace": {
       "frames": [
         {
-          "imageOffset": 2234916,
-          "imageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83"
+          "imageOffset": 2275620,
+          "imageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE"
         }
       ]
     },
@@ -700,14 +700,14 @@
     "processImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "senderImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "personaID": 4294967295,
-    "timestamp": "2026-10-23 06:18:13.843188-0500",
-    "machTimestamp": 19531474561473,
+    "timestamp": "2026-10-23 06:34:37.231186-0500",
+    "machTimestamp": 19555075873424,
     "personaName": "",
     "eventMessage": "job_end job=3 span=3 success=1",
-    "processImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
-    "traceID": 22144078317748228,
-    "processID": 69389,
-    "senderProgramCounter": 2234916,
+    "processImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
+    "traceID": 22346646155296772,
+    "processID": 72933,
+    "senderProgramCounter": 2275620,
     "parentActivityIdentifier": 0
   },
   {
@@ -723,16 +723,16 @@
     "subsystem": "engineering.atoma.rust-server",
     "category": "jobs",
     "personaType": -1,
-    "threadID": 25298593,
+    "threadID": 25340135,
     "launchPersonaType": -1,
-    "senderImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
+    "senderImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
     "signpostType": "begin",
     "launchPersonaID": 4294967295,
     "backtrace": {
       "frames": [
         {
-          "imageOffset": 2234556,
-          "imageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83"
+          "imageOffset": 2275260,
+          "imageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE"
         }
       ]
     },
@@ -740,15 +740,15 @@
     "processImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "senderImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "personaID": 4294967295,
-    "timestamp": "2026-10-23 06:18:13.843189-0500",
+    "timestamp": "2026-10-23 06:34:37.231187-0500",
     "signpostName": "Kernel Job",
-    "machTimestamp": 19531474561500,
+    "machTimestamp": 19555075873464,
     "personaName": "",
     "eventMessage": "job=6",
-    "processImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
-    "traceID": 22143612313829638,
-    "processID": 69389,
-    "senderProgramCounter": 2234556,
+    "processImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
+    "traceID": 22346180151378182,
+    "processID": 72933,
+    "senderProgramCounter": 2275260,
     "parentActivityIdentifier": 0
   },
   {
@@ -763,15 +763,15 @@
     "subsystem": "engineering.atoma.rust-server",
     "category": "jobs",
     "personaType": -1,
-    "threadID": 25298593,
+    "threadID": 25340135,
     "launchPersonaType": -1,
-    "senderImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
+    "senderImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
     "launchPersonaID": 4294967295,
     "backtrace": {
       "frames": [
         {
-          "imageOffset": 2234636,
-          "imageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83"
+          "imageOffset": 2275340,
+          "imageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE"
         }
       ]
     },
@@ -779,14 +779,14 @@
     "processImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "senderImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "personaID": 4294967295,
-    "timestamp": "2026-10-23 06:18:13.843189-0500",
-    "machTimestamp": 19531474561501,
+    "timestamp": "2026-10-23 06:34:37.231188-0500",
+    "machTimestamp": 19555075873466,
     "personaName": "",
     "eventMessage": "job_begin job=6 span=6",
-    "processImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
-    "traceID": 22143730425397252,
-    "processID": 69389,
-    "senderProgramCounter": 2234636,
+    "processImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
+    "traceID": 22346298262945796,
+    "processID": 72933,
+    "senderProgramCounter": 2275340,
     "parentActivityIdentifier": 0
   },
   {
@@ -802,16 +802,16 @@
     "subsystem": "engineering.atoma.rust-server",
     "category": "jobs",
     "personaType": -1,
-    "threadID": 25298599,
+    "threadID": 25340126,
     "launchPersonaType": -1,
-    "senderImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
+    "senderImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
     "signpostType": "end",
     "launchPersonaID": 4294967295,
     "backtrace": {
       "frames": [
         {
-          "imageOffset": 2234824,
-          "imageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83"
+          "imageOffset": 2275528,
+          "imageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE"
         }
       ]
     },
@@ -819,15 +819,15 @@
     "processImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "senderImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "personaID": 4294967295,
-    "timestamp": "2026-10-23 06:18:13.843502-0500",
+    "timestamp": "2026-10-23 06:34:37.231556-0500",
     "signpostName": "Kernel Job",
-    "machTimestamp": 19531474569014,
+    "machTimestamp": 19555075882299,
     "personaName": "",
     "eventMessage": "job=5 success=1",
-    "processImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
-    "traceID": 22143925846442502,
-    "processID": 69389,
-    "senderProgramCounter": 2234824,
+    "processImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
+    "traceID": 22346493683991046,
+    "processID": 72933,
+    "senderProgramCounter": 2275528,
     "parentActivityIdentifier": 0
   },
   {
@@ -842,15 +842,15 @@
     "subsystem": "engineering.atoma.rust-server",
     "category": "jobs",
     "personaType": -1,
-    "threadID": 25298599,
+    "threadID": 25340126,
     "launchPersonaType": -1,
-    "senderImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
+    "senderImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
     "launchPersonaID": 4294967295,
     "backtrace": {
       "frames": [
         {
-          "imageOffset": 2234916,
-          "imageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83"
+          "imageOffset": 2275620,
+          "imageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE"
         }
       ]
     },
@@ -858,14 +858,14 @@
     "processImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "senderImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "personaID": 4294967295,
-    "timestamp": "2026-10-23 06:18:13.843502-0500",
-    "machTimestamp": 19531474569019,
+    "timestamp": "2026-10-23 06:34:37.231556-0500",
+    "machTimestamp": 19555075882305,
     "personaName": "",
     "eventMessage": "job_end job=5 span=5 success=1",
-    "processImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
-    "traceID": 22144078317748228,
-    "processID": 69389,
-    "senderProgramCounter": 2234916,
+    "processImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
+    "traceID": 22346646155296772,
+    "processID": 72933,
+    "senderProgramCounter": 2275620,
     "parentActivityIdentifier": 0
   },
   {
@@ -881,16 +881,16 @@
     "subsystem": "engineering.atoma.rust-server",
     "category": "jobs",
     "personaType": -1,
-    "threadID": 25298599,
+    "threadID": 25340126,
     "launchPersonaType": -1,
-    "senderImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
+    "senderImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
     "signpostType": "begin",
     "launchPersonaID": 4294967295,
     "backtrace": {
       "frames": [
         {
-          "imageOffset": 2234556,
-          "imageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83"
+          "imageOffset": 2275260,
+          "imageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE"
         }
       ]
     },
@@ -898,15 +898,15 @@
     "processImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "senderImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "personaID": 4294967295,
-    "timestamp": "2026-10-23 06:18:13.843503-0500",
+    "timestamp": "2026-10-23 06:34:37.231558-0500",
     "signpostName": "Kernel Job",
-    "machTimestamp": 19531474569047,
+    "machTimestamp": 19555075882363,
     "personaName": "",
     "eventMessage": "job=7",
-    "processImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
-    "traceID": 22143612313829638,
-    "processID": 69389,
-    "senderProgramCounter": 2234556,
+    "processImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
+    "traceID": 22346180151378182,
+    "processID": 72933,
+    "senderProgramCounter": 2275260,
     "parentActivityIdentifier": 0
   },
   {
@@ -921,15 +921,15 @@
     "subsystem": "engineering.atoma.rust-server",
     "category": "jobs",
     "personaType": -1,
-    "threadID": 25298599,
+    "threadID": 25340126,
     "launchPersonaType": -1,
-    "senderImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
+    "senderImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
     "launchPersonaID": 4294967295,
     "backtrace": {
       "frames": [
         {
-          "imageOffset": 2234636,
-          "imageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83"
+          "imageOffset": 2275340,
+          "imageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE"
         }
       ]
     },
@@ -937,14 +937,14 @@
     "processImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "senderImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "personaID": 4294967295,
-    "timestamp": "2026-10-23 06:18:13.843504-0500",
-    "machTimestamp": 19531474569050,
+    "timestamp": "2026-10-23 06:34:37.231558-0500",
+    "machTimestamp": 19555075882365,
     "personaName": "",
     "eventMessage": "job_begin job=7 span=7",
-    "processImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
-    "traceID": 22143730425397252,
-    "processID": 69389,
-    "senderProgramCounter": 2234636,
+    "processImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
+    "traceID": 22346298262945796,
+    "processID": 72933,
+    "senderProgramCounter": 2275340,
     "parentActivityIdentifier": 0
   },
   {
@@ -960,16 +960,16 @@
     "subsystem": "engineering.atoma.rust-server",
     "category": "jobs",
     "personaType": -1,
-    "threadID": 25298593,
+    "threadID": 25340136,
     "launchPersonaType": -1,
-    "senderImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
+    "senderImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
     "signpostType": "end",
     "launchPersonaID": 4294967295,
     "backtrace": {
       "frames": [
         {
-          "imageOffset": 2234824,
-          "imageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83"
+          "imageOffset": 2275528,
+          "imageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE"
         }
       ]
     },
@@ -977,15 +977,15 @@
     "processImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "senderImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "personaID": 4294967295,
-    "timestamp": "2026-10-23 06:18:13.843546-0500",
+    "timestamp": "2026-10-23 06:34:37.231633-0500",
     "signpostName": "Kernel Job",
-    "machTimestamp": 19531474570073,
+    "machTimestamp": 19555075884157,
     "personaName": "",
     "eventMessage": "job=6 success=1",
-    "processImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
-    "traceID": 22143925846442502,
-    "processID": 69389,
-    "senderProgramCounter": 2234824,
+    "processImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
+    "traceID": 22346493683991046,
+    "processID": 72933,
+    "senderProgramCounter": 2275528,
     "parentActivityIdentifier": 0
   },
   {
@@ -1000,15 +1000,15 @@
     "subsystem": "engineering.atoma.rust-server",
     "category": "jobs",
     "personaType": -1,
-    "threadID": 25298593,
+    "threadID": 25340136,
     "launchPersonaType": -1,
-    "senderImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
+    "senderImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
     "launchPersonaID": 4294967295,
     "backtrace": {
       "frames": [
         {
-          "imageOffset": 2234916,
-          "imageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83"
+          "imageOffset": 2275620,
+          "imageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE"
         }
       ]
     },
@@ -1016,14 +1016,14 @@
     "processImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "senderImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "personaID": 4294967295,
-    "timestamp": "2026-10-23 06:18:13.843546-0500",
-    "machTimestamp": 19531474570080,
+    "timestamp": "2026-10-23 06:34:37.231633-0500",
+    "machTimestamp": 19555075884160,
     "personaName": "",
     "eventMessage": "job_end job=6 span=6 success=1",
-    "processImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
-    "traceID": 22144078317748228,
-    "processID": 69389,
-    "senderProgramCounter": 2234916,
+    "processImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
+    "traceID": 22346646155296772,
+    "processID": 72933,
+    "senderProgramCounter": 2275620,
     "parentActivityIdentifier": 0
   },
   {
@@ -1039,16 +1039,16 @@
     "subsystem": "engineering.atoma.rust-server",
     "category": "jobs",
     "personaType": -1,
-    "threadID": 25298593,
+    "threadID": 25340136,
     "launchPersonaType": -1,
-    "senderImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
+    "senderImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
     "signpostType": "begin",
     "launchPersonaID": 4294967295,
     "backtrace": {
       "frames": [
         {
-          "imageOffset": 2234556,
-          "imageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83"
+          "imageOffset": 2275260,
+          "imageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE"
         }
       ]
     },
@@ -1056,15 +1056,15 @@
     "processImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "senderImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "personaID": 4294967295,
-    "timestamp": "2026-10-23 06:18:13.843548-0500",
+    "timestamp": "2026-10-23 06:34:37.231635-0500",
     "signpostName": "Kernel Job",
-    "machTimestamp": 19531474570111,
+    "machTimestamp": 19555075884209,
     "personaName": "",
     "eventMessage": "job=8",
-    "processImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
-    "traceID": 22143612313829638,
-    "processID": 69389,
-    "senderProgramCounter": 2234556,
+    "processImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
+    "traceID": 22346180151378182,
+    "processID": 72933,
+    "senderProgramCounter": 2275260,
     "parentActivityIdentifier": 0
   },
   {
@@ -1079,15 +1079,15 @@
     "subsystem": "engineering.atoma.rust-server",
     "category": "jobs",
     "personaType": -1,
-    "threadID": 25298593,
+    "threadID": 25340136,
     "launchPersonaType": -1,
-    "senderImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
+    "senderImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
     "launchPersonaID": 4294967295,
     "backtrace": {
       "frames": [
         {
-          "imageOffset": 2234636,
-          "imageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83"
+          "imageOffset": 2275340,
+          "imageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE"
         }
       ]
     },
@@ -1095,14 +1095,14 @@
     "processImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "senderImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "personaID": 4294967295,
-    "timestamp": "2026-10-23 06:18:13.843548-0500",
-    "machTimestamp": 19531474570113,
+    "timestamp": "2026-10-23 06:34:37.231635-0500",
+    "machTimestamp": 19555075884212,
     "personaName": "",
     "eventMessage": "job_begin job=8 span=8",
-    "processImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
-    "traceID": 22143730425397252,
-    "processID": 69389,
-    "senderProgramCounter": 2234636,
+    "processImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
+    "traceID": 22346298262945796,
+    "processID": 72933,
+    "senderProgramCounter": 2275340,
     "parentActivityIdentifier": 0
   },
   {
@@ -1118,16 +1118,16 @@
     "subsystem": "engineering.atoma.rust-server",
     "category": "jobs",
     "personaType": -1,
-    "threadID": 25298593,
+    "threadID": 25340135,
     "launchPersonaType": -1,
-    "senderImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
+    "senderImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
     "signpostType": "end",
     "launchPersonaID": 4294967295,
     "backtrace": {
       "frames": [
         {
-          "imageOffset": 2234824,
-          "imageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83"
+          "imageOffset": 2275528,
+          "imageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE"
         }
       ]
     },
@@ -1135,15 +1135,15 @@
     "processImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "senderImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "personaID": 4294967295,
-    "timestamp": "2026-10-23 06:18:13.844246-0500",
+    "timestamp": "2026-10-23 06:34:37.232294-0500",
     "signpostName": "Kernel Job",
-    "machTimestamp": 19531474586866,
+    "machTimestamp": 19555075900016,
     "personaName": "",
     "eventMessage": "job=8 success=1",
-    "processImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
-    "traceID": 22143925846442502,
-    "processID": 69389,
-    "senderProgramCounter": 2234824,
+    "processImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
+    "traceID": 22346493683991046,
+    "processID": 72933,
+    "senderProgramCounter": 2275528,
     "parentActivityIdentifier": 0
   },
   {
@@ -1158,15 +1158,15 @@
     "subsystem": "engineering.atoma.rust-server",
     "category": "jobs",
     "personaType": -1,
-    "threadID": 25298593,
+    "threadID": 25340135,
     "launchPersonaType": -1,
-    "senderImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
+    "senderImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
     "launchPersonaID": 4294967295,
     "backtrace": {
       "frames": [
         {
-          "imageOffset": 2234916,
-          "imageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83"
+          "imageOffset": 2275620,
+          "imageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE"
         }
       ]
     },
@@ -1174,14 +1174,14 @@
     "processImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "senderImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "personaID": 4294967295,
-    "timestamp": "2026-10-23 06:18:13.844246-0500",
-    "machTimestamp": 19531474586871,
+    "timestamp": "2026-10-23 06:34:37.232294-0500",
+    "machTimestamp": 19555075900023,
     "personaName": "",
     "eventMessage": "job_end job=8 span=8 success=1",
-    "processImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
-    "traceID": 22144078317748228,
-    "processID": 69389,
-    "senderProgramCounter": 2234916,
+    "processImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
+    "traceID": 22346646155296772,
+    "processID": 72933,
+    "senderProgramCounter": 2275620,
     "parentActivityIdentifier": 0
   },
   {
@@ -1197,16 +1197,16 @@
     "subsystem": "engineering.atoma.rust-server",
     "category": "jobs",
     "personaType": -1,
-    "threadID": 25298593,
+    "threadID": 25340135,
     "launchPersonaType": -1,
-    "senderImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
+    "senderImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
     "signpostType": "begin",
     "launchPersonaID": 4294967295,
     "backtrace": {
       "frames": [
         {
-          "imageOffset": 2234556,
-          "imageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83"
+          "imageOffset": 2275260,
+          "imageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE"
         }
       ]
     },
@@ -1214,15 +1214,15 @@
     "processImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "senderImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "personaID": 4294967295,
-    "timestamp": "2026-10-23 06:18:13.844246-0500",
+    "timestamp": "2026-10-23 06:34:37.232294-0500",
     "signpostName": "Kernel Job",
-    "machTimestamp": 19531474586877,
+    "machTimestamp": 19555075900033,
     "personaName": "",
     "eventMessage": "job=9",
-    "processImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
-    "traceID": 22143612313829638,
-    "processID": 69389,
-    "senderProgramCounter": 2234556,
+    "processImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
+    "traceID": 22346180151378182,
+    "processID": 72933,
+    "senderProgramCounter": 2275260,
     "parentActivityIdentifier": 0
   },
   {
@@ -1237,15 +1237,15 @@
     "subsystem": "engineering.atoma.rust-server",
     "category": "jobs",
     "personaType": -1,
-    "threadID": 25298593,
+    "threadID": 25340135,
     "launchPersonaType": -1,
-    "senderImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
+    "senderImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
     "launchPersonaID": 4294967295,
     "backtrace": {
       "frames": [
         {
-          "imageOffset": 2234636,
-          "imageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83"
+          "imageOffset": 2275340,
+          "imageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE"
         }
       ]
     },
@@ -1253,14 +1253,14 @@
     "processImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "senderImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "personaID": 4294967295,
-    "timestamp": "2026-10-23 06:18:13.844246-0500",
-    "machTimestamp": 19531474586878,
+    "timestamp": "2026-10-23 06:34:37.232295-0500",
+    "machTimestamp": 19555075900036,
     "personaName": "",
     "eventMessage": "job_begin job=9 span=9",
-    "processImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
-    "traceID": 22143730425397252,
-    "processID": 69389,
-    "senderProgramCounter": 2234636,
+    "processImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
+    "traceID": 22346298262945796,
+    "processID": 72933,
+    "senderProgramCounter": 2275340,
     "parentActivityIdentifier": 0
   },
   {
@@ -1276,16 +1276,16 @@
     "subsystem": "engineering.atoma.rust-server",
     "category": "jobs",
     "personaType": -1,
-    "threadID": 25298599,
+    "threadID": 25340136,
     "launchPersonaType": -1,
-    "senderImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
+    "senderImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
     "signpostType": "end",
     "launchPersonaID": 4294967295,
     "backtrace": {
       "frames": [
         {
-          "imageOffset": 2234824,
-          "imageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83"
+          "imageOffset": 2275528,
+          "imageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE"
         }
       ]
     },
@@ -1293,15 +1293,15 @@
     "processImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "senderImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "personaID": 4294967295,
-    "timestamp": "2026-10-23 06:18:13.844263-0500",
+    "timestamp": "2026-10-23 06:34:37.232311-0500",
     "signpostName": "Kernel Job",
-    "machTimestamp": 19531474587281,
+    "machTimestamp": 19555075900421,
     "personaName": "",
     "eventMessage": "job=7 success=1",
-    "processImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
-    "traceID": 22143925846442502,
-    "processID": 69389,
-    "senderProgramCounter": 2234824,
+    "processImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
+    "traceID": 22346493683991046,
+    "processID": 72933,
+    "senderProgramCounter": 2275528,
     "parentActivityIdentifier": 0
   },
   {
@@ -1316,15 +1316,15 @@
     "subsystem": "engineering.atoma.rust-server",
     "category": "jobs",
     "personaType": -1,
-    "threadID": 25298599,
+    "threadID": 25340136,
     "launchPersonaType": -1,
-    "senderImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
+    "senderImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
     "launchPersonaID": 4294967295,
     "backtrace": {
       "frames": [
         {
-          "imageOffset": 2234916,
-          "imageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83"
+          "imageOffset": 2275620,
+          "imageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE"
         }
       ]
     },
@@ -1332,14 +1332,14 @@
     "processImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "senderImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "personaID": 4294967295,
-    "timestamp": "2026-10-23 06:18:13.844263-0500",
-    "machTimestamp": 19531474587285,
+    "timestamp": "2026-10-23 06:34:37.232311-0500",
+    "machTimestamp": 19555075900425,
     "personaName": "",
     "eventMessage": "job_end job=7 span=7 success=1",
-    "processImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
-    "traceID": 22144078317748228,
-    "processID": 69389,
-    "senderProgramCounter": 2234916,
+    "processImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
+    "traceID": 22346646155296772,
+    "processID": 72933,
+    "senderProgramCounter": 2275620,
     "parentActivityIdentifier": 0
   },
   {
@@ -1355,16 +1355,16 @@
     "subsystem": "engineering.atoma.rust-server",
     "category": "jobs",
     "personaType": -1,
-    "threadID": 25298599,
+    "threadID": 25340136,
     "launchPersonaType": -1,
-    "senderImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
+    "senderImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
     "signpostType": "begin",
     "launchPersonaID": 4294967295,
     "backtrace": {
       "frames": [
         {
-          "imageOffset": 2234556,
-          "imageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83"
+          "imageOffset": 2275260,
+          "imageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE"
         }
       ]
     },
@@ -1372,15 +1372,15 @@
     "processImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "senderImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "personaID": 4294967295,
-    "timestamp": "2026-10-23 06:18:13.844267-0500",
+    "timestamp": "2026-10-23 06:34:37.232313-0500",
     "signpostName": "Kernel Job",
-    "machTimestamp": 19531474587383,
+    "machTimestamp": 19555075900469,
     "personaName": "",
     "eventMessage": "job=10",
-    "processImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
-    "traceID": 22143612313829638,
-    "processID": 69389,
-    "senderProgramCounter": 2234556,
+    "processImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
+    "traceID": 22346180151378182,
+    "processID": 72933,
+    "senderProgramCounter": 2275260,
     "parentActivityIdentifier": 0
   },
   {
@@ -1395,15 +1395,15 @@
     "subsystem": "engineering.atoma.rust-server",
     "category": "jobs",
     "personaType": -1,
-    "threadID": 25298599,
+    "threadID": 25340136,
     "launchPersonaType": -1,
-    "senderImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
+    "senderImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
     "launchPersonaID": 4294967295,
     "backtrace": {
       "frames": [
         {
-          "imageOffset": 2234636,
-          "imageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83"
+          "imageOffset": 2275340,
+          "imageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE"
         }
       ]
     },
@@ -1411,14 +1411,172 @@
     "processImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "senderImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "personaID": 4294967295,
-    "timestamp": "2026-10-23 06:18:13.844267-0500",
-    "machTimestamp": 19531474587384,
+    "timestamp": "2026-10-23 06:34:37.232313-0500",
+    "machTimestamp": 19555075900470,
     "personaName": "",
     "eventMessage": "job_begin job=10 span=10",
-    "processImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
-    "traceID": 22143730425397252,
-    "processID": 69389,
-    "senderProgramCounter": 2234636,
+    "processImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
+    "traceID": 22346298262945796,
+    "processID": 72933,
+    "senderProgramCounter": 2275340,
+    "parentActivityIdentifier": 0
+  },
+  {
+    "timezoneName": "",
+    "eventType": "signpostEvent",
+    "signpostID": 10,
+    "signpostScope": "process",
+    "source": null,
+    "launchPersonaName": "",
+    "formatString": "job=%{public}llu success=%{public}d",
+    "userID": 501,
+    "activityIdentifier": 0,
+    "subsystem": "engineering.atoma.rust-server",
+    "category": "jobs",
+    "personaType": -1,
+    "threadID": 25340136,
+    "launchPersonaType": -1,
+    "senderImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
+    "signpostType": "end",
+    "launchPersonaID": 4294967295,
+    "backtrace": {
+      "frames": [
+        {
+          "imageOffset": 2275528,
+          "imageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE"
+        }
+      ]
+    },
+    "bootUUID": "F0625CCA-93EC-47F0-9BD5-84D9BA999309",
+    "processImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
+    "senderImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
+    "personaID": 4294967295,
+    "timestamp": "2026-10-23 06:34:37.233052-0500",
+    "signpostName": "Kernel Job",
+    "machTimestamp": 19555075918207,
+    "personaName": "",
+    "eventMessage": "job=10 success=1",
+    "processImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
+    "traceID": 22346493683991046,
+    "processID": 72933,
+    "senderProgramCounter": 2275528,
+    "parentActivityIdentifier": 0
+  },
+  {
+    "timezoneName": "",
+    "messageType": "Default",
+    "eventType": "logEvent",
+    "source": null,
+    "launchPersonaName": "",
+    "formatString": "job_end job=%{public}llu span=%{public}llu success=%{public}d",
+    "userID": 501,
+    "activityIdentifier": 0,
+    "subsystem": "engineering.atoma.rust-server",
+    "category": "jobs",
+    "personaType": -1,
+    "threadID": 25340136,
+    "launchPersonaType": -1,
+    "senderImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
+    "launchPersonaID": 4294967295,
+    "backtrace": {
+      "frames": [
+        {
+          "imageOffset": 2275620,
+          "imageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE"
+        }
+      ]
+    },
+    "bootUUID": "F0625CCA-93EC-47F0-9BD5-84D9BA999309",
+    "processImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
+    "senderImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
+    "personaID": 4294967295,
+    "timestamp": "2026-10-23 06:34:37.233052-0500",
+    "machTimestamp": 19555075918211,
+    "personaName": "",
+    "eventMessage": "job_end job=10 span=10 success=1",
+    "processImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
+    "traceID": 22346646155296772,
+    "processID": 72933,
+    "senderProgramCounter": 2275620,
+    "parentActivityIdentifier": 0
+  },
+  {
+    "timezoneName": "",
+    "eventType": "signpostEvent",
+    "signpostID": 11,
+    "signpostScope": "process",
+    "source": null,
+    "launchPersonaName": "",
+    "formatString": "job=%{public}llu",
+    "userID": 501,
+    "activityIdentifier": 0,
+    "subsystem": "engineering.atoma.rust-server",
+    "category": "jobs",
+    "personaType": -1,
+    "threadID": 25340136,
+    "launchPersonaType": -1,
+    "senderImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
+    "signpostType": "begin",
+    "launchPersonaID": 4294967295,
+    "backtrace": {
+      "frames": [
+        {
+          "imageOffset": 2275260,
+          "imageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE"
+        }
+      ]
+    },
+    "bootUUID": "F0625CCA-93EC-47F0-9BD5-84D9BA999309",
+    "processImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
+    "senderImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
+    "personaID": 4294967295,
+    "timestamp": "2026-10-23 06:34:37.233052-0500",
+    "signpostName": "Kernel Job",
+    "machTimestamp": 19555075918218,
+    "personaName": "",
+    "eventMessage": "job=11",
+    "processImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
+    "traceID": 22346180151378182,
+    "processID": 72933,
+    "senderProgramCounter": 2275260,
+    "parentActivityIdentifier": 0
+  },
+  {
+    "timezoneName": "",
+    "messageType": "Default",
+    "eventType": "logEvent",
+    "source": null,
+    "launchPersonaName": "",
+    "formatString": "job_begin job=%{public}llu span=%{public}llu",
+    "userID": 501,
+    "activityIdentifier": 0,
+    "subsystem": "engineering.atoma.rust-server",
+    "category": "jobs",
+    "personaType": -1,
+    "threadID": 25340136,
+    "launchPersonaType": -1,
+    "senderImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
+    "launchPersonaID": 4294967295,
+    "backtrace": {
+      "frames": [
+        {
+          "imageOffset": 2275340,
+          "imageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE"
+        }
+      ]
+    },
+    "bootUUID": "F0625CCA-93EC-47F0-9BD5-84D9BA999309",
+    "processImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
+    "senderImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
+    "personaID": 4294967295,
+    "timestamp": "2026-10-23 06:34:37.233052-0500",
+    "machTimestamp": 19555075918220,
+    "personaName": "",
+    "eventMessage": "job_begin job=11 span=11",
+    "processImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
+    "traceID": 22346298262945796,
+    "processID": 72933,
+    "senderProgramCounter": 2275340,
     "parentActivityIdentifier": 0
   },
   {
@@ -1434,16 +1592,16 @@
     "subsystem": "engineering.atoma.rust-server",
     "category": "jobs",
     "personaType": -1,
-    "threadID": 25298593,
+    "threadID": 25340126,
     "launchPersonaType": -1,
-    "senderImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
+    "senderImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
     "signpostType": "end",
     "launchPersonaID": 4294967295,
     "backtrace": {
       "frames": [
         {
-          "imageOffset": 2234824,
-          "imageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83"
+          "imageOffset": 2275528,
+          "imageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE"
         }
       ]
     },
@@ -1451,15 +1609,15 @@
     "processImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "senderImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "personaID": 4294967295,
-    "timestamp": "2026-10-23 06:18:13.844631-0500",
+    "timestamp": "2026-10-23 06:34:37.233055-0500",
     "signpostName": "Kernel Job",
-    "machTimestamp": 19531474596107,
+    "machTimestamp": 19555075918294,
     "personaName": "",
     "eventMessage": "job=9 success=1",
-    "processImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
-    "traceID": 22143925846442502,
-    "processID": 69389,
-    "senderProgramCounter": 2234824,
+    "processImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
+    "traceID": 22346493683991046,
+    "processID": 72933,
+    "senderProgramCounter": 2275528,
     "parentActivityIdentifier": 0
   },
   {
@@ -1474,15 +1632,15 @@
     "subsystem": "engineering.atoma.rust-server",
     "category": "jobs",
     "personaType": -1,
-    "threadID": 25298593,
+    "threadID": 25340126,
     "launchPersonaType": -1,
-    "senderImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
+    "senderImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
     "launchPersonaID": 4294967295,
     "backtrace": {
       "frames": [
         {
-          "imageOffset": 2234916,
-          "imageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83"
+          "imageOffset": 2275620,
+          "imageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE"
         }
       ]
     },
@@ -1490,172 +1648,14 @@
     "processImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "senderImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "personaID": 4294967295,
-    "timestamp": "2026-10-23 06:18:13.844631-0500",
-    "machTimestamp": 19531474596111,
+    "timestamp": "2026-10-23 06:34:37.233056-0500",
+    "machTimestamp": 19555075918301,
     "personaName": "",
     "eventMessage": "job_end job=9 span=9 success=1",
-    "processImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
-    "traceID": 22144078317748228,
-    "processID": 69389,
-    "senderProgramCounter": 2234916,
-    "parentActivityIdentifier": 0
-  },
-  {
-    "timezoneName": "",
-    "eventType": "signpostEvent",
-    "signpostID": 11,
-    "signpostScope": "process",
-    "source": null,
-    "launchPersonaName": "",
-    "formatString": "job=%{public}llu",
-    "userID": 501,
-    "activityIdentifier": 0,
-    "subsystem": "engineering.atoma.rust-server",
-    "category": "jobs",
-    "personaType": -1,
-    "threadID": 25298593,
-    "launchPersonaType": -1,
-    "senderImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
-    "signpostType": "begin",
-    "launchPersonaID": 4294967295,
-    "backtrace": {
-      "frames": [
-        {
-          "imageOffset": 2234556,
-          "imageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83"
-        }
-      ]
-    },
-    "bootUUID": "F0625CCA-93EC-47F0-9BD5-84D9BA999309",
-    "processImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
-    "senderImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
-    "personaID": 4294967295,
-    "timestamp": "2026-10-23 06:18:13.844632-0500",
-    "signpostName": "Kernel Job",
-    "machTimestamp": 19531474596140,
-    "personaName": "",
-    "eventMessage": "job=11",
-    "processImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
-    "traceID": 22143612313829638,
-    "processID": 69389,
-    "senderProgramCounter": 2234556,
-    "parentActivityIdentifier": 0
-  },
-  {
-    "timezoneName": "",
-    "messageType": "Default",
-    "eventType": "logEvent",
-    "source": null,
-    "launchPersonaName": "",
-    "formatString": "job_begin job=%{public}llu span=%{public}llu",
-    "userID": 501,
-    "activityIdentifier": 0,
-    "subsystem": "engineering.atoma.rust-server",
-    "category": "jobs",
-    "personaType": -1,
-    "threadID": 25298593,
-    "launchPersonaType": -1,
-    "senderImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
-    "launchPersonaID": 4294967295,
-    "backtrace": {
-      "frames": [
-        {
-          "imageOffset": 2234636,
-          "imageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83"
-        }
-      ]
-    },
-    "bootUUID": "F0625CCA-93EC-47F0-9BD5-84D9BA999309",
-    "processImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
-    "senderImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
-    "personaID": 4294967295,
-    "timestamp": "2026-10-23 06:18:13.844632-0500",
-    "machTimestamp": 19531474596141,
-    "personaName": "",
-    "eventMessage": "job_begin job=11 span=11",
-    "processImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
-    "traceID": 22143730425397252,
-    "processID": 69389,
-    "senderProgramCounter": 2234636,
-    "parentActivityIdentifier": 0
-  },
-  {
-    "timezoneName": "",
-    "eventType": "signpostEvent",
-    "signpostID": 10,
-    "signpostScope": "process",
-    "source": null,
-    "launchPersonaName": "",
-    "formatString": "job=%{public}llu success=%{public}d",
-    "userID": 501,
-    "activityIdentifier": 0,
-    "subsystem": "engineering.atoma.rust-server",
-    "category": "jobs",
-    "personaType": -1,
-    "threadID": 25298593,
-    "launchPersonaType": -1,
-    "senderImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
-    "signpostType": "end",
-    "launchPersonaID": 4294967295,
-    "backtrace": {
-      "frames": [
-        {
-          "imageOffset": 2234824,
-          "imageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83"
-        }
-      ]
-    },
-    "bootUUID": "F0625CCA-93EC-47F0-9BD5-84D9BA999309",
-    "processImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
-    "senderImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
-    "personaID": 4294967295,
-    "timestamp": "2026-10-23 06:18:13.844677-0500",
-    "signpostName": "Kernel Job",
-    "machTimestamp": 19531474597209,
-    "personaName": "",
-    "eventMessage": "job=10 success=1",
-    "processImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
-    "traceID": 22143925846442502,
-    "processID": 69389,
-    "senderProgramCounter": 2234824,
-    "parentActivityIdentifier": 0
-  },
-  {
-    "timezoneName": "",
-    "messageType": "Default",
-    "eventType": "logEvent",
-    "source": null,
-    "launchPersonaName": "",
-    "formatString": "job_end job=%{public}llu span=%{public}llu success=%{public}d",
-    "userID": 501,
-    "activityIdentifier": 0,
-    "subsystem": "engineering.atoma.rust-server",
-    "category": "jobs",
-    "personaType": -1,
-    "threadID": 25298593,
-    "launchPersonaType": -1,
-    "senderImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
-    "launchPersonaID": 4294967295,
-    "backtrace": {
-      "frames": [
-        {
-          "imageOffset": 2234916,
-          "imageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83"
-        }
-      ]
-    },
-    "bootUUID": "F0625CCA-93EC-47F0-9BD5-84D9BA999309",
-    "processImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
-    "senderImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
-    "personaID": 4294967295,
-    "timestamp": "2026-10-23 06:18:13.844677-0500",
-    "machTimestamp": 19531474597215,
-    "personaName": "",
-    "eventMessage": "job_end job=10 span=10 success=1",
-    "processImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
-    "traceID": 22144078317748228,
-    "processID": 69389,
-    "senderProgramCounter": 2234916,
+    "processImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
+    "traceID": 22346646155296772,
+    "processID": 72933,
+    "senderProgramCounter": 2275620,
     "parentActivityIdentifier": 0
   },
   {
@@ -1671,16 +1671,16 @@
     "subsystem": "engineering.atoma.rust-server",
     "category": "jobs",
     "personaType": -1,
-    "threadID": 25298593,
+    "threadID": 25340126,
     "launchPersonaType": -1,
-    "senderImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
+    "senderImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
     "signpostType": "begin",
     "launchPersonaID": 4294967295,
     "backtrace": {
       "frames": [
         {
-          "imageOffset": 2234556,
-          "imageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83"
+          "imageOffset": 2275260,
+          "imageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE"
         }
       ]
     },
@@ -1688,15 +1688,15 @@
     "processImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "senderImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "personaID": 4294967295,
-    "timestamp": "2026-10-23 06:18:13.844678-0500",
+    "timestamp": "2026-10-23 06:34:37.233058-0500",
     "signpostName": "Kernel Job",
-    "machTimestamp": 19531474597242,
+    "machTimestamp": 19555075918360,
     "personaName": "",
     "eventMessage": "job=12",
-    "processImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
-    "traceID": 22143612313829638,
-    "processID": 69389,
-    "senderProgramCounter": 2234556,
+    "processImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
+    "traceID": 22346180151378182,
+    "processID": 72933,
+    "senderProgramCounter": 2275260,
     "parentActivityIdentifier": 0
   },
   {
@@ -1711,15 +1711,15 @@
     "subsystem": "engineering.atoma.rust-server",
     "category": "jobs",
     "personaType": -1,
-    "threadID": 25298593,
+    "threadID": 25340126,
     "launchPersonaType": -1,
-    "senderImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
+    "senderImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
     "launchPersonaID": 4294967295,
     "backtrace": {
       "frames": [
         {
-          "imageOffset": 2234636,
-          "imageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83"
+          "imageOffset": 2275340,
+          "imageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE"
         }
       ]
     },
@@ -1727,172 +1727,14 @@
     "processImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "senderImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "personaID": 4294967295,
-    "timestamp": "2026-10-23 06:18:13.844678-0500",
-    "machTimestamp": 19531474597244,
+    "timestamp": "2026-10-23 06:34:37.233058-0500",
+    "machTimestamp": 19555075918361,
     "personaName": "",
     "eventMessage": "job_begin job=12 span=12",
-    "processImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
-    "traceID": 22143730425397252,
-    "processID": 69389,
-    "senderProgramCounter": 2234636,
-    "parentActivityIdentifier": 0
-  },
-  {
-    "timezoneName": "",
-    "eventType": "signpostEvent",
-    "signpostID": 12,
-    "signpostScope": "process",
-    "source": null,
-    "launchPersonaName": "",
-    "formatString": "job=%{public}llu success=%{public}d",
-    "userID": 501,
-    "activityIdentifier": 0,
-    "subsystem": "engineering.atoma.rust-server",
-    "category": "jobs",
-    "personaType": -1,
-    "threadID": 25298593,
-    "launchPersonaType": -1,
-    "senderImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
-    "signpostType": "end",
-    "launchPersonaID": 4294967295,
-    "backtrace": {
-      "frames": [
-        {
-          "imageOffset": 2234824,
-          "imageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83"
-        }
-      ]
-    },
-    "bootUUID": "F0625CCA-93EC-47F0-9BD5-84D9BA999309",
-    "processImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
-    "senderImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
-    "personaID": 4294967295,
-    "timestamp": "2026-10-23 06:18:13.844954-0500",
-    "signpostName": "Kernel Job",
-    "machTimestamp": 19531474603859,
-    "personaName": "",
-    "eventMessage": "job=12 success=1",
-    "processImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
-    "traceID": 22143925846442502,
-    "processID": 69389,
-    "senderProgramCounter": 2234824,
-    "parentActivityIdentifier": 0
-  },
-  {
-    "timezoneName": "",
-    "messageType": "Default",
-    "eventType": "logEvent",
-    "source": null,
-    "launchPersonaName": "",
-    "formatString": "job_end job=%{public}llu span=%{public}llu success=%{public}d",
-    "userID": 501,
-    "activityIdentifier": 0,
-    "subsystem": "engineering.atoma.rust-server",
-    "category": "jobs",
-    "personaType": -1,
-    "threadID": 25298593,
-    "launchPersonaType": -1,
-    "senderImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
-    "launchPersonaID": 4294967295,
-    "backtrace": {
-      "frames": [
-        {
-          "imageOffset": 2234916,
-          "imageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83"
-        }
-      ]
-    },
-    "bootUUID": "F0625CCA-93EC-47F0-9BD5-84D9BA999309",
-    "processImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
-    "senderImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
-    "personaID": 4294967295,
-    "timestamp": "2026-10-23 06:18:13.844954-0500",
-    "machTimestamp": 19531474603860,
-    "personaName": "",
-    "eventMessage": "job_end job=12 span=12 success=1",
-    "processImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
-    "traceID": 22144078317748228,
-    "processID": 69389,
-    "senderProgramCounter": 2234916,
-    "parentActivityIdentifier": 0
-  },
-  {
-    "timezoneName": "",
-    "eventType": "signpostEvent",
-    "signpostID": 13,
-    "signpostScope": "process",
-    "source": null,
-    "launchPersonaName": "",
-    "formatString": "job=%{public}llu",
-    "userID": 501,
-    "activityIdentifier": 0,
-    "subsystem": "engineering.atoma.rust-server",
-    "category": "jobs",
-    "personaType": -1,
-    "threadID": 25298593,
-    "launchPersonaType": -1,
-    "senderImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
-    "signpostType": "begin",
-    "launchPersonaID": 4294967295,
-    "backtrace": {
-      "frames": [
-        {
-          "imageOffset": 2234556,
-          "imageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83"
-        }
-      ]
-    },
-    "bootUUID": "F0625CCA-93EC-47F0-9BD5-84D9BA999309",
-    "processImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
-    "senderImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
-    "personaID": 4294967295,
-    "timestamp": "2026-10-23 06:18:13.844955-0500",
-    "signpostName": "Kernel Job",
-    "machTimestamp": 19531474603874,
-    "personaName": "",
-    "eventMessage": "job=13",
-    "processImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
-    "traceID": 22143612313829638,
-    "processID": 69389,
-    "senderProgramCounter": 2234556,
-    "parentActivityIdentifier": 0
-  },
-  {
-    "timezoneName": "",
-    "messageType": "Default",
-    "eventType": "logEvent",
-    "source": null,
-    "launchPersonaName": "",
-    "formatString": "job_begin job=%{public}llu span=%{public}llu",
-    "userID": 501,
-    "activityIdentifier": 0,
-    "subsystem": "engineering.atoma.rust-server",
-    "category": "jobs",
-    "personaType": -1,
-    "threadID": 25298593,
-    "launchPersonaType": -1,
-    "senderImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
-    "launchPersonaID": 4294967295,
-    "backtrace": {
-      "frames": [
-        {
-          "imageOffset": 2234636,
-          "imageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83"
-        }
-      ]
-    },
-    "bootUUID": "F0625CCA-93EC-47F0-9BD5-84D9BA999309",
-    "processImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
-    "senderImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
-    "personaID": 4294967295,
-    "timestamp": "2026-10-23 06:18:13.844955-0500",
-    "machTimestamp": 19531474603877,
-    "personaName": "",
-    "eventMessage": "job_begin job=13 span=13",
-    "processImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
-    "traceID": 22143730425397252,
-    "processID": 69389,
-    "senderProgramCounter": 2234636,
+    "processImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
+    "traceID": 22346298262945796,
+    "processID": 72933,
+    "senderProgramCounter": 2275340,
     "parentActivityIdentifier": 0
   },
   {
@@ -1908,16 +1750,16 @@
     "subsystem": "engineering.atoma.rust-server",
     "category": "jobs",
     "personaType": -1,
-    "threadID": 25298599,
+    "threadID": 25340126,
     "launchPersonaType": -1,
-    "senderImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
+    "senderImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
     "signpostType": "end",
     "launchPersonaID": 4294967295,
     "backtrace": {
       "frames": [
         {
-          "imageOffset": 2234824,
-          "imageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83"
+          "imageOffset": 2275528,
+          "imageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE"
         }
       ]
     },
@@ -1925,15 +1767,15 @@
     "processImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "senderImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "personaID": 4294967295,
-    "timestamp": "2026-10-23 06:18:13.844981-0500",
+    "timestamp": "2026-10-23 06:34:37.233444-0500",
     "signpostName": "Kernel Job",
-    "machTimestamp": 19531474604510,
+    "machTimestamp": 19555075927618,
     "personaName": "",
     "eventMessage": "job=11 success=1",
-    "processImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
-    "traceID": 22143925846442502,
-    "processID": 69389,
-    "senderProgramCounter": 2234824,
+    "processImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
+    "traceID": 22346493683991046,
+    "processID": 72933,
+    "senderProgramCounter": 2275528,
     "parentActivityIdentifier": 0
   },
   {
@@ -1948,15 +1790,15 @@
     "subsystem": "engineering.atoma.rust-server",
     "category": "jobs",
     "personaType": -1,
-    "threadID": 25298599,
+    "threadID": 25340126,
     "launchPersonaType": -1,
-    "senderImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
+    "senderImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
     "launchPersonaID": 4294967295,
     "backtrace": {
       "frames": [
         {
-          "imageOffset": 2234916,
-          "imageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83"
+          "imageOffset": 2275620,
+          "imageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE"
         }
       ]
     },
@@ -1964,14 +1806,172 @@
     "processImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "senderImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "personaID": 4294967295,
-    "timestamp": "2026-10-23 06:18:13.844981-0500",
-    "machTimestamp": 19531474604514,
+    "timestamp": "2026-10-23 06:34:37.233444-0500",
+    "machTimestamp": 19555075927623,
     "personaName": "",
     "eventMessage": "job_end job=11 span=11 success=1",
-    "processImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
-    "traceID": 22144078317748228,
-    "processID": 69389,
-    "senderProgramCounter": 2234916,
+    "processImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
+    "traceID": 22346646155296772,
+    "processID": 72933,
+    "senderProgramCounter": 2275620,
+    "parentActivityIdentifier": 0
+  },
+  {
+    "timezoneName": "",
+    "eventType": "signpostEvent",
+    "signpostID": 13,
+    "signpostScope": "process",
+    "source": null,
+    "launchPersonaName": "",
+    "formatString": "job=%{public}llu",
+    "userID": 501,
+    "activityIdentifier": 0,
+    "subsystem": "engineering.atoma.rust-server",
+    "category": "jobs",
+    "personaType": -1,
+    "threadID": 25340126,
+    "launchPersonaType": -1,
+    "senderImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
+    "signpostType": "begin",
+    "launchPersonaID": 4294967295,
+    "backtrace": {
+      "frames": [
+        {
+          "imageOffset": 2275260,
+          "imageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE"
+        }
+      ]
+    },
+    "bootUUID": "F0625CCA-93EC-47F0-9BD5-84D9BA999309",
+    "processImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
+    "senderImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
+    "personaID": 4294967295,
+    "timestamp": "2026-10-23 06:34:37.233445-0500",
+    "signpostName": "Kernel Job",
+    "machTimestamp": 19555075927639,
+    "personaName": "",
+    "eventMessage": "job=13",
+    "processImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
+    "traceID": 22346180151378182,
+    "processID": 72933,
+    "senderProgramCounter": 2275260,
+    "parentActivityIdentifier": 0
+  },
+  {
+    "timezoneName": "",
+    "messageType": "Default",
+    "eventType": "logEvent",
+    "source": null,
+    "launchPersonaName": "",
+    "formatString": "job_begin job=%{public}llu span=%{public}llu",
+    "userID": 501,
+    "activityIdentifier": 0,
+    "subsystem": "engineering.atoma.rust-server",
+    "category": "jobs",
+    "personaType": -1,
+    "threadID": 25340126,
+    "launchPersonaType": -1,
+    "senderImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
+    "launchPersonaID": 4294967295,
+    "backtrace": {
+      "frames": [
+        {
+          "imageOffset": 2275340,
+          "imageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE"
+        }
+      ]
+    },
+    "bootUUID": "F0625CCA-93EC-47F0-9BD5-84D9BA999309",
+    "processImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
+    "senderImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
+    "personaID": 4294967295,
+    "timestamp": "2026-10-23 06:34:37.233445-0500",
+    "machTimestamp": 19555075927640,
+    "personaName": "",
+    "eventMessage": "job_begin job=13 span=13",
+    "processImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
+    "traceID": 22346298262945796,
+    "processID": 72933,
+    "senderProgramCounter": 2275340,
+    "parentActivityIdentifier": 0
+  },
+  {
+    "timezoneName": "",
+    "eventType": "signpostEvent",
+    "signpostID": 12,
+    "signpostScope": "process",
+    "source": null,
+    "launchPersonaName": "",
+    "formatString": "job=%{public}llu success=%{public}d",
+    "userID": 501,
+    "activityIdentifier": 0,
+    "subsystem": "engineering.atoma.rust-server",
+    "category": "jobs",
+    "personaType": -1,
+    "threadID": 25340135,
+    "launchPersonaType": -1,
+    "senderImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
+    "signpostType": "end",
+    "launchPersonaID": 4294967295,
+    "backtrace": {
+      "frames": [
+        {
+          "imageOffset": 2275528,
+          "imageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE"
+        }
+      ]
+    },
+    "bootUUID": "F0625CCA-93EC-47F0-9BD5-84D9BA999309",
+    "processImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
+    "senderImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
+    "personaID": 4294967295,
+    "timestamp": "2026-10-23 06:34:37.233484-0500",
+    "signpostName": "Kernel Job",
+    "machTimestamp": 19555075928573,
+    "personaName": "",
+    "eventMessage": "job=12 success=1",
+    "processImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
+    "traceID": 22346493683991046,
+    "processID": 72933,
+    "senderProgramCounter": 2275528,
+    "parentActivityIdentifier": 0
+  },
+  {
+    "timezoneName": "",
+    "messageType": "Default",
+    "eventType": "logEvent",
+    "source": null,
+    "launchPersonaName": "",
+    "formatString": "job_end job=%{public}llu span=%{public}llu success=%{public}d",
+    "userID": 501,
+    "activityIdentifier": 0,
+    "subsystem": "engineering.atoma.rust-server",
+    "category": "jobs",
+    "personaType": -1,
+    "threadID": 25340135,
+    "launchPersonaType": -1,
+    "senderImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
+    "launchPersonaID": 4294967295,
+    "backtrace": {
+      "frames": [
+        {
+          "imageOffset": 2275620,
+          "imageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE"
+        }
+      ]
+    },
+    "bootUUID": "F0625CCA-93EC-47F0-9BD5-84D9BA999309",
+    "processImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
+    "senderImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
+    "personaID": 4294967295,
+    "timestamp": "2026-10-23 06:34:37.233484-0500",
+    "machTimestamp": 19555075928576,
+    "personaName": "",
+    "eventMessage": "job_end job=12 span=12 success=1",
+    "processImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
+    "traceID": 22346646155296772,
+    "processID": 72933,
+    "senderProgramCounter": 2275620,
     "parentActivityIdentifier": 0
   },
   {
@@ -1987,16 +1987,16 @@
     "subsystem": "engineering.atoma.rust-server",
     "category": "jobs",
     "personaType": -1,
-    "threadID": 25298599,
+    "threadID": 25340135,
     "launchPersonaType": -1,
-    "senderImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
+    "senderImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
     "signpostType": "begin",
     "launchPersonaID": 4294967295,
     "backtrace": {
       "frames": [
         {
-          "imageOffset": 2234556,
-          "imageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83"
+          "imageOffset": 2275260,
+          "imageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE"
         }
       ]
     },
@@ -2004,15 +2004,15 @@
     "processImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "senderImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "personaID": 4294967295,
-    "timestamp": "2026-10-23 06:18:13.844983-0500",
+    "timestamp": "2026-10-23 06:34:37.233485-0500",
     "signpostName": "Kernel Job",
-    "machTimestamp": 19531474604548,
+    "machTimestamp": 19555075928615,
     "personaName": "",
     "eventMessage": "job=14",
-    "processImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
-    "traceID": 22143612313829638,
-    "processID": 69389,
-    "senderProgramCounter": 2234556,
+    "processImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
+    "traceID": 22346180151378182,
+    "processID": 72933,
+    "senderProgramCounter": 2275260,
     "parentActivityIdentifier": 0
   },
   {
@@ -2027,15 +2027,15 @@
     "subsystem": "engineering.atoma.rust-server",
     "category": "jobs",
     "personaType": -1,
-    "threadID": 25298599,
+    "threadID": 25340135,
     "launchPersonaType": -1,
-    "senderImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
+    "senderImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
     "launchPersonaID": 4294967295,
     "backtrace": {
       "frames": [
         {
-          "imageOffset": 2234636,
-          "imageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83"
+          "imageOffset": 2275340,
+          "imageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE"
         }
       ]
     },
@@ -2043,14 +2043,14 @@
     "processImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "senderImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "personaID": 4294967295,
-    "timestamp": "2026-10-23 06:18:13.844983-0500",
-    "machTimestamp": 19531474604552,
+    "timestamp": "2026-10-23 06:34:37.233485-0500",
+    "machTimestamp": 19555075928616,
     "personaName": "",
     "eventMessage": "job_begin job=14 span=14",
-    "processImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
-    "traceID": 22143730425397252,
-    "processID": 69389,
-    "senderProgramCounter": 2234636,
+    "processImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
+    "traceID": 22346298262945796,
+    "processID": 72933,
+    "senderProgramCounter": 2275340,
     "parentActivityIdentifier": 0
   },
   {
@@ -2066,16 +2066,16 @@
     "subsystem": "engineering.atoma.rust-server",
     "category": "jobs",
     "personaType": -1,
-    "threadID": 25298600,
+    "threadID": 25340135,
     "launchPersonaType": -1,
-    "senderImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
+    "senderImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
     "signpostType": "end",
     "launchPersonaID": 4294967295,
     "backtrace": {
       "frames": [
         {
-          "imageOffset": 2234824,
-          "imageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83"
+          "imageOffset": 2275528,
+          "imageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE"
         }
       ]
     },
@@ -2083,15 +2083,15 @@
     "processImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "senderImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "personaID": 4294967295,
-    "timestamp": "2026-10-23 06:18:13.845250-0500",
+    "timestamp": "2026-10-23 06:34:37.234237-0500",
     "signpostName": "Kernel Job",
-    "machTimestamp": 19531474610975,
+    "machTimestamp": 19555075946659,
     "personaName": "",
     "eventMessage": "job=13 success=1",
-    "processImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
-    "traceID": 22143925846442502,
-    "processID": 69389,
-    "senderProgramCounter": 2234824,
+    "processImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
+    "traceID": 22346493683991046,
+    "processID": 72933,
+    "senderProgramCounter": 2275528,
     "parentActivityIdentifier": 0
   },
   {
@@ -2106,15 +2106,15 @@
     "subsystem": "engineering.atoma.rust-server",
     "category": "jobs",
     "personaType": -1,
-    "threadID": 25298600,
+    "threadID": 25340135,
     "launchPersonaType": -1,
-    "senderImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
+    "senderImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
     "launchPersonaID": 4294967295,
     "backtrace": {
       "frames": [
         {
-          "imageOffset": 2234916,
-          "imageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83"
+          "imageOffset": 2275620,
+          "imageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE"
         }
       ]
     },
@@ -2122,14 +2122,14 @@
     "processImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "senderImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "personaID": 4294967295,
-    "timestamp": "2026-10-23 06:18:13.845251-0500",
-    "machTimestamp": 19531474610978,
+    "timestamp": "2026-10-23 06:34:37.234237-0500",
+    "machTimestamp": 19555075946662,
     "personaName": "",
     "eventMessage": "job_end job=13 span=13 success=1",
-    "processImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
-    "traceID": 22144078317748228,
-    "processID": 69389,
-    "senderProgramCounter": 2234916,
+    "processImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
+    "traceID": 22346646155296772,
+    "processID": 72933,
+    "senderProgramCounter": 2275620,
     "parentActivityIdentifier": 0
   },
   {
@@ -2145,16 +2145,16 @@
     "subsystem": "engineering.atoma.rust-server",
     "category": "jobs",
     "personaType": -1,
-    "threadID": 25298600,
+    "threadID": 25340135,
     "launchPersonaType": -1,
-    "senderImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
+    "senderImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
     "signpostType": "begin",
     "launchPersonaID": 4294967295,
     "backtrace": {
       "frames": [
         {
-          "imageOffset": 2234556,
-          "imageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83"
+          "imageOffset": 2275260,
+          "imageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE"
         }
       ]
     },
@@ -2162,15 +2162,15 @@
     "processImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "senderImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "personaID": 4294967295,
-    "timestamp": "2026-10-23 06:18:13.845252-0500",
+    "timestamp": "2026-10-23 06:34:37.234239-0500",
     "signpostName": "Kernel Job",
-    "machTimestamp": 19531474611018,
+    "machTimestamp": 19555075946694,
     "personaName": "",
     "eventMessage": "job=15",
-    "processImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
-    "traceID": 22143612313829638,
-    "processID": 69389,
-    "senderProgramCounter": 2234556,
+    "processImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
+    "traceID": 22346180151378182,
+    "processID": 72933,
+    "senderProgramCounter": 2275260,
     "parentActivityIdentifier": 0
   },
   {
@@ -2185,15 +2185,15 @@
     "subsystem": "engineering.atoma.rust-server",
     "category": "jobs",
     "personaType": -1,
-    "threadID": 25298600,
+    "threadID": 25340135,
     "launchPersonaType": -1,
-    "senderImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
+    "senderImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
     "launchPersonaID": 4294967295,
     "backtrace": {
       "frames": [
         {
-          "imageOffset": 2234636,
-          "imageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83"
+          "imageOffset": 2275340,
+          "imageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE"
         }
       ]
     },
@@ -2201,14 +2201,14 @@
     "processImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "senderImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "personaID": 4294967295,
-    "timestamp": "2026-10-23 06:18:13.845252-0500",
-    "machTimestamp": 19531474611020,
+    "timestamp": "2026-10-23 06:34:37.234239-0500",
+    "machTimestamp": 19555075946695,
     "personaName": "",
     "eventMessage": "job_begin job=15 span=15",
-    "processImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
-    "traceID": 22143730425397252,
-    "processID": 69389,
-    "senderProgramCounter": 2234636,
+    "processImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
+    "traceID": 22346298262945796,
+    "processID": 72933,
+    "senderProgramCounter": 2275340,
     "parentActivityIdentifier": 0
   },
   {
@@ -2224,16 +2224,16 @@
     "subsystem": "engineering.atoma.rust-server",
     "category": "jobs",
     "personaType": -1,
-    "threadID": 25298599,
+    "threadID": 25340126,
     "launchPersonaType": -1,
-    "senderImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
+    "senderImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
     "signpostType": "end",
     "launchPersonaID": 4294967295,
     "backtrace": {
       "frames": [
         {
-          "imageOffset": 2234824,
-          "imageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83"
+          "imageOffset": 2275528,
+          "imageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE"
         }
       ]
     },
@@ -2241,15 +2241,15 @@
     "processImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "senderImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "personaID": 4294967295,
-    "timestamp": "2026-10-23 06:18:13.845286-0500",
+    "timestamp": "2026-10-23 06:34:37.234242-0500",
     "signpostName": "Kernel Job",
-    "machTimestamp": 19531474611830,
+    "machTimestamp": 19555075946766,
     "personaName": "",
     "eventMessage": "job=14 success=1",
-    "processImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
-    "traceID": 22143925846442502,
-    "processID": 69389,
-    "senderProgramCounter": 2234824,
+    "processImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
+    "traceID": 22346493683991046,
+    "processID": 72933,
+    "senderProgramCounter": 2275528,
     "parentActivityIdentifier": 0
   },
   {
@@ -2264,15 +2264,15 @@
     "subsystem": "engineering.atoma.rust-server",
     "category": "jobs",
     "personaType": -1,
-    "threadID": 25298599,
+    "threadID": 25340126,
     "launchPersonaType": -1,
-    "senderImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
+    "senderImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
     "launchPersonaID": 4294967295,
     "backtrace": {
       "frames": [
         {
-          "imageOffset": 2234916,
-          "imageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83"
+          "imageOffset": 2275620,
+          "imageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE"
         }
       ]
     },
@@ -2280,14 +2280,14 @@
     "processImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "senderImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "personaID": 4294967295,
-    "timestamp": "2026-10-23 06:18:13.845286-0500",
-    "machTimestamp": 19531474611833,
+    "timestamp": "2026-10-23 06:34:37.234242-0500",
+    "machTimestamp": 19555075946772,
     "personaName": "",
     "eventMessage": "job_end job=14 span=14 success=1",
-    "processImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
-    "traceID": 22144078317748228,
-    "processID": 69389,
-    "senderProgramCounter": 2234916,
+    "processImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
+    "traceID": 22346646155296772,
+    "processID": 72933,
+    "senderProgramCounter": 2275620,
     "parentActivityIdentifier": 0
   },
   {
@@ -2303,16 +2303,16 @@
     "subsystem": "engineering.atoma.rust-server",
     "category": "jobs",
     "personaType": -1,
-    "threadID": 25298599,
+    "threadID": 25340126,
     "launchPersonaType": -1,
-    "senderImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
+    "senderImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
     "signpostType": "begin",
     "launchPersonaID": 4294967295,
     "backtrace": {
       "frames": [
         {
-          "imageOffset": 2234556,
-          "imageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83"
+          "imageOffset": 2275260,
+          "imageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE"
         }
       ]
     },
@@ -2320,15 +2320,15 @@
     "processImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "senderImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "personaID": 4294967295,
-    "timestamp": "2026-10-23 06:18:13.845287-0500",
+    "timestamp": "2026-10-23 06:34:37.234243-0500",
     "signpostName": "Kernel Job",
-    "machTimestamp": 19531474611857,
+    "machTimestamp": 19555075946790,
     "personaName": "",
     "eventMessage": "job=16",
-    "processImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
-    "traceID": 22143612313829638,
-    "processID": 69389,
-    "senderProgramCounter": 2234556,
+    "processImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
+    "traceID": 22346180151378182,
+    "processID": 72933,
+    "senderProgramCounter": 2275260,
     "parentActivityIdentifier": 0
   },
   {
@@ -2343,15 +2343,15 @@
     "subsystem": "engineering.atoma.rust-server",
     "category": "jobs",
     "personaType": -1,
-    "threadID": 25298599,
+    "threadID": 25340126,
     "launchPersonaType": -1,
-    "senderImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
+    "senderImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
     "launchPersonaID": 4294967295,
     "backtrace": {
       "frames": [
         {
-          "imageOffset": 2234636,
-          "imageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83"
+          "imageOffset": 2275340,
+          "imageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE"
         }
       ]
     },
@@ -2359,14 +2359,14 @@
     "processImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "senderImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "personaID": 4294967295,
-    "timestamp": "2026-10-23 06:18:13.845287-0500",
-    "machTimestamp": 19531474611858,
+    "timestamp": "2026-10-23 06:34:37.234243-0500",
+    "machTimestamp": 19555075946792,
     "personaName": "",
     "eventMessage": "job_begin job=16 span=16",
-    "processImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
-    "traceID": 22143730425397252,
-    "processID": 69389,
-    "senderProgramCounter": 2234636,
+    "processImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
+    "traceID": 22346298262945796,
+    "processID": 72933,
+    "senderProgramCounter": 2275340,
     "parentActivityIdentifier": 0
   },
   {
@@ -2382,16 +2382,16 @@
     "subsystem": "engineering.atoma.rust-server",
     "category": "jobs",
     "personaType": -1,
-    "threadID": 25298599,
+    "threadID": 25340126,
     "launchPersonaType": -1,
-    "senderImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
+    "senderImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
     "signpostType": "end",
     "launchPersonaID": 4294967295,
     "backtrace": {
       "frames": [
         {
-          "imageOffset": 2234824,
-          "imageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83"
+          "imageOffset": 2275528,
+          "imageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE"
         }
       ]
     },
@@ -2399,15 +2399,15 @@
     "processImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "senderImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "personaID": 4294967295,
-    "timestamp": "2026-10-23 06:18:13.845618-0500",
+    "timestamp": "2026-10-23 06:34:37.234580-0500",
     "signpostName": "Kernel Job",
-    "machTimestamp": 19531474619789,
+    "machTimestamp": 19555075954880,
     "personaName": "",
     "eventMessage": "job=15 success=1",
-    "processImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
-    "traceID": 22143925846442502,
-    "processID": 69389,
-    "senderProgramCounter": 2234824,
+    "processImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
+    "traceID": 22346493683991046,
+    "processID": 72933,
+    "senderProgramCounter": 2275528,
     "parentActivityIdentifier": 0
   },
   {
@@ -2422,15 +2422,15 @@
     "subsystem": "engineering.atoma.rust-server",
     "category": "jobs",
     "personaType": -1,
-    "threadID": 25298599,
+    "threadID": 25340126,
     "launchPersonaType": -1,
-    "senderImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
+    "senderImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
     "launchPersonaID": 4294967295,
     "backtrace": {
       "frames": [
         {
-          "imageOffset": 2234916,
-          "imageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83"
+          "imageOffset": 2275620,
+          "imageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE"
         }
       ]
     },
@@ -2438,14 +2438,14 @@
     "processImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "senderImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "personaID": 4294967295,
-    "timestamp": "2026-10-23 06:18:13.845618-0500",
-    "machTimestamp": 19531474619792,
+    "timestamp": "2026-10-23 06:34:37.234580-0500",
+    "machTimestamp": 19555075954882,
     "personaName": "",
     "eventMessage": "job_end job=15 span=15 success=1",
-    "processImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
-    "traceID": 22144078317748228,
-    "processID": 69389,
-    "senderProgramCounter": 2234916,
+    "processImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
+    "traceID": 22346646155296772,
+    "processID": 72933,
+    "senderProgramCounter": 2275620,
     "parentActivityIdentifier": 0
   },
   {
@@ -2461,16 +2461,16 @@
     "subsystem": "engineering.atoma.rust-server",
     "category": "jobs",
     "personaType": -1,
-    "threadID": 25298599,
+    "threadID": 25340126,
     "launchPersonaType": -1,
-    "senderImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
+    "senderImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
     "signpostType": "begin",
     "launchPersonaID": 4294967295,
     "backtrace": {
       "frames": [
         {
-          "imageOffset": 2234556,
-          "imageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83"
+          "imageOffset": 2275260,
+          "imageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE"
         }
       ]
     },
@@ -2478,15 +2478,15 @@
     "processImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "senderImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "personaID": 4294967295,
-    "timestamp": "2026-10-23 06:18:13.845619-0500",
+    "timestamp": "2026-10-23 06:34:37.234581-0500",
     "signpostName": "Kernel Job",
-    "machTimestamp": 19531474619832,
+    "machTimestamp": 19555075954901,
     "personaName": "",
     "eventMessage": "job=17",
-    "processImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
-    "traceID": 22143612313829638,
-    "processID": 69389,
-    "senderProgramCounter": 2234556,
+    "processImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
+    "traceID": 22346180151378182,
+    "processID": 72933,
+    "senderProgramCounter": 2275260,
     "parentActivityIdentifier": 0
   },
   {
@@ -2501,15 +2501,15 @@
     "subsystem": "engineering.atoma.rust-server",
     "category": "jobs",
     "personaType": -1,
-    "threadID": 25298599,
+    "threadID": 25340126,
     "launchPersonaType": -1,
-    "senderImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
+    "senderImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
     "launchPersonaID": 4294967295,
     "backtrace": {
       "frames": [
         {
-          "imageOffset": 2234636,
-          "imageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83"
+          "imageOffset": 2275340,
+          "imageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE"
         }
       ]
     },
@@ -2517,14 +2517,14 @@
     "processImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "senderImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "personaID": 4294967295,
-    "timestamp": "2026-10-23 06:18:13.845619-0500",
-    "machTimestamp": 19531474619833,
+    "timestamp": "2026-10-23 06:34:37.234581-0500",
+    "machTimestamp": 19555075954902,
     "personaName": "",
     "eventMessage": "job_begin job=17 span=17",
-    "processImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
-    "traceID": 22143730425397252,
-    "processID": 69389,
-    "senderProgramCounter": 2234636,
+    "processImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
+    "traceID": 22346298262945796,
+    "processID": 72933,
+    "senderProgramCounter": 2275340,
     "parentActivityIdentifier": 0
   },
   {
@@ -2540,16 +2540,16 @@
     "subsystem": "engineering.atoma.rust-server",
     "category": "jobs",
     "personaType": -1,
-    "threadID": 25298600,
+    "threadID": 25340126,
     "launchPersonaType": -1,
-    "senderImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
+    "senderImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
     "signpostType": "end",
     "launchPersonaID": 4294967295,
     "backtrace": {
       "frames": [
         {
-          "imageOffset": 2234824,
-          "imageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83"
+          "imageOffset": 2275528,
+          "imageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE"
         }
       ]
     },
@@ -2557,15 +2557,15 @@
     "processImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "senderImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "personaID": 4294967295,
-    "timestamp": "2026-10-23 06:18:13.845621-0500",
+    "timestamp": "2026-10-23 06:34:37.234638-0500",
     "signpostName": "Kernel Job",
-    "machTimestamp": 19531474619869,
+    "machTimestamp": 19555075956277,
     "personaName": "",
     "eventMessage": "job=16 success=1",
-    "processImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
-    "traceID": 22143925846442502,
-    "processID": 69389,
-    "senderProgramCounter": 2234824,
+    "processImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
+    "traceID": 22346493683991046,
+    "processID": 72933,
+    "senderProgramCounter": 2275528,
     "parentActivityIdentifier": 0
   },
   {
@@ -2580,15 +2580,15 @@
     "subsystem": "engineering.atoma.rust-server",
     "category": "jobs",
     "personaType": -1,
-    "threadID": 25298600,
+    "threadID": 25340126,
     "launchPersonaType": -1,
-    "senderImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
+    "senderImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
     "launchPersonaID": 4294967295,
     "backtrace": {
       "frames": [
         {
-          "imageOffset": 2234916,
-          "imageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83"
+          "imageOffset": 2275620,
+          "imageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE"
         }
       ]
     },
@@ -2596,14 +2596,14 @@
     "processImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "senderImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "personaID": 4294967295,
-    "timestamp": "2026-10-23 06:18:13.845621-0500",
-    "machTimestamp": 19531474619872,
+    "timestamp": "2026-10-23 06:34:37.234638-0500",
+    "machTimestamp": 19555075956281,
     "personaName": "",
     "eventMessage": "job_end job=16 span=16 success=1",
-    "processImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
-    "traceID": 22144078317748228,
-    "processID": 69389,
-    "senderProgramCounter": 2234916,
+    "processImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
+    "traceID": 22346646155296772,
+    "processID": 72933,
+    "senderProgramCounter": 2275620,
     "parentActivityIdentifier": 0
   },
   {
@@ -2619,16 +2619,16 @@
     "subsystem": "engineering.atoma.rust-server",
     "category": "jobs",
     "personaType": -1,
-    "threadID": 25298600,
+    "threadID": 25340126,
     "launchPersonaType": -1,
-    "senderImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
+    "senderImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
     "signpostType": "begin",
     "launchPersonaID": 4294967295,
     "backtrace": {
       "frames": [
         {
-          "imageOffset": 2234556,
-          "imageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83"
+          "imageOffset": 2275260,
+          "imageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE"
         }
       ]
     },
@@ -2636,15 +2636,15 @@
     "processImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "senderImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "personaID": 4294967295,
-    "timestamp": "2026-10-23 06:18:13.845621-0500",
+    "timestamp": "2026-10-23 06:34:37.234640-0500",
     "signpostName": "Kernel Job",
-    "machTimestamp": 19531474619881,
+    "machTimestamp": 19555075956327,
     "personaName": "",
     "eventMessage": "job=18",
-    "processImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
-    "traceID": 22143612313829638,
-    "processID": 69389,
-    "senderProgramCounter": 2234556,
+    "processImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
+    "traceID": 22346180151378182,
+    "processID": 72933,
+    "senderProgramCounter": 2275260,
     "parentActivityIdentifier": 0
   },
   {
@@ -2659,15 +2659,15 @@
     "subsystem": "engineering.atoma.rust-server",
     "category": "jobs",
     "personaType": -1,
-    "threadID": 25298600,
+    "threadID": 25340126,
     "launchPersonaType": -1,
-    "senderImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
+    "senderImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
     "launchPersonaID": 4294967295,
     "backtrace": {
       "frames": [
         {
-          "imageOffset": 2234636,
-          "imageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83"
+          "imageOffset": 2275340,
+          "imageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE"
         }
       ]
     },
@@ -2675,14 +2675,172 @@
     "processImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "senderImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "personaID": 4294967295,
-    "timestamp": "2026-10-23 06:18:13.845622-0500",
-    "machTimestamp": 19531474619882,
+    "timestamp": "2026-10-23 06:34:37.234640-0500",
+    "machTimestamp": 19555075956328,
     "personaName": "",
     "eventMessage": "job_begin job=18 span=18",
-    "processImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
-    "traceID": 22143730425397252,
-    "processID": 69389,
-    "senderProgramCounter": 2234636,
+    "processImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
+    "traceID": 22346298262945796,
+    "processID": 72933,
+    "senderProgramCounter": 2275340,
+    "parentActivityIdentifier": 0
+  },
+  {
+    "timezoneName": "",
+    "eventType": "signpostEvent",
+    "signpostID": 18,
+    "signpostScope": "process",
+    "source": null,
+    "launchPersonaName": "",
+    "formatString": "job=%{public}llu success=%{public}d",
+    "userID": 501,
+    "activityIdentifier": 0,
+    "subsystem": "engineering.atoma.rust-server",
+    "category": "jobs",
+    "personaType": -1,
+    "threadID": 25340136,
+    "launchPersonaType": -1,
+    "senderImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
+    "signpostType": "end",
+    "launchPersonaID": 4294967295,
+    "backtrace": {
+      "frames": [
+        {
+          "imageOffset": 2275528,
+          "imageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE"
+        }
+      ]
+    },
+    "bootUUID": "F0625CCA-93EC-47F0-9BD5-84D9BA999309",
+    "processImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
+    "senderImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
+    "personaID": 4294967295,
+    "timestamp": "2026-10-23 06:34:37.234935-0500",
+    "signpostName": "Kernel Job",
+    "machTimestamp": 19555075963407,
+    "personaName": "",
+    "eventMessage": "job=18 success=1",
+    "processImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
+    "traceID": 22346493683991046,
+    "processID": 72933,
+    "senderProgramCounter": 2275528,
+    "parentActivityIdentifier": 0
+  },
+  {
+    "timezoneName": "",
+    "messageType": "Default",
+    "eventType": "logEvent",
+    "source": null,
+    "launchPersonaName": "",
+    "formatString": "job_end job=%{public}llu span=%{public}llu success=%{public}d",
+    "userID": 501,
+    "activityIdentifier": 0,
+    "subsystem": "engineering.atoma.rust-server",
+    "category": "jobs",
+    "personaType": -1,
+    "threadID": 25340136,
+    "launchPersonaType": -1,
+    "senderImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
+    "launchPersonaID": 4294967295,
+    "backtrace": {
+      "frames": [
+        {
+          "imageOffset": 2275620,
+          "imageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE"
+        }
+      ]
+    },
+    "bootUUID": "F0625CCA-93EC-47F0-9BD5-84D9BA999309",
+    "processImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
+    "senderImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
+    "personaID": 4294967295,
+    "timestamp": "2026-10-23 06:34:37.234935-0500",
+    "machTimestamp": 19555075963413,
+    "personaName": "",
+    "eventMessage": "job_end job=18 span=18 success=1",
+    "processImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
+    "traceID": 22346646155296772,
+    "processID": 72933,
+    "senderProgramCounter": 2275620,
+    "parentActivityIdentifier": 0
+  },
+  {
+    "timezoneName": "",
+    "eventType": "signpostEvent",
+    "signpostID": 19,
+    "signpostScope": "process",
+    "source": null,
+    "launchPersonaName": "",
+    "formatString": "job=%{public}llu",
+    "userID": 501,
+    "activityIdentifier": 0,
+    "subsystem": "engineering.atoma.rust-server",
+    "category": "jobs",
+    "personaType": -1,
+    "threadID": 25340136,
+    "launchPersonaType": -1,
+    "senderImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
+    "signpostType": "begin",
+    "launchPersonaID": 4294967295,
+    "backtrace": {
+      "frames": [
+        {
+          "imageOffset": 2275260,
+          "imageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE"
+        }
+      ]
+    },
+    "bootUUID": "F0625CCA-93EC-47F0-9BD5-84D9BA999309",
+    "processImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
+    "senderImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
+    "personaID": 4294967295,
+    "timestamp": "2026-10-23 06:34:37.234936-0500",
+    "signpostName": "Kernel Job",
+    "machTimestamp": 19555075963419,
+    "personaName": "",
+    "eventMessage": "job=19",
+    "processImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
+    "traceID": 22346180151378182,
+    "processID": 72933,
+    "senderProgramCounter": 2275260,
+    "parentActivityIdentifier": 0
+  },
+  {
+    "timezoneName": "",
+    "messageType": "Default",
+    "eventType": "logEvent",
+    "source": null,
+    "launchPersonaName": "",
+    "formatString": "job_begin job=%{public}llu span=%{public}llu",
+    "userID": 501,
+    "activityIdentifier": 0,
+    "subsystem": "engineering.atoma.rust-server",
+    "category": "jobs",
+    "personaType": -1,
+    "threadID": 25340136,
+    "launchPersonaType": -1,
+    "senderImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
+    "launchPersonaID": 4294967295,
+    "backtrace": {
+      "frames": [
+        {
+          "imageOffset": 2275340,
+          "imageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE"
+        }
+      ]
+    },
+    "bootUUID": "F0625CCA-93EC-47F0-9BD5-84D9BA999309",
+    "processImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
+    "senderImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
+    "personaID": 4294967295,
+    "timestamp": "2026-10-23 06:34:37.234936-0500",
+    "machTimestamp": 19555075963420,
+    "personaName": "",
+    "eventMessage": "job_begin job=19 span=19",
+    "processImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
+    "traceID": 22346298262945796,
+    "processID": 72933,
+    "senderProgramCounter": 2275340,
     "parentActivityIdentifier": 0
   },
   {
@@ -2698,16 +2856,16 @@
     "subsystem": "engineering.atoma.rust-server",
     "category": "jobs",
     "personaType": -1,
-    "threadID": 25298593,
+    "threadID": 25340136,
     "launchPersonaType": -1,
-    "senderImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
+    "senderImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
     "signpostType": "end",
     "launchPersonaID": 4294967295,
     "backtrace": {
       "frames": [
         {
-          "imageOffset": 2234824,
-          "imageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83"
+          "imageOffset": 2275528,
+          "imageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE"
         }
       ]
     },
@@ -2715,15 +2873,15 @@
     "processImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "senderImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "personaID": 4294967295,
-    "timestamp": "2026-10-23 06:18:13.845919-0500",
+    "timestamp": "2026-10-23 06:34:37.234938-0500",
     "signpostName": "Kernel Job",
-    "machTimestamp": 19531474627025,
+    "machTimestamp": 19555075963474,
     "personaName": "",
     "eventMessage": "job=17 success=1",
-    "processImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
-    "traceID": 22143925846442502,
-    "processID": 69389,
-    "senderProgramCounter": 2234824,
+    "processImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
+    "traceID": 22346493683991046,
+    "processID": 72933,
+    "senderProgramCounter": 2275528,
     "parentActivityIdentifier": 0
   },
   {
@@ -2738,15 +2896,15 @@
     "subsystem": "engineering.atoma.rust-server",
     "category": "jobs",
     "personaType": -1,
-    "threadID": 25298593,
+    "threadID": 25340136,
     "launchPersonaType": -1,
-    "senderImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
+    "senderImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
     "launchPersonaID": 4294967295,
     "backtrace": {
       "frames": [
         {
-          "imageOffset": 2234916,
-          "imageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83"
+          "imageOffset": 2275620,
+          "imageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE"
         }
       ]
     },
@@ -2754,172 +2912,14 @@
     "processImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "senderImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "personaID": 4294967295,
-    "timestamp": "2026-10-23 06:18:13.845919-0500",
-    "machTimestamp": 19531474627028,
+    "timestamp": "2026-10-23 06:34:37.234938-0500",
+    "machTimestamp": 19555075963475,
     "personaName": "",
     "eventMessage": "job_end job=17 span=17 success=1",
-    "processImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
-    "traceID": 22144078317748228,
-    "processID": 69389,
-    "senderProgramCounter": 2234916,
-    "parentActivityIdentifier": 0
-  },
-  {
-    "timezoneName": "",
-    "eventType": "signpostEvent",
-    "signpostID": 19,
-    "signpostScope": "process",
-    "source": null,
-    "launchPersonaName": "",
-    "formatString": "job=%{public}llu",
-    "userID": 501,
-    "activityIdentifier": 0,
-    "subsystem": "engineering.atoma.rust-server",
-    "category": "jobs",
-    "personaType": -1,
-    "threadID": 25298593,
-    "launchPersonaType": -1,
-    "senderImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
-    "signpostType": "begin",
-    "launchPersonaID": 4294967295,
-    "backtrace": {
-      "frames": [
-        {
-          "imageOffset": 2234556,
-          "imageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83"
-        }
-      ]
-    },
-    "bootUUID": "F0625CCA-93EC-47F0-9BD5-84D9BA999309",
-    "processImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
-    "senderImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
-    "personaID": 4294967295,
-    "timestamp": "2026-10-23 06:18:13.845920-0500",
-    "signpostName": "Kernel Job",
-    "machTimestamp": 19531474627057,
-    "personaName": "",
-    "eventMessage": "job=19",
-    "processImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
-    "traceID": 22143612313829638,
-    "processID": 69389,
-    "senderProgramCounter": 2234556,
-    "parentActivityIdentifier": 0
-  },
-  {
-    "timezoneName": "",
-    "messageType": "Default",
-    "eventType": "logEvent",
-    "source": null,
-    "launchPersonaName": "",
-    "formatString": "job_begin job=%{public}llu span=%{public}llu",
-    "userID": 501,
-    "activityIdentifier": 0,
-    "subsystem": "engineering.atoma.rust-server",
-    "category": "jobs",
-    "personaType": -1,
-    "threadID": 25298593,
-    "launchPersonaType": -1,
-    "senderImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
-    "launchPersonaID": 4294967295,
-    "backtrace": {
-      "frames": [
-        {
-          "imageOffset": 2234636,
-          "imageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83"
-        }
-      ]
-    },
-    "bootUUID": "F0625CCA-93EC-47F0-9BD5-84D9BA999309",
-    "processImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
-    "senderImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
-    "personaID": 4294967295,
-    "timestamp": "2026-10-23 06:18:13.845921-0500",
-    "machTimestamp": 19531474627058,
-    "personaName": "",
-    "eventMessage": "job_begin job=19 span=19",
-    "processImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
-    "traceID": 22143730425397252,
-    "processID": 69389,
-    "senderProgramCounter": 2234636,
-    "parentActivityIdentifier": 0
-  },
-  {
-    "timezoneName": "",
-    "eventType": "signpostEvent",
-    "signpostID": 18,
-    "signpostScope": "process",
-    "source": null,
-    "launchPersonaName": "",
-    "formatString": "job=%{public}llu success=%{public}d",
-    "userID": 501,
-    "activityIdentifier": 0,
-    "subsystem": "engineering.atoma.rust-server",
-    "category": "jobs",
-    "personaType": -1,
-    "threadID": 25298600,
-    "launchPersonaType": -1,
-    "senderImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
-    "signpostType": "end",
-    "launchPersonaID": 4294967295,
-    "backtrace": {
-      "frames": [
-        {
-          "imageOffset": 2234824,
-          "imageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83"
-        }
-      ]
-    },
-    "bootUUID": "F0625CCA-93EC-47F0-9BD5-84D9BA999309",
-    "processImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
-    "senderImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
-    "personaID": 4294967295,
-    "timestamp": "2026-10-23 06:18:13.845955-0500",
-    "signpostName": "Kernel Job",
-    "machTimestamp": 19531474627889,
-    "personaName": "",
-    "eventMessage": "job=18 success=1",
-    "processImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
-    "traceID": 22143925846442502,
-    "processID": 69389,
-    "senderProgramCounter": 2234824,
-    "parentActivityIdentifier": 0
-  },
-  {
-    "timezoneName": "",
-    "messageType": "Default",
-    "eventType": "logEvent",
-    "source": null,
-    "launchPersonaName": "",
-    "formatString": "job_end job=%{public}llu span=%{public}llu success=%{public}d",
-    "userID": 501,
-    "activityIdentifier": 0,
-    "subsystem": "engineering.atoma.rust-server",
-    "category": "jobs",
-    "personaType": -1,
-    "threadID": 25298600,
-    "launchPersonaType": -1,
-    "senderImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
-    "launchPersonaID": 4294967295,
-    "backtrace": {
-      "frames": [
-        {
-          "imageOffset": 2234916,
-          "imageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83"
-        }
-      ]
-    },
-    "bootUUID": "F0625CCA-93EC-47F0-9BD5-84D9BA999309",
-    "processImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
-    "senderImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
-    "personaID": 4294967295,
-    "timestamp": "2026-10-23 06:18:13.845955-0500",
-    "machTimestamp": 19531474627892,
-    "personaName": "",
-    "eventMessage": "job_end job=18 span=18 success=1",
-    "processImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
-    "traceID": 22144078317748228,
-    "processID": 69389,
-    "senderProgramCounter": 2234916,
+    "processImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
+    "traceID": 22346646155296772,
+    "processID": 72933,
+    "senderProgramCounter": 2275620,
     "parentActivityIdentifier": 0
   },
   {
@@ -2935,16 +2935,16 @@
     "subsystem": "engineering.atoma.rust-server",
     "category": "jobs",
     "personaType": -1,
-    "threadID": 25298600,
+    "threadID": 25340136,
     "launchPersonaType": -1,
-    "senderImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
+    "senderImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
     "signpostType": "begin",
     "launchPersonaID": 4294967295,
     "backtrace": {
       "frames": [
         {
-          "imageOffset": 2234556,
-          "imageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83"
+          "imageOffset": 2275260,
+          "imageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE"
         }
       ]
     },
@@ -2952,15 +2952,15 @@
     "processImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "senderImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "personaID": 4294967295,
-    "timestamp": "2026-10-23 06:18:13.845956-0500",
+    "timestamp": "2026-10-23 06:34:37.234939-0500",
     "signpostName": "Kernel Job",
-    "machTimestamp": 19531474627920,
+    "machTimestamp": 19555075963503,
     "personaName": "",
     "eventMessage": "job=20",
-    "processImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
-    "traceID": 22143612313829638,
-    "processID": 69389,
-    "senderProgramCounter": 2234556,
+    "processImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
+    "traceID": 22346180151378182,
+    "processID": 72933,
+    "senderProgramCounter": 2275260,
     "parentActivityIdentifier": 0
   },
   {
@@ -2975,15 +2975,15 @@
     "subsystem": "engineering.atoma.rust-server",
     "category": "jobs",
     "personaType": -1,
-    "threadID": 25298600,
+    "threadID": 25340136,
     "launchPersonaType": -1,
-    "senderImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
+    "senderImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
     "launchPersonaID": 4294967295,
     "backtrace": {
       "frames": [
         {
-          "imageOffset": 2234636,
-          "imageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83"
+          "imageOffset": 2275340,
+          "imageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE"
         }
       ]
     },
@@ -2991,14 +2991,14 @@
     "processImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "senderImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "personaID": 4294967295,
-    "timestamp": "2026-10-23 06:18:13.845956-0500",
-    "machTimestamp": 19531474627921,
+    "timestamp": "2026-10-23 06:34:37.234939-0500",
+    "machTimestamp": 19555075963504,
     "personaName": "",
     "eventMessage": "job_begin job=20 span=20",
-    "processImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
-    "traceID": 22143730425397252,
-    "processID": 69389,
-    "senderProgramCounter": 2234636,
+    "processImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
+    "traceID": 22346298262945796,
+    "processID": 72933,
+    "senderProgramCounter": 2275340,
     "parentActivityIdentifier": 0
   },
   {
@@ -3014,16 +3014,16 @@
     "subsystem": "engineering.atoma.rust-server",
     "category": "jobs",
     "personaType": -1,
-    "threadID": 25298599,
+    "threadID": 25340136,
     "launchPersonaType": -1,
-    "senderImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
+    "senderImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
     "signpostType": "end",
     "launchPersonaID": 4294967295,
     "backtrace": {
       "frames": [
         {
-          "imageOffset": 2234824,
-          "imageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83"
+          "imageOffset": 2275528,
+          "imageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE"
         }
       ]
     },
@@ -3031,15 +3031,15 @@
     "processImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "senderImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "personaID": 4294967295,
-    "timestamp": "2026-10-23 06:18:13.846267-0500",
+    "timestamp": "2026-10-23 06:34:37.235261-0500",
     "signpostName": "Kernel Job",
-    "machTimestamp": 19531474635383,
+    "machTimestamp": 19555075971237,
     "personaName": "",
     "eventMessage": "job=19 success=1",
-    "processImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
-    "traceID": 22143925846442502,
-    "processID": 69389,
-    "senderProgramCounter": 2234824,
+    "processImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
+    "traceID": 22346493683991046,
+    "processID": 72933,
+    "senderProgramCounter": 2275528,
     "parentActivityIdentifier": 0
   },
   {
@@ -3054,15 +3054,15 @@
     "subsystem": "engineering.atoma.rust-server",
     "category": "jobs",
     "personaType": -1,
-    "threadID": 25298599,
+    "threadID": 25340136,
     "launchPersonaType": -1,
-    "senderImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
+    "senderImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
     "launchPersonaID": 4294967295,
     "backtrace": {
       "frames": [
         {
-          "imageOffset": 2234916,
-          "imageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83"
+          "imageOffset": 2275620,
+          "imageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE"
         }
       ]
     },
@@ -3070,14 +3070,14 @@
     "processImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "senderImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "personaID": 4294967295,
-    "timestamp": "2026-10-23 06:18:13.846268-0500",
-    "machTimestamp": 19531474635386,
+    "timestamp": "2026-10-23 06:34:37.235261-0500",
+    "machTimestamp": 19555075971239,
     "personaName": "",
     "eventMessage": "job_end job=19 span=19 success=1",
-    "processImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
-    "traceID": 22144078317748228,
-    "processID": 69389,
-    "senderProgramCounter": 2234916,
+    "processImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
+    "traceID": 22346646155296772,
+    "processID": 72933,
+    "senderProgramCounter": 2275620,
     "parentActivityIdentifier": 0
   },
   {
@@ -3093,16 +3093,16 @@
     "subsystem": "engineering.atoma.rust-server",
     "category": "jobs",
     "personaType": -1,
-    "threadID": 25298599,
+    "threadID": 25340136,
     "launchPersonaType": -1,
-    "senderImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
+    "senderImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
     "signpostType": "begin",
     "launchPersonaID": 4294967295,
     "backtrace": {
       "frames": [
         {
-          "imageOffset": 2234556,
-          "imageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83"
+          "imageOffset": 2275260,
+          "imageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE"
         }
       ]
     },
@@ -3110,15 +3110,15 @@
     "processImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "senderImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "personaID": 4294967295,
-    "timestamp": "2026-10-23 06:18:13.846269-0500",
+    "timestamp": "2026-10-23 06:34:37.235263-0500",
     "signpostName": "Kernel Job",
-    "machTimestamp": 19531474635426,
+    "machTimestamp": 19555075971287,
     "personaName": "",
     "eventMessage": "job=21",
-    "processImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
-    "traceID": 22143612313829638,
-    "processID": 69389,
-    "senderProgramCounter": 2234556,
+    "processImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
+    "traceID": 22346180151378182,
+    "processID": 72933,
+    "senderProgramCounter": 2275260,
     "parentActivityIdentifier": 0
   },
   {
@@ -3133,15 +3133,15 @@
     "subsystem": "engineering.atoma.rust-server",
     "category": "jobs",
     "personaType": -1,
-    "threadID": 25298599,
+    "threadID": 25340136,
     "launchPersonaType": -1,
-    "senderImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
+    "senderImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
     "launchPersonaID": 4294967295,
     "backtrace": {
       "frames": [
         {
-          "imageOffset": 2234636,
-          "imageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83"
+          "imageOffset": 2275340,
+          "imageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE"
         }
       ]
     },
@@ -3149,14 +3149,14 @@
     "processImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "senderImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "personaID": 4294967295,
-    "timestamp": "2026-10-23 06:18:13.846269-0500",
-    "machTimestamp": 19531474635428,
+    "timestamp": "2026-10-23 06:34:37.235263-0500",
+    "machTimestamp": 19555075971288,
     "personaName": "",
     "eventMessage": "job_begin job=21 span=21",
-    "processImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
-    "traceID": 22143730425397252,
-    "processID": 69389,
-    "senderProgramCounter": 2234636,
+    "processImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
+    "traceID": 22346298262945796,
+    "processID": 72933,
+    "senderProgramCounter": 2275340,
     "parentActivityIdentifier": 0
   },
   {
@@ -3172,16 +3172,16 @@
     "subsystem": "engineering.atoma.rust-server",
     "category": "jobs",
     "personaType": -1,
-    "threadID": 25298600,
+    "threadID": 25340126,
     "launchPersonaType": -1,
-    "senderImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
+    "senderImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
     "signpostType": "end",
     "launchPersonaID": 4294967295,
     "backtrace": {
       "frames": [
         {
-          "imageOffset": 2234824,
-          "imageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83"
+          "imageOffset": 2275528,
+          "imageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE"
         }
       ]
     },
@@ -3189,15 +3189,15 @@
     "processImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "senderImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "personaID": 4294967295,
-    "timestamp": "2026-10-23 06:18:13.846271-0500",
+    "timestamp": "2026-10-23 06:34:37.235303-0500",
     "signpostName": "Kernel Job",
-    "machTimestamp": 19531474635464,
+    "machTimestamp": 19555075972230,
     "personaName": "",
     "eventMessage": "job=20 success=1",
-    "processImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
-    "traceID": 22143925846442502,
-    "processID": 69389,
-    "senderProgramCounter": 2234824,
+    "processImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
+    "traceID": 22346493683991046,
+    "processID": 72933,
+    "senderProgramCounter": 2275528,
     "parentActivityIdentifier": 0
   },
   {
@@ -3212,15 +3212,15 @@
     "subsystem": "engineering.atoma.rust-server",
     "category": "jobs",
     "personaType": -1,
-    "threadID": 25298600,
+    "threadID": 25340126,
     "launchPersonaType": -1,
-    "senderImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
+    "senderImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
     "launchPersonaID": 4294967295,
     "backtrace": {
       "frames": [
         {
-          "imageOffset": 2234916,
-          "imageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83"
+          "imageOffset": 2275620,
+          "imageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE"
         }
       ]
     },
@@ -3228,14 +3228,14 @@
     "processImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "senderImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "personaID": 4294967295,
-    "timestamp": "2026-10-23 06:18:13.846271-0500",
-    "machTimestamp": 19531474635468,
+    "timestamp": "2026-10-23 06:34:37.235303-0500",
+    "machTimestamp": 19555075972235,
     "personaName": "",
     "eventMessage": "job_end job=20 span=20 success=1",
-    "processImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
-    "traceID": 22144078317748228,
-    "processID": 69389,
-    "senderProgramCounter": 2234916,
+    "processImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
+    "traceID": 22346646155296772,
+    "processID": 72933,
+    "senderProgramCounter": 2275620,
     "parentActivityIdentifier": 0
   },
   {
@@ -3251,16 +3251,16 @@
     "subsystem": "engineering.atoma.rust-server",
     "category": "jobs",
     "personaType": -1,
-    "threadID": 25298600,
+    "threadID": 25340126,
     "launchPersonaType": -1,
-    "senderImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
+    "senderImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
     "signpostType": "begin",
     "launchPersonaID": 4294967295,
     "backtrace": {
       "frames": [
         {
-          "imageOffset": 2234556,
-          "imageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83"
+          "imageOffset": 2275260,
+          "imageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE"
         }
       ]
     },
@@ -3268,15 +3268,15 @@
     "processImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "senderImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "personaID": 4294967295,
-    "timestamp": "2026-10-23 06:18:13.846271-0500",
+    "timestamp": "2026-10-23 06:34:37.235307-0500",
     "signpostName": "Kernel Job",
-    "machTimestamp": 19531474635480,
+    "machTimestamp": 19555075972343,
     "personaName": "",
     "eventMessage": "job=22",
-    "processImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
-    "traceID": 22143612313829638,
-    "processID": 69389,
-    "senderProgramCounter": 2234556,
+    "processImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
+    "traceID": 22346180151378182,
+    "processID": 72933,
+    "senderProgramCounter": 2275260,
     "parentActivityIdentifier": 0
   },
   {
@@ -3291,15 +3291,15 @@
     "subsystem": "engineering.atoma.rust-server",
     "category": "jobs",
     "personaType": -1,
-    "threadID": 25298600,
+    "threadID": 25340126,
     "launchPersonaType": -1,
-    "senderImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
+    "senderImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
     "launchPersonaID": 4294967295,
     "backtrace": {
       "frames": [
         {
-          "imageOffset": 2234636,
-          "imageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83"
+          "imageOffset": 2275340,
+          "imageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE"
         }
       ]
     },
@@ -3307,14 +3307,14 @@
     "processImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "senderImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "personaID": 4294967295,
-    "timestamp": "2026-10-23 06:18:13.846271-0500",
-    "machTimestamp": 19531474635481,
+    "timestamp": "2026-10-23 06:34:37.235307-0500",
+    "machTimestamp": 19555075972344,
     "personaName": "",
     "eventMessage": "job_begin job=22 span=22",
-    "processImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
-    "traceID": 22143730425397252,
-    "processID": 69389,
-    "senderProgramCounter": 2234636,
+    "processImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
+    "traceID": 22346298262945796,
+    "processID": 72933,
+    "senderProgramCounter": 2275340,
     "parentActivityIdentifier": 0
   },
   {
@@ -3330,16 +3330,16 @@
     "subsystem": "engineering.atoma.rust-server",
     "category": "jobs",
     "personaType": -1,
-    "threadID": 25298593,
+    "threadID": 25340126,
     "launchPersonaType": -1,
-    "senderImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
+    "senderImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
     "signpostType": "end",
     "launchPersonaID": 4294967295,
     "backtrace": {
       "frames": [
         {
-          "imageOffset": 2234824,
-          "imageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83"
+          "imageOffset": 2275528,
+          "imageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE"
         }
       ]
     },
@@ -3347,15 +3347,15 @@
     "processImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "senderImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "personaID": 4294967295,
-    "timestamp": "2026-10-23 06:18:13.846962-0500",
+    "timestamp": "2026-10-23 06:34:37.236026-0500",
     "signpostName": "Kernel Job",
-    "machTimestamp": 19531474652064,
+    "machTimestamp": 19555075989586,
     "personaName": "",
     "eventMessage": "job=22 success=1",
-    "processImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
-    "traceID": 22143925846442502,
-    "processID": 69389,
-    "senderProgramCounter": 2234824,
+    "processImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
+    "traceID": 22346493683991046,
+    "processID": 72933,
+    "senderProgramCounter": 2275528,
     "parentActivityIdentifier": 0
   },
   {
@@ -3370,15 +3370,15 @@
     "subsystem": "engineering.atoma.rust-server",
     "category": "jobs",
     "personaType": -1,
-    "threadID": 25298593,
+    "threadID": 25340126,
     "launchPersonaType": -1,
-    "senderImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
+    "senderImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
     "launchPersonaID": 4294967295,
     "backtrace": {
       "frames": [
         {
-          "imageOffset": 2234916,
-          "imageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83"
+          "imageOffset": 2275620,
+          "imageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE"
         }
       ]
     },
@@ -3386,14 +3386,14 @@
     "processImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "senderImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "personaID": 4294967295,
-    "timestamp": "2026-10-23 06:18:13.846963-0500",
-    "machTimestamp": 19531474652067,
+    "timestamp": "2026-10-23 06:34:37.236026-0500",
+    "machTimestamp": 19555075989590,
     "personaName": "",
     "eventMessage": "job_end job=22 span=22 success=1",
-    "processImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
-    "traceID": 22144078317748228,
-    "processID": 69389,
-    "senderProgramCounter": 2234916,
+    "processImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
+    "traceID": 22346646155296772,
+    "processID": 72933,
+    "senderProgramCounter": 2275620,
     "parentActivityIdentifier": 0
   },
   {
@@ -3409,16 +3409,16 @@
     "subsystem": "engineering.atoma.rust-server",
     "category": "jobs",
     "personaType": -1,
-    "threadID": 25298593,
+    "threadID": 25340126,
     "launchPersonaType": -1,
-    "senderImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
+    "senderImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
     "signpostType": "begin",
     "launchPersonaID": 4294967295,
     "backtrace": {
       "frames": [
         {
-          "imageOffset": 2234556,
-          "imageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83"
+          "imageOffset": 2275260,
+          "imageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE"
         }
       ]
     },
@@ -3426,15 +3426,15 @@
     "processImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "senderImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "personaID": 4294967295,
-    "timestamp": "2026-10-23 06:18:13.846963-0500",
+    "timestamp": "2026-10-23 06:34:37.236026-0500",
     "signpostName": "Kernel Job",
-    "machTimestamp": 19531474652074,
+    "machTimestamp": 19555075989597,
     "personaName": "",
     "eventMessage": "job=23",
-    "processImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
-    "traceID": 22143612313829638,
-    "processID": 69389,
-    "senderProgramCounter": 2234556,
+    "processImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
+    "traceID": 22346180151378182,
+    "processID": 72933,
+    "senderProgramCounter": 2275260,
     "parentActivityIdentifier": 0
   },
   {
@@ -3449,15 +3449,15 @@
     "subsystem": "engineering.atoma.rust-server",
     "category": "jobs",
     "personaType": -1,
-    "threadID": 25298593,
+    "threadID": 25340126,
     "launchPersonaType": -1,
-    "senderImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
+    "senderImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
     "launchPersonaID": 4294967295,
     "backtrace": {
       "frames": [
         {
-          "imageOffset": 2234636,
-          "imageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83"
+          "imageOffset": 2275340,
+          "imageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE"
         }
       ]
     },
@@ -3465,14 +3465,14 @@
     "processImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "senderImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "personaID": 4294967295,
-    "timestamp": "2026-10-23 06:18:13.846963-0500",
-    "machTimestamp": 19531474652075,
+    "timestamp": "2026-10-23 06:34:37.236026-0500",
+    "machTimestamp": 19555075989598,
     "personaName": "",
     "eventMessage": "job_begin job=23 span=23",
-    "processImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
-    "traceID": 22143730425397252,
-    "processID": 69389,
-    "senderProgramCounter": 2234636,
+    "processImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
+    "traceID": 22346298262945796,
+    "processID": 72933,
+    "senderProgramCounter": 2275340,
     "parentActivityIdentifier": 0
   },
   {
@@ -3488,16 +3488,16 @@
     "subsystem": "engineering.atoma.rust-server",
     "category": "jobs",
     "personaType": -1,
-    "threadID": 25298593,
+    "threadID": 25340136,
     "launchPersonaType": -1,
-    "senderImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
+    "senderImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
     "signpostType": "end",
     "launchPersonaID": 4294967295,
     "backtrace": {
       "frames": [
         {
-          "imageOffset": 2234824,
-          "imageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83"
+          "imageOffset": 2275528,
+          "imageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE"
         }
       ]
     },
@@ -3505,15 +3505,15 @@
     "processImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "senderImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "personaID": 4294967295,
-    "timestamp": "2026-10-23 06:18:13.846991-0500",
+    "timestamp": "2026-10-23 06:34:37.236030-0500",
     "signpostName": "Kernel Job",
-    "machTimestamp": 19531474652743,
+    "machTimestamp": 19555075989679,
     "personaName": "",
     "eventMessage": "job=21 success=1",
-    "processImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
-    "traceID": 22143925846442502,
-    "processID": 69389,
-    "senderProgramCounter": 2234824,
+    "processImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
+    "traceID": 22346493683991046,
+    "processID": 72933,
+    "senderProgramCounter": 2275528,
     "parentActivityIdentifier": 0
   },
   {
@@ -3528,15 +3528,15 @@
     "subsystem": "engineering.atoma.rust-server",
     "category": "jobs",
     "personaType": -1,
-    "threadID": 25298593,
+    "threadID": 25340136,
     "launchPersonaType": -1,
-    "senderImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
+    "senderImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
     "launchPersonaID": 4294967295,
     "backtrace": {
       "frames": [
         {
-          "imageOffset": 2234916,
-          "imageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83"
+          "imageOffset": 2275620,
+          "imageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE"
         }
       ]
     },
@@ -3544,14 +3544,14 @@
     "processImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "senderImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "personaID": 4294967295,
-    "timestamp": "2026-10-23 06:18:13.846991-0500",
-    "machTimestamp": 19531474652747,
+    "timestamp": "2026-10-23 06:34:37.236030-0500",
+    "machTimestamp": 19555075989682,
     "personaName": "",
     "eventMessage": "job_end job=21 span=21 success=1",
-    "processImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
-    "traceID": 22144078317748228,
-    "processID": 69389,
-    "senderProgramCounter": 2234916,
+    "processImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
+    "traceID": 22346646155296772,
+    "processID": 72933,
+    "senderProgramCounter": 2275620,
     "parentActivityIdentifier": 0
   },
   {
@@ -3567,16 +3567,16 @@
     "subsystem": "engineering.atoma.rust-server",
     "category": "jobs",
     "personaType": -1,
-    "threadID": 25298593,
+    "threadID": 25340136,
     "launchPersonaType": -1,
-    "senderImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
+    "senderImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
     "signpostType": "begin",
     "launchPersonaID": 4294967295,
     "backtrace": {
       "frames": [
         {
-          "imageOffset": 2234556,
-          "imageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83"
+          "imageOffset": 2275260,
+          "imageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE"
         }
       ]
     },
@@ -3584,15 +3584,15 @@
     "processImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "senderImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "personaID": 4294967295,
-    "timestamp": "2026-10-23 06:18:13.846992-0500",
+    "timestamp": "2026-10-23 06:34:37.236032-0500",
     "signpostName": "Kernel Job",
-    "machTimestamp": 19531474652775,
+    "machTimestamp": 19555075989727,
     "personaName": "",
     "eventMessage": "job=24",
-    "processImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
-    "traceID": 22143612313829638,
-    "processID": 69389,
-    "senderProgramCounter": 2234556,
+    "processImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
+    "traceID": 22346180151378182,
+    "processID": 72933,
+    "senderProgramCounter": 2275260,
     "parentActivityIdentifier": 0
   },
   {
@@ -3607,15 +3607,15 @@
     "subsystem": "engineering.atoma.rust-server",
     "category": "jobs",
     "personaType": -1,
-    "threadID": 25298593,
+    "threadID": 25340136,
     "launchPersonaType": -1,
-    "senderImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
+    "senderImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
     "launchPersonaID": 4294967295,
     "backtrace": {
       "frames": [
         {
-          "imageOffset": 2234636,
-          "imageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83"
+          "imageOffset": 2275340,
+          "imageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE"
         }
       ]
     },
@@ -3623,14 +3623,14 @@
     "processImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "senderImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "personaID": 4294967295,
-    "timestamp": "2026-10-23 06:18:13.846992-0500",
-    "machTimestamp": 19531474652777,
+    "timestamp": "2026-10-23 06:34:37.236032-0500",
+    "machTimestamp": 19555075989728,
     "personaName": "",
     "eventMessage": "job_begin job=24 span=24",
-    "processImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
-    "traceID": 22143730425397252,
-    "processID": 69389,
-    "senderProgramCounter": 2234636,
+    "processImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
+    "traceID": 22346298262945796,
+    "processID": 72933,
+    "senderProgramCounter": 2275340,
     "parentActivityIdentifier": 0
   },
   {
@@ -3646,16 +3646,16 @@
     "subsystem": "engineering.atoma.rust-server",
     "category": "jobs",
     "personaType": -1,
-    "threadID": 25298593,
+    "threadID": 25340136,
     "launchPersonaType": -1,
-    "senderImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
+    "senderImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
     "signpostType": "end",
     "launchPersonaID": 4294967295,
     "backtrace": {
       "frames": [
         {
-          "imageOffset": 2234824,
-          "imageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83"
+          "imageOffset": 2275528,
+          "imageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE"
         }
       ]
     },
@@ -3663,15 +3663,15 @@
     "processImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "senderImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "personaID": 4294967295,
-    "timestamp": "2026-10-23 06:18:13.847295-0500",
+    "timestamp": "2026-10-23 06:34:37.236365-0500",
     "signpostName": "Kernel Job",
-    "machTimestamp": 19531474660041,
+    "machTimestamp": 19555075997714,
     "personaName": "",
     "eventMessage": "job=23 success=1",
-    "processImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
-    "traceID": 22143925846442502,
-    "processID": 69389,
-    "senderProgramCounter": 2234824,
+    "processImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
+    "traceID": 22346493683991046,
+    "processID": 72933,
+    "senderProgramCounter": 2275528,
     "parentActivityIdentifier": 0
   },
   {
@@ -3686,15 +3686,15 @@
     "subsystem": "engineering.atoma.rust-server",
     "category": "jobs",
     "personaType": -1,
-    "threadID": 25298593,
+    "threadID": 25340136,
     "launchPersonaType": -1,
-    "senderImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
+    "senderImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
     "launchPersonaID": 4294967295,
     "backtrace": {
       "frames": [
         {
-          "imageOffset": 2234916,
-          "imageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83"
+          "imageOffset": 2275620,
+          "imageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE"
         }
       ]
     },
@@ -3702,14 +3702,14 @@
     "processImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "senderImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "personaID": 4294967295,
-    "timestamp": "2026-10-23 06:18:13.847295-0500",
-    "machTimestamp": 19531474660045,
+    "timestamp": "2026-10-23 06:34:37.236365-0500",
+    "machTimestamp": 19555075997730,
     "personaName": "",
     "eventMessage": "job_end job=23 span=23 success=1",
-    "processImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
-    "traceID": 22144078317748228,
-    "processID": 69389,
-    "senderProgramCounter": 2234916,
+    "processImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
+    "traceID": 22346646155296772,
+    "processID": 72933,
+    "senderProgramCounter": 2275620,
     "parentActivityIdentifier": 0
   },
   {
@@ -3725,16 +3725,16 @@
     "subsystem": "engineering.atoma.rust-server",
     "category": "jobs",
     "personaType": -1,
-    "threadID": 25298600,
+    "threadID": 25340135,
     "launchPersonaType": -1,
-    "senderImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
+    "senderImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
     "signpostType": "end",
     "launchPersonaID": 4294967295,
     "backtrace": {
       "frames": [
         {
-          "imageOffset": 2234824,
-          "imageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83"
+          "imageOffset": 2275528,
+          "imageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE"
         }
       ]
     },
@@ -3742,15 +3742,15 @@
     "processImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "senderImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "personaID": 4294967295,
-    "timestamp": "2026-10-23 06:18:13.847330-0500",
+    "timestamp": "2026-10-23 06:34:37.236406-0500",
     "signpostName": "Kernel Job",
-    "machTimestamp": 19531474660876,
+    "machTimestamp": 19555075998720,
     "personaName": "",
     "eventMessage": "job=24 success=1",
-    "processImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
-    "traceID": 22143925846442502,
-    "processID": 69389,
-    "senderProgramCounter": 2234824,
+    "processImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
+    "traceID": 22346493683991046,
+    "processID": 72933,
+    "senderProgramCounter": 2275528,
     "parentActivityIdentifier": 0
   },
   {
@@ -3765,15 +3765,15 @@
     "subsystem": "engineering.atoma.rust-server",
     "category": "jobs",
     "personaType": -1,
-    "threadID": 25298600,
+    "threadID": 25340135,
     "launchPersonaType": -1,
-    "senderImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
+    "senderImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
     "launchPersonaID": 4294967295,
     "backtrace": {
       "frames": [
         {
-          "imageOffset": 2234916,
-          "imageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83"
+          "imageOffset": 2275620,
+          "imageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE"
         }
       ]
     },
@@ -3781,14 +3781,14 @@
     "processImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "senderImagePath": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
     "personaID": 4294967295,
-    "timestamp": "2026-10-23 06:18:13.847330-0500",
-    "machTimestamp": 19531474660878,
+    "timestamp": "2026-10-23 06:34:37.236407-0500",
+    "machTimestamp": 19555075998726,
     "personaName": "",
     "eventMessage": "job_end job=24 span=24 success=1",
-    "processImageUUID": "C2798834-BECD-3EB9-8EFF-A430FF9BAE83",
-    "traceID": 22144078317748228,
-    "processID": 69389,
-    "senderProgramCounter": 2234916,
+    "processImageUUID": "943DC85F-DC29-37ED-B3DB-04656A695EDE",
+    "traceID": 22346646155296772,
+    "processID": 72933,
+    "senderProgramCounter": 2275620,
     "parentActivityIdentifier": 0
   }
 ]
