@@ -105,3 +105,6 @@ pub mod native_layer_reference;
 
 #[cfg(feature = "native-mlx")]
 pub mod native_mtp;
+
+#[cfg(feature = "native-mlx")]
+pub mod native_mtp_cli;

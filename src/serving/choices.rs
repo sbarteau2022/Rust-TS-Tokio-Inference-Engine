@@ -63,26 +63,36 @@ impl Choices {
 }
 /// Stable lowest-ID tie breaking, identical to unconstrained greedy selection.
 pub fn select(logits: &[f32], allowed: Option<&[u32]>) -> Result<u32> {
-    ensure!(
-        !logits.is_empty() && logits.iter().all(|v| v.is_finite()),
-        "invalid logits"
-    );
-    fn best(logits: &[f32], ids: impl Iterator<Item = u32>) -> Result<u32> {
-        let mut winner: Option<u32> = None;
-        for id in ids {
-            ensure!((id as usize) < logits.len(), "invalid legal token");
-            if winner.is_none_or(|old| {
-                logits[id as usize].total_cmp(&logits[old as usize]).is_gt()
-                    || (logits[id as usize].total_cmp(&logits[old as usize]).is_eq() && id < old)
-            }) {
-                winner = Some(id);
-            }
-        }
-        winner.ok_or_else(|| anyhow::anyhow!("empty legal token set"))
-    }
+    ensure!(!logits.is_empty(), "invalid logits");
     match allowed {
-        Some(ids) => best(logits, ids.iter().copied()),
-        None => best(logits, 0..logits.len() as u32),
+        None => {
+            ensure!(logits[0].is_finite(), "invalid logits");
+            let mut best = 0usize;
+            let mut best_val = logits[0];
+            for (i, &val) in logits.iter().enumerate().skip(1) {
+                ensure!(val.is_finite(), "invalid logits");
+                if val.total_cmp(&best_val).is_gt() {
+                    best = i;
+                    best_val = val;
+                }
+            }
+            Ok(best as u32)
+        }
+        Some(ids) => {
+            ensure!(logits.iter().all(|v| v.is_finite()), "invalid logits");
+            let mut winner: Option<u32> = None;
+            for &id in ids {
+                ensure!((id as usize) < logits.len(), "invalid legal token");
+                if winner.is_none_or(|old| {
+                    logits[id as usize].total_cmp(&logits[old as usize]).is_gt()
+                        || (logits[id as usize].total_cmp(&logits[old as usize]).is_eq()
+                            && id < old)
+                }) {
+                    winner = Some(id);
+                }
+            }
+            winner.ok_or_else(|| anyhow::anyhow!("empty legal token set"))
+        }
     }
 }
 #[cfg(test)]

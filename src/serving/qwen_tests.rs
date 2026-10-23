@@ -305,6 +305,7 @@ async fn scheduler_rows_atomic_duplicate_stale_and_cancellation() -> Result<()> 
     let executor = fixture.open(Device::Gpu)?;
     let mut backend = ScheduledQwen::new(executor, vec![]);
     let input = |sequence, position, tokens| StepInput {
+        remaining_output_tokens: 8,
         kind: StepKind::Prefill,
         sequence,
         position,
@@ -387,6 +388,7 @@ async fn context_bound_and_scheduler_drain_with_three_requests() -> Result<()> {
     let mut adapter = ScheduledQwen::new(executor, vec![]);
     let storage = adapter.storage();
     let input = |sequence| StepInput {
+        remaining_output_tokens: 8,
         kind: StepKind::Prefill,
         sequence,
         position: 0,

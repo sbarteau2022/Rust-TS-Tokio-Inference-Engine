@@ -433,3 +433,100 @@ async fn panicked_backend_closes_admission_and_reports_unfinished_work() -> Resu
     assert!(engine.shutdown().await.is_err());
     Ok(())
 }
+
+#[tokio::test]
+async fn bounded_stream_matches_final_receipt_and_nonstreaming_output() -> Result<()> {
+    let model = oracle();
+    let engine = Engine::new(config(), model.codec.clone(), model)?;
+    assert!(engine.submit_stream(vec![1], 4, 0).is_err());
+    assert!(engine.submit_stream(vec![1], 4, 129).is_err());
+    let mut request = engine.submit_stream(vec![1, 2, 3], 8, 1)?;
+    let mut events = Vec::new();
+    while let Some(event) = request.next_token().await {
+        assert_eq!(event.index, events.len());
+        if let Some(previous) = events.last() {
+            let previous: &TokenEvent = previous;
+            assert_eq!(event.sequence, previous.sequence);
+            assert!(event.elapsed_ms >= previous.elapsed_ms);
+        }
+        events.push(event);
+    }
+    let generation = request.result().await?;
+    assert_eq!(
+        generation.tokens,
+        events.iter().map(|e| e.token).collect::<Vec<_>>()
+    );
+    assert_eq!(
+        generation.token_times_ms,
+        events.iter().map(|e| e.elapsed_ms).collect::<Vec<_>>()
+    );
+    let baseline = engine.submit(vec![1, 2, 3], 8)?.result().await?;
+    assert_eq!(generation.tokens, baseline.tokens);
+    let stats = engine.shutdown().await?;
+    assert_eq!(stats.completed, 2);
+    assert_eq!(stats.memory_used, 0);
+    Ok(())
+}
+
+#[tokio::test]
+async fn backpressured_stream_yields_other_lanes_and_result_drains() -> Result<()> {
+    let model = oracle();
+    let engine = Engine::new(config(), model.codec.clone(), model)?;
+    let mut slow = engine.submit_stream(vec![1], 10, 1)?;
+    assert!(slow.next_token().await.is_some());
+    let fast = engine.submit(vec![2], 4)?;
+    let result = tokio::time::timeout(std::time::Duration::from_secs(2), fast.result()).await??;
+    assert_eq!(result.tokens.len(), 4);
+    let iterations = engine.stats().iterations;
+    for _ in 0..100 {
+        tokio::task::yield_now().await;
+    }
+    assert_eq!(
+        engine.stats().iterations,
+        iterations,
+        "full stream must pause native encoding"
+    );
+    let rest = tokio::time::timeout(std::time::Duration::from_secs(2), slow.result()).await??;
+    assert_eq!(rest.tokens.len(), 10);
+    let stats = engine.shutdown().await?;
+    assert_eq!(stats.completed, 2);
+    assert_eq!(stats.memory_used, 0);
+    Ok(())
+}
+
+#[tokio::test]
+async fn undrained_stream_shutdown_reports_gap_and_drop_cancels() -> Result<()> {
+    let model = oracle();
+    let seen = model.seen.clone();
+    let engine = Engine::new(config(), model.codec.clone(), model)?;
+    let mut blocked = engine.submit_stream(vec![1], 10, 1)?;
+    assert!(blocked.next_token().await.is_some());
+    while seen.lock().unwrap().len() < 2 {
+        tokio::task::yield_now().await;
+    }
+    let stats =
+        tokio::time::timeout(std::time::Duration::from_secs(2), engine.shutdown()).await??;
+    assert_eq!(stats.failed, 1);
+    assert_eq!(stats.memory_used, 0);
+    assert!(blocked.result().await.is_err());
+    let model = oracle();
+    let engine = Engine::new(config(), model.codec.clone(), model)?;
+    let mut canceled = engine.submit_stream(vec![1], 10, 1)?;
+    assert!(canceled.next_token().await.is_some());
+    drop(canceled);
+    let stats =
+        tokio::time::timeout(std::time::Duration::from_secs(2), engine.shutdown()).await??;
+    assert_eq!(stats.cancelled, 1);
+    assert_eq!(stats.memory_used, 0);
+    let mut model = oracle();
+    model.fault = 1;
+    let engine = Engine::new(config(), model.codec.clone(), model)?;
+    let mut bad = engine.submit_stream(vec![1], 4, 1)?;
+    assert!(
+        bad.next_token().await.is_none(),
+        "unvalidated batch leaked a token"
+    );
+    assert!(bad.result().await.is_err());
+    assert!(engine.shutdown().await?.admission_closed);
+    Ok(())
+}

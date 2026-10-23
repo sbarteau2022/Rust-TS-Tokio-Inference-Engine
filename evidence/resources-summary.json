@@ -11,11 +11,11 @@
       "variants": {
         "persistent": {
           "n": 50,
-          "caller_wall_median_ms": 0.266979,
-          "prepare_median_ms": 0.0075415,
+          "caller_wall_median_ms": 0.20425,
+          "prepare_median_ms": 0.0071045,
           "compile_median_ms": 0.0,
-          "dispatch_wall_median_ms": 0.2528955,
-          "gpu_median_ms": 0.10372919496148825,
+          "dispatch_wall_median_ms": 0.1907915,
+          "gpu_median_ms": 0.10352086974307895,
           "validation_median_ms": 0.0,
           "device_allocated_min_bytes": 655360,
           "device_allocated_max_bytes": 655360,
@@ -35,11 +35,11 @@
         },
         "recreated": {
           "n": 50,
-          "caller_wall_median_ms": 1.9005204999999998,
-          "prepare_median_ms": 0.0944585,
-          "compile_median_ms": 0.060020500000000004,
-          "dispatch_wall_median_ms": 1.6623125,
-          "gpu_median_ms": 0.10427081724628806,
+          "caller_wall_median_ms": 1.329542,
+          "prepare_median_ms": 0.070104,
+          "compile_median_ms": 0.0413755,
+          "dispatch_wall_median_ms": 1.090125,
+          "gpu_median_ms": 0.046250002924352884,
           "validation_median_ms": 0.0,
           "device_allocated_min_bytes": 655360,
           "device_allocated_max_bytes": 655360,
@@ -58,7 +58,7 @@
           }
         }
       },
-      "recreated_over_persistent_wall": 7.11861419812045,
+      "recreated_over_persistent_wall": 6.509385556915545,
       "scope": "same raw Q1.31 integer inputs; full CPU reference enabled only with debug-validation feature; caller wall includes fresh backend construction in recreated case; persistent backend dropped before recreated phase; OS shader cache not flushed; first 3 samples are warmup; no serving-throughput claim"
     },
     "rectangular": {
@@ -71,11 +71,11 @@
       "variants": {
         "persistent": {
           "n": 50,
-          "caller_wall_median_ms": 0.1903335,
-          "prepare_median_ms": 0.0029375,
+          "caller_wall_median_ms": 0.133104,
+          "prepare_median_ms": 0.0025840000000000004,
           "compile_median_ms": 0.0,
-          "dispatch_wall_median_ms": 0.1790835,
-          "gpu_median_ms": 0.029770773835480213,
+          "dispatch_wall_median_ms": 0.125542,
+          "gpu_median_ms": 0.012500036973506212,
           "validation_median_ms": 0.0,
           "device_allocated_min_bytes": 491520,
           "device_allocated_max_bytes": 491520,
@@ -95,11 +95,11 @@
         },
         "recreated": {
           "n": 50,
-          "caller_wall_median_ms": 2.0176035,
-          "prepare_median_ms": 0.09866699999999999,
-          "compile_median_ms": 0.075771,
-          "dispatch_wall_median_ms": 1.716146,
-          "gpu_median_ms": 0.029624963644891977,
+          "caller_wall_median_ms": 1.269833,
+          "prepare_median_ms": 0.046312,
+          "compile_median_ms": 0.032854,
+          "dispatch_wall_median_ms": 1.072562,
+          "gpu_median_ms": 0.014791672583669424,
           "validation_median_ms": 0.0,
           "device_allocated_min_bytes": 491520,
           "device_allocated_max_bytes": 491520,
@@ -118,7 +118,7 @@
           }
         }
       },
-      "recreated_over_persistent_wall": 10.60035936921246,
+      "recreated_over_persistent_wall": 9.540156569299194,
       "scope": "same raw Q1.31 integer inputs; full CPU reference enabled only with debug-validation feature; caller wall includes fresh backend construction in recreated case; persistent backend dropped before recreated phase; OS shader cache not flushed; first 3 samples are warmup; no serving-throughput claim"
     },
     "elementwise": {
@@ -131,11 +131,11 @@
       "variants": {
         "persistent": {
           "n": 50,
-          "caller_wall_median_ms": 0.148604,
-          "prepare_median_ms": 0.0029795,
+          "caller_wall_median_ms": 0.13745849999999998,
+          "prepare_median_ms": 0.0025830000000000002,
           "compile_median_ms": 0.0,
-          "dispatch_wall_median_ms": 0.13929200000000003,
-          "gpu_median_ms": 0.00762502895668149,
+          "dispatch_wall_median_ms": 0.1293955,
+          "gpu_median_ms": 0.007625087164342403,
           "validation_median_ms": 0.0,
           "device_allocated_min_bytes": 524288,
           "device_allocated_max_bytes": 524288,
@@ -155,11 +155,11 @@
         },
         "recreated": {
           "n": 50,
-          "caller_wall_median_ms": 1.9272505,
-          "prepare_median_ms": 0.068083,
-          "compile_median_ms": 0.046917,
-          "dispatch_wall_median_ms": 1.618312,
-          "gpu_median_ms": 0.008624978363513947,
+          "caller_wall_median_ms": 1.2506665,
+          "prepare_median_ms": 0.043458,
+          "compile_median_ms": 0.028771,
+          "dispatch_wall_median_ms": 1.0583125,
+          "gpu_median_ms": 0.008583301678299904,
           "validation_median_ms": 0.0,
           "device_allocated_min_bytes": 524288,
           "device_allocated_max_bytes": 524288,
@@ -178,7 +178,7 @@
           }
         }
       },
-      "recreated_over_persistent_wall": 12.969035153831658,
+      "recreated_over_persistent_wall": 9.098502457105235,
       "scope": "same raw Q1.31 integer inputs; full CPU reference enabled only with debug-validation feature; caller wall includes fresh backend construction in recreated case; persistent backend dropped before recreated phase; OS shader cache not flushed; first 3 samples are warmup; no serving-throughput claim"
     }
   }

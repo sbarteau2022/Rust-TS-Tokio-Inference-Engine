@@ -16,7 +16,7 @@ use std::{
         Arc,
     },
 };
-use tokio::sync::{mpsc, oneshot};
+use tokio::sync::{mpsc, oneshot, Notify};
 
 #[derive(Clone)]
 pub enum Storage {
@@ -77,6 +77,8 @@ pub trait ModelBackend: Send + 'static {
 }
 #[derive(Debug)]
 pub struct StepInput {
+    /// Output tokens still permitted, including the token returned by this row.
+    pub remaining_output_tokens: usize,
     pub kind: StepKind,
     pub sequence: u64,
     pub position: usize,
@@ -132,7 +134,15 @@ pub struct Stats {
     pub memory_peak: usize,
     pub admission_closed: bool,
 }
+#[derive(Clone, Debug)]
+pub struct TokenEvent {
+    pub sequence: u64,
+    pub index: usize,
+    pub token: u32,
+    pub elapsed_ms: f64,
+}
 struct Envelope {
+    stream: Option<mpsc::Sender<TokenEvent>>,
     admitted_at: std::time::Instant,
     choices: Option<Choices>,
     id: u64,
@@ -152,14 +162,25 @@ struct Sequence {
     iterations: usize,
 }
 pub struct Request {
+    stream: Option<mpsc::Receiver<TokenEvent>>,
+    wake: Arc<Notify>,
     cancelled: Arc<AtomicBool>,
     reply: Option<oneshot::Receiver<Result<Generation>>>,
 }
 impl Request {
     pub fn cancel(&self) {
         self.cancelled.store(true, Ordering::Release);
+        self.wake.notify_one();
+    }
+    pub async fn next_token(&mut self) -> Option<TokenEvent> {
+        let event = self.stream.as_mut()?.recv().await;
+        self.wake.notify_one();
+        event
     }
     pub async fn result(mut self) -> Result<Generation> {
+        if self.stream.is_some() {
+            while self.next_token().await.is_some() {}
+        }
         self.reply
             .take()
             .unwrap()
@@ -173,6 +194,7 @@ impl Drop for Request {
     }
 }
 pub struct Engine {
+    wake: Arc<Notify>,
     tx: Option<mpsc::Sender<Envelope>>,
     task: Option<tokio::task::JoinHandle<()>>,
     config: Config,
@@ -225,6 +247,7 @@ impl Engine {
         let (tx, rx) = mpsc::channel(config.max_queued);
         let handle = tokio::runtime::Handle::try_current()
             .map_err(|_| anyhow::anyhow!("Tokio runtime required"))?;
+        let wake = Arc::new(Notify::new());
         let task = handle.spawn(run(
             config.clone(),
             storage,
@@ -232,8 +255,10 @@ impl Engine {
             rx,
             counters.clone(),
             budget.clone(),
+            wake.clone(),
         ));
         Ok(Self {
+            wake,
             tx: Some(tx),
             task: Some(task),
             config,
@@ -245,7 +270,22 @@ impl Engine {
         })
     }
     pub fn submit(&self, prompt: Vec<u32>, max_new: usize) -> Result<Request> {
-        self.submit_inner(prompt, max_new, None)
+        self.submit_inner(prompt, max_new, None, None)
+    }
+    pub fn submit_stream(
+        &self,
+        prompt: Vec<u32>,
+        max_new: usize,
+        capacity: usize,
+    ) -> Result<Request> {
+        ensure!(
+            (1..=128).contains(&capacity),
+            "stream capacity outside 1..128"
+        );
+        let (tx, rx) = mpsc::channel(capacity);
+        let mut request = self.submit_inner(prompt, max_new, None, Some(tx))?;
+        request.stream = Some(rx);
+        Ok(request)
     }
     pub fn submit_choices(
         &self,
@@ -263,13 +303,14 @@ impl Engine {
             &self.info.eos_tokens,
             max_new,
         )?;
-        self.submit_inner(prompt, max_new, Some(choices))
+        self.submit_inner(prompt, max_new, Some(choices), None)
     }
     fn submit_inner(
         &self,
         prompt: Vec<u32>,
         max_new: usize,
         choices: Option<Choices>,
+        stream: Option<mpsc::Sender<TokenEvent>>,
     ) -> Result<Request> {
         ensure!(
             !self.counters.poisoned.load(Ordering::Acquire),
@@ -300,6 +341,7 @@ impl Engine {
             .as_ref()
             .ok_or_else(|| anyhow::anyhow!("scheduler closed"))?
             .try_send(Envelope {
+                stream,
                 admitted_at: std::time::Instant::now(),
                 choices,
                 id,
@@ -310,7 +352,10 @@ impl Engine {
             })
             .map_err(|e| anyhow::anyhow!("scheduler admission: {e}"))?;
         self.counters.admitted.fetch_add(1, Ordering::Relaxed);
+        self.wake.notify_one();
         Ok(Request {
+            stream: None,
+            wake: self.wake.clone(),
             cancelled,
             reply: Some(rx),
         })
@@ -323,8 +368,15 @@ impl Engine {
     }
     pub async fn shutdown(mut self) -> Result<Stats> {
         self.tx.take();
+        self.wake.notify_one();
         self.task.take().unwrap().await?;
         Ok(self.stats())
+    }
+}
+impl Drop for Engine {
+    fn drop(&mut self) {
+        self.tx.take();
+        self.wake.notify_one();
     }
 }
 fn stats(c: &Counters, b: &ByteBudget) -> Stats {
@@ -346,7 +398,12 @@ struct Pending {
     charges: Vec<Charge>,
 }
 fn cancelled(s: &Sequence) -> bool {
-    s.envelope.cancelled.load(Ordering::Acquire) || s.envelope.reply.is_closed()
+    s.envelope.cancelled.load(Ordering::Acquire)
+        || s.envelope.reply.is_closed()
+        || s.envelope
+            .stream
+            .as_ref()
+            .is_some_and(mpsc::Sender::is_closed)
 }
 async fn release<B: ModelBackend>(backend: &mut B, id: u64, c: &Counters) -> Result<()> {
     let result = backend.release(id).await;
@@ -370,10 +427,11 @@ async fn run<B: ModelBackend>(
     mut rx: mpsc::Receiver<Envelope>,
     c: Arc<Counters>,
     budget: ByteBudget,
+    wake: Arc<Notify>,
 ) {
     let info = backend.info();
     let config_hash = config.fingerprint().expect("validated config");
-    let mut active = VecDeque::new();
+    let mut active = VecDeque::with_capacity(config.max_sequences);
     loop {
         if c.poisoned.load(Ordering::Acquire) {
             rx.close();
@@ -389,7 +447,7 @@ async fn run<B: ModelBackend>(
         if active.is_empty() {
             match rx.recv().await {
                 Some(e) => active.push_back(Sequence {
-                    token_times_ms: Vec::new(),
+                    token_times_ms: Vec::with_capacity(e.max_new),
                     envelope: e,
                     consumed: 0,
                     managed_charge: None,
@@ -404,7 +462,7 @@ async fn run<B: ModelBackend>(
         while active.len() < config.max_sequences {
             match rx.try_recv() {
                 Ok(e) => active.push_back(Sequence {
-                    token_times_ms: Vec::new(),
+                    token_times_ms: Vec::with_capacity(e.max_new),
                     envelope: e,
                     consumed: 0,
                     managed_charge: None,
@@ -416,14 +474,29 @@ async fn run<B: ModelBackend>(
                 Err(_) => break,
             }
         }
-        let mut batch = Vec::new();
-        let mut pending = Vec::new();
+        let notified = wake.notified();
+        tokio::pin!(notified);
+        notified.as_mut().enable();
+        let mut batch = Vec::with_capacity(active.len());
+        let mut pending = Vec::with_capacity(active.len());
         let mut token_budget = config.max_batch_tokens;
         for _ in 0..active.len() {
             let mut s = active.pop_front().unwrap();
             if cancelled(&s) {
                 let _ = release(&mut backend, s.envelope.id, &c).await;
                 c.cancelled.fetch_add(1, Ordering::Relaxed);
+                continue;
+            }
+            if s.envelope
+                .stream
+                .as_ref()
+                .is_some_and(|tx| tx.capacity() == 0)
+            {
+                if rx.is_closed() {
+                    fail(s, "shutdown with undrained token stream", &mut backend, &c).await;
+                } else {
+                    active.push_back(s);
+                }
                 continue;
             }
             if token_budget == 0 {
@@ -466,7 +539,12 @@ async fn run<B: ModelBackend>(
                 }
             };
             let prompt_complete = !prefill || s.prefilled + count == s.envelope.prompt.len();
+            let history = match &storage {
+                Storage::Host(_) => s.history.clone(),
+                Storage::BackendManaged { .. } => Vec::new(),
+            };
             batch.push(StepInput {
+                remaining_output_tokens: s.envelope.max_new - s.generated.len(),
                 kind: if prefill {
                     StepKind::Prefill
                 } else {
@@ -476,7 +554,7 @@ async fn run<B: ModelBackend>(
                 position: s.consumed,
                 tokens,
                 prompt_complete,
-                history: s.history.clone(),
+                history,
                 allowed_tokens: s
                     .envelope
                     .choices
@@ -492,7 +570,9 @@ async fn run<B: ModelBackend>(
             token_budget -= count;
         }
         if pending.is_empty() {
-            tokio::task::yield_now().await;
+            if !active.is_empty() {
+                notified.await;
+            }
             continue;
         }
         let workspace = match budget.reserve(info.workspace_bytes) {
@@ -581,9 +661,37 @@ async fn run<B: ModelBackend>(
                             s.prefilled = (s.prefilled + p.count).min(s.envelope.prompt.len());
                             s.iterations += 1;
                             if let Some(token) = output.next_token {
+                                let elapsed_ms =
+                                    s.envelope.admitted_at.elapsed().as_secs_f64() * 1000.;
+                                if let Some(stream) = &s.envelope.stream {
+                                    let event = TokenEvent {
+                                        sequence: s.envelope.id,
+                                        index: s.generated.len(),
+                                        token,
+                                        elapsed_ms,
+                                    };
+                                    match stream.try_send(event) {
+                                        Ok(()) => {}
+                                        Err(mpsc::error::TrySendError::Closed(_)) => {
+                                            let _ = release(&mut backend, s.envelope.id, &c).await;
+                                            c.cancelled.fetch_add(1, Ordering::Relaxed);
+                                            continue;
+                                        }
+                                        Err(mpsc::error::TrySendError::Full(_)) => {
+                                            c.poisoned.store(true, Ordering::Release);
+                                            fail(
+                                                s,
+                                                "stream capacity invariant failed",
+                                                &mut backend,
+                                                &c,
+                                            )
+                                            .await;
+                                            continue;
+                                        }
+                                    }
+                                }
                                 s.generated.push(token);
-                                s.token_times_ms
-                                    .push(s.envelope.admitted_at.elapsed().as_secs_f64() * 1000.);
+                                s.token_times_ms.push(elapsed_ms);
                             }
                             if s.generated.len() == s.envelope.max_new
                                 || s.generated

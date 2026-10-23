@@ -15,7 +15,7 @@ related_files:
     lines: "1-1015"
     role: "config"
   - path: "Cargo.toml"
-    lines: "1-73"
+    lines: "1-77"
     role: "config"
   - path: "backend/rapid_worker.py"
     lines: "1-165"
@@ -39,13 +39,16 @@ related_files:
     lines: "1-170"
     role: "primary"
   - path: "examples/native_mtp_automaton_smoke.rs"
-    lines: "1-218"
+    lines: "1-262"
     role: "primary"
   - path: "examples/native_mtp_bench.rs"
     lines: "1-130"
     role: "primary"
   - path: "examples/native_mtp_decode_smoke.rs"
     lines: "1-160"
+    role: "primary"
+  - path: "examples/native_mtp_scheduler_smoke.rs"
+    lines: "1-147"
     role: "primary"
   - path: "examples/native_mtp_smoke.rs"
     lines: "1-186"
@@ -153,7 +156,7 @@ related_files:
     lines: "1-35"
     role: "test"
   - path: "judges/run.py"
-    lines: "1-230"
+    lines: "1-231"
     role: "test"
   - path: "judges/speculative_report.py"
     lines: "1-74"
@@ -267,7 +270,7 @@ related_files:
     lines: "1-81"
     role: "primary"
   - path: "src/main.rs"
-    lines: "1-453"
+    lines: "1-458"
     role: "primary"
   - path: "src/runtime.rs"
     lines: "1-366"
@@ -276,7 +279,7 @@ related_files:
     lines: "1-193"
     role: "primary"
   - path: "src/serving/choices.rs"
-    lines: "1-123"
+    lines: "1-133"
     role: "primary"
   - path: "src/serving/completion_ledger.rs"
     lines: "1-100"
@@ -288,7 +291,7 @@ related_files:
     lines: "1-280"
     role: "primary"
   - path: "src/serving/mod.rs"
-    lines: "1-107"
+    lines: "1-110"
     role: "primary"
   - path: "src/serving/model_ir.rs"
     lines: "1-244"
@@ -327,25 +330,31 @@ related_files:
     lines: "1-468"
     role: "primary"
   - path: "src/serving/native_mtp_automaton.rs"
-    lines: "1-98"
+    lines: "1-206"
+    role: "primary"
+  - path: "src/serving/native_mtp_cli.rs"
+    lines: "1-223"
     role: "primary"
   - path: "src/serving/native_mtp_decode.rs"
-    lines: "1-149"
+    lines: "1-273"
     role: "primary"
   - path: "src/serving/native_mtp_device.rs"
     lines: "1-436"
+    role: "primary"
+  - path: "src/serving/native_mtp_scheduler.rs"
+    lines: "1-686"
     role: "primary"
   - path: "src/serving/native_ops.rs"
     lines: "1-273"
     role: "primary"
   - path: "src/serving/native_qwen.rs"
-    lines: "1-690"
+    lines: "1-694"
     role: "primary"
   - path: "src/serving/native_reference.rs"
     lines: "1-100"
     role: "primary"
   - path: "src/serving/native_speculative.rs"
-    lines: "1-382"
+    lines: "1-386"
     role: "primary"
   - path: "src/serving/native_state.rs"
     lines: "1-194"
@@ -354,13 +363,13 @@ related_files:
     lines: "1-213"
     role: "primary"
   - path: "src/serving/qwen_tests.rs"
-    lines: "1-566"
+    lines: "1-568"
     role: "primary"
   - path: "src/serving/rapid.rs"
     lines: "1-265"
     role: "primary"
   - path: "src/serving/scheduler.rs"
-    lines: "1-645"
+    lines: "1-753"
     role: "primary"
   - path: "src/serving/weights.rs"
     lines: "1-395"
@@ -414,7 +423,7 @@ related_files:
     lines: "1-341"
     role: "test"
   - path: "tests/serving.rs"
-    lines: "1-435"
+    lines: "1-532"
     role: "test"
   - path: "ts/generated/trace.ts"
     lines: "1-5"
@@ -620,3 +629,25 @@ Counter definition: the current experimental `replayed_target_tokens` field coun
 Observed stateful admission smoke: three admitted transactions bound three known seeds and 11 learned proposals, accepted 11 learned tokens and published 16 total tokens across five admitted target commands. Canceling the next result receiver increased observation/cost and attempted seed/proposal counts while published committed tokens remained 16 and unfinished stayed zero. A separately injected post-verifier allocation failure recorded one admitted target command, one attempted known seed, one learned proposal, one failure and zero accepted/committed progress. Shutdown logical bytes were zero. These are constructed controls on one prompt, not an acceptance or performance estimate.
 
 1.3.0 — Record accepted-window pilot and implement stateful MTP admission, separate known-prefix ledger geometry and native completion-owned preparation/commit.
+
+## Bounded scheduler streaming contract
+
+The current shared Engine has only a final oneshot receipt; its backend contract returns one token per row. Add optional bounded token streaming there before connecting speculative grouped work to it. `submit_stream` explicitly selects a capacity in 1..128. Each token event binds sequence, monotonically increasing index, token ID and elapsed time from admission. A sole scheduler producer publishes only after whole-batch validation and records the same timestamp in the final generation. Never silently discard an event. A full stream pauses only that sequence before further native work; other lanes continue. Consumption/cancellation/admission/shutdown wake the scheduler through a shared Notify, avoiding a polling hot loop when every stream is blocked. Dropping the request cancels it. Calling final `result` drains any remaining token events so bounded backpressure cannot deadlock that convenience method.
+
+Orderly shutdown drains readable requests but returns an explicit error for a stream that blocks further work without being consumed, releases its state, and preserves its already-enqueued prefix. It must not wait forever on an undrained bounded stream. This is Rust API token streaming, not an HTTP protocol. Existing submit/choices and backends retain their final-receipt behavior. MTP serving still needs a backend bridge that distinguishes its internally verified token bundle from per-token scheduler publication and honors the full remaining output budget.
+
+### Shared Engine MTP bridge
+
+`ScheduledMtp` retains request-local prompt staging, a private automaton cursor, verified pending output IDs and a virtual consumed position. Prompt chunks accumulate until complete; initialization then runs the native prompt and consumes/publishes one maintained-state baseline token. Decode validates the scheduler's last published input ID and virtual position. If pending IDs exist, it publishes the next already-verified ID without another model call; otherwise it requests a bounded automaton transaction and buffers its verified receipt. `StepInput.remaining_output_tokens` bounds the full speculative receipt, so hidden GPU state never advances beyond requested output. Stop/cancellation releases unpublished buffered IDs and the entire private cursor. All rows validate before work and new rows publish atomically after successful backend completion.
+
+The bridge advertises context 511 because it consumes the last returned output into a native context of 512, unlike the older next-logit-only backend. It supports at most three request-local lanes, explicit width 1..8 and regular FP32 state. It rejects choice masks and external history, and enforces `prompt.len() + tokens.len() + remaining_output_tokens <= 512` on every prefill chunk. Storage reservations include a conservative per-lane budget plus workspace; model weights remain outside that logical state budget as in the existing native adapters. Iteration scheduling is shared, but GPU kernels still execute per row: do not call it physical tensor batching. Controller committed counts refer to its internal receipt, not streamed end-user delivery.
+
+1.4.0 — Implement `ScheduledMtp` (`src/serving/native_mtp_scheduler.rs`) and bounded scheduler token streaming (`Engine::submit_stream`), fuse hot-path logit/argmax scans, eliminate per-step 993 KB final-logit vector clones, and wire concurrent batch + streaming verification into `examples/native_mtp_automaton_smoke.rs`.
+
+## Native MTP CLI and audit driver
+
+`native-mtp-generate PROMPT MAX_NEW` requires explicit `--draft-width`, `--stream-capacity`, `--qualification-trials`, `--probe-epochs`, `--initial-mass`, `--admission-mass` and `--reward-mass`. These set actual backend/controller fields; there is no implicit production policy. The local command fixes the existing bounded draft-metadata scaffold to capacity 8 × 64 bytes, 64 branches, 4,096 declared IDs, 16 leases, queue depth 4, wait 3 epochs, anchor 1,073,741,824, dead threshold 2, rate masses [268435456,1073741824,2147483647] and pressure multipliers [1,2,4] in Q31. It does not place model KV payloads in that metadata pool or claim cache coverage. Draft registration is bounded to one proposer and work limit three. Native state budget is 1 GiB with up to 64 version slots; Engine reserves 128 MiB/lane plus 512 MiB workspace for at most three lanes. Weights are outside this logical state budget.
+
+The CLI owns its controller and advances one audit epoch after scheduler drain at explicit Normal pressure, with native logical state bytes supplied as the outside-cache estimate. Auditing per consumed event failed because the worker may already own another native lease. Live decay/probing requires a scheduler-owned quiescent audit hook and remains unfinished. Other embeddings of ScheduledMtp must provide an audit driver appropriate to their shared controller; blindly auditing an unrelated shared payload cache with an empty live set is not supported. Engine configuration fingerprints cover serving settings, not controller policy. The CLI prints the complete policy, model identity and width; preserve that header and full command with measurements. A unified configuration fingerprint remains a promotion requirement.
+
+Observed shared-scheduler smoke: three lanes completed exact output limits 1/8/16 with IDs equal to the sequential target; the final scheduler had zero failed/canceled requests and zero logical used bytes. A second run held a capacity-one stream while another request finished eight tokens, then canceled the held stream; one completion and one cancellation were accounted and native shutdown bytes were zero. Token timestamps include grouped verification gaps followed by rapid buffered publication. They must not be interpreted as uniform per-token model execution or an HTTP benchmark.

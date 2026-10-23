@@ -3,9 +3,11 @@ use anyhow::{ensure, Context, Result};
 use rust_server::{
     cache::*,
     serving::{
+        config::Config as ServingConfig,
         native_mlx::Device,
-        native_qwen::{AutomatonMtp, QwenDeviceExecutor},
+        native_qwen::{AutomatonMtp, QwenDeviceExecutor, ScheduledMtp},
         native_tokenizer::NativeTokenizer,
+        scheduler::Engine,
         weights::Manifest,
     },
 };
@@ -200,12 +202,54 @@ async fn main() -> Result<()> {
     drop(other);
     drop(fault);
     drop(p);
+    // Verify the shared Engine MTP bridge (ScheduledMtp) with submit and submit_stream.
+    let sched_c = controller()?;
+    let sched_mtp = ScheduledMtp::new(
+        sched_c,
+        e.clone(),
+        tokenizer.eos(),
+        4,
+        "mtp-scheduled-bridge".into(),
+    )?;
+    let sched_storage = sched_mtp.storage();
+    let engine = Engine::new(
+        ServingConfig {
+            version: 1,
+            max_queued: 4,
+            max_sequences: 3,
+            max_batch_tokens: 24,
+            prefill_chunk_tokens: 8,
+            max_context_tokens: 511,
+            max_new_tokens: 16,
+            model_memory_bytes: 1024 * 1024 * 1024,
+            max_in_flight: 3,
+        },
+        sched_storage,
+        sched_mtp,
+    )?;
+    let mut streamed_req = engine.submit_stream(prompt.clone(), 8, 2)?;
+    let nonstream_req = engine.submit(prompt.clone(), 8)?;
+    let mut streamed_tokens = Vec::new();
+    while let Some(ev) = streamed_req.next_token().await {
+        streamed_tokens.push(ev.token);
+    }
+    let streamed_gen = streamed_req.result().await?;
+    let nonstream_gen = nonstream_req.result().await?;
+    ensure!(
+        streamed_gen.tokens == nonstream_gen.tokens && streamed_tokens == streamed_gen.tokens,
+        "ScheduledMtp stream/non-stream parity"
+    );
+    let sched_stats = engine.shutdown().await?;
+    ensure!(
+        sched_stats.completed == 2 && sched_stats.memory_used == 0 && !sched_stats.admission_closed,
+        "ScheduledMtp engine drain"
+    );
     let stats = Arc::try_unwrap(e)
         .map_err(|_| anyhow::anyhow!("executor leaked"))?
         .shutdown()
         .await?;
     ensure!(stats.logical_bytes == 0, "MTP automaton shutdown");
-    let report = serde_json::json!({"pass":true,"native_output_and_state_gate":true,"seed_accounting":ledger,"cancellation_accounting":after,"post_verifier_failure":failed,"queue_fallback":true,"shutdown_bytes":stats.logical_bytes,"serving_qualified":false});
+    let report = serde_json::json!({"pass":true,"native_output_and_state_gate":true,"seed_accounting":ledger,"cancellation_accounting":after,"post_verifier_failure":failed,"queue_fallback":true,"scheduled_mtp_stream_parity":true,"shutdown_bytes":stats.logical_bytes,"serving_qualified":false});
     std::fs::write(
         Path::new(&out).join("summary.json"),
         serde_json::to_string_pretty(&report)?,

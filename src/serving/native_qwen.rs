@@ -688,3 +688,7 @@ pub use automaton::{
     AutomatonCursor, AutomatonMtp, AutomatonMtpCursor, AutomatonMtpStep, AutomatonProposer,
     AutomatonStep, DraftProposer, ProposalContext, ProposalFuture, RetrievalProposer,
 };
+
+#[path = "native_mtp_scheduler.rs"]
+mod mtp_scheduler;
+pub use mtp_scheduler::ScheduledMtp;

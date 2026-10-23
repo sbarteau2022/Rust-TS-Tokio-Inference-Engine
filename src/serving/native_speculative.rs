@@ -36,15 +36,19 @@ struct Plan {
     terminal: bool,
 }
 /// Fixed tie-break: the lowest vocabulary index wins, matching native greedy select.
+/// Single-pass fused finite verification + argmax scan over the 248,320-token vocabulary.
 fn winner(logits: &[f32]) -> Result<u32> {
     ensure!(
-        !logits.is_empty() && logits.len() <= 300_000 && logits.iter().all(|v| v.is_finite()),
+        !logits.is_empty() && logits.len() <= 300_000 && logits[0].is_finite(),
         "greedy logits finite/shape"
     );
     let mut best = 0;
-    for i in 1..logits.len() {
-        if logits[i].total_cmp(&logits[best]).is_gt() {
+    let mut best_val = logits[0];
+    for (i, &val) in logits.iter().enumerate().skip(1) {
+        ensure!(val.is_finite(), "greedy logits finite/shape");
+        if val.total_cmp(&best_val).is_gt() {
             best = i;
+            best_val = val;
         }
     }
     Ok(best as u32)
@@ -71,7 +75,7 @@ fn plan(
         ensure!(row.len() == vocab, "verifier row vocabulary");
         winner(row)?;
     }
-    let mut emitted = Vec::new();
+    let mut emitted = Vec::with_capacity(draft.len() + 1);
     let mut accepted = 0;
     let mut terminal = false;
     for i in 0..draft.len() {
@@ -185,10 +189,10 @@ impl QwenDeviceExecutor {
             && !draft.is_empty()
             && decision.emitted.len() == draft.len()
         {
-            let block = block.expect("nonempty draft evaluated");
+            let mut block = block.expect("nonempty draft evaluated");
             (
                 block.state,
-                block.logits.last().expect("validated rows").clone(),
+                block.logits.pop().expect("validated rows"),
                 1,
                 0,
             )

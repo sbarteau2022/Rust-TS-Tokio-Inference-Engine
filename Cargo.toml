@@ -71,3 +71,7 @@ required-features = ["native-mlx"]
 [[example]]
 name = "native_mtp_automaton_smoke"
 required-features = ["native-mlx"]
+
+[[example]]
+name = "native_mtp_scheduler_smoke"
+required-features = ["native-mlx"]

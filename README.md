@@ -1,7 +1,7 @@
 ---
 title: "Rust Server — Apple native kernel compiler and runtime"
 document_type: "implementation"
-version: "1.29.0"
+version: "1.30.0"
 date: "2026-10-23T05:21:07Z"
 implementation_date: null
 author: "Codex for Stewart Barteau"
@@ -15,7 +15,7 @@ related_files:
     lines: "1-1015"
     role: "config"
   - path: "Cargo.toml"
-    lines: "1-73"
+    lines: "1-77"
     role: "config"
   - path: "backend/rapid_worker.py"
     lines: "1-165"
@@ -39,13 +39,16 @@ related_files:
     lines: "1-170"
     role: "primary"
   - path: "examples/native_mtp_automaton_smoke.rs"
-    lines: "1-218"
+    lines: "1-262"
     role: "primary"
   - path: "examples/native_mtp_bench.rs"
     lines: "1-130"
     role: "primary"
   - path: "examples/native_mtp_decode_smoke.rs"
     lines: "1-160"
+    role: "primary"
+  - path: "examples/native_mtp_scheduler_smoke.rs"
+    lines: "1-147"
     role: "primary"
   - path: "examples/native_mtp_smoke.rs"
     lines: "1-186"
@@ -153,7 +156,7 @@ related_files:
     lines: "1-35"
     role: "test"
   - path: "judges/run.py"
-    lines: "1-230"
+    lines: "1-231"
     role: "test"
   - path: "judges/speculative_report.py"
     lines: "1-74"
@@ -267,7 +270,7 @@ related_files:
     lines: "1-81"
     role: "primary"
   - path: "src/main.rs"
-    lines: "1-453"
+    lines: "1-458"
     role: "primary"
   - path: "src/runtime.rs"
     lines: "1-366"
@@ -276,7 +279,7 @@ related_files:
     lines: "1-193"
     role: "primary"
   - path: "src/serving/choices.rs"
-    lines: "1-123"
+    lines: "1-133"
     role: "primary"
   - path: "src/serving/completion_ledger.rs"
     lines: "1-100"
@@ -288,7 +291,7 @@ related_files:
     lines: "1-280"
     role: "primary"
   - path: "src/serving/mod.rs"
-    lines: "1-107"
+    lines: "1-110"
     role: "primary"
   - path: "src/serving/model_ir.rs"
     lines: "1-244"
@@ -327,25 +330,31 @@ related_files:
     lines: "1-468"
     role: "primary"
   - path: "src/serving/native_mtp_automaton.rs"
-    lines: "1-98"
+    lines: "1-206"
+    role: "primary"
+  - path: "src/serving/native_mtp_cli.rs"
+    lines: "1-223"
     role: "primary"
   - path: "src/serving/native_mtp_decode.rs"
-    lines: "1-149"
+    lines: "1-273"
     role: "primary"
   - path: "src/serving/native_mtp_device.rs"
     lines: "1-436"
+    role: "primary"
+  - path: "src/serving/native_mtp_scheduler.rs"
+    lines: "1-686"
     role: "primary"
   - path: "src/serving/native_ops.rs"
     lines: "1-273"
     role: "primary"
   - path: "src/serving/native_qwen.rs"
-    lines: "1-690"
+    lines: "1-694"
     role: "primary"
   - path: "src/serving/native_reference.rs"
     lines: "1-100"
     role: "primary"
   - path: "src/serving/native_speculative.rs"
-    lines: "1-382"
+    lines: "1-386"
     role: "primary"
   - path: "src/serving/native_state.rs"
     lines: "1-194"
@@ -354,13 +363,13 @@ related_files:
     lines: "1-213"
     role: "primary"
   - path: "src/serving/qwen_tests.rs"
-    lines: "1-566"
+    lines: "1-568"
     role: "primary"
   - path: "src/serving/rapid.rs"
     lines: "1-265"
     role: "primary"
   - path: "src/serving/scheduler.rs"
-    lines: "1-645"
+    lines: "1-753"
     role: "primary"
   - path: "src/serving/weights.rs"
     lines: "1-395"
@@ -414,7 +423,7 @@ related_files:
     lines: "1-341"
     role: "test"
   - path: "tests/serving.rs"
-    lines: "1-435"
+    lines: "1-532"
     role: "test"
   - path: "ts/generated/trace.ts"
     lines: "1-5"
@@ -1078,3 +1087,26 @@ Stateful MTP admission is implemented through `AutomatonMtp` under the existing 
 1.29.0 — Stateful Spec 15 MTP admission with known-prefix accounting, opaque prepared branches, command-owned completion guards, failure-inclusive target calls and maintained-state baseline fallback.
 
 Stateful admission qualification: **146 default / 146 debug-validation / 98 minimal-feature** Rust tests passed, together with strict compiler/Clippy gates, TS 7.1/tsrs and native/GPU judges. [Bound admission evidence](evidence/native-mtp-admission/manifest.sha256) records current source, binary, raw controls and exact scope. Actual server-scheduler wiring, streaming, sustained multi-lane qualification and adapter performance measurement remain open.
+
+The shared scheduler now exposes opt-in bounded Rust token streaming via `Engine::submit_stream` and `Request::next_token`, and `ScheduledMtp` (`src/serving/native_mtp_scheduler.rs`) bridges `AutomatonMtp` into the fair `Engine` scheduler. A full stream pauses only that sequence while other lanes continue; calling final `result` drains remaining token events, and orderly shutdown reports an explicit error for an undrained stream that blocks completion. `ScheduledMtp` stages chunked prompts, runs a maintained-state first-token step on prompt completion, and drains verified speculative tokens one per scheduler iteration while bounding proposals by `remaining_output_tokens` and enforcing the 512-token context ceiling on every prefill chunk. Hot-path logit ownership (`block.logits.pop()` replacing 993 KB per-step clones), single-pass fused finiteness/argmax scans, and race-free `Notify` wakeups are now active across `src/serving/`.
+
+1.30.0 — Bounded scheduler token streaming (`Engine::submit_stream`), `ScheduledMtp` shared-scheduler Spec 15 MTP bridge, hot-path logit/argmax and wakeup optimizations, and multi-lane streaming verification in `native_mtp_automaton_smoke`.
+
+## Shared scheduler MTP token streaming
+
+`ScheduledMtp` now connects the Spec 15 MTP adapter to the existing fair Engine. Three real-model streams passed output-ID checks against sequential target generation at exact limits 1/8/16; a backpressured lane allowed another lane to finish, cancellation drained, and native state returned to zero bytes. These are correctness gates, not a multi-lane throughput qualification. Scheduling interleaves request-local rows; kernels are not physically tensor-batched.
+
+Explicit local command (the policy values below are an experimental reproduction profile, not production recommendations):
+
+```sh
+cargo run --release --locked -- native-mtp-generate 'Complete: 1, 2, 3,' 8 \
+  --draft-width 4 --stream-capacity 1 \
+  --qualification-trials 64 --probe-epochs 2 \
+  --initial-mass 2147483647 --admission-mass 268435455 --reward-mass 536870911
+```
+
+All seven flags are required; duplicates, unknown names and invalid bounds fail before model loading. Output is a typed token-event text log followed by final decoded text, without a Python worker or JSON transport. The CLI uses the designated Combined model, FP32/regular state, up to 128 output tokens, effective context 511, logical in-flight limit 3 and the fixed bounded draft-metadata scaffold documented in the tuning plan. It is not an HTTP server. The CLI audits once after scheduler drain at normal pressure. Live audit-epoch decay/probing requires a scheduler-owned quiescent audit hook and remains unfinished; library integrations must supply their own safe audit driver.
+
+1.30.0 — Shared Engine bounded token streaming, explicit remaining-output budget, state-safe MTP scheduler bridge and opt-in policy flags. HTTP transport, physical tensor batching, sustained mixed-workload qualification and unified controller/serving configuration fingerprints remain unfinished.
+
+Streaming checkpoint validation: **153 default / 153 debug-validation / 101 minimal-feature Rust tests**, strict Clippy, TS 7.1/tsrs and native/GPU judges passed. The designated model passed the three-lane correctness gate and eight-token CLI run. [Bound source, commands and raw evidence](evidence/native-mtp-stream/qualification.json). Live audit decay, HTTP and sustained throughput qualification remain open.

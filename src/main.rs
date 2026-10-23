@@ -38,6 +38,11 @@ async fn main() -> Result<()> {
             if args.get(2).is_some_and(|s|s=="--extended") {rust_server::serving::native_extended::run().await?;} else {rust_server::serving::native_boundary::qualify_cli(args.len()==3).await?;}
         }
         #[cfg(feature = "native-mlx")]
+        Some("native-mtp-generate") => {
+            ensure!(args.len()>=4,"{}",rust_server::serving::native_mtp_cli::USAGE);
+            rust_server::serving::native_mtp_cli::run(&args[2],args[3].parse()?,&args[4..]).await?;
+        }
+        #[cfg(feature = "native-mlx")]
         Some("native-generate") => {
             use rust_server::serving::{native_qwen::ActivationPrecision,native_mlx::Device};
             ensure!(args.len()>=4 && (args.len()-4)%2==0,"native-generate PROMPT MAX_NEW [--activation f32|bf16] [--device gpu|cpu] [--choices yes,no]; selected Combined model, regular KV only");
@@ -247,7 +252,7 @@ async fn main() -> Result<()> {
             println!("{}", serde_json::to_string(&wire::decode(&bytes)?)?);
         }
         Some("--help") | Some("help") => {
-            println!("rust-server: model-run CONFIG PROMPTS MAX_NEW [flags] | config check|print --config FILE | cache-judge CONFIG.json | run-chain INPUTS.json TRACE [TRACE ...] | macro-bench DIRECTORY THREADS LIMIT COUNT | capabilities | backend-judge DIRECTORY | idle | decode TRACE | uma-judge | kernel-judge DIRECTORY [ABS_CAPTURE_PATH] | runtime-judge | run TRACE INPUTS.json; runtime limit: RUST_SERVER_IN_FLIGHT=2|3 (default 3)");
+            println!("rust-server: native-mtp-generate PROMPT MAX_NEW [explicit policy flags; see README] | model-run CONFIG PROMPTS MAX_NEW [flags] | config check|print --config FILE | cache-judge CONFIG.json | run-chain INPUTS.json TRACE [TRACE ...] | macro-bench DIRECTORY THREADS LIMIT COUNT | capabilities | backend-judge DIRECTORY | idle | decode TRACE | uma-judge | kernel-judge DIRECTORY [ABS_CAPTURE_PATH] | runtime-judge | run TRACE INPUTS.json; runtime limit: RUST_SERVER_IN_FLIGHT=2|3 (default 3)");
         }
         _ => bail!("use rust-server --help"),
     }
