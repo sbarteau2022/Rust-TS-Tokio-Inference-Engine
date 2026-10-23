@@ -171,11 +171,11 @@ hw.ncpu: 18
  1134   0.0   6048 /System/Library/CoreServices/TextInputMenuAgent.app/Contents/MacOS/TextInputMenuAgent
  1135   0.0   2400 /opt/homebrew/opt/postgresql@17/bin/postgres
  1138   0.0   2272 /System/Library/Frameworks/CryptoTokenKit.framework/ctkahp.bundle/Contents/MacOS/ctkahp
- 1309   0.0   1664 postgres: checkpointer 
- 1310   0.0    816 postgres: background writer 
- 1321   0.0    560 postgres: walwriter 
- 1322   0.0   2208 postgres: autovacuum launcher 
- 1323   0.0   1712 postgres: logical replication launcher 
+ 1309   0.0   1664 postgres: checkpointer
+ 1310   0.0    816 postgres: background writer
+ 1321   0.0    560 postgres: walwriter
+ 1322   0.0   2208 postgres: autovacuum launcher
+ 1323   0.0   1712 postgres: logical replication launcher
  1334   0.0   6016 /System/Library/CoreServices/UserNotificationCenter.app/Contents/MacOS/UserNotificationCenter
  1372   0.0    816 /usr/sbin/distnoted
  1399   0.0    816 /usr/sbin/distnoted

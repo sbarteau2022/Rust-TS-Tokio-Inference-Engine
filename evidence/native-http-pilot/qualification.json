@@ -201,5 +201,6 @@
   "native_dspark": false,
   "production_qualified": false,
   "acceptance_scope": "audited profile cumulative warmup plus both lane cells; learned proposals exclude known seeds",
-  "initial_failed_attempt": "initial-artifact-serialization/driver.log"
+  "initial_failed_attempt": "initial-artifact-serialization/driver.log",
+  "host_capture_normalization": "trailing line whitespace removed; process identities and measurements unchanged"
 }

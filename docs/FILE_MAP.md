@@ -2,7 +2,7 @@
 title: "Implementation file map and evidence index"
 document_type: "implementation"
 version: "1.0.0"
-date: "2026-10-23T12:21:54Z"
+date: "2026-10-23T12:22:23Z"
 implementation_date: null
 author: "Codex for Stewart Barteau"
 reviewers: []
