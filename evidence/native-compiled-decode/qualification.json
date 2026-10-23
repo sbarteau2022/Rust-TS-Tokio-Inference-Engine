@@ -1,0 +1,44 @@
+{
+  "pass": true,
+  "scope": "native compiled recurrence functional qualification and single ordered eager profiler control; not HTTP throughput or comparative speedup qualification",
+  "gates": {
+    "pass": true,
+    "scope": "retained numerical/lifetime/HTTP observation integrity; no throughput speedup or production qualification",
+    "heldout_exact_cases": 60,
+    "task_successes": 58,
+    "packed_rows": 96,
+    "context": 512,
+    "http_compiled_entries": 60
+  },
+  "native_warm_decode_tok_s": {
+    "eager_timing_on": 25.937892180350797,
+    "eager_timing_off": 26.003657892660982,
+    "compiled_timing_on": 25.771873035587873
+  },
+  "eager_profile_ms_per_forward": {
+    "graph_ns": 0.8608538809523809,
+    "wait_ns": 36.59421638095238,
+    "validation_export_ns": 0.01767593650793651,
+    "wall_ns": 37.481242071428575
+  },
+  "ordered_profiler_time_difference_fraction": 0.002535507197458653,
+  "cold_compiled_first_decode_seconds": 1.404181542,
+  "compiled_first_entries": 30,
+  "regression": {
+    "rust_default": 191,
+    "rust_debug_validation": 191,
+    "typescript": 26,
+    "offline_reader_tests": 38,
+    "tsrs": true,
+    "typescript_7_1": true,
+    "clippy_all_targets": true,
+    "format": true,
+    "timing_asan_ubsan": true
+  },
+  "speculation": false,
+  "acceptance": null,
+  "production_qualified": false,
+  "target_100_tok_s_achieved": false,
+  "acceptance_90_percent_achieved": false,
+  "next": "Implement preregistered perturbing operator attribution, then optimize the dominant measured contributor; qualify an economical multi-token verifier separately."
+}

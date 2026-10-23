@@ -1,0 +1,9 @@
+{
+  "pass": true,
+  "scope": "retained numerical/lifetime/HTTP observation integrity; no throughput speedup or production qualification",
+  "heldout_exact_cases": 60,
+  "task_successes": 58,
+  "packed_rows": 96,
+  "context": 512,
+  "http_compiled_entries": 60
+}

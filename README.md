@@ -1,8 +1,8 @@
 ---
 title: "Rust Server — Apple native kernel compiler and runtime"
 document_type: "implementation"
-version: "1.43.0"
-date: "2026-10-23T20:58:00Z"
+version: "1.44.0"
+date: "2026-10-23T21:27:14.641Z"
 implementation_date: null
 author: "Codex for Stewart Barteau"
 reviewers: []
@@ -1448,3 +1448,17 @@ Exactly 4,000 closed-window tokens plus 192 open-arrival and eight warmup tokens
 Native gates: all group-only reference comparisons were bitwise equal. The fused candidate preserved exact frozen tokens and passed 63 full-logit/unified-state comparisons (max absolute error: logits 1.48e-5, state 2.29e-5), 96 packed-row comparisons, row permutations/lease pressure/canceled-receiver reclamation and context-512 queue/cancellation/restart pressure. Fused arithmetic is not bitwise identical to the reference. Regression: 188 default and 188 debug-validation Rust tests, 25 TS tests, TS 7.1/tsrs, Clippy, and adversarial offline readers passed. Broader held-out quality and 100+ tok/s / >=90% acceptance remain unqualified.
 
 [Bound candidate scorecard](evidence/native-layer-groups/qualification.json) · [native observations](evidence/native-layer-groups/summary.json) · [next design and gates](docs/NATIVE_TUNING_PLAN.md). Next: measure graph-construction versus completion wait, then qualify persistent compiled native decode blocks and the corresponding speculative verifier.
+
+## Native execution attribution experiment
+
+Target HTTP accepts `--execution-timing off|on`, default off. Native cumulative counters distinguish host graph construction/bookkeeping, existing eval/completion waits, validation/export and forward wall time; they add no GPU barriers. Eval wait includes dispatch and is not GPU-only time. Snapshot/trace controls are excluded, while scalar and packed candidate forwards are counted. These counters record attempts/completions, not committed tokens or drafter acceptance. The offline group qualification example accepts a final `off|on` argument and stores separate prefill/decode counter deltas. Design and gates are recorded in `docs/NATIVE_TUNING_PLAN.md`; performance and production promotion remain unqualified until measured.
+
+`--graph-mode eager|compiled-decode` is an additional target-only experiment (default `eager`). Compiled mode owns a bounded cache of 30 recurrent-layer functions for each B=1/2/3 geometry, at most 90 entries. Activations and convolution/recurrent parents are explicit inputs; request state and attention positions are never captured. Prefill and attention remain eager. GPU is required, and the presence of `MLX_DISABLE_COMPILE` refuses compiled mode even if its value is `0`. Snapshot/trace controls retain original arithmetic. Cache lifetime is bounded by the worker's immutable weight owner.
+
+The native example syntax is `native_group_qualification NEW_DIRECTORY GROUP [reference|fused] [off|on] [eager|compiled-decode]`. The TS HTTP benchmark accepts the corresponding `--execution-timing off|on --graph-mode eager|compiled-decode` flags, forwards them to the server and checks actual receipt metadata. Nondefault controls refuse MTP profiles before model load. Warm native timing follows numerical qualification and excludes cold compiler startup; neither is an HTTP performance claim.
+
+Compiled candidate observations: 63 scalar numerical comparisons and all four frozen 64-token streams passed; warmed native decode was **25.77 tok/s**. The first compiled decode took **1.404 s** while creating 30 function entries; this is separate from warm timing and is not model-load TTFT. The unchanged 60-case suite preserved every selected token and its existing **58/60** task result (15 raw, 20 anchored, 23 domain successes), not 60/60 quality. Packed B=1/2/3 and context-512 cancellation/queue/restart gates passed with no hot-path state upload/export. These observations show compatibility, not a material speed gain. Next is the explicitly diagnostic operator-attribution experiment in the design plan; the 100+ tok/s and >=90% speculative-acceptance targets remain open.
+
+Live compiled target-physical HTTP also passed single/three-lane parity, deadline and disconnect/recovery, the real TS client, both stream readers and zero ownership drain (7 packed calls / 14 rows, 60 B1/B2 function entries). `python3 judges/compiled_gate_report.py evidence/native-compiled-decode` audits the retained gates; `compiled_execution_report.py REPORT.json` checks frozen timing and compiler/profiler accounting. These are functional and observation-integrity gates, not a claim of higher server throughput.
+
+Fresh eager controls at the same group-10/fused setting measured **26.00 tok/s timing-off** and **25.94 timing-on**; the single ordered pair differed by 0.25% in elapsed decode time. This is an overhead observation, not a statistically established cost or speedup. The fresh timing-on profile averaged **0.861 ms graph/bookkeeping, 36.594 ms eval/completion wait, 0.018 ms validation/export** per native forward. Compiled timing-on remained 25.77 tok/s and stays opt-in. Regression passed 191 default + 191 debug-validation Rust tests, 26 TS tests, 38 adversarial offline reader tests, TS 7.1/tsrs, all-target Clippy, formatting and the timing ASAN/UBSAN judge. [Compiled-path scorecard](evidence/native-compiled-decode/qualification.json).

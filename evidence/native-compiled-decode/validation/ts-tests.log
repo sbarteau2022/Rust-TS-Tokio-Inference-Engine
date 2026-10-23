@@ -1,0 +1,38 @@
+
+> apple-native-rust-server@0.1.0 test
+> tsx --test ts/*.test.ts
+
+✔ benchmark flags preserve order and fail before side effects (0.7715ms)
+✔ closed waves reserve exact final token budget (0.14ms)
+✔ absolute arrivals proceed while earlier work is unfinished and retain failures (0.174417ms)
+✔ shutdown timer is bounded and canceled on normal process exit (93.3465ms)
+✔ physical target benchmark labels select explicit server modes (0.183625ms)
+✔ layer grouping is explicit and refuses unsupported speculation before launch (0.147ms)
+✔ recurrent ablation validates mode and compatible execution profile (0.057334ms)
+✔ compiled graph and profiler flags are explicit target-only controls (0.072ms)
+✔ HTTP client validates origin and bounds before network (0.425542ms)
+✔ HTTP client accepts fragmented binary finish and rejects error or truncated EOF (11.879875ms)
+✔ HTTP overload remains typed and cancels its non-AMST body (0.279708ms)
+✔ HTTP timing separates TTFT, burst gaps, request envelope and per-lane decode (0.795208ms)
+✔ HTTP macro windows count globally delivered tokens, not request completion (0.957125ms)
+✔ HTTP timing rejects empty, regressed and mismatched observations (0.14175ms)
+✔ offline artifacts preserve exact u64 metadata (0.061125ms)
+✔ nonfinite request envelopes and zero-duration macro bursts are explicit (0.173667ms)
+✔ Rust fixture and all chunk sizes agree, BOM and Unicode preserved (15.216083ms)
+✔ unknown controls, ordering, exact terminal and EOF refusal (3.951333ms)
+✔ malformed structural mutations fail without permitting poisoned reuse (15.866084ms)
+✔ typed errors terminate partial and empty streams (0.18225ms)
+✔ timestamp, token and aggregate text caps fail closed (16.440458ms)
+✔ MVK records exact dependency order (1.213375ms)
+✔ invalid shapes and unsafe names rejected (0.131292ms)
+✔ undefined and invalid handles rejected (0.081125ms)
+✔ second kernel family records row-bias fusion (0.200167ms)
+✔ CORDIC functions serialize stable version-3 operation codes (0.335417ms)
+ℹ tests 26
+ℹ suites 0
+ℹ pass 26
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 209.35625

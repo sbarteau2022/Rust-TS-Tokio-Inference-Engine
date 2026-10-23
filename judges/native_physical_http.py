@@ -5,6 +5,8 @@ ROOT=Path(__file__).resolve().parents[1]
 OUT=ROOT/(sys.argv[1] if len(sys.argv)>1 else 'evidence/native-physical-scheduler/http')
 GROUP=int(sys.argv[2]) if len(sys.argv)>2 else 1
 MODE=sys.argv[3] if len(sys.argv)>3 else 'reference'
+GRAPH=sys.argv[4] if len(sys.argv)>4 else 'eager'
+assert GRAPH in ('eager','compiled-decode')
 assert GROUP in (1,4,10,40) and MODE in ('reference','fused')
 OUT.mkdir(parents=True,exist_ok=False)
 # This parser is for test observations only; Rust and TypeScript independently validate saved bodies.
@@ -25,7 +27,7 @@ def frames(raw):
     return result
 with socket.socket() as s:s.bind(('127.0.0.1',0));port=s.getsockname()[1]
 flags=['--tensor-batching','physical','--execution-profile','target','--draft-width','4','--stream-capacity','1','--qualification-trials','64','--probe-epochs','2','--initial-mass','2147483647','--admission-mass','268435455','--reward-mass','536870911']
-flags += ['--layer-group',str(GROUP),'--recurrent-kernel',MODE]
+flags += ['--layer-group',str(GROUP),'--recurrent-kernel',MODE,'--graph-mode',GRAPH]
 command=[str(ROOT/'target/release/rust-server'),'native-mtp-serve',f'127.0.0.1:{port}','1000','8',*flags]
 (OUT/'command.json').write_text(json.dumps({'command':command,'model':'/Users/stewartbarteau/models/fused/Qwen3.6-MoE-Combined','binary_sha256':hashlib.sha256(Path(command[0]).read_bytes()).hexdigest()},indent=2))
 log=(OUT/'server.log').open('w');proc=subprocess.Popen(command,cwd=ROOT,stdout=log,stderr=subprocess.STDOUT)
@@ -64,9 +66,9 @@ try:
     recovered=request('recovered',8);assert recovered['status']==200 and recovered['frames'][-1]['kind']==2 and recovered['tokens']==baseline['tokens'][:8]
     # Exercise the actual TS 7.1 client over this same persistent server.
     ts="import {generate} from './ts/http-client.ts';let n=0;await generate(process.argv[1],'Complete: 1, 2, 3,',8,30000,f=>{if(f.kind===1)n++});if(n!==8)throw Error('token count');console.log('HTTP_TS_PASS tokens='+n);"
-    ts=ts.replace("if(f.kind===1)n++",f"if(f.kind===0&&(!f.profile.includes('layer_group={GROUP} ')||!f.profile.includes('recurrent_kernel={MODE} ')))throw Error('execution metadata');if(f.kind===1)n++")
+    ts=ts.replace("if(f.kind===1)n++",f"if(f.kind===0&&(!f.profile.includes('layer_group={GROUP} ')||!f.profile.includes('recurrent_kernel={MODE} ')||!f.profile.includes('graph_mode={GRAPH} ')))throw Error('execution metadata');if(f.kind===1)n++")
     subprocess.run(['node','--import','tsx','--input-type=module','-e',ts,f'http://127.0.0.1:{port}'],cwd=ROOT,check=True,stdout=(OUT/'ts-client.log').open('w'),stderr=subprocess.STDOUT,timeout=60)
-    summary={'pass':True,'layer_group':GROUP,'recurrent_kernel':MODE,'scope':'bounded HTTP transport smoke, repeated short prompt; not throughput qualification','single':baseline,'three_lanes':lanes,'deadline':deadline,'disconnect':disconnected,'recovered':recovered}
+    summary={'pass':True,'layer_group':GROUP,'recurrent_kernel':MODE,'graph_mode':GRAPH,'scope':'bounded HTTP transport smoke, repeated short prompt; not throughput qualification','single':baseline,'three_lanes':lanes,'deadline':deadline,'disconnect':disconnected,'recovered':recovered}
     (OUT/'summary.json').write_text(json.dumps(summary,indent=2))
 finally:
     if proc.poll() is None:proc.send_signal(signal.SIGTERM)

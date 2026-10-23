@@ -29,3 +29,12 @@ test('recurrent ablation validates mode and compatible execution profile',()=>{
  assert.throws(()=>benchOptions(args(base+' --recurrent-kernel auto')));
  assert.throws(()=>benchOptions(args('--profiles mtp --arrival closed --tokens-per-cell 2000 --recurrent-kernel fused')));
 });
+
+test('compiled graph and profiler flags are explicit target-only controls',()=>{
+ const base='--profiles target-physical --arrival closed --tokens-per-cell 2000';
+ const defaults=benchOptions(args(base));assert.equal(defaults.graphMode,'eager');assert.equal(defaults.executionTiming,'off');
+ const tuned=benchOptions(args(base+' --graph-mode compiled-decode --execution-timing on --layer-group 10 --recurrent-kernel fused'));
+ assert.equal(tuned.graphMode,'compiled-decode');assert.equal(tuned.executionTiming,'on');
+ for(const tail of ['--graph-mode auto','--execution-timing yes','--graph-mode eager --graph-mode compiled-decode','--execution-timing on --execution-timing off','--graph-mode'])assert.throws(()=>benchOptions(args(base+' '+tail)));
+ for(const tail of ['--graph-mode compiled-decode','--execution-timing on'])assert.throws(()=>benchOptions(args('--profiles mtp --arrival closed --tokens-per-cell 2000 '+tail)));
+});

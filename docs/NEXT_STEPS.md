@@ -1,8 +1,8 @@
 ---
 title: "Next stages toward an Apple native inference server"
 document_type: "architecture"
-version: "1.2.0"
-date: "2026-10-23T20:58:00Z"
+version: "1.3.0"
+date: "2026-10-23T21:27:14.643Z"
 implementation_date: null
 author: "Codex for Stewart Barteau"
 reviewers: []
@@ -950,3 +950,9 @@ Next, in order:
 3. Qualify fused attention and any separately labeled lower-precision model lane against their own controls and the complete held-out suites. Preserve integer-only custom Metal arithmetic.
 4. Integrate the qualified target path into compatible native MTP/custom drafting, efficient multi-token verification, and automaton profitability scheduling. Acceptance and end-to-end speed are independent gates.
 5. Complete heterogeneous-position continuous batching and native paging with unified KV/convolution/recurrent rollback. Benchmark cold/warm TTFT, ITL tails, per-lane and aggregate throughput, memory and held-out coding quality before promotion.
+
+### Compiled-recurrence checkpoint
+
+Persistent native compiled decode blocks and nonintrusive execution counters are opt-in, default eager/off. Initial scalar, packed and frozen 60-case preservation gates passed; the task baseline remains 58/60. Warmed four-prompt compiled decode is 25.77 tok/s, not a material breakthrough and not HTTP qualification. Retain the eager control and classify the earlier pre-header eager profile as exploratory. Context-512/queue/restart pressure and actual TS/HTTP functional wiring have also passed. Fresh eager controls measured 26.00 tok/s with timing off and 25.94 with timing on (single ordered pair, no statistical speedup claim). Compiled timing-on remained 25.77 tok/s; defaults remain unchanged.
+
+Next performance discriminator: operator-attribution profile specified in NATIVE_TUNING_PLAN.md, with explicitly perturbing barriers and unchanged arithmetic. Then optimize the largest measured contributor and rerun uninstrumented native/HTTP controls. The independent speculative target still requires economical multi-token verification, compatible learned proposer, acceptance >=90% on held-out workloads and net committed tokens/s including draft/verify/commit cost. Keep the 100+ tok/s objective active; no default promotion or goal completion is supported by current evidence.

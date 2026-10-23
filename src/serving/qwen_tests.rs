@@ -39,6 +39,8 @@ impl Fixture {
             activation_precision: 1,
             layer_group: 1,
             fused_recurrent: 0,
+            execution_timing: 0,
+            compiled_decode: 0,
             epsilon: 1e-6,
             theta: 10000.,
         };

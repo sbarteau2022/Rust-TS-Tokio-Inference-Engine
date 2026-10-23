@@ -1,8 +1,8 @@
 ---
 title: "Adversarial review of the native kernel prototype"
 document_type: "research"
-version: "1.2.0"
-date: "2026-10-23T20:58:00Z"
+version: "1.3.0"
+date: "2026-10-23T21:27:14.643Z"
 implementation_date: null
 author: "Codex for Stewart Barteau"
 reviewers: []
@@ -906,3 +906,15 @@ Fused recurrence review: decay is already exponentiated, matching the upstream p
 
 
 Observed outcome: group-only scalar snapshot comparisons were bitwise equal. Fused/group-10 passed 63 full-logit/state comparisons at the preregistered limits, 96 packed-row comparisons, row permutation/lease pressure/canceled receiver checks, context-512 queue/cancellation/restart pressure and live physical HTTP deadline/disconnect/recovery/TS-client/both-reader gates. The 4,200-token candidate HTTP run independently verified exact frozen tokens, clocks/windows, declared settings and zero benchmark drain residue, with zero failed/canceled benchmark requests. Functional cancellation probes intentionally caused cancellations and one connection error; these are separate from the throughput run. Fused arithmetic is numerically close, not bitwise equal to the snapshot control. Defaults remain unchanged; this is not broad held-out quality, MTP acceptance, sustained heterogeneous batching or a comparative performance promotion.
+
+## Persistent compiled recurrence and execution attribution — 2026-10-23
+
+Reviewed stale-parent capture, stale attention offsets, cache growth, compiler-disable fallback, captured-callable lifetime, cross-thread compiler cache destruction, deterministic reference contamination, partial-result cancellation and profiler overclaim. Functions live in the immutable weight owner, receive all request arrays as arguments and are destroyed before weight arrays on the owning worker. The cache key includes layer/B/dtype/quant/kernel; supported B is 1..3 and the inventory cap is 90. Attention remains eager. Snapshot/trace controls disable compiled and fused recurrence. GPU/default-device/compiler availability checks fail closed. Rust/HTTP/TS switches default to eager/off and reject unsupported MTP tuning combinations.
+
+The initial four-prompt candidate passed 63 full-logit/unified-state comparisons and exact 64-token streams. The 60-case frozen suite then preserved every selected token at every generated position and the existing quality vector [15,20,23] (58/60), with logits max_abs 3.83854e-5, state max_abs 1.00851e-4, NRMSE below 1.92e-6. This is numerical and behavior preservation, not bitwise equality or 60/60 task quality. Packed B=1/2/3, immutable branches, permutations, sibling retention, invalid geometry/budget and dropped-result retirement passed separately. Native tests do not establish live HTTP wiring, long-context scaling or a speedup.
+
+Profiler counters add no completion barriers, distinguish attempts/completions, use no clocks when disabled and exclude independent snapshot/trace controls. An ASAN/UBSAN fake-clock judge checks interval accounting, abandoned attempts and duplicate completion refusal. Offline mutation tests reject impossible waits, false disabled mode, compiler inventory mismatch, missing observations and changed frozen tokens. These readers validate reported observations, not an independent GPU recomputation. Eval/completion wait includes dispatch and cannot be called GPU-only time. Cold compiler work precedes the warmed timing cells. No 100+ tok/s, >=90% acceptance or production sampling claim follows from this gate.
+
+Completed live checks: context-512 chunk/single drift stayed within the same strict numerical gate; three pending steps plus cancellation retained immutable parents and rejected the fourth admission; shutdown invalidated the one deliberately live state, and restart rejected its foreign epoch. Live target-physical HTTP passed single/three-lane frozen tokens, deadline, disconnect/recovery, real TS metadata, Rust/TS stream readers and zero owned-state drain. It exercised 60 compiled entries (B1/B2), 7 packed calls / 14 rows and 59 scalar calls. This functional smoke is not a sustained continuous-batching measurement. Offline gate audit also compared all 60 retained generated streams against the previously frozen native MTP-preservation suite, detecting omitted cases and altered tokens.
+
+Fresh eager on/off controls completed serially after regression jobs: 25.9379 versus 26.0037 warmed native tok/s. Both passed all 63 comparisons, exact frozen streams and zero drain; disabled counters and compiler inventories were zero. The observed ordered-pair timing difference is 0.25%, not an overhead confidence interval. Fresh wait averaged 36.594 ms per forward versus 0.861 ms graph/bookkeeping. Compiler recurrence did not establish a material gain; no default change is justified. Final regression: 191 default and 191 debug-validation Rust tests, 26 TS tests, 38 offline adversarial reader tests, TS 7.1/tsrs, all-target Clippy, formatting and ASAN/UBSAN timer accounting passed.

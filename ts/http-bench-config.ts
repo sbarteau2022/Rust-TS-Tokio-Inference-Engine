@@ -2,15 +2,17 @@
 export const profileLabels={target:'Target','target-physical':'Target',mtp:'Mtp','mtp-audited':'Audited'} as const;
 export type Profile=keyof typeof profileLabels;
 export function benchOptions(args:string[]){
- if(args.length!==6&&args.length!==8&&args.length!==10)throw Error('required --profiles ORDER --arrival closed|closed+open --tokens-per-cell N [--layer-group 1|4|10|40] [--recurrent-kernel reference|fused]');
- const values=new Map<string,string>();for(let i=0;i<args.length;i+=2){const key=args[i]!,value=args[i+1]!;if(!['--profiles','--arrival','--tokens-per-cell','--layer-group','--recurrent-kernel'].includes(key)||values.has(key))throw Error('unknown/duplicate benchmark flag');values.set(key,value);}
+ if(args.length<6||args.length>14||args.length%2)throw Error('required --profiles ORDER --arrival closed|closed+open --tokens-per-cell N; optional --layer-group, --recurrent-kernel, --execution-timing, --graph-mode');
+ const values=new Map<string,string>();for(let i=0;i<args.length;i+=2){const key=args[i]!,value=args[i+1]!;if(!['--profiles','--arrival','--tokens-per-cell','--layer-group','--recurrent-kernel','--execution-timing','--graph-mode'].includes(key)||values.has(key))throw Error('unknown/duplicate benchmark flag');values.set(key,value);}
  const profiles=values.get('--profiles')?.split(',')??[];if(!profiles.length||profiles.length>3||new Set(profiles).size!==profiles.length||profiles.some(p=>!Object.hasOwn(profileLabels,p)))throw Error('invalid profile order');
  const arrival=values.get('--arrival');if(arrival!=='closed'&&arrival!=='closed+open')throw Error('invalid arrival policy');
  const raw=values.get('--tokens-per-cell')??'';if(!/^\d+$/.test(raw))throw Error('decimal token budget required');const tokens=Number(raw);if(!Number.isSafeInteger(tokens)||tokens<1000||tokens>2000)throw Error('token budget 1000..2000');
  const group=values.get('--layer-group')??'1';if(!['1','4','10','40'].includes(group))throw Error('invalid layer group');
  const recurrent=values.get('--recurrent-kernel')??'reference';if(!['reference','fused'].includes(recurrent))throw Error('invalid recurrent kernel');
- if((group!=='1'||recurrent==='fused')&&profiles.some(p=>p!=='target'&&p!=='target-physical'))throw Error('grouped layers require target profiles');
- return {profiles:profiles as Profile[],arrival,tokens,layerGroup:Number(group),recurrentKernel:recurrent};
+ const timing=values.get('--execution-timing')??'off';if(!['off','on'].includes(timing))throw Error('invalid execution timing');
+ const graph=values.get('--graph-mode')??'eager';if(!['eager','compiled-decode'].includes(graph))throw Error('invalid graph mode');
+ if((group!=='1'||recurrent==='fused'||timing==='on'||graph!=='eager')&&profiles.some(p=>p!=='target'&&p!=='target-physical'))throw Error('execution tuning requires target profiles');
+ return {profiles:profiles as Profile[],arrival,tokens,layerGroup:Number(group),recurrentKernel:recurrent,executionTiming:timing,graphMode:graph};
 }
 export function wavePlan(left:number,lanes:number):number[]{if(!Number.isInteger(left)||left<1||left>2000||![1,3].includes(lanes))throw Error('wave bounds');const plan:number[]=[];for(let i=0;i<lanes&&left>0;i++){const n=Math.min(64,left);plan.push(n);left-=n;}return plan;}
 export interface Clock {now():number;sleep(ms:number):Promise<unknown>}

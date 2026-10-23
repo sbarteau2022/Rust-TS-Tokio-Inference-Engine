@@ -158,6 +158,42 @@ fn recurrent_flags(flags: &[String]) -> Result<(bool, Vec<String>)> {
     }
     Ok((mode.unwrap_or(false), rest))
 }
+fn timing_flags(flags: &[String]) -> Result<(bool, Vec<String>)> {
+    ensure!(flags.len().is_multiple_of(2), "timing flags require pairs");
+    let mut mode = None;
+    let mut rest = Vec::new();
+    for pair in flags.as_chunks::<2>().0 {
+        if pair[0] == "--execution-timing" {
+            ensure!(mode.is_none(), "duplicate execution timing");
+            mode = Some(match pair[1].as_str() {
+                "off" => false,
+                "on" => true,
+                _ => anyhow::bail!("execution timing must be off|on"),
+            });
+        } else {
+            rest.extend_from_slice(pair);
+        }
+    }
+    Ok((mode.unwrap_or(false), rest))
+}
+fn graph_flags(flags: &[String]) -> Result<(bool, Vec<String>)> {
+    ensure!(flags.len().is_multiple_of(2), "graph flags require pairs");
+    let mut mode = None;
+    let mut rest = Vec::new();
+    for pair in flags.as_chunks::<2>().0 {
+        if pair[0] == "--graph-mode" {
+            ensure!(mode.is_none(), "duplicate graph mode");
+            mode = Some(match pair[1].as_str() {
+                "eager" => false,
+                "compiled-decode" => true,
+                _ => anyhow::bail!("graph mode must be eager|compiled-decode"),
+            });
+        } else {
+            rest.extend_from_slice(pair);
+        }
+    }
+    Ok((mode.unwrap_or(false), rest))
+}
 pub async fn serve(
     address: SocketAddr,
     body_timeout_ms: u64,
@@ -168,7 +204,9 @@ pub async fn serve(
         config::Config,
         native_mlx::Device,
         native_mtp_cli::Options,
-        native_qwen::{QwenDeviceExecutor, ScheduledDevice, ScheduledMtp, StateMode},
+        native_qwen::{
+            ExecutionTuning, QwenDeviceExecutor, ScheduledDevice, ScheduledMtp, StateMode,
+        },
         scheduler::Engine,
         weights::Manifest,
     };
@@ -179,7 +217,9 @@ pub async fn serve(
             && (1..=64).contains(&max_connections),
         "explicit loopback address/nonzero port and HTTP limits required"
     );
-    let (fused_recurrent, flags) = recurrent_flags(flags)?;
+    let (compiled_decode, flags) = graph_flags(flags)?;
+    let (execution_timing, flags) = timing_flags(&flags)?;
+    let (fused_recurrent, flags) = recurrent_flags(&flags)?;
     let (layer_group, flags) = layer_group_flags(&flags)?;
     let (physical, flags) = batching_flags(&flags)?;
     let (deferred_seed, flags) = seed_flags(&flags)?;
@@ -200,6 +240,18 @@ pub async fn serve(
         !fused_recurrent || execution == Profile::Target,
         "fused recurrent requires target profile"
     );
+    ensure!(
+        !execution_timing || execution == Profile::Target,
+        "execution timing requires target profile"
+    );
+    ensure!(
+        !compiled_decode || execution == Profile::Target,
+        "compiled decode requires target profile"
+    );
+    ensure!(
+        !compiled_decode || std::env::var_os("MLX_DISABLE_COMPILE").is_none(),
+        "compiled decode refuses MLX_DISABLE_COMPILE"
+    );
     let options = Options::parse(&flags)?;
     let controller = options.controller()?;
     let manifest = Manifest::read(std::path::Path::new(
@@ -208,8 +260,18 @@ pub async fn serve(
     let tokenizer = NativeTokenizer::load(&manifest)?;
     let state_budget = if physical { 2 } else { 1 } * 1024 * 1024 * 1024;
     let executor = Arc::new(if execution == Profile::Target {
-        QwenDeviceExecutor::open_tuned(Device::Gpu, 64, state_budget, layer_group, fused_recurrent)
-            .await?
+        QwenDeviceExecutor::open_configured(
+            Device::Gpu,
+            64,
+            state_budget,
+            ExecutionTuning {
+                layer_group,
+                fused_recurrent,
+                execution_timing,
+                compiled_decode,
+            },
+        )
+        .await?
     } else {
         QwenDeviceExecutor::open_mtp(Device::Gpu, 64, state_budget).await?
     });
@@ -261,7 +323,7 @@ pub async fn serve(
             None,
         )
     };
-    let profile=format!("EXPERIMENTAL-NATIVE-HTTP execution={execution:?} seed_mode={} width={} stream_capacity={} policy={:?} context=511 in_flight=3 body_timeout_ms={body_timeout_ms} max_connections={max_connections} physical_tensor_batching={physical} layer_group={layer_group} recurrent_kernel={} state_budget_bytes={state_budget} production_qualified=false audit_clock={}",if deferred_seed {"deferred"} else {"eager"},options.width,options.capacity,options.policy,if fused_recurrent {"fused"} else {"reference"},if execution==Profile::Audited {"validated-batches"} else {"disabled"});
+    let profile=format!("EXPERIMENTAL-NATIVE-HTTP execution={execution:?} seed_mode={} width={} stream_capacity={} policy={:?} context=511 in_flight=3 body_timeout_ms={body_timeout_ms} max_connections={max_connections} physical_tensor_batching={physical} layer_group={layer_group} recurrent_kernel={} execution_timing={} graph_mode={} state_budget_bytes={state_budget} production_qualified=false audit_clock={}",if deferred_seed {"deferred"} else {"eager"},options.width,options.capacity,options.policy,if fused_recurrent {"fused"} else {"reference"},if execution_timing {"on"} else {"off"},if compiled_decode {"compiled-decode"} else {"eager"},if execution==Profile::Audited {"validated-batches"} else {"disabled"});
     let engine = Arc::new(engine);
     let codec = Arc::new(Codec::new(tokenizer, executor.identity().into()));
     let server = http::Server::bind(
@@ -296,6 +358,11 @@ pub async fn serve(
     let transport = transport?;
     let scheduler = scheduler?;
     let native = native?;
+    println!("EXECUTION_METRICS {:?}", native.execution);
+    println!(
+        "COMPILED_CACHE entries={} misses={} calls={}",
+        native.compiled_entries, native.compiled_misses, native.compiled_calls
+    );
     println!(
         "NATIVE_MEMORY active_bytes={} peak_bytes={} layer_group={layer_group}",
         native.mlx_active_bytes, native.mlx_peak_bytes
@@ -335,6 +402,34 @@ mod tests {
     use super::*;
     fn args(s: &str) -> Vec<String> {
         s.split_whitespace().map(str::to_owned).collect()
+    }
+    #[test]
+    fn compiled_mode_is_explicit() {
+        assert!(!graph_flags(&[]).unwrap().0);
+        assert!(
+            graph_flags(&args("--graph-mode compiled-decode"))
+                .unwrap()
+                .0
+        );
+        for s in [
+            "--graph-mode",
+            "--graph-mode auto",
+            "--graph-mode compiled-decode --graph-mode eager",
+        ] {
+            assert!(graph_flags(&args(s)).is_err());
+        }
+    }
+    #[test]
+    fn timing_is_explicit_and_fail_closed() {
+        assert!(!timing_flags(&[]).unwrap().0);
+        assert!(timing_flags(&args("--execution-timing on")).unwrap().0);
+        for s in [
+            "--execution-timing",
+            "--execution-timing yes",
+            "--execution-timing on --execution-timing off",
+        ] {
+            assert!(timing_flags(&args(s)).is_err());
+        }
     }
     #[test]
     fn recurrent_kernel_is_explicit() {

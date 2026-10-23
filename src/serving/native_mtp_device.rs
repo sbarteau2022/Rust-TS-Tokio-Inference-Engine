@@ -71,7 +71,13 @@ impl QwenDeviceExecutor {
             "MTP resident budget bounds"
         );
         tokio::task::spawn_blocking(move || {
-            Self::start(device, slots, logical_byte_limit, true, 1, false)
+            Self::start(
+                device,
+                slots,
+                logical_byte_limit,
+                true,
+                ExecutionTuning::default(),
+            )
         })
         .await?
     }

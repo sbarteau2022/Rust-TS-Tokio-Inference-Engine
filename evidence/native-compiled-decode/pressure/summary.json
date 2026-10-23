@@ -1,0 +1,28 @@
+{
+  "branch_isolation": true,
+  "chunk_single_logit_drift": [
+    3.982656002633978e-7,
+    4.887580871582031e-6
+  ],
+  "chunk_single_state_drift": [
+    1.9030116941303516e-7,
+    0.000011444091796875
+  ],
+  "context": 512,
+  "explicit_diagnostic_exported_bytes": 438517760,
+  "fourth_step_rejected": true,
+  "graph_mode": "compiled-decode",
+  "hot_path_exported_bytes": 0,
+  "hot_path_uploaded_bytes": 0,
+  "layer_group": 10,
+  "mlx_peak_bytes_process": 20463260740,
+  "pass": true,
+  "pending_receipt_cancel": true,
+  "physical_command_buffer_cap_claim": false,
+  "recovery": true,
+  "recurrent_kernel": "fused",
+  "restart_foreign_epoch_rejected": true,
+  "shutdown_invalidated": 1,
+  "slot_exhaustion": true,
+  "three_admitted_queue_cancel": true
+}

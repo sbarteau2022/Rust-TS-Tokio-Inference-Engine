@@ -1,0 +1,41 @@
+{
+  "bitwise_match": false,
+  "cases": 60,
+  "compiled_calls": 2970,
+  "compiled_entries": 30,
+  "compiled_misses": 30,
+  "diagnostic_exported_bytes": 24067112960,
+  "elapsed_seconds": 57.830225291,
+  "graph_mode": "compiled-decode",
+  "identity": "509cc92543203798f2db08b6fb6cbb38a80942fc0437ae81a3ef9ff27720915b",
+  "layer_group": 10,
+  "maxima": [
+    1.9167933295561435e-6,
+    0.00003838539123535156,
+    0.0,
+    0.0,
+    9.720439041305112e-7,
+    0.00010085105895996094
+  ],
+  "maxima_order": [
+    "logit_nrmse",
+    "logit_max_abs",
+    "trace_nrmse",
+    "trace_max_abs",
+    "state_nrmse",
+    "state_max_abs"
+  ],
+  "mlx_peak_bytes_process": 20069278084,
+  "pass": true,
+  "production_qualified": false,
+  "quality": [
+    15,
+    20,
+    23
+  ],
+  "recurrent_kernel": "fused",
+  "residents_after_drain": 0,
+  "steps": 360,
+  "trace_compared": false,
+  "uploaded_bytes": 0
+}

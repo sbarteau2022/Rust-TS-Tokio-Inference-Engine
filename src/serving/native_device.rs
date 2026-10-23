@@ -48,6 +48,17 @@ pub struct DeviceStep {
     pub logits: Vec<f32>,
     pub trace: Vec<f32>,
 }
+/// Host intervals; eval wait includes dispatch and is not GPU-only time.
+#[derive(Clone, Copy, Debug, Default, serde::Serialize)]
+pub struct ExecutionMetrics {
+    pub calls: u64,
+    pub completed: u64,
+    pub graph_ns: u64,
+    pub wait_ns: u64,
+    pub validation_export_ns: u64,
+    pub wall_ns: u64,
+    pub completion_groups: u64,
+}
 #[derive(Clone, Copy, Debug, Default)]
 pub struct DeviceStats {
     pub residents: u64,
@@ -60,6 +71,10 @@ pub struct DeviceStats {
     pub mlx_active_bytes: u64,
     pub mlx_peak_bytes: u64,
     pub invalidated_at_shutdown: u64,
+    pub execution: ExecutionMetrics,
+    pub compiled_entries: u64,
+    pub compiled_misses: u64,
+    pub compiled_calls: u64,
 }
 #[path = "native_mtp_device.rs"]
 mod mtp;
@@ -106,7 +121,7 @@ impl Session {
         )
     }
     fn stats(&self) -> Result<DeviceStats> {
-        let mut v = [0; 7];
+        let mut v = [0; 17];
         let mut e = [0; 1024];
         native_status(
             unsafe {
@@ -123,6 +138,18 @@ impl Session {
             mlx_active_bytes: v[5],
             mlx_peak_bytes: v[6],
             invalidated_at_shutdown: 0,
+            compiled_entries: v[14],
+            compiled_misses: v[15],
+            compiled_calls: v[16],
+            execution: ExecutionMetrics {
+                calls: v[7],
+                completed: v[8],
+                graph_ns: v[9],
+                wait_ns: v[10],
+                validation_export_ns: v[11],
+                wall_ns: v[12],
+                completion_groups: v[13],
+            },
         })
     }
 }
@@ -157,6 +184,35 @@ impl QwenDeviceExecutor {
         layer_group: u32,
         fused_recurrent: bool,
     ) -> Result<Self> {
+        Self::open_configured(
+            device,
+            slots,
+            logical_byte_limit,
+            ExecutionTuning {
+                layer_group,
+                fused_recurrent,
+                execution_timing: false,
+                compiled_decode: false,
+            },
+        )
+        .await
+    }
+    pub async fn open_configured(
+        device: Device,
+        slots: usize,
+        logical_byte_limit: u64,
+        tuning: ExecutionTuning,
+    ) -> Result<Self> {
+        ensure!(
+            !tuning.compiled_decode
+                || (device == Device::Gpu && std::env::var_os("MLX_DISABLE_COMPILE").is_none()),
+            "compiled decode requires GPU and no MLX_DISABLE_COMPILE"
+        );
+        let ExecutionTuning {
+            layer_group,
+            fused_recurrent,
+            ..
+        } = tuning;
         ensure!(
             !fused_recurrent || device == Device::Gpu,
             "fused recurrent requires GPU"
@@ -172,14 +228,7 @@ impl QwenDeviceExecutor {
             "device resident budget bounds"
         );
         tokio::task::spawn_blocking(move || {
-            Self::start(
-                device,
-                slots,
-                logical_byte_limit,
-                false,
-                layer_group,
-                fused_recurrent,
-            )
+            Self::start(device, slots, logical_byte_limit, false, tuning)
         })
         .await?
     }
@@ -188,15 +237,16 @@ impl QwenDeviceExecutor {
         slots: usize,
         limit: u64,
         mtp_enabled: bool,
-        layer_group: u32,
-        fused_recurrent: bool,
+        tuning: ExecutionTuning,
     ) -> Result<Self> {
         let manifest = Manifest::read(Path::new(
             include_str!("../../fixtures/native-model.path").trim(),
         ))?;
         let mut architecture = Architecture::workhorse(&manifest)?;
-        architecture.layer_group = layer_group as i32;
-        architecture.fused_recurrent = i32::from(fused_recurrent);
+        architecture.layer_group = tuning.layer_group as i32;
+        architecture.fused_recurrent = i32::from(tuning.fused_recurrent);
+        architecture.execution_timing = i32::from(tuning.execution_timing);
+        architecture.compiled_decode = i32::from(tuning.compiled_decode);
         let identity = manifest.identity.clone();
         let program = HybridProgram::compile(40, 4)?;
         let owner = next_owner()?;
@@ -1034,6 +1084,20 @@ mod tests {
         assert!(!dropped.load(Ordering::SeqCst));
         drop(work);
         assert!(dropped.load(Ordering::SeqCst));
+    }
+    #[tokio::test]
+    async fn compiled_decode_rejects_cpu_before_loading_weights() {
+        assert!(QwenDeviceExecutor::open_configured(
+            Device::Cpu,
+            1,
+            1,
+            ExecutionTuning {
+                compiled_decode: true,
+                ..ExecutionTuning::default()
+            },
+        )
+        .await
+        .is_err());
     }
     #[tokio::test]
     async fn invalid_budget_rejects_before_loading_weights() {

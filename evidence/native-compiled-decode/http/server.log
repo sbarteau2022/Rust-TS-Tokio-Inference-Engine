@@ -1,0 +1,6 @@
+READY http://127.0.0.1:56033 identity=509cc92543203798f2db08b6fb6cbb38a80942fc0437ae81a3ef9ff27720915b
+EXECUTION_METRICS ExecutionMetrics { calls: 0, completed: 0, graph_ns: 0, wait_ns: 0, validation_export_ns: 0, wall_ns: 0, completion_groups: 0 }
+COMPILED_CACHE entries=60 misses=60 calls=1320
+NATIVE_MEMORY active_bytes=19508919616 peak_bytes=20350526328 layer_group=10
+BATCH_METRICS BatchCounters { packed_calls: 7, packed_rows: 14, scalar_calls: 59 }
+DRAIN http=Stats { active_connections: 0, active_producers: 0, accepted_connections: 10, rejected_requests: 0, queued_finishes: 6, deadlines: 1, disconnected: 1, stopped: 0, producer_errors: 0, connection_errors: 1 } scheduler=Stats { admitted: 8, completed: 6, failed: 0, cancelled: 2, iterations: 54, memory_used: 0, memory_peak: 1318387712, admission_closed: false } native_bytes=0 audit_epochs=0

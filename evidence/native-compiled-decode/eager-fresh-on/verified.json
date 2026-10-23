@@ -1,0 +1,16 @@
+{
+  "pass": true,
+  "graph_mode": "eager",
+  "execution_timing": "on",
+  "warm_native_decode_tok_s": 25.937892180350797,
+  "decode_execution": {
+    "calls": 252,
+    "completed": 252,
+    "completion_groups": 1260,
+    "graph_ns": 216935178,
+    "validation_export_ns": 4454336,
+    "wait_ns": 9221742528,
+    "wall_ns": 9445273002
+  },
+  "scope": "four-prompt warm native observation integrity; no HTTP, held-out or speedup claim"
+}

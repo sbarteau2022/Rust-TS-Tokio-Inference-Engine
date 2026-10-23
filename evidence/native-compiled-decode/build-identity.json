@@ -1,0 +1,31 @@
+{
+  "time": "2026-10-23T21:21:07.323Z",
+  "model": "/Users/stewartbarteau/models/fused/Qwen3.6-MoE-Combined",
+  "identity": "509cc92543203798f2db08b6fb6cbb38a80942fc0437ae81a3ef9ff27720915b",
+  "hashes": {
+    "target/release/examples/native_group_qualification": "a46f8bab060496c47c48e10e297df5a19b25349529399f8675863f7f7832e296",
+    "target/release/examples/native_physical_batch": "72504a22bbbe287b1e1e93a2249eef7496e62900b3420c06f87487246015dc28",
+    "target/release/examples/native_device_reference": "3c447a2b4d7dfb8dbf326b7c057e48ee62095de1b8c6d9ecc4bc71a772075deb",
+    "target/release/examples/native_device_pressure": "4ba4626c3a5abfd9b080070d8dd17986478d202b485375e186c3e03f12d666b2",
+    "native/qwen_model.inc": "94f83bd0867cbc5bcfc132addbad89151ecad49cf5c7173612e0b4b7ee969edb",
+    "native/qwen_batch.inc": "7a429d5869a81137b829761b1a58b90f8da35f978e14434251e066b9430ca5d2",
+    "native/execution_timing.h": "e8e2ac5a7630e71b00be284c6bf6b57b8039afc33cce005f895c3077870eb295"
+  },
+  "commands": [
+    "native_group_qualification evidence/native-compiled-decode/compiled-timing 10 fused on compiled-decode",
+    "native_physical_batch evidence/native-compiled-decode/packed 10 fused compiled-decode",
+    "native_device_reference evidence/native-compiled-decode/heldout 10 fused compiled-decode",
+    "native_device_pressure evidence/native-compiled-decode/pressure 10 fused compiled-decode",
+    "python3 judges/native_physical_http.py evidence/native-compiled-decode/http 10 fused compiled-decode",
+    "native_group_qualification evidence/native-compiled-decode/eager-fresh-on 10 fused on eager",
+    "native_group_qualification evidence/native-compiled-decode/eager-fresh-off 10 fused off eager"
+  ],
+  "limitations": [
+    "The earlier eager-timing binary predates the header extraction and is exploratory only.",
+    "Cold compiler initialization precedes warmed four-prompt timing; this is not cold TTFT.",
+    "No matched HTTP performance or 100 tok/s claim.",
+    "Fresh eager controls run on then off, one process at a time; no reverse-order repeat or statistical speedup claim.",
+    "Context-pressure source subsequently tightened its assertion to also require max_abs <=1e-3; the retained measured errors independently satisfy that stricter assertion."
+  ],
+  "server_binary_sha256": "0c4e6f3455d98d22719ac9ecaa02860be8bc925c45ed0dae9937a67dd8e35d2e"
+}

@@ -27,6 +27,24 @@ pub enum ActivationPrecision {
     Bf16 = 0,
     F32 = 1,
 }
+/// Explicit target execution controls; defaults retain the reference profile.
+#[derive(Clone, Copy, Debug)]
+pub struct ExecutionTuning {
+    pub layer_group: u32,
+    pub fused_recurrent: bool,
+    pub execution_timing: bool,
+    pub compiled_decode: bool,
+}
+impl Default for ExecutionTuning {
+    fn default() -> Self {
+        Self {
+            layer_group: 1,
+            fused_recurrent: false,
+            execution_timing: false,
+            compiled_decode: false,
+        }
+    }
+}
 #[repr(C)]
 #[derive(Clone, Copy, Debug)]
 struct Architecture {
@@ -54,6 +72,8 @@ struct Architecture {
     activation_precision: i32,
     layer_group: i32,
     fused_recurrent: i32,
+    execution_timing: i32,
+    compiled_decode: i32,
     epsilon: f32,
     theta: f32,
 }
@@ -143,6 +163,8 @@ impl Architecture {
             activation_precision: 1,
             layer_group: 1,
             fused_recurrent: 0,
+            execution_timing: 0,
+            compiled_decode: 0,
             epsilon: 1e-6,
             theta: 10000000.,
         })
@@ -672,7 +694,8 @@ mod tests;
 #[path = "native_device.rs"]
 mod device;
 pub use device::{
-    DeviceBlock, DeviceState, DeviceStats, DeviceStep, MtpState, MtpStep, QwenDeviceExecutor,
+    DeviceBlock, DeviceState, DeviceStats, DeviceStep, ExecutionMetrics, MtpState, MtpStep,
+    QwenDeviceExecutor,
 };
 
 #[path = "native_device_scheduler.rs"]

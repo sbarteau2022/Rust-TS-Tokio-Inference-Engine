@@ -1,6 +1,9 @@
 //! Hardware lifetime/cancellation/context pressure. No model-quality promotion.
 use anyhow::{ensure, Result};
-use rust_server::serving::{native_mlx::Device, native_qwen::QwenDeviceExecutor};
+use rust_server::serving::{
+    native_mlx::Device,
+    native_qwen::{ExecutionTuning, QwenDeviceExecutor},
+};
 use std::{future::Future, path::Path, task::Poll};
 fn drift(a: &[f32], b: &[f32]) -> Result<(f64, f64)> {
     ensure!(
@@ -22,8 +25,8 @@ fn drift(a: &[f32], b: &[f32]) -> Result<(f64, f64)> {
 async fn main() -> Result<()> {
     let args: Vec<_> = std::env::args().skip(1).collect();
     ensure!(
-        (1..=3).contains(&args.len()),
-        "native_device_pressure NEW_DIRECTORY [GROUP] [reference|fused]"
+        (1..=4).contains(&args.len()),
+        "native_device_pressure NEW_DIRECTORY [GROUP] [reference|fused] [eager|compiled-decode]"
     );
     let group: u32 = args.get(1).map_or(Ok(1), |s| s.parse())?;
     let mode = args.get(2).map_or("reference", String::as_str);
@@ -31,11 +34,18 @@ async fn main() -> Result<()> {
         matches!(mode, "reference" | "fused"),
         "recurrent kernel mode"
     );
+    let graph = args.get(3).map_or("eager", String::as_str);
+    ensure!(matches!(graph, "eager" | "compiled-decode"), "graph mode");
+    let tuning = ExecutionTuning {
+        layer_group: group,
+        fused_recurrent: mode == "fused",
+        execution_timing: false,
+        compiled_decode: graph == "compiled-decode",
+    };
     let out = Path::new(&args[0]);
     std::fs::create_dir(out)?;
     let executor =
-        QwenDeviceExecutor::open_tuned(Device::Gpu, 8, 768 * 1024 * 1024, group, mode == "fused")
-            .await?;
+        QwenDeviceExecutor::open_configured(Device::Gpu, 8, 768 * 1024 * 1024, tuning).await?;
     let prefix = executor
         .step(&executor.empty_state(), vec![16; 8])
         .await?
@@ -149,7 +159,10 @@ async fn main() -> Result<()> {
         &executor.snapshot(&single).await?,
     )?;
     ensure!(
-        logit_drift.0 <= 1e-5 && state_drift.0 <= 1e-5,
+        logit_drift.0 <= 1e-5
+            && state_drift.0 <= 1e-5
+            && logit_drift.1 <= 1e-3
+            && state_drift.1 <= 1e-3,
         "context chunk/single parity {logit_drift:?} {state_drift:?}"
     );
     ensure!(
@@ -167,8 +180,7 @@ async fn main() -> Result<()> {
             && shutdown.invalidated_at_shutdown == 1,
         "shutdown did not invalidate live version"
     );
-    let restarted =
-        QwenDeviceExecutor::open_tuned(Device::Gpu, 2, 1, group, mode == "fused").await?;
+    let restarted = QwenDeviceExecutor::open_configured(Device::Gpu, 2, 1, tuning).await?;
     ensure!(
         restarted.step(&survivor, vec![16]).await.is_err(),
         "foreign epoch accepted after restart"
@@ -186,7 +198,7 @@ async fn main() -> Result<()> {
         final_stats.residents == 0 && final_stats.steps == 0,
         "restart drain"
     );
-    let report = serde_json::json!({"pass":true,"layer_group":group,"recurrent_kernel":mode,"slot_exhaustion":true,"recovery":true,"branch_isolation":true,"pending_receipt_cancel":true,"three_admitted_queue_cancel":true,"fourth_step_rejected":true,"context":512,"chunk_single_logit_drift":logit_drift,"chunk_single_state_drift":state_drift,"hot_path_exported_bytes":stats.exported_bytes,"hot_path_uploaded_bytes":stats.uploaded_bytes,"explicit_diagnostic_exported_bytes":before.exported_bytes,"shutdown_invalidated":shutdown.invalidated_at_shutdown,"restart_foreign_epoch_rejected":true,"mlx_peak_bytes_process":before.mlx_peak_bytes,"physical_command_buffer_cap_claim":false});
+    let report = serde_json::json!({"pass":true,"layer_group":group,"recurrent_kernel":mode,"graph_mode":graph,"slot_exhaustion":true,"recovery":true,"branch_isolation":true,"pending_receipt_cancel":true,"three_admitted_queue_cancel":true,"fourth_step_rejected":true,"context":512,"chunk_single_logit_drift":logit_drift,"chunk_single_state_drift":state_drift,"hot_path_exported_bytes":stats.exported_bytes,"hot_path_uploaded_bytes":stats.uploaded_bytes,"explicit_diagnostic_exported_bytes":before.exported_bytes,"shutdown_invalidated":shutdown.invalidated_at_shutdown,"restart_foreign_epoch_rejected":true,"mlx_peak_bytes_process":before.mlx_peak_bytes,"physical_command_buffer_cap_claim":false});
     std::fs::write(
         out.join("summary.json"),
         serde_json::to_vec_pretty(&report)?,

@@ -4,7 +4,7 @@ use rust_server::serving::{
     choices,
     model_ir::{ModelStepIr, StepKind},
     native_mlx::Device,
-    native_qwen::QwenDeviceExecutor,
+    native_qwen::{ExecutionMetrics, ExecutionTuning, QwenDeviceExecutor},
     native_tokenizer::NativeTokenizer,
     weights::Manifest,
 };
@@ -25,12 +25,22 @@ fn compare(a: &[f32], b: &[f32]) -> Result<serde_json::Value> {
         serde_json::json!({"pass":nrmse<=1e-5&&max<=1e-3,"nrmse":nrmse,"max_abs":max,"unequal_bits":unequal}),
     )
 }
+fn metrics_delta(before: ExecutionMetrics, after: ExecutionMetrics) -> Result<serde_json::Value> {
+    let a = serde_json::to_value(before)?;
+    let mut b = serde_json::to_value(after)?;
+    for (key, value) in b.as_object_mut().context("metrics object")? {
+        let before = a[key].as_u64().context("metrics integer")?;
+        let after = value.as_u64().context("metrics integer")?;
+        *value = serde_json::json!(after.checked_sub(before).context("metrics decreased")?);
+    }
+    Ok(b)
+}
 #[tokio::main]
 async fn main() -> Result<()> {
     let args: Vec<_> = std::env::args().skip(1).collect();
     ensure!(
-        (2..=3).contains(&args.len()),
-        "native_group_qualification NEW_DIRECTORY GROUP [reference|fused]"
+        (2..=5).contains(&args.len()),
+        "native_group_qualification NEW_DIRECTORY GROUP [reference|fused] [off|on] [eager|compiled-decode]"
     );
     let group: u32 = args[1].parse()?;
     ensure!(matches!(group, 1 | 4 | 10 | 40), "group bounds");
@@ -39,21 +49,35 @@ async fn main() -> Result<()> {
         matches!(mode, "reference" | "fused"),
         "recurrent kernel mode"
     );
+    let timing = args.get(3).map_or("off", String::as_str);
+    ensure!(matches!(timing, "off" | "on"), "execution timing mode");
+    let graph = args.get(4).map_or("eager", String::as_str);
+    ensure!(matches!(graph, "eager" | "compiled-decode"), "graph mode");
     let out = Path::new(&args[0]);
     std::fs::create_dir(out)?;
     let manifest = Manifest::read(Path::new(
         include_str!("../fixtures/native-model.path").trim(),
     ))?;
     let tokenizer = NativeTokenizer::load(&manifest)?;
-    let executor =
-        QwenDeviceExecutor::open_tuned(Device::Gpu, 16, 1024 * 1024 * 1024, group, mode == "fused")
-            .await?;
+    let executor = QwenDeviceExecutor::open_configured(
+        Device::Gpu,
+        16,
+        1024 * 1024 * 1024,
+        ExecutionTuning {
+            layer_group: group,
+            fused_recurrent: mode == "fused",
+            execution_timing: timing == "on",
+            compiled_decode: graph == "compiled-decode",
+        },
+    )
+    .await?;
     let frozen: serde_json::Value = serde_json::from_slice(&std::fs::read(
         "evidence/native-mtp-stream-matrix/raw/references.json",
     )?)?;
     let mut observations = Vec::new();
     let mut timings = Vec::new();
     let mut passed = true;
+    let mut previous_misses = 0;
     for (prompt, line) in include_str!("../fixtures/native-speculative-prompts.tsv")
         .lines()
         .enumerate()
@@ -77,7 +101,15 @@ async fn main() -> Result<()> {
             };
             let ir = ModelStepIr::compile(StepKind::Prefill, state.position(), tokens, 248320)?;
             let baseline = executor.reference_execute(&reference, ir.clone()).await?;
+            let candidate_start = Instant::now();
             let candidate = executor.execute(&state, ir).await?;
+            let candidate_seconds = candidate_start.elapsed().as_secs_f64();
+            let candidate_stats = executor.stats().await?;
+            let compiled_misses_delta = candidate_stats
+                .compiled_misses
+                .checked_sub(previous_misses)
+                .context("compiler misses decreased")?;
+            previous_misses = candidate_stats.compiled_misses;
             let values = executor.snapshot(&candidate.state).await?;
             let l = compare(&candidate.logits, &baseline.logits)?;
             let s = compare(&values, executor.reference_values(&baseline.state)?)?;
@@ -86,7 +118,7 @@ async fn main() -> Result<()> {
                 && s["pass"] == true
                 && token == choices::select(&baseline.logits, None)?;
             passed &= ok;
-            observations.push(serde_json::json!({"prompt":prompt,"decode":decode,"position":candidate.state.position(),"logits":l,"state":s,"token":token,"pass":ok}));
+            observations.push(serde_json::json!({"prompt":prompt,"decode":decode,"candidate_seconds":candidate_seconds,"compiled_misses_delta":compiled_misses_delta,"position":candidate.state.position(),"logits":l,"state":s,"token":token,"pass":ok}));
             std::fs::write(
                 out.join("partial.json"),
                 serde_json::to_vec_pretty(&observations)?,
@@ -97,6 +129,7 @@ async fn main() -> Result<()> {
         }
         drop((state, reference, logits));
         // Time a fresh generation without snapshot/reference work; preserve exact frozen tokens.
+        let before_prefill = executor.stats().await?.execution;
         let start = Instant::now();
         let mut state = executor.empty_state();
         let mut logits = Vec::new();
@@ -106,6 +139,7 @@ async fn main() -> Result<()> {
             logits = step.logits;
         }
         let ttft = start.elapsed().as_secs_f64();
+        let before_decode = executor.stats().await?.execution;
         let decode_start = Instant::now();
         let mut tokens = Vec::new();
         for i in 0..64 {
@@ -122,7 +156,10 @@ async fn main() -> Result<()> {
             }
         }
         let decode_seconds = decode_start.elapsed().as_secs_f64();
-        timings.push(serde_json::json!({"prompt":prompt,"tokens":tokens,"ttft_seconds":ttft,"decode_seconds":decode_seconds,"decode_steps":63,"decode_tok_s":63./decode_seconds,"total_seconds":start.elapsed().as_secs_f64()}));
+        let after_decode = executor.stats().await?.execution;
+        let prefill_execution = metrics_delta(before_prefill, before_decode)?;
+        let decode_execution = metrics_delta(before_decode, after_decode)?;
+        timings.push(serde_json::json!({"prompt":prompt,"tokens":tokens,"prefill_execution":prefill_execution,"decode_execution":decode_execution,"ttft_seconds":ttft,"decode_seconds":decode_seconds,"decode_steps":63,"decode_tok_s":63./decode_seconds,"total_seconds":start.elapsed().as_secs_f64()}));
         drop(state);
     }
     let live = executor.stats().await?;
@@ -135,7 +172,7 @@ async fn main() -> Result<()> {
         shutdown.invalidated_at_shutdown == 0 && shutdown.logical_bytes == 0,
         "shutdown residue"
     );
-    let report = serde_json::json!({"pass":passed,"identity":manifest.identity,"layer_group":group,"recurrent_kernel":mode,"scope":"four-prompt native parity and 64-token generation; no HTTP/held-out qualification","observations":observations,"timings":timings,"mlx_active_bytes":live.mlx_active_bytes,"mlx_peak_bytes":live.mlx_peak_bytes,"native_residents":live.residents,"native_bytes":live.logical_bytes});
+    let report = serde_json::json!({"pass":passed,"identity":manifest.identity,"layer_group":group,"recurrent_kernel":mode,"execution_timing":timing,"graph_mode":graph,"compiled_entries":live.compiled_entries,"compiled_misses":live.compiled_misses,"compiled_calls":live.compiled_calls,"scope":"four-prompt native parity and 64-token generation; no HTTP/held-out qualification","observations":observations,"timings":timings,"mlx_active_bytes":live.mlx_active_bytes,"mlx_peak_bytes":live.mlx_peak_bytes,"native_residents":live.residents,"native_bytes":live.logical_bytes});
     std::fs::write(out.join("report.json"), serde_json::to_vec_pretty(&report)?)?;
     ensure!(passed, "completion-group parity gate failed");
     println!(

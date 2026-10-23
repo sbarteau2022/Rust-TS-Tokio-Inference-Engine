@@ -13,6 +13,7 @@ extern "C" int rs_qwen_device_decode_batch(void* handle,const StateId* parents,c
  std::vector<StateId> reserved;
  try{
   for(size_t row=0;row<batch;++row)reserved.push_back(session.table.reserve(position+1,charge));
+  ForwardTiming timer(static_cast<Weights*>(session.weights)->timing,c.execution_timing);
   Qwen m(*static_cast<Weights*>(session.weights),c,session.gpu!=0);auto s=m.s;
   auto ids=mx::array(tokens,{int(batch)},mx::uint32);std::string embed="language_model.model.embed_tokens";auto [group,bits]=m.quant(embed);
   auto scales=mx::astype(mx::take(m.w(embed+".scales"),ids,0,s),mx::float32,s),biases=mx::astype(mx::take(m.w(embed+".biases"),ids,0,s),mx::float32,s);
@@ -22,20 +23,23 @@ extern "C" int rs_qwen_device_decode_batch(void* handle,const StateId* parents,c
    std::vector<mx::array> pair;
    for(int slot=0;slot<2;++slot){std::vector<mx::array> rows;for(auto p:old)rows.push_back(p->arrays[array]);pair.push_back(mx::concatenate(rows,0,s));++array;}
    std::string prefix="language_model.model.layers."+std::to_string(layer);std::vector<mx::array> next;
+   if(c.compiled_decode&&session.layers[layer].mixer==0){auto result=m.compiled_recurrent(x,prefix,pair[0],pair[1]);x=result[0];next={result[1],result[2]};}
+   else{
    auto h=m.norm(x,prefix+".input_layernorm.weight");auto r=session.layers[layer].mixer==0?m.recurrent(h,prefix+".linear_attn",pair[0],pair[1],next):m.attention(h,prefix+".self_attn",int(position),pair[0],pair[1],next);
    auto residual=mx::add(x,r,s);x=mx::add(residual,m.moe(m.norm(residual,prefix+".post_attention_layernorm.weight"),prefix+".mlp"),s);
+   }
    std::vector<mx::array> evaluated={x};for(auto a:next)evaluated.push_back(mx::contiguous(mx::astype(a,mx::float32,s),false,s));pending.insert(pending.end(),evaluated.begin(),evaluated.end());
-   if((layer+1)%c.layer_group==0||layer+1==c.layers){mx::eval(pending);mx::synchronize(s);pending.clear();}x=evaluated[0];
+   if((layer+1)%c.layer_group==0||layer+1==c.layers){timer.graph();mx::eval(pending);mx::synchronize(s);timer.wait();pending.clear();}x=evaluated[0];
    for(size_t i=1;i<evaluated.size();++i)packed.push_back(evaluated[i]);
   }
   auto normalized=m.norm(x,"language_model.model.norm.weight");auto output=mx::contiguous(mx::astype(m.linear(mx::take(normalized,0,1,s),"language_model.lm_head"),mx::float32,s),false,s);
-  std::vector<mx::array> finite;for(auto a:packed)finite.push_back(mx::all(mx::isfinite(a,s),s));finite.push_back(mx::all(mx::isfinite(output,s),s));auto evaluated=finite;evaluated.push_back(output);mx::eval(evaluated);mx::synchronize(s);
+  std::vector<mx::array> finite;for(auto a:packed)finite.push_back(mx::all(mx::isfinite(a,s),s));finite.push_back(mx::all(mx::isfinite(output,s),s));auto evaluated=finite;evaluated.push_back(output);timer.graph();mx::eval(evaluated);mx::synchronize(s);timer.wait();
   for(auto a:finite)if(!a.item<bool>())throw std::runtime_error("nonfinite batch result");
   if(packed.size()!=80||output.size()!=logits_count)throw std::runtime_error("batch result inventory");
   std::vector<DevicePayload> children;for(size_t row=0;row<batch;++row){DevicePayload child;for(auto a:packed){auto start=mx::Shape(a.ndim(),0),end=a.shape();start[0]=int(row);end[0]=int(row+1);child.arrays.push_back(mx::slice(a,start,end,s));}children.push_back(std::move(child));}
   // Materialize row views before publication; backing remains fully charged per child.
-  for(auto& child:children){mx::eval(child.arrays);}mx::synchronize(s);
+  timer.graph();for(auto& child:children){mx::eval(child.arrays);}mx::synchronize(s);timer.wait();
   for(size_t row=0;row<batch;++row)session.table.publish(reserved[row],std::move(children[row]));
-  std::memcpy(logits,output.data<float>(),logits_count*4);for(size_t row=0;row<batch;++row)outputs[row]=reserved[row];session.steps+=batch;
+  std::memcpy(logits,output.data<float>(),logits_count*4);for(size_t row=0;row<batch;++row)outputs[row]=reserved[row];session.steps+=batch;timer.complete();
  }catch(...){try{mx::synchronize(mx::default_stream(mx::Device(session.gpu?mx::Device::gpu:mx::Device::cpu)));}catch(...){}for(auto id:reserved)session.table.rollback(id);throw;}
 });}

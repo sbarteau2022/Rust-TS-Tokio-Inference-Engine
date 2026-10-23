@@ -1,8 +1,11 @@
 //! Offline real-model gate for batch-shaped decode; not HTTP or throughput qualification.
 use anyhow::{ensure, Context, Result};
 use rust_server::serving::{
-    choices, native_mlx::Device, native_qwen::QwenDeviceExecutor,
-    native_tokenizer::NativeTokenizer, weights::Manifest,
+    choices,
+    native_mlx::Device,
+    native_qwen::{ExecutionTuning, QwenDeviceExecutor},
+    native_tokenizer::NativeTokenizer,
+    weights::Manifest,
 };
 use std::{path::Path, sync::Arc};
 fn compare(a: &[f32], b: &[f32]) -> Result<serde_json::Value> {
@@ -41,13 +44,22 @@ async fn main() -> Result<()> {
         matches!(mode.as_str(), "reference" | "fused"),
         "recurrent kernel mode"
     );
+    let graph = std::env::args().nth(4).unwrap_or_else(|| "eager".into());
+    ensure!(
+        matches!(graph.as_str(), "eager" | "compiled-decode"),
+        "graph mode"
+    );
     let executor = Arc::new(
-        QwenDeviceExecutor::open_tuned(
+        QwenDeviceExecutor::open_configured(
             Device::Gpu,
             32,
             2 * 1024 * 1024 * 1024,
-            group,
-            mode == "fused",
+            ExecutionTuning {
+                layer_group: group,
+                fused_recurrent: mode == "fused",
+                execution_timing: false,
+                compiled_decode: graph == "compiled-decode",
+            },
         )
         .await?,
     );
@@ -218,7 +230,7 @@ async fn main() -> Result<()> {
         .map_err(|_| anyhow::anyhow!("executor owner"))?
         .shutdown()
         .await?;
-    let report = serde_json::json!({"pass":passed,"layer_group":group,"recurrent_kernel":mode,"scope":"native equal-position batch graph, controlled branches then greedy; no HTTP/throughput claim","identity":manifest.identity,"observations":observations,"native_residents":native.residents,"native_bytes":native.logical_bytes,"mlx_active_bytes":live.mlx_active_bytes,"mlx_peak_bytes":live.mlx_peak_bytes});
+    let report = serde_json::json!({"pass":passed,"layer_group":group,"recurrent_kernel":mode,"graph_mode":graph,"scope":"native equal-position batch graph, controlled branches then greedy; no HTTP/throughput claim","identity":manifest.identity,"observations":observations,"native_residents":native.residents,"native_bytes":native.logical_bytes,"mlx_active_bytes":live.mlx_active_bytes,"mlx_peak_bytes":live.mlx_peak_bytes});
     std::fs::write(
         format!("{out}/summary.json"),
         serde_json::to_vec_pretty(&report)?,
