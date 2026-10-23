@@ -1,0 +1,71 @@
+warning: rust-server@0.1.0: In file included from native/mlx_bridge.cpp:2:
+warning: rust-server@0.1.0: In file included from /Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/vendor/mlx/include/mlx/mlx.h:5:
+warning: rust-server@0.1.0: In file included from /Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/vendor/mlx/include/mlx/array.h:11:
+warning: rust-server@0.1.0: /Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/vendor/mlx/include/mlx/allocator.h:50:36: warning: unused parameter 'ptr' [-Wunused-parameter]
+warning: rust-server@0.1.0:    50 |   virtual Buffer make_buffer(void* ptr, size_t size) {
+warning: rust-server@0.1.0:       |                                    ^
+warning: rust-server@0.1.0: /Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/vendor/mlx/include/mlx/allocator.h:50:48: warning: unused parameter 'size' [-Wunused-parameter]
+warning: rust-server@0.1.0:    50 |   virtual Buffer make_buffer(void* ptr, size_t size) {
+warning: rust-server@0.1.0:       |                                                ^
+warning: rust-server@0.1.0: /Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/vendor/mlx/include/mlx/allocator.h:53:31: warning: unused parameter 'buffer' [-Wunused-parameter]
+warning: rust-server@0.1.0:    53 |   virtual void release(Buffer buffer) {}
+warning: rust-server@0.1.0:       |                               ^
+warning: rust-server@0.1.0: In file included from native/mlx_bridge.cpp:2:
+warning: rust-server@0.1.0: In file included from /Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/vendor/mlx/include/mlx/mlx.h:5:
+warning: rust-server@0.1.0: In file included from /Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/vendor/mlx/include/mlx/array.h:13:
+warning: rust-server@0.1.0: In file included from /Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/vendor/mlx/include/mlx/dtype.h:9:
+warning: rust-server@0.1.0: In file included from /Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/vendor/mlx/include/mlx/types/complex.h:5:
+warning: rust-server@0.1.0: In file included from /Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/vendor/mlx/include/mlx/types/half_types.h:32:
+warning: rust-server@0.1.0: /Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/vendor/mlx/include/mlx/types/bf16.h:29:3: warning: definition of implicit copy assignment operator for '_MLX_BFloat16' is deprecated because it has a user-declared copy constructor [-Wdeprecated-copy]
+warning: rust-server@0.1.0:    29 |   _MLX_BFloat16(_MLX_BFloat16 const&) = default;
+warning: rust-server@0.1.0:       |   ^
+warning: rust-server@0.1.0: /Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/vendor/mlx/include/mlx/types/bf16.h:38:19: note: in implicit copy assignment operator for 'mlx::core::_MLX_BFloat16' first required here
+warning: rust-server@0.1.0:    38 |     return (*this = _MLX_BFloat16(x));
+warning: rust-server@0.1.0:       |                   ^
+warning: rust-server@0.1.0: 4 warnings generated.
+   Compiling rust-server v0.1.0 (/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine)
+    Finished `release` profile [optimized] target(s) in 0.64s
+warning: the following packages contain code that will be rejected by a future version of Rust: block v0.1.6
+note: to see what the problems were, use the option `--future-incompat-report`, or run `cargo report future-incompatibilities --id 1`
+     Running `target/release/examples/native_hidden_smoke /tmp/rust-hidden-smoke-final-20261023`
+ATTENTION-ORACLE layer=language_model.model.layers.3.self_attn offset=0 tokens=1 nrmse=0 max_abs=0
+ATTENTION-ORACLE layer=language_model.model.layers.7.self_attn offset=0 tokens=1 nrmse=0 max_abs=0
+ATTENTION-ORACLE layer=language_model.model.layers.11.self_attn offset=0 tokens=1 nrmse=0 max_abs=0
+ATTENTION-ORACLE layer=language_model.model.layers.15.self_attn offset=0 tokens=1 nrmse=0 max_abs=0
+ATTENTION-ORACLE layer=language_model.model.layers.19.self_attn offset=0 tokens=1 nrmse=0 max_abs=0
+ATTENTION-ORACLE layer=language_model.model.layers.23.self_attn offset=0 tokens=1 nrmse=0 max_abs=0
+ATTENTION-ORACLE layer=language_model.model.layers.27.self_attn offset=0 tokens=1 nrmse=0 max_abs=0
+ATTENTION-ORACLE layer=language_model.model.layers.31.self_attn offset=0 tokens=1 nrmse=0 max_abs=0
+ATTENTION-ORACLE layer=language_model.model.layers.35.self_attn offset=0 tokens=1 nrmse=0 max_abs=0
+ATTENTION-ORACLE layer=language_model.model.layers.39.self_attn offset=0 tokens=1 nrmse=0 max_abs=0
+ATTENTION-ORACLE layer=language_model.model.layers.3.self_attn offset=0 tokens=2 nrmse=1.70090146e-07 max_abs=1.46814568e-06
+ATTENTION-ORACLE layer=language_model.model.layers.7.self_attn offset=0 tokens=2 nrmse=7.64610341e-08 max_abs=1.91102849e-06
+ATTENTION-ORACLE layer=language_model.model.layers.11.self_attn offset=0 tokens=2 nrmse=1.62577252e-07 max_abs=3.30482569e-06
+ATTENTION-ORACLE layer=language_model.model.layers.15.self_attn offset=0 tokens=2 nrmse=7.22717495e-08 max_abs=1.97233114e-06
+ATTENTION-ORACLE layer=language_model.model.layers.19.self_attn offset=0 tokens=2 nrmse=8.86563758e-08 max_abs=2.06155052e-06
+ATTENTION-ORACLE layer=language_model.model.layers.23.self_attn offset=0 tokens=2 nrmse=9.48075126e-08 max_abs=2.2293437e-06
+ATTENTION-ORACLE layer=language_model.model.layers.27.self_attn offset=0 tokens=2 nrmse=9.27524195e-08 max_abs=2.90971679e-06
+ATTENTION-ORACLE layer=language_model.model.layers.31.self_attn offset=0 tokens=2 nrmse=6.00749568e-08 max_abs=1.71239897e-06
+ATTENTION-ORACLE layer=language_model.model.layers.35.self_attn offset=0 tokens=2 nrmse=1.47010637e-07 max_abs=1.99756117e-06
+ATTENTION-ORACLE layer=language_model.model.layers.39.self_attn offset=0 tokens=2 nrmse=4.78776878e-08 max_abs=9.92341883e-07
+ATTENTION-ORACLE layer=language_model.model.layers.3.self_attn offset=0 tokens=4 nrmse=1.62695078e-07 max_abs=1.46814568e-06
+ATTENTION-ORACLE layer=language_model.model.layers.7.self_attn offset=0 tokens=4 nrmse=1.53127746e-07 max_abs=2.82391006e-06
+ATTENTION-ORACLE layer=language_model.model.layers.11.self_attn offset=0 tokens=4 nrmse=1.92366958e-07 max_abs=3.51639872e-06
+ATTENTION-ORACLE layer=language_model.model.layers.15.self_attn offset=0 tokens=4 nrmse=1.98227125e-07 max_abs=4.7512546e-06
+ATTENTION-ORACLE layer=language_model.model.layers.19.self_attn offset=0 tokens=4 nrmse=1.59114433e-07 max_abs=3.12039631e-06
+ATTENTION-ORACLE layer=language_model.model.layers.23.self_attn offset=0 tokens=4 nrmse=1.71199216e-07 max_abs=3.67027482e-06
+ATTENTION-ORACLE layer=language_model.model.layers.27.self_attn offset=0 tokens=4 nrmse=1.62973926e-07 max_abs=2.90971679e-06
+ATTENTION-ORACLE layer=language_model.model.layers.31.self_attn offset=0 tokens=4 nrmse=1.12557378e-07 max_abs=4.37652149e-06
+ATTENTION-ORACLE layer=language_model.model.layers.35.self_attn offset=0 tokens=4 nrmse=1.67710823e-07 max_abs=1.99756117e-06
+ATTENTION-ORACLE layer=language_model.model.layers.39.self_attn offset=0 tokens=4 nrmse=6.69601639e-08 max_abs=1.67099077e-06
+ATTENTION-ORACLE layer=language_model.model.layers.3.self_attn offset=0 tokens=8 nrmse=1.64513211e-07 max_abs=1.46814568e-06
+ATTENTION-ORACLE layer=language_model.model.layers.7.self_attn offset=0 tokens=8 nrmse=1.716987e-07 max_abs=2.97279124e-06
+ATTENTION-ORACLE layer=language_model.model.layers.11.self_attn offset=0 tokens=8 nrmse=2.22611027e-07 max_abs=4.88685115e-06
+ATTENTION-ORACLE layer=language_model.model.layers.15.self_attn offset=0 tokens=8 nrmse=1.93259009e-07 max_abs=4.7512546e-06
+ATTENTION-ORACLE layer=language_model.model.layers.19.self_attn offset=0 tokens=8 nrmse=1.7116516e-07 max_abs=3.12039631e-06
+ATTENTION-ORACLE layer=language_model.model.layers.23.self_attn offset=0 tokens=8 nrmse=1.88629921e-07 max_abs=3.67027482e-06
+ATTENTION-ORACLE layer=language_model.model.layers.27.self_attn offset=0 tokens=8 nrmse=1.66612041e-07 max_abs=2.90971679e-06
+ATTENTION-ORACLE layer=language_model.model.layers.31.self_attn offset=0 tokens=8 nrmse=1.68305776e-07 max_abs=4.37652149e-06
+ATTENTION-ORACLE layer=language_model.model.layers.35.self_attn offset=0 tokens=8 nrmse=1.71417738e-07 max_abs=1.99832621e-06
+ATTENTION-ORACLE layer=language_model.model.layers.39.self_attn offset=0 tokens=8 nrmse=7.94431101e-08 max_abs=2.16091277e-06
+{"all_position_logits_and_unified_state_bitwise":true,"counts":[1,2,4,8],"hidden_transfer":"diagnostic snapshot only; production handles remain native","logical_bytes_at_shutdown":0,"mtp_forward_qualified":false,"pass":true,"post_norm_scalar_max_relative_l2":7.650997966225019e-8,"single_row_batched_logit_max_relative_l2":2.460363544993645e-7}

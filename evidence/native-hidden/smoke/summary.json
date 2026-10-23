@@ -1,0 +1,15 @@
+{
+  "all_position_logits_and_unified_state_bitwise": true,
+  "counts": [
+    1,
+    2,
+    4,
+    8
+  ],
+  "hidden_transfer": "diagnostic snapshot only; production handles remain native",
+  "logical_bytes_at_shutdown": 0,
+  "mtp_forward_qualified": false,
+  "pass": true,
+  "post_norm_scalar_max_relative_l2": 7.650997966225019e-8,
+  "single_row_batched_logit_max_relative_l2": 2.460363544993645e-7
+}

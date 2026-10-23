@@ -15,7 +15,7 @@ related_files:
     lines: "1-1015"
     role: "config"
   - path: "Cargo.toml"
-    lines: "1-53"
+    lines: "1-57"
     role: "config"
   - path: "backend/rapid_worker.py"
     lines: "1-165"
@@ -34,6 +34,9 @@ related_files:
     role: "primary"
   - path: "examples/native_discriminators.rs"
     lines: "1-145"
+    role: "primary"
+  - path: "examples/native_hidden_smoke.rs"
+    lines: "1-170"
     role: "primary"
   - path: "examples/native_speculative_smoke.rs"
     lines: "1-370"
@@ -135,7 +138,7 @@ related_files:
     lines: "1-35"
     role: "test"
   - path: "judges/run.py"
-    lines: "1-221"
+    lines: "1-222"
     role: "test"
   - path: "judges/speculative_report.py"
     lines: "1-74"
@@ -168,7 +171,7 @@ related_files:
     lines: "1-178"
     role: "primary"
   - path: "native/mlx_bridge.h"
-    lines: "1-87"
+    lines: "1-96"
     role: "primary"
   - path: "native/operator_probe.inc"
     lines: "1-28"
@@ -183,10 +186,10 @@ related_files:
     lines: "1-30"
     role: "primary"
   - path: "native/qwen_device.inc"
-    lines: "1-47"
+    lines: "1-56"
     role: "primary"
   - path: "native/qwen_model.inc"
-    lines: "1-172"
+    lines: "1-173"
     role: "primary"
   - path: "native/state_table.h"
     lines: "1-38"
@@ -279,7 +282,7 @@ related_files:
     lines: "1-193"
     role: "primary"
   - path: "src/serving/native_device.rs"
-    lines: "1-687"
+    lines: "1-766"
     role: "primary"
   - path: "src/serving/native_device_scheduler.rs"
     lines: "1-178"
@@ -650,3 +653,7 @@ A further fault control exhausts the native state table after block verification
 ## Native MTP ingestion review — 2026-10-23
 
 The sidecar is accepted only for the explicit 42-tensor Combined layout. Validation checks mixed packing using each module override, not a global four-bit assumption. All required tensors are removed in turn by tests; malformed geometry, dtype, offsets, extras, truncation, trailing payload and symlinks are rejected. Metadata tests use sparse files and do not establish numerical correctness. The native MLX store is separate from the target store because target norm sanitization currently reacts to MTP keys. Artifact identity and stamp checks bind opening to the same checkpoint; this follows the existing local immutable-file trust boundary, not protection against a malicious local writer preserving timestamps. Loading establishes ingestion only: MTP forward, quantization application during projections, hidden-state alignment, transactional draft cache and profitability remain open.
+
+## Opt-in target hidden payload review — 2026-10-23
+
+Hidden activations are stored in an explicit optional payload, never appended to the 80-array state vector. Reservation includes count × hidden × four bytes before encoding; publication and rollback cover both unified state and hidden output. The same native generation/owner descriptor and Rust retirement lifetime bind both. Snapshot size is now computed from unified state geometry rather than total charged bytes, avoiding a hidden-byte buffer accounting error. Hidden diagnostics reject ordinary states. Matched all-position logits/state, continuation, scalar post-norm values and slot pressure are tested by native_hidden_smoke. Default no-hidden behavior requires the broader frozen-suite preservation gate; sidecar ingestion alone provides no evidence here. No MTP forward or throughput claim is made.

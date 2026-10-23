@@ -1,8 +1,8 @@
 ---
 title: "Rust Server — Apple native kernel compiler and runtime"
 document_type: "implementation"
-version: "1.24.0"
-date: "2026-10-23T04:28:10Z"
+version: "1.25.0"
+date: "2026-10-23T05:21:07Z"
 implementation_date: null
 author: "Codex for Stewart Barteau"
 reviewers: []
@@ -15,7 +15,7 @@ related_files:
     lines: "1-1015"
     role: "config"
   - path: "Cargo.toml"
-    lines: "1-53"
+    lines: "1-57"
     role: "config"
   - path: "backend/rapid_worker.py"
     lines: "1-165"
@@ -34,6 +34,9 @@ related_files:
     role: "primary"
   - path: "examples/native_discriminators.rs"
     lines: "1-145"
+    role: "primary"
+  - path: "examples/native_hidden_smoke.rs"
+    lines: "1-170"
     role: "primary"
   - path: "examples/native_speculative_smoke.rs"
     lines: "1-370"
@@ -135,7 +138,7 @@ related_files:
     lines: "1-35"
     role: "test"
   - path: "judges/run.py"
-    lines: "1-221"
+    lines: "1-222"
     role: "test"
   - path: "judges/speculative_report.py"
     lines: "1-74"
@@ -168,7 +171,7 @@ related_files:
     lines: "1-178"
     role: "primary"
   - path: "native/mlx_bridge.h"
-    lines: "1-87"
+    lines: "1-96"
     role: "primary"
   - path: "native/operator_probe.inc"
     lines: "1-28"
@@ -183,10 +186,10 @@ related_files:
     lines: "1-30"
     role: "primary"
   - path: "native/qwen_device.inc"
-    lines: "1-47"
+    lines: "1-56"
     role: "primary"
   - path: "native/qwen_model.inc"
-    lines: "1-172"
+    lines: "1-173"
     role: "primary"
   - path: "native/state_table.h"
     lines: "1-38"
@@ -279,7 +282,7 @@ related_files:
     lines: "1-193"
     role: "primary"
   - path: "src/serving/native_device.rs"
-    lines: "1-687"
+    lines: "1-766"
     role: "primary"
   - path: "src/serving/native_device_scheduler.rs"
     lines: "1-178"
@@ -1012,3 +1015,11 @@ Native sidecar ingestion is now available with `cargo run --release --locked -- 
 1.24.0 — Native MTP sidecar ingestion: strict supported layout, mixed quantization validation, isolated MLX store and explicit ingestion-only CLI. MTP forward execution remains pending.
 
 MTP ingestion checks passed: **141 default / 141 debug-validation / 96 minimal-feature Rust tests**, strict Clippy/format, TS 7.1/tsrs and the ordered native/kernel judges. [Bound evidence](evidence/mtp-inventory/manifest.sha256) records the real sidecar load; no new throughput result is claimed.
+
+## Device-owned MTP hidden boundary
+
+The opt-in `QwenDeviceExecutor::hidden_block` captures post-normalized activations with the exact target state version. Hidden bytes share the state reservation and completion lifetime; ordinary execution captures none. `hidden_snapshot` is a diagnostic export, not an internal transport. The [native tuning design](docs/NATIVE_TUNING_PLAN.md) records ownership and qualification; MTP forward execution is still pending.
+
+Hidden boundary qualification: 1/2/4/8-token matched all-position logits and unified states are bitwise preserved; independent scalar post-norm relative L2 ≤ 7.66e-8. The default frozen-suite gate retains bitwise equality across 60 cases / 360 steps, with existing quality scores unchanged (15/16 raw, 20/20 constrained, 23/24 domain). No MTP draft or speedup is claimed.
+
+1.25.0 — Device-owned opt-in post-norm payload, atomic state/activation lifetime and byte accounting, diagnostic snapshot, scalar normalization and bitwise preservation gates. All 141 default / 141 debug-validation / 96 minimal-feature Rust tests and ordered TS/native/kernel judges passed; context-512 device pressure/recovery passed. [Bound evidence](evidence/native-hidden/manifest.sha256).

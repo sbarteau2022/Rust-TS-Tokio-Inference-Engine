@@ -1,7 +1,7 @@
 ---
 title: "Native MTP integration and tuning control plan"
 document_type: "architecture"
-version: "1.0.0"
+version: "1.1.0"
 date: "2026-10-23T05:04:01Z"
 implementation_date: null
 author: "Codex for Stewart Barteau"
@@ -15,7 +15,7 @@ related_files:
     lines: "1-1015"
     role: "config"
   - path: "Cargo.toml"
-    lines: "1-53"
+    lines: "1-57"
     role: "config"
   - path: "backend/rapid_worker.py"
     lines: "1-165"
@@ -34,6 +34,9 @@ related_files:
     role: "primary"
   - path: "examples/native_discriminators.rs"
     lines: "1-145"
+    role: "primary"
+  - path: "examples/native_hidden_smoke.rs"
+    lines: "1-170"
     role: "primary"
   - path: "examples/native_speculative_smoke.rs"
     lines: "1-370"
@@ -135,7 +138,7 @@ related_files:
     lines: "1-35"
     role: "test"
   - path: "judges/run.py"
-    lines: "1-221"
+    lines: "1-222"
     role: "test"
   - path: "judges/speculative_report.py"
     lines: "1-74"
@@ -168,7 +171,7 @@ related_files:
     lines: "1-178"
     role: "primary"
   - path: "native/mlx_bridge.h"
-    lines: "1-87"
+    lines: "1-96"
     role: "primary"
   - path: "native/operator_probe.inc"
     lines: "1-28"
@@ -183,10 +186,10 @@ related_files:
     lines: "1-30"
     role: "primary"
   - path: "native/qwen_device.inc"
-    lines: "1-47"
+    lines: "1-56"
     role: "primary"
   - path: "native/qwen_model.inc"
-    lines: "1-172"
+    lines: "1-173"
     role: "primary"
   - path: "native/state_table.h"
     lines: "1-38"
@@ -279,7 +282,7 @@ related_files:
     lines: "1-193"
     role: "primary"
   - path: "src/serving/native_device.rs"
-    lines: "1-687"
+    lines: "1-766"
     role: "primary"
   - path: "src/serving/native_device_scheduler.rs"
     lines: "1-178"
@@ -497,7 +500,7 @@ Evidence: evidence/mtp-inventory/header-inventory.json. Inspect the selected che
 
 ## Proven necessity and rollout
 
-Mixed packing and missing hidden-state interfaces are concrete integration requirements observed in this artifact and source. Performance gains remain hypotheses. Leave current runtime behavior unchanged until head equivalence, rollback and held-out gates pass; retain no-draft fallback. Next deliverable is native sidecar ingestion plus the verified hidden-state contract, not a promised acceptance percentage.
+Mixed packing and missing hidden-state interfaces are concrete integration requirements observed in this artifact and source. Performance gains remain hypotheses. Leave current runtime behavior unchanged until head equivalence, rollback and held-out gates pass; retain no-draft fallback. Sidecar ingestion and the opt-in hidden-state boundary are now implemented. Next deliverable is native mixed-quantization MTP forward execution, not a promised acceptance percentage.
 
 ## Changelog
 
@@ -508,3 +511,15 @@ Native ingestion result: the real sidecar opened successfully through the Rust-o
 ### Hidden-state ownership contract for the next increment
 
 The current native device table publishes exactly 80 state arrays and accounts only KV/convolution/recurrent bytes. Do not append hidden tensors to that vector silently: snapshot inventory, reservations and reference comparisons assume its current layout. Introduce an explicit versioned payload carrying unified state plus optional post-norm hidden output, reserve its bytes before encoding, and publish both atomically. A handle must bind executor owner, model identity, position and numerical profile; stale or foreign handles fail before work admission. Speculative rejection must release candidate hidden and draft states while preserving the committed parent. Request cancellation retains all buffers through native completion. Keep hidden export optional on the default no-draft path so its allocation and numerical behavior remain unchanged.
+
+## Device hidden boundary implementation — 2026-10-23
+
+Implemented an explicit native DevicePayload containing the unchanged 80 unified-state arrays and optional post-norm hidden array. The existing StateId binds owner, generation, end position and full charged bytes. `hidden_block` charges all activation rows before encoding and atomically publishes them with the target state; rejected or canceled outputs retire the complete payload. No additional payload is retained by ordinary step/block calls. Snapshot of unified state excludes hidden activations, while `hidden_snapshot` explicitly exports only captured rows for diagnostics. Native production consumers will use the same worker-confined payload without CPU export. The API does not yet execute MTP.
+
+The native_hidden_smoke example compares opt-in versus ordinary all-position logits and unified state bitwise at chunk sizes 1/2/4/8, checks post-norm activations against an independent f64 scalar RMS computation using actual BF16 norm weights, compares continuation, saturates four state slots and checks parent preservation and zero residency after release. Single-row versus batched vocabulary projection has a separate relative-L2 gate of 1e-5, consistent with existing verifier qualification; it is not claimed bitwise. An initial exploratory assertion incorrectly required those two different projection geometries to be bitwise equal; the final gate distinguishes them explicitly and retains bitwise requirements for matched geometry.
+
+Local engineering distinction: the inspected Rapid explicit-sidecar injection path documents and enforces uniform packing inferred from fusion weights. This artifact has BF16 fusion/router weights plus mixed packed projections. Native integration must preserve each validated module override and dense BF16 projection rather than copy that uniform assumption. The sidecar normalization values and direct-load source indicate sanitized weights; qualify that explicitly rather than invoking the Qwen main-store MTP-presence shift heuristic.
+
+Observed focused results: post-norm scalar maximum relative L2 7.650997966225019e-8; single-row/batched logit maximum relative L2 2.460363544993645e-7. Matched all-position logits and unified state were bitwise equal. Frozen default preservation: 60 cases / 360 steps, all six drift maxima zero, no residual residency; quality remains [15, 20, 23] in suites of [16, 20, 24]. No throughput is measured by this boundary qualification.
+
+1.1.0 — Implement and qualify opt-in post-norm payload ownership, scalar normalization, bitwise default preservation and context-512 device pressure/recovery. MTP forward and performance remain unqualified.

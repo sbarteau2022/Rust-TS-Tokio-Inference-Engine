@@ -23,8 +23,13 @@ impl Drop for Lifetime {
 pub struct DeviceState {
     owner: u64,
     token: Option<Arc<Lifetime>>,
+    hidden_rows: usize,
 }
 impl DeviceState {
+    /// Rows of post-normalized hidden activations owned by this exact version.
+    pub fn hidden_rows(&self) -> usize {
+        self.hidden_rows
+    }
     pub fn position(&self) -> usize {
         self.token.as_ref().map_or(0, |t| t.id.position as usize)
     }
@@ -66,11 +71,12 @@ enum Work {
         state: DeviceState,
         ir: ModelStepIr,
         all_logits: bool,
+        capture_hidden: bool,
         _completion: Option<CompletionGuard>,
         reply: oneshot::Sender<Result<DeviceStep>>,
         _permit: OwnedSemaphorePermit,
     },
-    Snapshot(DeviceState, oneshot::Sender<Result<Vec<f32>>>),
+    Snapshot(DeviceState, bool, oneshot::Sender<Result<Vec<f32>>>),
     Stats(oneshot::Sender<Result<DeviceStats>>),
 }
 struct Session(*mut c_void);
@@ -166,15 +172,15 @@ impl QwenDeviceExecutor {
                             work = rx.recv() => {
                                 let Some(work)=work else { break; };
                                 match work {
-                                    Work::Step { state,ir,all_logits,_completion,reply,_permit } => {
+                                    Work::Step { state,ir,all_logits,capture_hidden,_completion,reply,_permit } => {
                                         let usage=session.stats()?;
-                                        let required=(architecture.state_len(state.position()+ir.len())*4) as u64;
+                                        let required=((architecture.state_len(state.position()+ir.len())+if capture_hidden {ir.len()*architecture.hidden as usize}else{0})*4) as u64;
                                         let result=if faulted {
                                             Err(anyhow::anyhow!("device admission closed"))
                                         }else if usage.residents>=slots as u64 || required>limit.saturating_sub(usage.logical_bytes) {
                                             Err(anyhow::anyhow!("device resident budget exhausted"))
                                         }else {
-                                            let result=device_forward(&session,&manifest,architecture,owner,&worker_releases,&state,(&ir,all_logits));
+                                            let result=device_forward(&session,&manifest,architecture,owner,&worker_releases,&state,(&ir,all_logits,capture_hidden));
                                             if result.is_err(){faulted=true;worker_closed.store(true,Ordering::Release);}
                                             result
                                         };
@@ -186,11 +192,11 @@ impl QwenDeviceExecutor {
                                         let result=forward(&weights,&manifest,architecture,device,&program,&ir,&state);
                                         drop(permit);let _=reply.send(result);
                                     }
-                                    Work::Snapshot(state,reply) => {
+                                    Work::Snapshot(state,hidden,reply) => {
                                         let result=(|| {
                                             let Some(token)=&state.token else { return Ok(Vec::new()); };
-                                            let mut values=vec![0.;state.bytes()/4];let mut e=[0;1024];
-                                            native_status(unsafe { rs_qwen_device_snapshot(session.0,&token.id,values.as_mut_ptr(),values.len(),e.as_mut_ptr(),e.len()) },&e)?;
+                                            let mut values=vec![0.;if hidden {state.hidden_rows*architecture.hidden as usize}else{architecture.state_len(state.position())}];let mut e=[0;1024];
+                                            native_status(unsafe { if hidden {rs_qwen_device_hidden_snapshot(session.0,&token.id,values.as_mut_ptr(),values.len(),e.as_mut_ptr(),e.len())}else{rs_qwen_device_snapshot(session.0,&token.id,values.as_mut_ptr(),values.len(),e.as_mut_ptr(),e.len())} },&e)?;
                                             ensure!(values.iter().all(|v| v.is_finite()),"nonfinite exported state");Ok(values)
                                         })();let _=reply.send(result);
                                     }
@@ -234,6 +240,7 @@ impl QwenDeviceExecutor {
         DeviceState {
             owner: self.owner,
             token: None,
+            hidden_rows: 0,
         }
     }
     fn validate(&self, state: &DeviceState) -> Result<()> {
@@ -256,7 +263,7 @@ impl QwenDeviceExecutor {
         .await
     }
     pub async fn execute(&self, state: &DeviceState, ir: ModelStepIr) -> Result<DeviceStep> {
-        self.execute_mode(state, ir, false, None, None).await
+        self.execute_mode(state, ir, false, false, None, None).await
     }
     /// Experimental verifier ABI; no candidate is committed by this call.
     pub async fn verify_block(&self, state: &DeviceState, tokens: Vec<u32>) -> Result<DeviceBlock> {
@@ -276,8 +283,26 @@ impl QwenDeviceExecutor {
             self.architecture.vocab as u32,
         )?;
         let result = self
-            .execute_mode(state, ir, true, completion, calls)
+            .execute_mode(state, ir, true, false, completion, calls)
             .await?;
+        Ok(DeviceBlock {
+            state: result.state,
+            logits: result
+                .logits
+                .chunks_exact(self.architecture.vocab as usize)
+                .map(<[f32]>::to_vec)
+                .collect(),
+        })
+    }
+    /// Opt-in MTP input boundary: captures every post-norm row with unified state.
+    pub async fn hidden_block(&self, state: &DeviceState, tokens: Vec<u32>) -> Result<DeviceBlock> {
+        let ir = ModelStepIr::compile(
+            StepKind::Prefill,
+            state.position(),
+            tokens,
+            self.architecture.vocab as u32,
+        )?;
+        let result = self.execute_mode(state, ir, true, true, None, None).await?;
         Ok(DeviceBlock {
             state: result.state,
             logits: result
@@ -292,6 +317,7 @@ impl QwenDeviceExecutor {
         state: &DeviceState,
         ir: ModelStepIr,
         all_logits: bool,
+        capture_hidden: bool,
         completion: Option<CompletionGuard>,
         calls: Option<Arc<AtomicU64>>,
     ) -> Result<DeviceStep> {
@@ -320,6 +346,7 @@ impl QwenDeviceExecutor {
                 state: state.clone(),
                 ir,
                 all_logits,
+                capture_hidden,
                 _completion: completion,
                 reply,
                 _permit: permit,
@@ -343,7 +370,8 @@ impl QwenDeviceExecutor {
             tokens,
             self.architecture.vocab as u32,
         )?;
-        self.execute_mode(state, ir, false, completion, calls).await
+        self.execute_mode(state, ir, false, false, completion, calls)
+            .await
     }
     /// Offline A/B only: share immutable weights with the CPU-snapshot reference.
     pub fn reference_empty_state(&self) -> ModelState {
@@ -390,13 +418,20 @@ impl QwenDeviceExecutor {
         ensure!(state.owner == self.owner, "foreign reference state");
         Ok(&state.values)
     }
+    pub async fn hidden_snapshot(&self, state: &DeviceState) -> Result<Vec<f32>> {
+        ensure!(state.hidden_rows > 0, "state has no hidden activations");
+        self.snapshot_mode(state, true).await
+    }
     pub async fn snapshot(&self, state: &DeviceState) -> Result<Vec<f32>> {
+        self.snapshot_mode(state, false).await
+    }
+    async fn snapshot_mode(&self, state: &DeviceState, hidden: bool) -> Result<Vec<f32>> {
         self.validate(state)?;
         let (reply, received) = oneshot::channel();
         self.tx
             .as_ref()
             .context("device stopped")?
-            .try_send(Work::Snapshot(state.clone(), reply))
+            .try_send(Work::Snapshot(state.clone(), hidden, reply))
             .map_err(|_| anyhow::anyhow!("device work queue full/closed"))?;
         received.await.context("snapshot worker stopped")?
     }
@@ -435,9 +470,9 @@ fn device_forward(
     owner: u64,
     releases: &mpsc::UnboundedSender<StateId>,
     state: &DeviceState,
-    mode: (&ModelStepIr, bool),
+    mode: (&ModelStepIr, bool, bool),
 ) -> Result<DeviceStep> {
-    let (ir, all_logits) = mode;
+    let (ir, all_logits, capture_hidden) = mode;
     manifest.verify_stamps()?;
     let mut id = StateId::default();
     let mut logits = vec![0.; c.vocab as usize * if all_logits { ir.len() } else { 1 }];
@@ -449,7 +484,20 @@ fn device_forward(
     let mut e = [0; 1024];
     native_status(
         unsafe {
-            if all_logits {
+            if capture_hidden {
+                rs_qwen_device_hidden_block(
+                    session.0,
+                    state.token.as_ref().map_or(std::ptr::null(), |t| &t.id),
+                    state.position(),
+                    ir.ffi_ids().as_ptr(),
+                    ir.len(),
+                    &mut id,
+                    logits.as_mut_ptr(),
+                    logits.len(),
+                    e.as_mut_ptr(),
+                    e.len(),
+                )
+            } else if all_logits {
                 rs_qwen_device_block(
                     session.0,
                     state.token.as_ref().map_or(std::ptr::null(), |t| &t.id),
@@ -484,6 +532,7 @@ fn device_forward(
     // Establish retirement ownership before any subsequent fallible check.
     let next = DeviceState {
         owner,
+        hidden_rows: if capture_hidden { ir.len() } else { 0 },
         token: Some(Arc::new(Lifetime {
             id,
             releases: releases.clone(),
@@ -492,7 +541,14 @@ fn device_forward(
     manifest.verify_stamps()?;
     ensure!(
         id.position == (state.position() + ir.len()) as u64
-            && id.bytes == (c.state_len(id.position as usize) * 4) as u64
+            && id.bytes
+                == ((c.state_len(id.position as usize)
+                    + if capture_hidden {
+                        ir.len() * c.hidden as usize
+                    } else {
+                        0
+                    })
+                    * 4) as u64
             && logits.iter().chain(&trace).all(|v| v.is_finite()),
         "invalid device receipt"
     );
@@ -537,6 +593,26 @@ unsafe extern "C" {
         output: *mut StateId,
         logits: *mut f32,
         logits_count: usize,
+        error: *mut c_char,
+        cap: usize,
+    ) -> i32;
+    fn rs_qwen_device_hidden_block(
+        session: *mut c_void,
+        previous: *const StateId,
+        position: usize,
+        tokens: *const u32,
+        count: usize,
+        output: *mut StateId,
+        logits: *mut f32,
+        logits_count: usize,
+        error: *mut c_char,
+        cap: usize,
+    ) -> i32;
+    fn rs_qwen_device_hidden_snapshot(
+        session: *mut c_void,
+        id: *const StateId,
+        output: *mut f32,
+        count: usize,
         error: *mut c_char,
         cap: usize,
     ) -> i32;
@@ -585,6 +661,7 @@ mod tests {
         };
         let state = DeviceState {
             owner: 3,
+            hidden_rows: 0,
             token: Some(Arc::new(Lifetime { id, releases: tx })),
         };
         let command_reader = state.clone();
@@ -652,9 +729,11 @@ mod tests {
                     state: DeviceState {
                         owner: 1,
                         token: None,
+                        hidden_rows: 0,
                     },
                     ir: ModelStepIr::compile(StepKind::Decode, 0, vec![1], 2).unwrap(),
                     all_logits: false,
+                    capture_hidden: false,
                     _completion: Some(guard.clone()),
                     reply,
                     _permit: permit,

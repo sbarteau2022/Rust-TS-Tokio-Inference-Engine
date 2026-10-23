@@ -85,3 +85,12 @@ void rs_qwen_device_destroy(void*);
 #ifdef __cplusplus
 }
 #endif
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+int rs_qwen_device_hidden_block(void*,const struct StateId*,size_t,const uint32_t*,size_t,struct StateId*,float*,size_t,char*,size_t);
+int rs_qwen_device_hidden_snapshot(void*,const struct StateId*,float*,size_t,char*,size_t);
+#ifdef __cplusplus
+}
+#endif

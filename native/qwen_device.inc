@@ -1,9 +1,10 @@
 #include "state_table.h"
 #include <atomic>
 namespace {
+struct DevicePayload {std::vector<mx::array> arrays;std::optional<mx::array> hidden;};
 struct DeviceSession {
  void* weights;int gpu;rs_qwen_config config;std::vector<rs_qwen_layer> layers;
- StateTable<std::vector<mx::array>> table;
+ StateTable<DevicePayload> table;
  uint64_t exports=0,uploads=0,steps=0;
  DeviceSession(void* w,int g,rs_qwen_config c,const rs_qwen_layer* l,size_t n,uint64_t owner,size_t slots,uint64_t bytes):weights(w),gpu(g),config(c),layers(l,l+n),table(owner,slots,bytes){}
 };
@@ -18,26 +19,28 @@ extern "C" void* rs_qwen_device_create(void* weights,int gpu,const rs_qwen_confi
  result=new DeviceSession(weights,gpu,c,layers,count,owner,slots,bytes);
  });return result;
 }
-static int device_step(void* handle,const StateId* previous,size_t position,const uint32_t* tokens,size_t count,StateId* output,float* logits,size_t logits_count,float* trace,size_t trace_count,char* error,size_t capacity,bool all_logits){return checked(error,capacity,[&]{
+static int device_step(void* handle,const StateId* previous,size_t position,const uint32_t* tokens,size_t count,StateId* output,float* logits,size_t logits_count,float* trace,size_t trace_count,char* error,size_t capacity,bool all_logits,bool capture_hidden=false){return checked(error,capacity,[&]{
  if(!handle||!output||!tokens||!logits)throw std::invalid_argument("device step descriptor");auto& session=*static_cast<DeviceSession*>(handle);const auto& c=session.config;
  if(!count||count>8||position>512||count>512-position||logits_count!=size_t(c.vocab)*(all_logits?count:1))throw std::invalid_argument("device step capacity");
  if((position==0)!=(!previous))throw std::invalid_argument("device previous state presence");
- const std::vector<mx::array>* old=nullptr;if(previous){if(previous->position!=position)throw std::invalid_argument("device position mismatch");old=&session.table.get(*previous);}
- auto id=session.table.reserve(position+count,qwen_state_count(c,position+count)*4);
+ const std::vector<mx::array>* old=nullptr;if(previous){if(previous->position!=position)throw std::invalid_argument("device position mismatch");old=&session.table.get(*previous).arrays;}
+ auto state_count=qwen_state_count(c,position+count);auto hidden_bytes=capture_hidden?count*size_t(c.hidden)*4:0;
+ auto id=session.table.reserve(position+count,state_count*4+hidden_bytes);
  try{
-  std::vector<mx::array> next;
-  char inner[1024]={};auto code=qwen_forward_core(session.weights,session.gpu,&c,session.layers.data(),session.layers.size(),tokens,count,position,nullptr,position?qwen_state_count(c,position):0,nullptr,id.bytes/4,logits,logits_count,0,nullptr,0,trace,trace_count,inner,sizeof(inner),old,&next,all_logits);
+  DevicePayload next;
+  char inner[1024]={};auto code=qwen_forward_core(session.weights,session.gpu,&c,session.layers.data(),session.layers.size(),tokens,count,position,nullptr,position?qwen_state_count(c,position):0,nullptr,state_count,logits,logits_count,0,nullptr,0,trace,trace_count,inner,sizeof(inner),old,&next.arrays,all_logits,capture_hidden?&next.hidden:nullptr);
   if(code)throw std::runtime_error(inner);
-  if(next.size()!=80)throw std::runtime_error("device state array inventory");
+  if(next.arrays.size()!=80)throw std::runtime_error("device state array inventory");
   for(size_t i=0;i<logits_count;++i)if(!std::isfinite(logits[i]))throw std::runtime_error("nonfinite device logits");
   session.table.publish(id,std::move(next));++session.steps;*output=id;
  }catch(...){session.table.rollback(id);throw;}
 });}
 extern "C" int rs_qwen_device_step(void* h,const StateId* p,size_t position,const uint32_t* t,size_t n,StateId* out,float* logits,size_t lc,float* trace,size_t tc,char* e,size_t ec){return device_step(h,p,position,t,n,out,logits,lc,trace,tc,e,ec,false);}
 extern "C" int rs_qwen_device_block(void* h,const StateId* p,size_t position,const uint32_t* t,size_t n,StateId* out,float* logits,size_t lc,char* e,size_t ec){return device_step(h,p,position,t,n,out,logits,lc,nullptr,0,e,ec,true);}
+extern "C" int rs_qwen_device_hidden_block(void* h,const StateId* p,size_t position,const uint32_t* t,size_t n,StateId* out,float* logits,size_t lc,char* e,size_t ec){return device_step(h,p,position,t,n,out,logits,lc,nullptr,0,e,ec,true,true);}
 extern "C" int rs_qwen_device_release(void* handle,const StateId* id,char* error,size_t capacity){return checked(error,capacity,[&]{if(!handle||!id)throw std::invalid_argument("release descriptor");static_cast<DeviceSession*>(handle)->table.release(*id);});}
 extern "C" int rs_qwen_device_snapshot(void* handle,const StateId* id,float* output,size_t count,char* error,size_t capacity){return checked(error,capacity,[&]{
- if(!handle||!id||!output||count!=id->bytes/4)throw std::invalid_argument("snapshot capacity");auto& session=*static_cast<DeviceSession*>(handle);const auto& arrays=session.table.get(*id);size_t offset=0;
+ if(!handle||!id||!output)throw std::invalid_argument("snapshot descriptor");auto& session=*static_cast<DeviceSession*>(handle);const auto& arrays=session.table.get(*id).arrays;if(count!=qwen_state_count(session.config,id->position))throw std::invalid_argument("snapshot capacity");size_t offset=0;
  for(const auto& a:arrays){if(a.size()>count-offset)throw std::runtime_error("snapshot array capacity");std::memcpy(output+offset,a.data<float>(),a.size()*4);offset+=a.size();}
  if(offset!=count)throw std::runtime_error("snapshot accounting");session.exports+=count*4;
 });}
@@ -45,3 +48,9 @@ extern "C" int rs_qwen_device_stats(void* handle,uint64_t* output,size_t count,c
 extern "C" void rs_qwen_device_destroy(void* handle){delete static_cast<DeviceSession*>(handle);}
 
 extern "C" int rs_qwen_device_drain(void* handle,uint64_t* invalidated,char* error,size_t capacity){return checked(error,capacity,[&]{if(!handle||!invalidated)throw std::invalid_argument("drain descriptor");auto& s=*static_cast<DeviceSession*>(handle);*invalidated=s.table.residents();s.table.clear();if(s.table.residents()||s.table.bytes())throw std::runtime_error("device drain residual");});}
+
+extern "C" int rs_qwen_device_hidden_snapshot(void* handle,const StateId* id,float* output,size_t count,char* error,size_t capacity){return checked(error,capacity,[&]{
+ if(!handle||!id||!output)throw std::invalid_argument("hidden snapshot descriptor");auto& s=*static_cast<DeviceSession*>(handle);const auto& value=s.table.get(*id).hidden;
+ if(!value||value->dtype()!=mx::float32||value->size()!=count)throw std::invalid_argument("missing hidden or snapshot capacity");
+ std::memcpy(output,value->data<float>(),count*4);s.exports+=count*4;
+});}

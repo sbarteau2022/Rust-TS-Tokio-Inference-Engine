@@ -15,7 +15,7 @@ related_files:
     lines: "1-1015"
     role: "config"
   - path: "Cargo.toml"
-    lines: "1-53"
+    lines: "1-57"
     role: "config"
   - path: "backend/rapid_worker.py"
     lines: "1-165"
@@ -34,6 +34,9 @@ related_files:
     role: "primary"
   - path: "examples/native_discriminators.rs"
     lines: "1-145"
+    role: "primary"
+  - path: "examples/native_hidden_smoke.rs"
+    lines: "1-170"
     role: "primary"
   - path: "examples/native_speculative_smoke.rs"
     lines: "1-370"
@@ -135,7 +138,7 @@ related_files:
     lines: "1-35"
     role: "test"
   - path: "judges/run.py"
-    lines: "1-221"
+    lines: "1-222"
     role: "test"
   - path: "judges/speculative_report.py"
     lines: "1-74"
@@ -168,7 +171,7 @@ related_files:
     lines: "1-178"
     role: "primary"
   - path: "native/mlx_bridge.h"
-    lines: "1-87"
+    lines: "1-96"
     role: "primary"
   - path: "native/operator_probe.inc"
     lines: "1-28"
@@ -183,10 +186,10 @@ related_files:
     lines: "1-30"
     role: "primary"
   - path: "native/qwen_device.inc"
-    lines: "1-47"
+    lines: "1-56"
     role: "primary"
   - path: "native/qwen_model.inc"
-    lines: "1-172"
+    lines: "1-173"
     role: "primary"
   - path: "native/state_table.h"
     lines: "1-38"
@@ -279,7 +282,7 @@ related_files:
     lines: "1-193"
     role: "primary"
   - path: "src/serving/native_device.rs"
-    lines: "1-687"
+    lines: "1-766"
     role: "primary"
   - path: "src/serving/native_device_scheduler.rs"
     lines: "1-178"
@@ -705,3 +708,7 @@ The next proposer needs a worker-confined hidden-state tap bound to the same nat
 ## Native MTP continuation — 2026-10-23
 
 Completed strict 42-tensor sidecar validation and isolated MLX ingestion via native-mtp-inspect. Next implement device-owned post-normalized target hidden handles, shifted-token MTP prefill and its separate attention state; apply per-module quantization explicitly. Then register the native proposer under Spec 15, verify rejection/cancellation/state recovery and qualify matched workloads before exposing operational tuning controls. The head has not yet generated a draft.
+
+## Post-norm payload continuation — 2026-10-23
+
+Opt-in device-owned hidden payloads are implemented and the focused real-model 1/2/4/8 gate passes, including scalar normalization and charged slot-pressure recovery. Next add mixed BF16/affine MTP projections, explicitly sanitized sidecar norms, independent draft attention state, shifted-token prefill and native proposer registration. The installed Rapid injection code assumes uniformly packed sidecars in its explicit-sidecar path; this checkpoint has BF16 fusion/router plus mixed packed attention/expert projections, so it must retain per-module metadata instead. This is an observed local compatibility boundary, not a claim about all Rapid versions.
