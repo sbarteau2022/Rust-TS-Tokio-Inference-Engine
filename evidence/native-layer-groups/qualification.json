@@ -1,0 +1,269 @@
+{
+  "status": "experimental target candidate; defaults unchanged",
+  "production_qualified": false,
+  "objective_achieved": false,
+  "hardware": "Apple M5 Pro, 48 GiB",
+  "model_path": "/Users/stewartbarteau/models/fused/Qwen3.6-MoE-Combined",
+  "model_identity": "509cc92543203798f2db08b6fb6cbb38a80942fc0437ae81a3ef9ff27720915b",
+  "binary_sha256": "121a345730304d64f3c20d05edd0809a1647663710e7d0d7f20ff4847d544b67",
+  "settings": {
+    "profiles": [
+      "target-physical"
+    ],
+    "arrival": "closed+open",
+    "tokens": 2000,
+    "layerGroup": 10,
+    "recurrentKernel": "fused"
+  },
+  "speculation": false,
+  "draft_acceptance": null,
+  "model_arithmetic": "FP32 baseline; custom integer-only Metal kernels unchanged",
+  "context_limit": 511,
+  "in_flight": 3,
+  "prefill_chunk": 8,
+  "full_state_finite_checks": true,
+  "closed_tokens": 4000,
+  "open_success_tokens": 192,
+  "warmup_tokens": 8,
+  "total_exact_reference_tokens": 4200,
+  "benchmark_memory": {
+    "mlx_active_bytes": 19508935168,
+    "mlx_peak_bytes": 20363248360,
+    "logical_state_budget_bytes": 2147483648
+  },
+  "cells": [
+    {
+      "profile": "target-physical",
+      "lanes": 1,
+      "arrival_policy": "closed-loop synchronized waves; not continuous batching",
+      "tokens": 2000,
+      "wall_seconds": 89.76651191604138,
+      "aggregate_tokens_per_second": 22.28002355567297,
+      "ttft_ms": {
+        "count": 32,
+        "mean": 418.2746758274734,
+        "p50": 422.05083405971527,
+        "p95": 444.9351249933243,
+        "max": 445.6449580192566
+      },
+      "client_callback_itl_ms": {
+        "count": 1968,
+        "mean": 38.79433066440307,
+        "p50": 38.683959007263184,
+        "p95": 40.27612495422363,
+        "max": 45.82700002193451
+      },
+      "native_publication_itl_ms": {
+        "count": 1968,
+        "mean": 38.7950294715447,
+        "p50": 38.67699999999968,
+        "p95": 40.26700000000005,
+        "max": 45.825000000000045
+      },
+      "post_first_tokens_per_lane_second": 25.776962326033395,
+      "windows": [
+        {
+          "tokens": 1000,
+          "elapsed_seconds": 44.69257537508011,
+          "tokens_per_second": 22.37508113165447
+        },
+        {
+          "tokens": 1500,
+          "elapsed_seconds": 67.2543469580412,
+          "tokens_per_second": 22.303391049738742
+        },
+        {
+          "tokens": 2000,
+          "elapsed_seconds": 89.76556241607666,
+          "tokens_per_second": 22.280259223795692
+        }
+      ]
+    },
+    {
+      "profile": "target-physical",
+      "lanes": 3,
+      "arrival_policy": "closed-loop synchronized waves; not continuous batching",
+      "tokens": 2000,
+      "wall_seconds": 79.9555304580927,
+      "aggregate_tokens_per_second": 25.013904460908623,
+      "ttft_ms": {
+        "count": 32,
+        "mean": 1222.6905013658106,
+        "p50": 1211.8115419149399,
+        "p95": 1341.932000041008,
+        "max": 1341.9412920475006
+      },
+      "client_callback_itl_ms": {
+        "count": 1968,
+        "mean": 98.63507890792155,
+        "p50": 86.90220892429352,
+        "p95": 119.38466691970825,
+        "max": 195.19274997711182
+      },
+      "native_publication_itl_ms": {
+        "count": 1968,
+        "mean": 98.63555945121952,
+        "p50": 86.89800000000014,
+        "p95": 119.40499999999975,
+        "max": 195.23800000000028
+      },
+      "post_first_tokens_per_lane_second": 10.138380899289658,
+      "windows": [
+        {
+          "tokens": 1000,
+          "elapsed_seconds": 39.761441040992736,
+          "tokens_per_second": 25.149993909150147
+        },
+        {
+          "tokens": 1500,
+          "elapsed_seconds": 59.587354207992554,
+          "tokens_per_second": 25.173126411422416
+        },
+        {
+          "tokens": 2000,
+          "elapsed_seconds": 79.95442458307743,
+          "tokens_per_second": 25.01425043615792
+        }
+      ]
+    }
+  ],
+  "open_pressure": {
+    "offered": 16,
+    "accepted": 6,
+    "rejected_503": 10,
+    "failed": 0
+  },
+  "packing": {
+    "packed_calls": 308,
+    "packed_rows": 616,
+    "scalar_calls": 4064,
+    "scope": "successful adapter completions over warmup, closed cells and open arrivals; not per-cell or committed-token counters"
+  },
+  "regression": {
+    "full": {
+      "failed_marker": false,
+      "rust_passed": 188
+    },
+    "debug": {
+      "failed_marker": false,
+      "rust_passed": 188
+    },
+    "clippy": {
+      "failed_marker": false,
+      "rust_passed": 0
+    },
+    "typescript_tests": [
+      "\u2139 tests 25",
+      "\u2139 suites 0",
+      "\u2139 pass 25",
+      "\u2139 fail 0",
+      "\u2139 cancelled 0",
+      "\u2139 skipped 0",
+      "\u2139 todo 0",
+      "\u2139 duration_ms 241.826875"
+    ]
+  },
+  "qualification_limits": [
+    "Single fresh candidate HTTP run; no matched HTTP reference/reverse-order speedup claim.",
+    "Four frozen short prompts; broad held-out quality remains unqualified.",
+    "Closed synchronized waves plus bounded open arrivals; not sustained heterogeneous continuous batching.",
+    "Speculation disabled; 100+ tok/s and >=90% learned draft acceptance remain open."
+  ],
+  "native_ablation_runs": [
+    {
+      "directory": "fused-group-10",
+      "layer_group": 10,
+      "recurrent_kernel": "fused",
+      "native_decode_steps": 252,
+      "pooled_native_decode_tok_s": 25.759581506976662,
+      "mean_native_prefill_ms": 419.2139795,
+      "mlx_peak_gib": 18.68309273198247,
+      "max_logit_abs": 1.4781951904296875e-05,
+      "max_state_abs": 2.288818359375e-05,
+      "all_bitwise_equal": false
+    },
+    {
+      "directory": "group-1",
+      "layer_group": 1,
+      "recurrent_kernel": "reference",
+      "native_decode_steps": 252,
+      "pooled_native_decode_tok_s": 18.36107847728953,
+      "mean_native_prefill_ms": 629.23348925,
+      "mlx_peak_gib": 18.45859219506383,
+      "max_logit_abs": 0.0,
+      "max_state_abs": 0.0,
+      "all_bitwise_equal": true
+    },
+    {
+      "directory": "group-1-repeat",
+      "layer_group": 1,
+      "recurrent_kernel": "reference",
+      "native_decode_steps": 252,
+      "pooled_native_decode_tok_s": 19.970982835564346,
+      "mean_native_prefill_ms": 609.736854,
+      "mlx_peak_gib": 18.45859219506383,
+      "max_logit_abs": 0.0,
+      "max_state_abs": 0.0,
+      "all_bitwise_equal": true
+    },
+    {
+      "directory": "group-10",
+      "layer_group": 10,
+      "recurrent_kernel": "reference",
+      "native_decode_steps": 252,
+      "pooled_native_decode_tok_s": 24.161295050768558,
+      "mean_native_prefill_ms": 539.3505417499999,
+      "mlx_peak_gib": 18.72071558609605,
+      "max_logit_abs": 0.0,
+      "max_state_abs": 0.0,
+      "all_bitwise_equal": true
+    },
+    {
+      "directory": "group-4",
+      "layer_group": 4,
+      "recurrent_kernel": "reference",
+      "native_decode_steps": 252,
+      "pooled_native_decode_tok_s": 23.238277659909798,
+      "mean_native_prefill_ms": 574.694146,
+      "mlx_peak_gib": 18.70178371667862,
+      "max_logit_abs": 0.0,
+      "max_state_abs": 0.0,
+      "all_bitwise_equal": true
+    },
+    {
+      "directory": "group-40",
+      "layer_group": 40,
+      "recurrent_kernel": "reference",
+      "native_decode_steps": 252,
+      "pooled_native_decode_tok_s": 22.51936246150695,
+      "mean_native_prefill_ms": 579.06893725,
+      "mlx_peak_gib": 18.72262293472886,
+      "max_logit_abs": 0.0,
+      "max_state_abs": 0.0,
+      "all_bitwise_equal": true
+    },
+    {
+      "directory": "reference-10-clean",
+      "layer_group": 10,
+      "recurrent_kernel": "reference",
+      "native_decode_steps": 252,
+      "pooled_native_decode_tok_s": 24.522552035214012,
+      "mean_native_prefill_ms": 537.29545825,
+      "mlx_peak_gib": 18.72071558609605,
+      "max_logit_abs": 0.0,
+      "max_state_abs": 0.0,
+      "all_bitwise_equal": true
+    }
+  ],
+  "native_comparison_note": "Fresh native reference-group-10 after fused candidate; single ordered repetition, not a paired HTTP/reverse-order speedup claim.",
+  "source_sha256": {
+    "native/qwen_model.inc": "e8fb3c1143be98348d3c3767a4eeccfbeac34dc9cb5475068d6046a371bdd84c",
+    "native/qwen_batch.inc": "20674fb56c1742c01bf3f5064ab38f0880682ca9b0983ec070b32fa20f9a6a2c",
+    "native/qwen_device.inc": "2baa10709d967685f235e3d44b362cc01c6c1d485fa2243310eea924c0d7d4ab",
+    "native/mlx_bridge.h": "452aae8cde480ed3ef31c50e7cb1fa90935680b8110656dd52badb4ae256165e",
+    "src/serving/native_device.rs": "963118a2c483d5d80e2c287ad73063af9c7bf5a5b6b26891e539ae065f482d22",
+    "src/serving/native_http.rs": "7c1983484d42de1ac7c405a705e97e075a8edb8b5cdada536fd21d6a1d2cf6f0",
+    "ts/http-bench.ts": "9d2383bcbc108bdab362f2874f01fd5b161467d5e61a33ccaabdaeea324acd8b",
+    "judges/physical_throughput_verify.py": "1ed6e164e93b3b04f61348d5d91364cd02946ea23b7c66c9147ed1cf452fbe31"
+  }
+}

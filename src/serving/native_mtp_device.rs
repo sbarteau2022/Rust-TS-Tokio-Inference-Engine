@@ -70,8 +70,10 @@ impl QwenDeviceExecutor {
                 && logical_byte_limit <= 8 * 1024 * 1024 * 1024,
             "MTP resident budget bounds"
         );
-        tokio::task::spawn_blocking(move || Self::start(device, slots, logical_byte_limit, true))
-            .await?
+        tokio::task::spawn_blocking(move || {
+            Self::start(device, slots, logical_byte_limit, true, 1, false)
+        })
+        .await?
     }
     pub async fn mtp_snapshot(&self, state: &MtpState) -> Result<Vec<f32>> {
         ensure!(

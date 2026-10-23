@@ -1,8 +1,8 @@
 ---
 title: "Native MTP integration and tuning control plan"
 document_type: "architecture"
-version: "1.3.0"
-date: "2026-10-23T12:43:42Z"
+version: "1.4.0"
+date: "2026-10-23T20:58:00Z"
 implementation_date: null
 author: "Codex for Stewart Barteau"
 reviewers: []
@@ -15,7 +15,7 @@ related_files:
     lines: "1-1148"
     role: "config"
   - path: "Cargo.toml"
-    lines: "1-102"
+    lines: "1-106"
     role: "config"
   - path: "backend/rapid_worker.py"
     lines: "1-165"
@@ -27,7 +27,7 @@ related_files:
     lines: "1-394"
     role: "primary"
   - path: "examples/native_device_pressure.rs"
-    lines: "1-184"
+    lines: "1-196"
     role: "primary"
   - path: "examples/native_device_reference.rs"
     lines: "1-166"
@@ -57,7 +57,7 @@ related_files:
     lines: "1-186"
     role: "primary"
   - path: "examples/native_physical_batch.rs"
-    lines: "1-213"
+    lines: "1-232"
     role: "primary"
   - path: "examples/native_seed_qualification.rs"
     lines: "1-271"
@@ -174,7 +174,7 @@ related_files:
     lines: "1-81"
     role: "test"
   - path: "judges/native_physical_http.py"
-    lines: "1-88"
+    lines: "1-93"
     role: "test"
   - path: "judges/native_seed_http.py"
     lines: "1-84"
@@ -186,7 +186,7 @@ related_files:
     lines: "1-29"
     role: "test"
   - path: "judges/physical_throughput_verify.py"
-    lines: "1-80"
+    lines: "1-90"
     role: "test"
   - path: "judges/projection_reference.cpp"
     lines: "1-53"
@@ -243,13 +243,13 @@ related_files:
     lines: "1-30"
     role: "primary"
   - path: "native/qwen_batch.inc"
-    lines: "1-40"
+    lines: "1-41"
     role: "primary"
   - path: "native/qwen_device.inc"
-    lines: "1-61"
+    lines: "1-63"
     role: "primary"
   - path: "native/qwen_model.inc"
-    lines: "1-173"
+    lines: "1-185"
     role: "primary"
   - path: "native/qwen_mtp.inc"
     lines: "1-55"
@@ -354,7 +354,7 @@ related_files:
     lines: "1-193"
     role: "primary"
   - path: "src/serving/native_device.rs"
-    lines: "1-1001"
+    lines: "1-1046"
     role: "primary"
   - path: "src/serving/native_device_scheduler.rs"
     lines: "1-205"
@@ -369,7 +369,7 @@ related_files:
     lines: "1-214"
     role: "primary"
   - path: "src/serving/native_http.rs"
-    lines: "1-333"
+    lines: "1-460"
     role: "primary"
   - path: "src/serving/native_ingestion.rs"
     lines: "1-272"
@@ -393,7 +393,7 @@ related_files:
     lines: "1-275"
     role: "primary"
   - path: "src/serving/native_mtp_device.rs"
-    lines: "1-436"
+    lines: "1-438"
     role: "primary"
   - path: "src/serving/native_mtp_scheduler.rs"
     lines: "1-1057"
@@ -402,7 +402,7 @@ related_files:
     lines: "1-273"
     role: "primary"
   - path: "src/serving/native_qwen.rs"
-    lines: "1-694"
+    lines: "1-698"
     role: "primary"
   - path: "src/serving/native_reference.rs"
     lines: "1-100"
@@ -420,7 +420,7 @@ related_files:
     lines: "1-220"
     role: "primary"
   - path: "src/serving/qwen_tests.rs"
-    lines: "1-568"
+    lines: "1-570"
     role: "primary"
   - path: "src/serving/rapid.rs"
     lines: "1-265"
@@ -540,10 +540,10 @@ related_files:
     lines: "1-13"
     role: "primary"
   - path: "ts/http-bench-config.test.ts"
-    lines: "1-14"
+    lines: "1-31"
     role: "test"
   - path: "ts/http-bench-config.ts"
-    lines: "1-27"
+    lines: "1-30"
     role: "primary"
   - path: "ts/http-bench.ts"
     lines: "1-55"
@@ -898,3 +898,35 @@ Extend only offline TS benchmark controls to label target-physical separately an
 The current 40-layer target graph calls eval plus synchronize inside every layer (native/qwen_model.inc), retains 80 state-finiteness reductions before returning, and exports 248,320 FP32 logits (993,280 bytes) per scalar step for native/Rust validation and greedy selection. The packed graph retains the same per-layer boundaries and full-state finite checks. This is a correctness-first native graph, not a qualified fused production implementation. In the first scalar one-lane HTTP cell, mean callback versus native-publication gaps were 49.427147 versus 49.427710 ms; that measurement does not implicate HTTP transport as the principal inter-token delay.
 
 These observations do not attribute wall time to synchronization, finite checks, quantized projections, recurrent update, attention, MoE or full-vocabulary export separately. Next preregister native stage timing/dispatch counts and MLX peak memory before claiming a bandwidth or ALU ceiling. Isolate boundary grouping/deferred evaluation, then sampled versus full diagnostic state scans, then device-side greedy selection with lowest-ID tie/finite-policy parity; preserve immutable parent rollback and exact tokens. Keep any validation-posture change explicit and separate from the inactive production sampling-policy draft. Unequal-position packing requires its own RoPE/mask/state-layout design. Do not combine these ablations and assign their total gain to one optimization.
+
+## Native execution-boundary ablation — preregistered 2026-10-23
+
+Objective remains 100+ generated tokens/s and >=90% measured draft acceptance on the Combined checkpoint, with held-out quality and state safety. Neither is established. First isolate synchronization grouping before changing arithmetic, finite checks, precision, drafter or scheduler geometry.
+
+Add explicit target-only `--layer-group 1|4|10|40`, default 1. The device executor owns the setting; snapshot reference and diagnostic trace calls always retain per-layer completion. Evaluate all pending activation/state outputs at each group boundary, synchronizing there and at final output publication. Keep every state finite check, FP32 arithmetic, full logits and immutable parent ownership. Both scalar and packed target graphs use the setting. Reject invalid/duplicate values and nondefault MTP combinations before weights load. No environment toggle or silent default promotion.
+
+Preregister native qualification against the unchanged snapshot reference: all four frozen prompts, greedy continuation, full logits and unified-state comparisons, repeated parent use and packed B=1/2/3, existing foreign-parent/invalid-token/resident-pressure/cancellation gates. Require exact token equality; NRMSE <=1e-5 and max absolute <=1e-3 for state/logits; preserve any failed observations. Run separate processes for each group so MLX peak-memory counters are independent. Capture model/binary identity, wall-clock prefill/decode, MLX active/peak, zero ownership residue and full commands. Increased lazy-graph memory or any parity/rollback failure blocks promotion. A short native gate does not establish HTTP throughput or broad held-out quality. After the gate, benchmark HTTP 1/3 lanes with the same fixed-window protocol and both orders; retain group 1 as control.
+
+Subsequent separate experiments: fused SDPA and GatedDelta kernels; device-side greedy selection; explicit validation-posture configuration; qualified FP16/BF16 activation lanes; efficient multi-token target verification and compatible MTP/custom proposer; heterogeneous state-safe continuous batching. Acceptance alone is not profitability: measure committed tokens divided by total draft+verify+commit time. Preserve integer-only custom Metal kernels as a separate numerical contract. No 100 tok/s or 90% acceptance claim until observed on this exact model/workload.
+
+### Fused primitive feasibility gate (separate from boundary grouping)
+
+MLX SDK 0.32.4 exposes C++ `fast::scaled_dot_product_attention` and `fast::gated_delta_update`. Inspect the matching upstream implementation before mapping parameters: gated delta expects the already-exponentiated decay, beta, normalized q/k and FP32 `[B,Hv,Dv,Dk]` state. First run a standalone native component judge at the real key/value head geometry, B=1/3 and T=1/8, comparing against the existing arithmetic recurrence. Check all outputs/state, repeated branches from the same immutable parent, and zero parent mutation. Component success permits a separately flagged full-model experiment only; it does not qualify model tokens or speed. Keep arithmetic changes out of the completion-group matrix. The source contract is https://raw.githubusercontent.com/ml-explore/mlx/v0.32.4/mlx/fast.cpp .
+
+### Fused recurrent full-model ablation — preregistered before integration
+
+Expose a separate target-only `--recurrent-kernel reference|fused`, default reference; do not change attention or activation precision. The native device constructor owns this selection and refuses fused CPU sessions. Reference/snapshot and diagnostic trace executions force the original recurrence and layer boundaries. Map the existing normalized q/k, v, already-exponentiated decay, beta and FP32 immutable state directly into MLX 0.32.4 `fast::gated_delta_update`; keep convolution, gating, projections and all output/state finite checks unchanged. Preserve the baseline executable for the remaining completion-group measurements.
+
+Require the same four-prompt full-logit/full-state numeric limits and exact frozen tokens, plus packed B=1/2/3 and context/cancellation/branch isolation at the selected configuration. Keep the fused primitive's changes separate from group-only measurements. Benchmark fresh reference and fused runs at the same group, with repeated reverse-order controls and peak memory. No MTP, activation-precision or production-sampling change is part of this switch. If numerical/token gates fail, record the failure and leave the candidate unqualified; never hide it by widening tolerances after seeing results.
+
+Fused HTTP functional gate: extend the existing physical HTTP smoke with explicit group/kernel arguments and verify those values in the actual TS client's metadata callback. Preserve one/three-lane exact reference tokens, deadline, disconnect/recovery, both archive readers and real packed completion counters with zero drain. This short repeated-prompt gate is not a throughput or sustained continuous-batching claim.
+
+First candidate server measurement may use one explicit target-physical profile, 2,000 tokens at each of one/three lanes plus the existing open-arrival pressure test. Verify with an explicit `--single` offline reader mode that requires exactly that coverage, unchanged raw archives/clocks/reference tokens and declared group/kernel metadata. Label it absolute candidate throughput, never an A/B speedup or default-promotion result. The original two-profile/both-order contract remains required for comparative claims; the verifier's default continues to enforce it.
+
+### Next design gate: persistent compiled decode blocks and host/wait attribution
+
+The first fused recurrence remains far below the 100 tok/s objective. Do not attribute the remainder to bandwidth from a source audit. Next record bridge wall time, host graph-construction time, eval/completion-wait time and logits-export time without inserting new GPU barriers. Completion wait includes submission/dispatch and GPU waiting; it is not a GPU-only timer. Report instrumentation overhead against the same uninstrumented configuration.
+
+Candidate after attribution: persistent MLX C++ compiled recurrent decode blocks under an explicit `--graph-mode eager|compiled-decode`, default eager. Cache functions within the immutable weight owner, keyed by layer, batch geometry, dtype, quantization and kernel mode; pass x/convolution/recurrent state as inputs, never capture a request parent. Restrict the first compiled lane to T=1, B=1/2/3 with fixed recurrent-state geometry, bounded to 90 layer/geometry entries per selected profile. Preserve the existing eager prefill/attention and snapshot controls. Offset-dependent attention must not be cached with a stale captured position. Ensure function-cache destruction precedes weight destruction and canceled receivers retain completion ownership.
+
+Before activation: exact frozen and held-out token comparisons, existing strict numerical gates, repeated immutable-parent branches, B=1/2/3 state packing, cancellation, budget rejection and max-context pressure. Record cold compilation/first-token latency separately from warmed decode, plus cache entry/miss counts and MLX peak memory. A compiler-created FMA change is a numerical change, not presumed bitwise parity. No post-hoc tolerance widening. Only if the measured path remains GPU-bound should the next experiment prioritize projection/MoE layout or a separately qualified lower-precision model lane. Efficient multi-token verification and compatible draft scheduling remain required for the independent >=90% acceptance target.

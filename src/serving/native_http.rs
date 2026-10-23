@@ -114,6 +114,50 @@ fn batching_flags(flags: &[String]) -> Result<(bool, Vec<String>)> {
     }
     Ok((mode.unwrap_or(false), rest))
 }
+fn layer_group_flags(flags: &[String]) -> Result<(u32, Vec<String>)> {
+    ensure!(
+        flags.len().is_multiple_of(2),
+        "layer group flags require pairs"
+    );
+    let mut group = None;
+    let mut rest = Vec::new();
+    for pair in flags.as_chunks::<2>().0 {
+        if pair[0] == "--layer-group" {
+            ensure!(group.is_none(), "duplicate layer group");
+            group = Some(match pair[1].as_str() {
+                "1" => 1,
+                "4" => 4,
+                "10" => 10,
+                "40" => 40,
+                _ => anyhow::bail!("layer group must be 1|4|10|40"),
+            });
+        } else {
+            rest.extend_from_slice(pair);
+        }
+    }
+    Ok((group.unwrap_or(1), rest))
+}
+fn recurrent_flags(flags: &[String]) -> Result<(bool, Vec<String>)> {
+    ensure!(
+        flags.len().is_multiple_of(2),
+        "recurrent flags require pairs"
+    );
+    let mut mode = None;
+    let mut rest = Vec::new();
+    for pair in flags.as_chunks::<2>().0 {
+        if pair[0] == "--recurrent-kernel" {
+            ensure!(mode.is_none(), "duplicate recurrent kernel");
+            mode = Some(match pair[1].as_str() {
+                "reference" => false,
+                "fused" => true,
+                _ => anyhow::bail!("recurrent kernel must be reference|fused"),
+            });
+        } else {
+            rest.extend_from_slice(pair);
+        }
+    }
+    Ok((mode.unwrap_or(false), rest))
+}
 pub async fn serve(
     address: SocketAddr,
     body_timeout_ms: u64,
@@ -135,7 +179,9 @@ pub async fn serve(
             && (1..=64).contains(&max_connections),
         "explicit loopback address/nonzero port and HTTP limits required"
     );
-    let (physical, flags) = batching_flags(flags)?;
+    let (fused_recurrent, flags) = recurrent_flags(flags)?;
+    let (layer_group, flags) = layer_group_flags(&flags)?;
+    let (physical, flags) = batching_flags(&flags)?;
     let (deferred_seed, flags) = seed_flags(&flags)?;
     let (execution, flags) = profile_flags(&flags)?;
     ensure!(
@@ -146,6 +192,14 @@ pub async fn serve(
         !physical || execution == Profile::Target,
         "physical batching requires target profile"
     );
+    ensure!(
+        layer_group == 1 || execution == Profile::Target,
+        "grouped layers require target profile"
+    );
+    ensure!(
+        !fused_recurrent || execution == Profile::Target,
+        "fused recurrent requires target profile"
+    );
     let options = Options::parse(&flags)?;
     let controller = options.controller()?;
     let manifest = Manifest::read(std::path::Path::new(
@@ -153,7 +207,12 @@ pub async fn serve(
     ))?;
     let tokenizer = NativeTokenizer::load(&manifest)?;
     let state_budget = if physical { 2 } else { 1 } * 1024 * 1024 * 1024;
-    let executor = Arc::new(QwenDeviceExecutor::open_mtp(Device::Gpu, 64, state_budget).await?);
+    let executor = Arc::new(if execution == Profile::Target {
+        QwenDeviceExecutor::open_tuned(Device::Gpu, 64, state_budget, layer_group, fused_recurrent)
+            .await?
+    } else {
+        QwenDeviceExecutor::open_mtp(Device::Gpu, 64, state_budget).await?
+    });
     let config = Config {
         version: 1,
         max_queued: 3,
@@ -202,7 +261,7 @@ pub async fn serve(
             None,
         )
     };
-    let profile=format!("EXPERIMENTAL-NATIVE-HTTP execution={execution:?} seed_mode={} width={} stream_capacity={} policy={:?} context=511 in_flight=3 body_timeout_ms={body_timeout_ms} max_connections={max_connections} physical_tensor_batching={physical} state_budget_bytes={state_budget} production_qualified=false audit_clock={}",if deferred_seed {"deferred"} else {"eager"},options.width,options.capacity,options.policy,if execution==Profile::Audited {"validated-batches"} else {"disabled"});
+    let profile=format!("EXPERIMENTAL-NATIVE-HTTP execution={execution:?} seed_mode={} width={} stream_capacity={} policy={:?} context=511 in_flight=3 body_timeout_ms={body_timeout_ms} max_connections={max_connections} physical_tensor_batching={physical} layer_group={layer_group} recurrent_kernel={} state_budget_bytes={state_budget} production_qualified=false audit_clock={}",if deferred_seed {"deferred"} else {"eager"},options.width,options.capacity,options.policy,if fused_recurrent {"fused"} else {"reference"},if execution==Profile::Audited {"validated-batches"} else {"disabled"});
     let engine = Arc::new(engine);
     let codec = Arc::new(Codec::new(tokenizer, executor.identity().into()));
     let server = http::Server::bind(
@@ -237,6 +296,10 @@ pub async fn serve(
     let transport = transport?;
     let scheduler = scheduler?;
     let native = native?;
+    println!(
+        "NATIVE_MEMORY active_bytes={} peak_bytes={} layer_group={layer_group}",
+        native.mlx_active_bytes, native.mlx_peak_bytes
+    );
     ensure!(
         transport.active_producers == 0
             && transport.active_connections == 0
@@ -272,6 +335,70 @@ mod tests {
     use super::*;
     fn args(s: &str) -> Vec<String> {
         s.split_whitespace().map(str::to_owned).collect()
+    }
+    #[test]
+    fn recurrent_kernel_is_explicit() {
+        assert!(!recurrent_flags(&[]).unwrap().0);
+        assert!(
+            recurrent_flags(&args("--recurrent-kernel fused"))
+                .unwrap()
+                .0
+        );
+        for s in [
+            "--recurrent-kernel",
+            "--recurrent-kernel bad",
+            "--recurrent-kernel fused --recurrent-kernel reference",
+        ] {
+            assert!(recurrent_flags(&args(s)).is_err());
+        }
+        assert_eq!(
+            recurrent_flags(&args("--recurrent-kernel reference --layer-group 4"))
+                .unwrap()
+                .1,
+            args("--layer-group 4")
+        );
+    }
+    #[tokio::test]
+    async fn invalid_group_constructor_rejects_before_model_loading() {
+        for group in [0, 2, 3, 41, u32::MAX] {
+            let result = super::super::native_qwen::QwenDeviceExecutor::open_grouped(
+                super::super::native_mlx::Device::Gpu,
+                8,
+                1024,
+                group,
+            )
+            .await;
+            assert!(result.is_err());
+        }
+    }
+    #[test]
+    fn layer_groups_fail_closed() {
+        assert_eq!(layer_group_flags(&[]).unwrap().0, 1);
+        for group in [1, 4, 10, 40] {
+            assert_eq!(
+                layer_group_flags(&args(&format!("--layer-group {group}")))
+                    .unwrap()
+                    .0,
+                group
+            );
+        }
+        for value in [
+            "--layer-group",
+            "--layer-group 0",
+            "--layer-group 3",
+            "--layer-group 41",
+            "--layer-group -1",
+            "--layer-group 04",
+            "--layer-group 4 --layer-group 10",
+        ] {
+            assert!(layer_group_flags(&args(value)).is_err());
+        }
+        assert_eq!(
+            layer_group_flags(&args("--layer-group 4 --execution-profile target"))
+                .unwrap()
+                .1,
+            args("--execution-profile target")
+        );
     }
     #[test]
     fn batching_mode_fails_closed_and_defaults_scalar() {

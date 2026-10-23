@@ -1,0 +1,33 @@
+{
+  "native_binary_sha256": "121a345730304d64f3c20d05edd0809a1647663710e7d0d7f20ff4847d544b67",
+  "qualification_binary_sha256": "b96d6e74b5c54aae8138ef4cc725c43aabafe2873e8ab500227b5aa9b195f86c",
+  "candidate_command": [
+    "target/release/examples/native_group_qualification",
+    "evidence/native-layer-groups/fused-group-10",
+    "10",
+    "fused"
+  ],
+  "model_identity": "509cc92543203798f2db08b6fb6cbb38a80942fc0437ae81a3ef9ff27720915b",
+  "gate": "NRMSE<=1e-5, max_abs<=1e-3, exact frozen greedy tokens",
+  "scope": "FP32 target-only native recurrence; no speculation or integer-path changes",
+  "commands": [
+    [
+      "target/release/examples/native_group_qualification",
+      "evidence/native-layer-groups/fused-group-10",
+      "10",
+      "fused"
+    ],
+    [
+      "target/release/examples/native_physical_batch",
+      "evidence/native-layer-groups/packed-fused-10",
+      "10",
+      "fused"
+    ],
+    [
+      "target/release/examples/native_device_pressure",
+      "evidence/native-layer-groups/pressure-fused-10",
+      "10",
+      "fused"
+    ]
+  ]
+}

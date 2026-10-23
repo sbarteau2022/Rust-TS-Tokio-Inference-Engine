@@ -1,0 +1,5 @@
+B=1 T=1 output_max=9.31323e-10 output_nrmse=3.96918e-08 state_max=2.32831e-10 state_nrmse=3.80773e-08 parent_unchanged=true
+B=1 T=8 output_max=1.86265e-09 output_nrmse=4.15006e-08 state_max=1.39698e-09 state_nrmse=6.24858e-08 parent_unchanged=true
+B=3 T=1 output_max=9.31323e-10 output_nrmse=3.84491e-08 state_max=2.32831e-10 state_nrmse=3.81495e-08 parent_unchanged=true
+B=3 T=8 output_max=1.86265e-09 output_nrmse=4.13401e-08 state_max=1.39698e-09 state_nrmse=6.25199e-08 parent_unchanged=true
+PASS native fused delta component; no full-model or throughput claim

@@ -12,3 +12,20 @@ test('physical target benchmark labels select explicit server modes',()=>{
  assert.deepEqual(benchOptions(args('--profiles target-physical,target --arrival closed+open --tokens-per-cell 2000')).profiles,['target-physical','target']);
  assert.throws(()=>executionFlags('bogus' as never));
 });
+
+test('layer grouping is explicit and refuses unsupported speculation before launch',()=>{
+ const base='--profiles target-physical,target --arrival closed --tokens-per-cell 2000';
+ assert.equal(benchOptions(args(base)).layerGroup,1);
+ for(const g of [1,4,10,40])assert.equal(benchOptions(args(base+` --layer-group ${g}`)).layerGroup,g);
+ for(const g of ['0','3','04','41','-1','1e1'])assert.throws(()=>benchOptions(args(base+` --layer-group ${g}`)));
+ assert.throws(()=>benchOptions(args('--profiles mtp --arrival closed --tokens-per-cell 2000 --layer-group 4')));
+ assert.throws(()=>benchOptions(args(base+' --layer-group 4 --layer-group 10')));
+});
+
+test('recurrent ablation validates mode and compatible execution profile',()=>{
+ const base='--profiles target --arrival closed --tokens-per-cell 2000';
+ assert.equal(benchOptions(args(base)).recurrentKernel,'reference');
+ assert.equal(benchOptions(args(base+' --recurrent-kernel fused --layer-group 40')).recurrentKernel,'fused');
+ assert.throws(()=>benchOptions(args(base+' --recurrent-kernel auto')));
+ assert.throws(()=>benchOptions(args('--profiles mtp --arrival closed --tokens-per-cell 2000 --recurrent-kernel fused')));
+});

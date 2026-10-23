@@ -1,0 +1,37 @@
+
+> apple-native-rust-server@0.1.0 test
+> tsx --test ts/*.test.ts
+
+✔ benchmark flags preserve order and fail before side effects (0.667459ms)
+✔ closed waves reserve exact final token budget (0.08125ms)
+✔ absolute arrivals proceed while earlier work is unfinished and retain failures (0.162458ms)
+✔ shutdown timer is bounded and canceled on normal process exit (89.612667ms)
+✔ physical target benchmark labels select explicit server modes (0.175583ms)
+✔ layer grouping is explicit and refuses unsupported speculation before launch (0.132084ms)
+✔ recurrent ablation validates mode and compatible execution profile (0.062084ms)
+✔ HTTP client validates origin and bounds before network (0.440542ms)
+✔ HTTP client accepts fragmented binary finish and rejects error or truncated EOF (17.111917ms)
+✔ HTTP overload remains typed and cancels its non-AMST body (0.252209ms)
+✔ HTTP timing separates TTFT, burst gaps, request envelope and per-lane decode (0.627042ms)
+✔ HTTP macro windows count globally delivered tokens, not request completion (0.844084ms)
+✔ HTTP timing rejects empty, regressed and mismatched observations (0.119458ms)
+✔ offline artifacts preserve exact u64 metadata (0.071166ms)
+✔ nonfinite request envelopes and zero-duration macro bursts are explicit (0.22625ms)
+✔ Rust fixture and all chunk sizes agree, BOM and Unicode preserved (15.894625ms)
+✔ unknown controls, ordering, exact terminal and EOF refusal (4.009ms)
+✔ malformed structural mutations fail without permitting poisoned reuse (17.531958ms)
+✔ typed errors terminate partial and empty streams (0.208916ms)
+✔ timestamp, token and aggregate text caps fail closed (14.885417ms)
+✔ MVK records exact dependency order (1.327417ms)
+✔ invalid shapes and unsafe names rejected (0.249ms)
+✔ undefined and invalid handles rejected (0.15925ms)
+✔ second kernel family records row-bias fusion (0.399667ms)
+✔ CORDIC functions serialize stable version-3 operation codes (0.375917ms)
+ℹ tests 25
+ℹ suites 0
+ℹ pass 25
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 241.826875

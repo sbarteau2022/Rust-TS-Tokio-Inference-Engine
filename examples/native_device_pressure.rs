@@ -21,10 +21,21 @@ fn drift(a: &[f32], b: &[f32]) -> Result<(f64, f64)> {
 #[tokio::main]
 async fn main() -> Result<()> {
     let args: Vec<_> = std::env::args().skip(1).collect();
-    ensure!(args.len() == 1, "native_device_pressure NEW_DIRECTORY");
+    ensure!(
+        (1..=3).contains(&args.len()),
+        "native_device_pressure NEW_DIRECTORY [GROUP] [reference|fused]"
+    );
+    let group: u32 = args.get(1).map_or(Ok(1), |s| s.parse())?;
+    let mode = args.get(2).map_or("reference", String::as_str);
+    ensure!(
+        matches!(mode, "reference" | "fused"),
+        "recurrent kernel mode"
+    );
     let out = Path::new(&args[0]);
     std::fs::create_dir(out)?;
-    let executor = QwenDeviceExecutor::open(Device::Gpu, 8, 768 * 1024 * 1024).await?;
+    let executor =
+        QwenDeviceExecutor::open_tuned(Device::Gpu, 8, 768 * 1024 * 1024, group, mode == "fused")
+            .await?;
     let prefix = executor
         .step(&executor.empty_state(), vec![16; 8])
         .await?
@@ -156,7 +167,8 @@ async fn main() -> Result<()> {
             && shutdown.invalidated_at_shutdown == 1,
         "shutdown did not invalidate live version"
     );
-    let restarted = QwenDeviceExecutor::open(Device::Gpu, 2, 1).await?;
+    let restarted =
+        QwenDeviceExecutor::open_tuned(Device::Gpu, 2, 1, group, mode == "fused").await?;
     ensure!(
         restarted.step(&survivor, vec![16]).await.is_err(),
         "foreign epoch accepted after restart"
@@ -174,7 +186,7 @@ async fn main() -> Result<()> {
         final_stats.residents == 0 && final_stats.steps == 0,
         "restart drain"
     );
-    let report = serde_json::json!({"pass":true,"slot_exhaustion":true,"recovery":true,"branch_isolation":true,"pending_receipt_cancel":true,"three_admitted_queue_cancel":true,"fourth_step_rejected":true,"context":512,"chunk_single_logit_drift":logit_drift,"chunk_single_state_drift":state_drift,"hot_path_exported_bytes":stats.exported_bytes,"hot_path_uploaded_bytes":stats.uploaded_bytes,"explicit_diagnostic_exported_bytes":before.exported_bytes,"shutdown_invalidated":shutdown.invalidated_at_shutdown,"restart_foreign_epoch_rejected":true,"mlx_peak_bytes_process":before.mlx_peak_bytes,"physical_command_buffer_cap_claim":false});
+    let report = serde_json::json!({"pass":true,"layer_group":group,"recurrent_kernel":mode,"slot_exhaustion":true,"recovery":true,"branch_isolation":true,"pending_receipt_cancel":true,"three_admitted_queue_cancel":true,"fourth_step_rejected":true,"context":512,"chunk_single_logit_drift":logit_drift,"chunk_single_state_drift":state_drift,"hot_path_exported_bytes":stats.exported_bytes,"hot_path_uploaded_bytes":stats.uploaded_bytes,"explicit_diagnostic_exported_bytes":before.exported_bytes,"shutdown_invalidated":shutdown.invalidated_at_shutdown,"restart_foreign_epoch_rejected":true,"mlx_peak_bytes_process":before.mlx_peak_bytes,"physical_command_buffer_cap_claim":false});
     std::fs::write(
         out.join("summary.json"),
         serde_json::to_vec_pretty(&report)?,

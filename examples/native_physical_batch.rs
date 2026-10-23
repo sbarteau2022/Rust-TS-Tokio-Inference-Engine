@@ -30,8 +30,27 @@ async fn main() -> Result<()> {
         include_str!("../fixtures/native-model.path").trim(),
     ))?;
     let tokenizer = NativeTokenizer::load(&manifest)?;
-    let executor =
-        Arc::new(QwenDeviceExecutor::open(Device::Gpu, 32, 2 * 1024 * 1024 * 1024).await?);
+    let group: u32 = std::env::args()
+        .nth(2)
+        .unwrap_or_else(|| "1".into())
+        .parse()?;
+    let mode = std::env::args()
+        .nth(3)
+        .unwrap_or_else(|| "reference".into());
+    ensure!(
+        matches!(mode.as_str(), "reference" | "fused"),
+        "recurrent kernel mode"
+    );
+    let executor = Arc::new(
+        QwenDeviceExecutor::open_tuned(
+            Device::Gpu,
+            32,
+            2 * 1024 * 1024 * 1024,
+            group,
+            mode == "fused",
+        )
+        .await?,
+    );
     let texts: Vec<_> = include_str!("../fixtures/native-speculative-prompts.tsv")
         .lines()
         .map(|s| s.split_once('\t').unwrap().1)
@@ -199,7 +218,7 @@ async fn main() -> Result<()> {
         .map_err(|_| anyhow::anyhow!("executor owner"))?
         .shutdown()
         .await?;
-    let report = serde_json::json!({"pass":passed,"scope":"native equal-position batch graph, controlled branches then greedy; no HTTP/throughput claim","identity":manifest.identity,"observations":observations,"native_residents":native.residents,"native_bytes":native.logical_bytes,"mlx_active_bytes":live.mlx_active_bytes,"mlx_peak_bytes":live.mlx_peak_bytes});
+    let report = serde_json::json!({"pass":passed,"layer_group":group,"recurrent_kernel":mode,"scope":"native equal-position batch graph, controlled branches then greedy; no HTTP/throughput claim","identity":manifest.identity,"observations":observations,"native_residents":native.residents,"native_bytes":native.logical_bytes,"mlx_active_bytes":live.mlx_active_bytes,"mlx_peak_bytes":live.mlx_peak_bytes});
     std::fs::write(
         format!("{out}/summary.json"),
         serde_json::to_vec_pretty(&report)?,

@@ -1,8 +1,8 @@
 ---
 title: "Adversarial review of the native kernel prototype"
 document_type: "research"
-version: "1.1.0"
-date: "2026-10-23T12:43:42Z"
+version: "1.2.0"
+date: "2026-10-23T20:58:00Z"
 implementation_date: null
 author: "Codex for Stewart Barteau"
 reviewers: []
@@ -15,7 +15,7 @@ related_files:
     lines: "1-1148"
     role: "config"
   - path: "Cargo.toml"
-    lines: "1-102"
+    lines: "1-106"
     role: "config"
   - path: "backend/rapid_worker.py"
     lines: "1-165"
@@ -27,7 +27,7 @@ related_files:
     lines: "1-394"
     role: "primary"
   - path: "examples/native_device_pressure.rs"
-    lines: "1-184"
+    lines: "1-196"
     role: "primary"
   - path: "examples/native_device_reference.rs"
     lines: "1-166"
@@ -57,7 +57,7 @@ related_files:
     lines: "1-186"
     role: "primary"
   - path: "examples/native_physical_batch.rs"
-    lines: "1-213"
+    lines: "1-232"
     role: "primary"
   - path: "examples/native_seed_qualification.rs"
     lines: "1-271"
@@ -174,7 +174,7 @@ related_files:
     lines: "1-81"
     role: "test"
   - path: "judges/native_physical_http.py"
-    lines: "1-88"
+    lines: "1-93"
     role: "test"
   - path: "judges/native_seed_http.py"
     lines: "1-84"
@@ -186,7 +186,7 @@ related_files:
     lines: "1-29"
     role: "test"
   - path: "judges/physical_throughput_verify.py"
-    lines: "1-80"
+    lines: "1-90"
     role: "test"
   - path: "judges/projection_reference.cpp"
     lines: "1-53"
@@ -243,13 +243,13 @@ related_files:
     lines: "1-30"
     role: "primary"
   - path: "native/qwen_batch.inc"
-    lines: "1-40"
+    lines: "1-41"
     role: "primary"
   - path: "native/qwen_device.inc"
-    lines: "1-61"
+    lines: "1-63"
     role: "primary"
   - path: "native/qwen_model.inc"
-    lines: "1-173"
+    lines: "1-185"
     role: "primary"
   - path: "native/qwen_mtp.inc"
     lines: "1-55"
@@ -354,7 +354,7 @@ related_files:
     lines: "1-193"
     role: "primary"
   - path: "src/serving/native_device.rs"
-    lines: "1-1001"
+    lines: "1-1046"
     role: "primary"
   - path: "src/serving/native_device_scheduler.rs"
     lines: "1-205"
@@ -369,7 +369,7 @@ related_files:
     lines: "1-214"
     role: "primary"
   - path: "src/serving/native_http.rs"
-    lines: "1-333"
+    lines: "1-460"
     role: "primary"
   - path: "src/serving/native_ingestion.rs"
     lines: "1-272"
@@ -393,7 +393,7 @@ related_files:
     lines: "1-275"
     role: "primary"
   - path: "src/serving/native_mtp_device.rs"
-    lines: "1-436"
+    lines: "1-438"
     role: "primary"
   - path: "src/serving/native_mtp_scheduler.rs"
     lines: "1-1057"
@@ -402,7 +402,7 @@ related_files:
     lines: "1-273"
     role: "primary"
   - path: "src/serving/native_qwen.rs"
-    lines: "1-694"
+    lines: "1-698"
     role: "primary"
   - path: "src/serving/native_reference.rs"
     lines: "1-100"
@@ -420,7 +420,7 @@ related_files:
     lines: "1-220"
     role: "primary"
   - path: "src/serving/qwen_tests.rs"
-    lines: "1-568"
+    lines: "1-570"
     role: "primary"
   - path: "src/serving/rapid.rs"
     lines: "1-265"
@@ -540,10 +540,10 @@ related_files:
     lines: "1-13"
     role: "primary"
   - path: "ts/http-bench-config.test.ts"
-    lines: "1-14"
+    lines: "1-31"
     role: "test"
   - path: "ts/http-bench-config.ts"
-    lines: "1-27"
+    lines: "1-30"
     role: "primary"
   - path: "ts/http-bench.ts"
     lines: "1-55"
@@ -892,3 +892,17 @@ The Rust batch descriptor rejects empty/oversized batches, length mismatch, fore
 The Qwen attention/recurrent methods now obtain B from the activation shape; B=1 scalar behavior remains independently controlled. The batch graph uses batch-shaped projections/MoE and preserves per-layer synchronization for this trial. Children use immutable row views, each charged for the full packed backing. This intentionally overcounts logical storage; it does not claim a physical process-memory cap or detached row allocations. The real gate exercises actual packed children through multiple continuations and reversed row order. ABI malformed/foreign descriptors use sentinel weights under ASan/UBSan to prove rejection without weight access or output mutation.
 
 Native numerical qualification requires exact selected-token parity and independently measured full-logit/unified-state errors within the preregistered FP32 thresholds. Numerical equality is not claimed bitwise for B>1. The native prototype is not automatically called by the scheduler or HTTP path; broader model quality, actual service batching telemetry and throughput remain unqualified. A separately rerun native MTP transaction smoke protects shared scalar graph behavior. No production sampling policy or integer Metal arithmetic changes are included.
+
+## Completion-group native target experiment (2026-10-23)
+
+Threats reviewed before promotion: deferred MLX graphs retaining mutable parents; pending convolution slices omitted from evaluation; tracing reading incomplete arrays; native descriptor bypass of Rust parsing; packed sibling backing undercharge; failed/canceled completion exposing provisional states; peak-memory growth hidden behind logical-state limits; HTTP metadata claiming a setting that never reaches C++.
+
+Controls: session-owned immutable configuration validated independently in Rust and C++; every group evaluates all pending activation and both state outputs per layer, then synchronizes; trace and CPU-snapshot reference operations force one-layer completion. Existing final finite checks and native reservation/publish/rollback order are preserved. Packed views keep their existing full-backing charge. HTTP accepts nondefault groups only for target, records the group in every profile, and the TS reader checks that metadata against the requested group. Target HTTP now opens the target executor without loading unused MTP weights; fresh group-1 controls are therefore required instead of assigning historical HTTP differences to grouping. Process peak MLX memory is separately reported. No default promotion or reduced validation is implied.
+
+Remaining gates: live full-model group comparisons, independent fresh-process timings, B=1/2/3 packed-state equivalence, context/queue/cancellation pressure and HTTP parity. Keep any failures and distinguish short native generation from HTTP, heterogeneous batching, held-out quality and speculative acceptance. Shared-host CPU/GPU activity during the first control is a performance confound; repeat that control after regression tests finish before interpreting a speed ratio.
+
+
+Fused recurrence review: decay is already exponentiated, matching the upstream primitive contract; passing log-decay would silently change the model. q/k normalization, head replication ratio and `[B,Hv,Dv,Dk]` state layout remain unchanged. Never overwrite a parent with the returned child. Snapshot controls forcibly disable the primitive so full-model comparisons remain independent arithmetic paths. The isolated component judge checks realistic B=1/3, T=1/8 geometry, all state/output values, repeated children and unchanged parent data; it does not substitute for full-model or rollback gates. MTP/CPU selection is refused before execution. Retain the original default and strict prerecorded tolerances.
+
+
+Observed outcome: group-only scalar snapshot comparisons were bitwise equal. Fused/group-10 passed 63 full-logit/state comparisons at the preregistered limits, 96 packed-row comparisons, row permutation/lease pressure/canceled receiver checks, context-512 queue/cancellation/restart pressure and live physical HTTP deadline/disconnect/recovery/TS-client/both-reader gates. The 4,200-token candidate HTTP run independently verified exact frozen tokens, clocks/windows, declared settings and zero benchmark drain residue, with zero failed/canceled benchmark requests. Functional cancellation probes intentionally caused cancellations and one connection error; these are separate from the throughput run. Fused arithmetic is numerically close, not bitwise equal to the snapshot control. Defaults remain unchanged; this is not broad held-out quality, MTP acceptance, sustained heterogeneous batching or a comparative performance promotion.

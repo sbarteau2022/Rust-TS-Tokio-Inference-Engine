@@ -17,14 +17,15 @@ extern "C" int rs_qwen_device_decode_batch(void* handle,const StateId* parents,c
   auto ids=mx::array(tokens,{int(batch)},mx::uint32);std::string embed="language_model.model.embed_tokens";auto [group,bits]=m.quant(embed);
   auto scales=mx::astype(mx::take(m.w(embed+".scales"),ids,0,s),mx::float32,s),biases=mx::astype(mx::take(m.w(embed+".biases"),ids,0,s),mx::float32,s);
   auto x=mx::reshape(mx::dequantize(mx::take(m.w(embed+".weight"),ids,0,s),scales,biases,group,bits,"affine",{},mx::float32,s),{int(batch),1,c.hidden},s);
-  std::vector<mx::array> packed;size_t array=0;
+  std::vector<mx::array> packed,pending;size_t array=0;
   for(int layer=0;layer<c.layers;++layer){
    std::vector<mx::array> pair;
    for(int slot=0;slot<2;++slot){std::vector<mx::array> rows;for(auto p:old)rows.push_back(p->arrays[array]);pair.push_back(mx::concatenate(rows,0,s));++array;}
    std::string prefix="language_model.model.layers."+std::to_string(layer);std::vector<mx::array> next;
    auto h=m.norm(x,prefix+".input_layernorm.weight");auto r=session.layers[layer].mixer==0?m.recurrent(h,prefix+".linear_attn",pair[0],pair[1],next):m.attention(h,prefix+".self_attn",int(position),pair[0],pair[1],next);
    auto residual=mx::add(x,r,s);x=mx::add(residual,m.moe(m.norm(residual,prefix+".post_attention_layernorm.weight"),prefix+".mlp"),s);
-   std::vector<mx::array> evaluated={x};for(auto a:next)evaluated.push_back(mx::contiguous(mx::astype(a,mx::float32,s),false,s));mx::eval(evaluated);mx::synchronize(s);x=evaluated[0];
+   std::vector<mx::array> evaluated={x};for(auto a:next)evaluated.push_back(mx::contiguous(mx::astype(a,mx::float32,s),false,s));pending.insert(pending.end(),evaluated.begin(),evaluated.end());
+   if((layer+1)%c.layer_group==0||layer+1==c.layers){mx::eval(pending);mx::synchronize(s);pending.clear();}x=evaluated[0];
    for(size_t i=1;i<evaluated.size();++i)packed.push_back(evaluated[i]);
   }
   auto normalized=m.norm(x,"language_model.model.norm.weight");auto output=mx::contiguous(mx::astype(m.linear(mx::take(normalized,0,1,s),"language_model.lm_head"),mx::float32,s),false,s);

@@ -100,3 +100,7 @@ required-features = ["native-mlx"]
 [[example]]
 name = "native_physical_batch"
 required-features = ["native-mlx"]
+
+[[example]]
+name = "native_group_qualification"
+required-features = ["native-mlx"]

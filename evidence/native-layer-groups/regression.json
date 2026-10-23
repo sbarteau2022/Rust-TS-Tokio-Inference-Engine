@@ -1,0 +1,24 @@
+{
+  "full": {
+    "failed_marker": false,
+    "rust_passed": 188
+  },
+  "debug": {
+    "failed_marker": false,
+    "rust_passed": 188
+  },
+  "clippy": {
+    "failed_marker": false,
+    "rust_passed": 0
+  },
+  "typescript_tests": [
+    "\u2139 tests 25",
+    "\u2139 suites 0",
+    "\u2139 pass 25",
+    "\u2139 fail 0",
+    "\u2139 cancelled 0",
+    "\u2139 skipped 0",
+    "\u2139 todo 0",
+    "\u2139 duration_ms 241.826875"
+  ]
+}

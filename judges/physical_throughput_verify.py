@@ -30,11 +30,19 @@ def self_test():
         else:raise AssertionError('mismatched/duplicate receipt accepted')
     print('PASS physical coverage corruption controls')
 
-def verify(directory):
+def control_contract(summary,allow_single=False):
+    options=summary['options']
+    allowed=[['target'],['target-physical']] if allow_single else [['target','target-physical'],['target-physical','target']]
+    require(summary['pass'] and options['profiles'] in allowed and options['arrival']=='closed+open' and options['tokens']==2000,'wrong control contract')
+    if allow_single:
+        require(options.get('layerGroup') in (1,4,10,40) and options.get('recurrentKernel') in ('reference','fused'),'explicit native candidate flags required')
+    n=len(options['profiles'])
+    require(len(summary['cells'])==2*n and len(summary['open_loop'])==n and summary['total_closed_tokens']==4000*n,'matrix coverage')
+
+def verify(directory,allow_single=False):
     directory=directory.resolve();summary=json.loads((directory/'summary.json').read_text());options=summary['options'];reference=json.loads((ROOT/'evidence/native-mtp-stream-matrix/raw/references.json').read_text())
-    require(summary['pass'] and options['profiles'] in [['target','target-physical'],['target-physical','target']] and options['arrival']=='closed+open' and options['tokens']==2000,'wrong control contract')
-    require(len(summary['cells'])==4 and len(summary['open_loop'])==2 and summary['total_closed_tokens']==8000,'matrix coverage')
-    report={'pass':True,'closed_tokens':0,'open_success_tokens':0,'profiles':[]}
+    control_contract(summary,allow_single)
+    report={'pass':True,'scope':'single candidate absolute measurement; no comparative speedup claim' if allow_single else 'two-profile controlled matrix','closed_tokens':0,'open_success_tokens':0,'profiles':[]}
     with (directory/'independent-verification.log').open('w') as log:
         for profile in options['profiles']:
             base=directory/profile;cells=[c for c in summary['cells'] if c['profile']==profile];loads=[c for c in summary['open_loop'] if c['profile']==profile]
@@ -71,10 +79,14 @@ def verify(directory):
             for row in allrows:
                 require(('physical_tensor_batching='+str(profile=='target-physical').lower()) in row['metadata']['profile'],'wrong native physical mode')
                 require('execution=Target' in row['metadata']['profile'],'speculation unexpectedly active')
+                require(f"layer_group={options.get('layerGroup',1)} " in row['metadata']['profile'] if 'layerGroup' in options else True,'wrong completion group')
+                require(f"recurrent_kernel={options.get('recurrentKernel','reference')} " in row['metadata']['profile'] if 'recurrentKernel' in options else True,'wrong recurrent kernel')
             report['open_success_tokens']+=load['tokens'];report['profiles'].append({'profile':profile,'successful_requests':len(allrows),'open_accepted':len(successful),'open_rejected':rejected,'drain':state})
     (directory/'independent-verification.json').write_text(json.dumps(report,indent=2)+'\n');print('PASS independent clocks, archives, target parity, rejection/receipt accounting and native drain')
 
 if __name__=='__main__':
-    require(len(sys.argv)==2,'physical_throughput_verify DIRECTORY|--self-test')
+    require(len(sys.argv) in (2,3),'physical_throughput_verify DIRECTORY [--single]|--self-test')
     if sys.argv[1]=='--self-test':self_test()
-    else:verify(Path(sys.argv[1]))
+    else:
+        require(len(sys.argv)==2 or sys.argv[2]=='--single','unknown verifier mode')
+        verify(Path(sys.argv[1]),len(sys.argv)==3)

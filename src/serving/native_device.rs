@@ -138,20 +138,65 @@ pub struct QwenDeviceExecutor {
 }
 impl QwenDeviceExecutor {
     pub async fn open(device: Device, slots: usize, logical_byte_limit: u64) -> Result<Self> {
+        Self::open_grouped(device, slots, logical_byte_limit, 1).await
+    }
+    /// Experimental completion grouping; arithmetic and full state checks are unchanged.
+    pub async fn open_grouped(
+        device: Device,
+        slots: usize,
+        logical_byte_limit: u64,
+        layer_group: u32,
+    ) -> Result<Self> {
+        Self::open_tuned(device, slots, logical_byte_limit, layer_group, false).await
+    }
+    /// Experimental native recurrent primitive; snapshot control remains unchanged.
+    pub async fn open_tuned(
+        device: Device,
+        slots: usize,
+        logical_byte_limit: u64,
+        layer_group: u32,
+        fused_recurrent: bool,
+    ) -> Result<Self> {
+        ensure!(
+            !fused_recurrent || device == Device::Gpu,
+            "fused recurrent requires GPU"
+        );
+        ensure!(
+            matches!(layer_group, 1 | 4 | 10 | 40),
+            "layer group must be 1|4|10|40"
+        );
         ensure!(
             (1..=64).contains(&slots)
                 && logical_byte_limit > 0
                 && logical_byte_limit <= 8 * 1024 * 1024 * 1024,
             "device resident budget bounds"
         );
-        tokio::task::spawn_blocking(move || Self::start(device, slots, logical_byte_limit, false))
-            .await?
+        tokio::task::spawn_blocking(move || {
+            Self::start(
+                device,
+                slots,
+                logical_byte_limit,
+                false,
+                layer_group,
+                fused_recurrent,
+            )
+        })
+        .await?
     }
-    fn start(device: Device, slots: usize, limit: u64, mtp_enabled: bool) -> Result<Self> {
+    fn start(
+        device: Device,
+        slots: usize,
+        limit: u64,
+        mtp_enabled: bool,
+        layer_group: u32,
+        fused_recurrent: bool,
+    ) -> Result<Self> {
         let manifest = Manifest::read(Path::new(
             include_str!("../../fixtures/native-model.path").trim(),
         ))?;
-        let architecture = Architecture::workhorse(&manifest)?;
+        let mut architecture = Architecture::workhorse(&manifest)?;
+        architecture.layer_group = layer_group as i32;
+        architecture.fused_recurrent = i32::from(fused_recurrent);
         let identity = manifest.identity.clone();
         let program = HybridProgram::compile(40, 4)?;
         let owner = next_owner()?;

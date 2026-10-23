@@ -52,6 +52,8 @@ struct Architecture {
     chunk: i32,
     rope_dims: i32,
     activation_precision: i32,
+    layer_group: i32,
+    fused_recurrent: i32,
     epsilon: f32,
     theta: f32,
 }
@@ -139,6 +141,8 @@ impl Architecture {
             chunk: 8,
             rope_dims: 64,
             activation_precision: 1,
+            layer_group: 1,
+            fused_recurrent: 0,
             epsilon: 1e-6,
             theta: 10000000.,
         })

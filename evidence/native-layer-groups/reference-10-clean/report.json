@@ -1,0 +1,1508 @@
+{
+  "identity": "509cc92543203798f2db08b6fb6cbb38a80942fc0437ae81a3ef9ff27720915b",
+  "layer_group": 10,
+  "mlx_active_bytes": 19508787456,
+  "mlx_peak_bytes": 20101215300,
+  "native_bytes": 0,
+  "native_residents": 0,
+  "observations": [
+    {
+      "decode": false,
+      "logits": {
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "pass": true,
+      "position": 8,
+      "prompt": 0,
+      "state": {
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "token": 264
+    },
+    {
+      "decode": false,
+      "logits": {
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "pass": true,
+      "position": 16,
+      "prompt": 0,
+      "state": {
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "token": 884
+    },
+    {
+      "decode": false,
+      "logits": {
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "pass": true,
+      "position": 24,
+      "prompt": 0,
+      "state": {
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "token": 18
+    },
+    {
+      "decode": false,
+      "logits": {
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "pass": true,
+      "position": 32,
+      "prompt": 0,
+      "state": {
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "token": 4523
+    },
+    {
+      "decode": false,
+      "logits": {
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "pass": true,
+      "position": 40,
+      "prompt": 0,
+      "state": {
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "token": 4536
+    },
+    {
+      "decode": false,
+      "logits": {
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "pass": true,
+      "position": 48,
+      "prompt": 0,
+      "state": {
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "token": 248046
+    },
+    {
+      "decode": false,
+      "logits": {
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "pass": true,
+      "position": 56,
+      "prompt": 0,
+      "state": {
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "token": 248069
+    },
+    {
+      "decode": false,
+      "logits": {
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "pass": true,
+      "position": 58,
+      "prompt": 0,
+      "state": {
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "token": 71093
+    },
+    {
+      "decode": true,
+      "logits": {
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "pass": true,
+      "position": 59,
+      "prompt": 0,
+      "state": {
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "token": 34602
+    },
+    {
+      "decode": true,
+      "logits": {
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "pass": true,
+      "position": 60,
+      "prompt": 0,
+      "state": {
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "token": 198
+    },
+    {
+      "decode": true,
+      "logits": {
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "pass": true,
+      "position": 61,
+      "prompt": 0,
+      "state": {
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "token": 9299
+    },
+    {
+      "decode": true,
+      "logits": {
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "pass": true,
+      "position": 62,
+      "prompt": 0,
+      "state": {
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "token": 5003
+    },
+    {
+      "decode": true,
+      "logits": {
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "pass": true,
+      "position": 63,
+      "prompt": 0,
+      "state": {
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "token": 884
+    },
+    {
+      "decode": true,
+      "logits": {
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "pass": true,
+      "position": 64,
+      "prompt": 0,
+      "state": {
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "token": 62
+    },
+    {
+      "decode": true,
+      "logits": {
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "pass": true,
+      "position": 65,
+      "prompt": 0,
+      "state": {
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "token": 15
+    },
+    {
+      "decode": true,
+      "logits": {
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "pass": true,
+      "position": 66,
+      "prompt": 0,
+      "state": {
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "token": 2784
+    },
+    {
+      "decode": false,
+      "logits": {
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "pass": true,
+      "position": 8,
+      "prompt": 1,
+      "state": {
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "token": 248046
+    },
+    {
+      "decode": false,
+      "logits": {
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "pass": true,
+      "position": 16,
+      "prompt": 1,
+      "state": {
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "token": 18
+    },
+    {
+      "decode": false,
+      "logits": {
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "pass": true,
+      "position": 24,
+      "prompt": 1,
+      "state": {
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "token": 248046
+    },
+    {
+      "decode": false,
+      "logits": {
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "pass": true,
+      "position": 32,
+      "prompt": 1,
+      "state": {
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "token": 20
+    },
+    {
+      "decode": false,
+      "logits": {
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "pass": true,
+      "position": 40,
+      "prompt": 1,
+      "state": {
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "token": 248046
+    },
+    {
+      "decode": false,
+      "logits": {
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "pass": true,
+      "position": 48,
+      "prompt": 1,
+      "state": {
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "token": 248046
+    },
+    {
+      "decode": false,
+      "logits": {
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "pass": true,
+      "position": 56,
+      "prompt": 1,
+      "state": {
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "token": 271
+    },
+    {
+      "decode": false,
+      "logits": {
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "pass": true,
+      "position": 57,
+      "prompt": 1,
+      "state": {
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "token": 71093
+    },
+    {
+      "decode": true,
+      "logits": {
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "pass": true,
+      "position": 58,
+      "prompt": 1,
+      "state": {
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "token": 34602
+    },
+    {
+      "decode": true,
+      "logits": {
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "pass": true,
+      "position": 59,
+      "prompt": 1,
+      "state": {
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "token": 198
+    },
+    {
+      "decode": true,
+      "logits": {
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "pass": true,
+      "position": 60,
+      "prompt": 1,
+      "state": {
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "token": 12966
+    },
+    {
+      "decode": true,
+      "logits": {
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "pass": true,
+      "position": 61,
+      "prompt": 1,
+      "state": {
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "token": 1877
+    },
+    {
+      "decode": true,
+      "logits": {
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "pass": true,
+      "position": 62,
+      "prompt": 1,
+      "state": {
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "token": 60
+    },
+    {
+      "decode": true,
+      "logits": {
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "pass": true,
+      "position": 63,
+      "prompt": 1,
+      "state": {
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "token": 198
+    },
+    {
+      "decode": true,
+      "logits": {
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "pass": true,
+      "position": 64,
+      "prompt": 1,
+      "state": {
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "token": 8556
+    },
+    {
+      "decode": true,
+      "logits": {
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "pass": true,
+      "position": 65,
+      "prompt": 1,
+      "state": {
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "token": 9284
+    },
+    {
+      "decode": false,
+      "logits": {
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "pass": true,
+      "position": 8,
+      "prompt": 2,
+      "state": {
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "token": 7376
+    },
+    {
+      "decode": false,
+      "logits": {
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "pass": true,
+      "position": 16,
+      "prompt": 2,
+      "state": {
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "token": 24
+    },
+    {
+      "decode": false,
+      "logits": {
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "pass": true,
+      "position": 24,
+      "prompt": 2,
+      "state": {
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "token": 264
+    },
+    {
+      "decode": false,
+      "logits": {
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "pass": true,
+      "position": 32,
+      "prompt": 2,
+      "state": {
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "token": 1957
+    },
+    {
+      "decode": false,
+      "logits": {
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "pass": true,
+      "position": 40,
+      "prompt": 2,
+      "state": {
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "token": 248046
+    },
+    {
+      "decode": false,
+      "logits": {
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "pass": true,
+      "position": 48,
+      "prompt": 2,
+      "state": {
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "token": 198
+    },
+    {
+      "decode": false,
+      "logits": {
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "pass": true,
+      "position": 56,
+      "prompt": 2,
+      "state": {
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "token": 71093
+    },
+    {
+      "decode": true,
+      "logits": {
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "pass": true,
+      "position": 57,
+      "prompt": 2,
+      "state": {
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "token": 34602
+    },
+    {
+      "decode": true,
+      "logits": {
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "pass": true,
+      "position": 58,
+      "prompt": 2,
+      "state": {
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "token": 198
+    },
+    {
+      "decode": true,
+      "logits": {
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "pass": true,
+      "position": 59,
+      "prompt": 2,
+      "state": {
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "token": 320
+    },
+    {
+      "decode": true,
+      "logits": {
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "pass": true,
+      "position": 60,
+      "prompt": 2,
+      "state": {
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "token": 59240
+    },
+    {
+      "decode": true,
+      "logits": {
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "pass": true,
+      "position": 61,
+      "prompt": 2,
+      "state": {
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "token": 449
+    },
+    {
+      "decode": true,
+      "logits": {
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "pass": true,
+      "position": 62,
+      "prompt": 2,
+      "state": {
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "token": 1287
+    },
+    {
+      "decode": true,
+      "logits": {
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "pass": true,
+      "position": 63,
+      "prompt": 2,
+      "state": {
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "token": 314
+    },
+    {
+      "decode": true,
+      "logits": {
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "pass": true,
+      "position": 64,
+      "prompt": 2,
+      "state": {
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "token": 24959
+    },
+    {
+      "decode": false,
+      "logits": {
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "pass": true,
+      "position": 8,
+      "prompt": 3,
+      "state": {
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "token": 248046
+    },
+    {
+      "decode": false,
+      "logits": {
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "pass": true,
+      "position": 16,
+      "prompt": 3,
+      "state": {
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "token": 3808
+    },
+    {
+      "decode": false,
+      "logits": {
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "pass": true,
+      "position": 24,
+      "prompt": 3,
+      "state": {
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "token": 36354
+    },
+    {
+      "decode": false,
+      "logits": {
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "pass": true,
+      "position": 32,
+      "prompt": 3,
+      "state": {
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "token": 321
+    },
+    {
+      "decode": false,
+      "logits": {
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "pass": true,
+      "position": 40,
+      "prompt": 3,
+      "state": {
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "token": 25689
+    },
+    {
+      "decode": false,
+      "logits": {
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "pass": true,
+      "position": 48,
+      "prompt": 3,
+      "state": {
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "token": 248046
+    },
+    {
+      "decode": false,
+      "logits": {
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "pass": true,
+      "position": 56,
+      "prompt": 3,
+      "state": {
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "token": 198
+    },
+    {
+      "decode": false,
+      "logits": {
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "pass": true,
+      "position": 64,
+      "prompt": 3,
+      "state": {
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "token": 760
+    },
+    {
+      "decode": true,
+      "logits": {
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "pass": true,
+      "position": 65,
+      "prompt": 3,
+      "state": {
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "token": 6007
+    },
+    {
+      "decode": true,
+      "logits": {
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "pass": true,
+      "position": 66,
+      "prompt": 3,
+      "state": {
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "token": 18458
+    },
+    {
+      "decode": true,
+      "logits": {
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "pass": true,
+      "position": 67,
+      "prompt": 3,
+      "state": {
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "token": 9584
+    },
+    {
+      "decode": true,
+      "logits": {
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "pass": true,
+      "position": 68,
+      "prompt": 3,
+      "state": {
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "token": 369
+    },
+    {
+      "decode": true,
+      "logits": {
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "pass": true,
+      "position": 69,
+      "prompt": 3,
+      "state": {
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "token": 421
+    },
+    {
+      "decode": true,
+      "logits": {
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "pass": true,
+      "position": 70,
+      "prompt": 3,
+      "state": {
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "token": 279
+    },
+    {
+      "decode": true,
+      "logits": {
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "pass": true,
+      "position": 71,
+      "prompt": 3,
+      "state": {
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "token": 3421
+    },
+    {
+      "decode": true,
+      "logits": {
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "pass": true,
+      "position": 72,
+      "prompt": 3,
+      "state": {
+        "max_abs": 0.0,
+        "nrmse": 0.0,
+        "pass": true,
+        "unequal_bits": 0
+      },
+      "token": 5041
+    }
+  ],
+  "pass": true,
+  "recurrent_kernel": "reference",
+  "scope": "four-prompt native parity and 64-token generation; no HTTP/held-out qualification",
+  "timings": [
+    {
+      "decode_seconds": 2.569179208,
+      "decode_steps": 63,
+      "decode_tok_s": 24.521450198502464,
+      "prompt": 0,
+      "tokens": [
+        71093,
+        34602,
+        198,
+        9299,
+        5003,
+        884,
+        62,
+        15,
+        2784,
+        25,
+        585,
+        18,
+        17,
+        11,
+        292,
+        25,
+        585,
+        18,
+        17,
+        8,
+        1411,
+        585,
+        18,
+        17,
+        313,
+        264,
+        478,
+        292,
+        333,
+        198,
+        9299,
+        5003,
+        884,
+        62,
+        16,
+        2784,
+        25,
+        585,
+        18,
+        17,
+        11,
+        292,
+        25,
+        585,
+        18,
+        17,
+        8,
+        1411,
+        585,
+        18,
+        17,
+        313,
+        264,
+        478,
+        292,
+        333,
+        198,
+        9299,
+        5003,
+        884,
+        62,
+        17,
+        2784,
+        25
+      ],
+      "total_seconds": 3.111772834,
+      "ttft_seconds": 0.54259225
+    },
+    {
+      "decode_seconds": 2.582720625,
+      "decode_steps": 63,
+      "decode_tok_s": 24.39288221504794,
+      "prompt": 1,
+      "tokens": [
+        71093,
+        34602,
+        198,
+        12966,
+        1877,
+        60,
+        198,
+        8556,
+        9284,
+        62,
+        15,
+        363,
+        313,
+        198,
+        262,
+        1992,
+        10398,
+        9991,
+        16417,
+        7,
+        15,
+        681,
+        220,
+        15,
+        1174,
+        198,
+        92,
+        271,
+        12966,
+        1877,
+        60,
+        198,
+        8556,
+        9284,
+        62,
+        16,
+        363,
+        313,
+        198,
+        262,
+        1992,
+        10398,
+        9991,
+        16417,
+        7,
+        16,
+        681,
+        220,
+        16,
+        1174,
+        198,
+        92,
+        271,
+        12966,
+        1877,
+        60,
+        198,
+        8556,
+        9284,
+        62,
+        17,
+        363,
+        313,
+        198
+      ],
+      "total_seconds": 3.125457833,
+      "ttft_seconds": 0.542735708
+    },
+    {
+      "decode_seconds": 2.56273725,
+      "decode_steps": 63,
+      "decode_tok_s": 24.583089819293804,
+      "prompt": 2,
+      "tokens": [
+        71093,
+        34602,
+        198,
+        320,
+        59240,
+        449,
+        1287,
+        314,
+        24959,
+        494,
+        220,
+        15,
+        310,
+        220,
+        16,
+        20,
+        198,
+        1112,
+        4947,
+        25,
+        498,
+        72,
+        18,
+        17,
+        26,
+        220,
+        16,
+        21,
+        60,
+        283,
+        498,
+        15,
+        11,
+        220,
+        16,
+        11,
+        220,
+        17,
+        11,
+        220,
+        18,
+        11,
+        220,
+        19,
+        11,
+        220,
+        20,
+        11,
+        220,
+        21,
+        11,
+        220,
+        22,
+        11,
+        220,
+        23,
+        11,
+        220,
+        24,
+        11,
+        220,
+        16,
+        15,
+        11
+      ],
+      "total_seconds": 3.057546,
+      "ttft_seconds": 0.494807292
+    },
+    {
+      "decode_seconds": 2.561618,
+      "decode_steps": 63,
+      "decode_tok_s": 24.593830930294835,
+      "prompt": 3,
+      "tokens": [
+        760,
+        6007,
+        18458,
+        9584,
+        369,
+        421,
+        279,
+        3421,
+        5041,
+        942,
+        279,
+        81726,
+        4011,
+        1345,
+        264,
+        21966,
+        3108,
+        1990,
+        9687,
+        264,
+        5604,
+        310,
+        424,
+        13,
+        3095,
+        279,
+        2849,
+        28024,
+        82,
+        11,
+        279,
+        3421,
+        1189,
+        2708,
+        466,
+        31153,
+        279,
+        4011,
+        11,
+        694,
+        279,
+        21966,
+        3108,
+        579,
+        1510,
+        35590,
+        63,
+        1990,
+        3387,
+        310,
+        279,
+        2235,
+        795,
+        13,
+        1061,
+        11121,
+        264,
+        958,
+        43095,
+        12217,
+        466,
+        795,
+        3667,
+        563
+      ],
+      "total_seconds": 3.130666208,
+      "ttft_seconds": 0.569046583
+    }
+  ]
+}

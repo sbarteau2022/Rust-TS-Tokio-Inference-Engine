@@ -1,0 +1,40 @@
+{
+  "pass": true,
+  "scope": "single candidate absolute measurement; no comparative speedup claim",
+  "closed_tokens": 4000,
+  "open_success_tokens": 192,
+  "profiles": [
+    {
+      "profile": "target-physical",
+      "successful_requests": 71,
+      "open_accepted": 6,
+      "open_rejected": 10,
+      "drain": {
+        "http": {
+          "active_connections": 0,
+          "active_producers": 0,
+          "accepted_connections": 81,
+          "rejected_requests": 10,
+          "queued_finishes": 71,
+          "deadlines": 0,
+          "disconnected": 0,
+          "stopped": 0,
+          "producer_errors": 0,
+          "connection_errors": 0
+        },
+        "scheduler": {
+          "admitted": 71,
+          "completed": 71,
+          "failed": 0,
+          "cancelled": 0,
+          "iterations": 3106,
+          "memory_used": 0,
+          "memory_peak": 1318387712,
+          "admission_closed": false
+        },
+        "native_bytes": 0,
+        "audit_epochs": 0
+      }
+    }
+  ]
+}

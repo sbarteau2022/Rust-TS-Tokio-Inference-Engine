@@ -48,7 +48,7 @@ int rs_mlx_kernel(void* graph, int op, const uint32_t* inputs, size_t count,
 extern "C" {
 #endif
 typedef struct {
- int32_t hidden,layers,vocab,q_heads,kv_heads,head_dim,key_heads,value_heads,key_dim,value_dim,conv,interval,experts,top,intermediate,shared,group,bits,context,chunk,rope_dims,activation_precision;
+ int32_t hidden,layers,vocab,q_heads,kv_heads,head_dim,key_heads,value_heads,key_dim,value_dim,conv,interval,experts,top,intermediate,shared,group,bits,context,chunk,rope_dims,activation_precision,layer_group,fused_recurrent;
  float epsilon,theta;
 } rs_qwen_config;
 typedef struct {uint32_t index,mixer;} rs_qwen_layer;

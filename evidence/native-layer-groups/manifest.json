@@ -1,0 +1,28 @@
+{
+  "objective": "native target execution boundary ablation; 100+tok/s and >=90% acceptance remain open",
+  "binary_sha256": "3d7648c35316975f1df03dfb0f74fb2010ea3a8e1ccf68c76b6d2e1093d13b50",
+  "groups": [
+    1,
+    4,
+    10,
+    40
+  ],
+  "model_path": "/Users/stewartbarteau/models/fused/Qwen3.6-MoE-Combined",
+  "argv_template": [
+    "target/release/examples/native_group_qualification",
+    "evidence/native-layer-groups/group-G",
+    "G"
+  ],
+  "host": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+  "hardware": "Apple M5 Pro",
+  "speculation": false,
+  "acceptance": null,
+  "full_state_checks": true,
+  "arithmetic": "FP32 model lane",
+  "scope": "four frozen short prompts, not held-out or HTTP qualification",
+  "performance_confounds": [
+    "First group-1 run and group-1-repeat overlapped regression jobs; do not use them as uncontended controls.",
+    "Shared host system services and compiler/file caches were not reset."
+  ],
+  "preserved_control_binary": "artifacts/native-group-control"
+}

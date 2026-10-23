@@ -1,8 +1,8 @@
 ---
 title: "Rust Server — Apple native kernel compiler and runtime"
 document_type: "implementation"
-version: "1.42.0"
-date: "2026-10-23T12:43:42Z"
+version: "1.43.0"
+date: "2026-10-23T20:58:00Z"
 implementation_date: null
 author: "Codex for Stewart Barteau"
 reviewers: []
@@ -15,7 +15,7 @@ related_files:
     lines: "1-1148"
     role: "config"
   - path: "Cargo.toml"
-    lines: "1-102"
+    lines: "1-106"
     role: "config"
   - path: "backend/rapid_worker.py"
     lines: "1-165"
@@ -27,7 +27,7 @@ related_files:
     lines: "1-394"
     role: "primary"
   - path: "examples/native_device_pressure.rs"
-    lines: "1-184"
+    lines: "1-196"
     role: "primary"
   - path: "examples/native_device_reference.rs"
     lines: "1-166"
@@ -57,7 +57,7 @@ related_files:
     lines: "1-186"
     role: "primary"
   - path: "examples/native_physical_batch.rs"
-    lines: "1-213"
+    lines: "1-232"
     role: "primary"
   - path: "examples/native_seed_qualification.rs"
     lines: "1-271"
@@ -174,7 +174,7 @@ related_files:
     lines: "1-81"
     role: "test"
   - path: "judges/native_physical_http.py"
-    lines: "1-88"
+    lines: "1-93"
     role: "test"
   - path: "judges/native_seed_http.py"
     lines: "1-84"
@@ -186,7 +186,7 @@ related_files:
     lines: "1-29"
     role: "test"
   - path: "judges/physical_throughput_verify.py"
-    lines: "1-80"
+    lines: "1-90"
     role: "test"
   - path: "judges/projection_reference.cpp"
     lines: "1-53"
@@ -243,13 +243,13 @@ related_files:
     lines: "1-30"
     role: "primary"
   - path: "native/qwen_batch.inc"
-    lines: "1-40"
+    lines: "1-41"
     role: "primary"
   - path: "native/qwen_device.inc"
-    lines: "1-61"
+    lines: "1-63"
     role: "primary"
   - path: "native/qwen_model.inc"
-    lines: "1-173"
+    lines: "1-185"
     role: "primary"
   - path: "native/qwen_mtp.inc"
     lines: "1-55"
@@ -354,7 +354,7 @@ related_files:
     lines: "1-193"
     role: "primary"
   - path: "src/serving/native_device.rs"
-    lines: "1-1001"
+    lines: "1-1046"
     role: "primary"
   - path: "src/serving/native_device_scheduler.rs"
     lines: "1-205"
@@ -369,7 +369,7 @@ related_files:
     lines: "1-214"
     role: "primary"
   - path: "src/serving/native_http.rs"
-    lines: "1-333"
+    lines: "1-460"
     role: "primary"
   - path: "src/serving/native_ingestion.rs"
     lines: "1-272"
@@ -393,7 +393,7 @@ related_files:
     lines: "1-275"
     role: "primary"
   - path: "src/serving/native_mtp_device.rs"
-    lines: "1-436"
+    lines: "1-438"
     role: "primary"
   - path: "src/serving/native_mtp_scheduler.rs"
     lines: "1-1057"
@@ -402,7 +402,7 @@ related_files:
     lines: "1-273"
     role: "primary"
   - path: "src/serving/native_qwen.rs"
-    lines: "1-694"
+    lines: "1-698"
     role: "primary"
   - path: "src/serving/native_reference.rs"
     lines: "1-100"
@@ -420,7 +420,7 @@ related_files:
     lines: "1-220"
     role: "primary"
   - path: "src/serving/qwen_tests.rs"
-    lines: "1-568"
+    lines: "1-570"
     role: "primary"
   - path: "src/serving/rapid.rs"
     lines: "1-265"
@@ -540,10 +540,10 @@ related_files:
     lines: "1-13"
     role: "primary"
   - path: "ts/http-bench-config.test.ts"
-    lines: "1-14"
+    lines: "1-31"
     role: "test"
   - path: "ts/http-bench-config.ts"
-    lines: "1-27"
+    lines: "1-30"
     role: "primary"
   - path: "ts/http-bench.ts"
     lines: "1-55"
@@ -1417,3 +1417,34 @@ Three-lane physical/scalar changes were **+11.65% / +9.15%** in the two orders. 
 Packing is opportunistic and its counters cover whole profile runs, including warmup/open arrivals. Logical state reservations increase in physical mode; no process-memory savings are claimed. Open arrivals test bounded admission, not sustained heterogeneous batching. Keep scalar default. Next target packing coverage for unequal positions, prefill/first-token latency and a separately controlled per-layer synchronization ablation. [Bound throughput scorecard](evidence/native-physical-throughput/qualification.json).
 
 Throughput checkpoint regression gates: **185 default / 185 debug Rust checks**, **23 TS tests**, TS **7.1/tsrs**, strict Clippy and schema/native/GPU judges passed. Independent Rust archive validation and offline timing/counter corruption controls passed for both orders. All servers drained; native binary hash remained unchanged across measurement and regression. The measured throughput is not a hardware ceiling: source audit finds 40 per-layer eval/synchronize boundaries, 80 full-state finite reductions and 993,280 bytes of logits exported per scalar step. Attribute their costs with profiling before changing validation or claiming a compute/bandwidth limit.
+
+
+## Experimental native layer completion groups
+
+The target-only server accepts `--layer-group 1|4|10|40` (default 1). This groups native MLX layer completion boundaries; FP32 model arithmetic, full state-finiteness checks, CPU logits, immutable state leases and final completion-before-publication remain unchanged. It applies to both scalar and physical target decode. Nondefault groups are refused for MTP before model loading. Trace/snapshot reference operations retain the original per-layer boundary. This is separate from the integer-only custom Metal path and the inactive production sampling proposal.
+
+Design and promotion gates: [native tuning plan](docs/NATIVE_TUNING_PLAN.md). Offline qualification: `cargo run --release --example native_group_qualification -- NEW_DIRECTORY 4`; packed-state gate: `cargo run --release --example native_physical_batch -- NEW_DIRECTORY 4`; cancellation/context pressure: `cargo run --release --example native_device_pressure -- NEW_DIRECTORY 4`. Each command runs only the designated Combined checkpoint through Rust/native MLX. Evidence lives under `evidence/native-layer-groups/`. The TS 7.1 benchmark accepts optional `--layer-group 4` alongside its explicit profile/order/arrival/window flags and verifies the group in stream metadata.
+
+The 100+ generated tok/s and >=90% learned draft acceptance targets remain unqualified. Completion grouping is the first isolated performance experiment; it does not establish efficient speculative verification, heterogeneous continuous batching or held-out model quality.
+
+
+### Native fused recurrent candidate
+
+`--recurrent-kernel reference|fused` is a separate target-only experiment, default `reference`. The fused candidate calls the native MLX 0.32.4 C++ gated-delta primitive with the existing normalized q/k, decay, beta and FP32 state. It does not use a Python worker, change attention/quantization, or enable speculation. Full diagnostic/snapshot controls retain the original arithmetic. The three qualification examples above accept a final `fused` argument, e.g. `cargo run --release --example native_group_qualification -- NEW_DIRECTORY 40 fused`. Do not infer full-model or throughput qualification from the standalone `judges/fused_delta.cpp` component judge.
+
+The offline report reader `python3 judges/layer_groups_report.py` checks saved exact token streams, gate limits and timing/accounting fields. It does not independently recompute GPU arrays from the compact numerical observations. Performance controls must run without concurrent regression jobs; the first control and its early repeat are retained with that confound rather than used as clean speedup evidence.
+
+### First fused/grouped server measurement
+
+Combined checkpoint, M5 Pro 48 GiB, **target-only**, FP32 model lane, physical batching, `--layer-group 10 --recurrent-kernel fused`; context 511, prefill chunk 8, in-flight 3. One fresh candidate run, independently checked against raw streams and timing/accounting; no matched-reference speedup claim.
+
+| Lanes | Aggregate tok/s, including prefill | Post-first decode tok/s per lane | Mean TTFT | Mean / p95 callback ITL |
+|---|---:|---:|---:|---:|
+| 1 | 22.28 | 25.78 | 418 ms | 38.79 / 40.28 ms |
+| 3 | 25.01 | 10.14 | 1,223 ms | 98.64 / 119.38 ms |
+
+Exactly 4,000 closed-window tokens plus 192 open-arrival and eight warmup tokens matched the frozen reference. The 1k/1500/2k macro windows are retained. Open pressure admitted six requests and rejected ten with 503; the benchmark had zero failed/canceled requests and drained all ownership. Actual packed completions: 308 calls / 616 rows; scalar completions: 4,064 across the whole run. Peak MLX memory was 20,363,248,360 bytes (~18.97 GiB), separate from the 2 GiB logical state budget. Draft acceptance is **N/A** because speculation was off. Closed waves are not continuous batching.
+
+Native gates: all group-only reference comparisons were bitwise equal. The fused candidate preserved exact frozen tokens and passed 63 full-logit/unified-state comparisons (max absolute error: logits 1.48e-5, state 2.29e-5), 96 packed-row comparisons, row permutations/lease pressure/canceled-receiver reclamation and context-512 queue/cancellation/restart pressure. Fused arithmetic is not bitwise identical to the reference. Regression: 188 default and 188 debug-validation Rust tests, 25 TS tests, TS 7.1/tsrs, Clippy, and adversarial offline readers passed. Broader held-out quality and 100+ tok/s / >=90% acceptance remain unqualified.
+
+[Bound candidate scorecard](evidence/native-layer-groups/qualification.json) · [native observations](evidence/native-layer-groups/summary.json) · [next design and gates](docs/NATIVE_TUNING_PLAN.md). Next: measure graph-construction versus completion wait, then qualify persistent compiled native decode blocks and the corresponding speculative verifier.

@@ -12,6 +12,8 @@ struct DeviceSession {
 extern "C" void* rs_qwen_device_create(void* weights,int gpu,const rs_qwen_config* config,const rs_qwen_layer* layers,size_t count,size_t slots,uint64_t bytes,char* error,size_t capacity){
  void* result=nullptr;checked(error,capacity,[&]{
  if(!weights||!config||!layers||count!=40||gpu<0||gpu>1)throw std::invalid_argument("device session descriptor");const auto& c=*config;
+ if(c.layer_group!=1&&c.layer_group!=4&&c.layer_group!=10&&c.layer_group!=40)throw std::invalid_argument("device layer group");
+ if(c.fused_recurrent<0||c.fused_recurrent>1||(c.fused_recurrent&&!gpu))throw std::invalid_argument("device recurrent kernel");
  // This ABI is deliberately restricted to the qualified architecture and FP32 profile.
  if(c.hidden!=2048||c.layers!=40||c.vocab!=248320||c.q_heads!=16||c.kv_heads!=2||c.head_dim!=256||c.key_heads!=16||c.value_heads!=32||c.key_dim!=128||c.value_dim!=128||c.conv!=4||c.interval!=4||c.context!=512||c.chunk!=8||c.activation_precision!=1||c.experts!=256||c.top!=8||c.intermediate!=512||c.shared!=512||c.rope_dims!=64||c.epsilon!=1e-6f||c.theta!=10000000.f||!(c.group==32||c.group==64||c.group==128)||!(c.bits==2||c.bits==3||c.bits==4||c.bits==5||c.bits==6||c.bits==8))throw std::invalid_argument("device session architecture/profile");
  for(size_t i=0;i<count;++i)if(layers[i].index!=i||layers[i].mixer!=uint32_t((i+1)%4==0))throw std::invalid_argument("device session program");

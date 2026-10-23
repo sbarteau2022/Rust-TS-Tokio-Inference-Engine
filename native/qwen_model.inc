@@ -91,7 +91,10 @@ struct Qwen {
   k=mx::multiply(mx::fast::rms_norm(k,{},1e-6,s),mx::array(1.f/std::sqrt(float(c.key_dim))),s);
   auto beta=mx::sigmoid(b,s);auto softplus=mx::logaddexp(mx::add(a,w(p+".dt_bias"),s),mx::array(0.f),s);
   auto decay=mx::exp(mx::negative(mx::multiply(mx::exp(mx::astype(w(p+".A_log"),mx::float32,s),s),softplus,s),s),s);
-  auto initial_state=state;std::vector<mx::array> out;
+  auto initial_state=state;
+  auto readout=[&](){
+  if(c.fused_recurrent){auto result=mx::fast::gated_delta_update(q,k,v,decay,beta,state,{},s);state=result[1];return result[0];}
+  std::vector<mx::array> out;
   for(int i=0;i<t;++i){
    auto qt=mx::astype(mx::repeat(mx::take(q,i,1,s),c.value_heads/c.key_heads,1,s),mx::float32,s);
    auto kt=mx::astype(mx::repeat(mx::take(k,i,1,s),c.value_heads/c.key_heads,1,s),mx::float32,s);
@@ -101,7 +104,8 @@ struct Qwen {
    state=mx::add(state,mx::multiply(mx::expand_dims(kt,-2,s),mx::expand_dims(delta,-1,s),s),s);
    out.push_back(mx::astype(mx::sum(mx::multiply(state,mx::expand_dims(qt,-2,s),s),-1,false,s),x.dtype(),s));
   }
-  auto readout=mx::stack(out,1,s);if(operators)check_delta(qkv,conv,cw,a,b,initial_state,activated,readout,state,next[0],p);
+  return mx::stack(out,1,s);
+  }();if(operators)check_delta(qkv,conv,cw,a,b,initial_state,activated,readout,state,next[0],p);
   next.push_back(state);auto y=norm(readout,p+".norm.weight",false);
   auto ungated=y;y=mx::astype(mx::multiply(mx::astype(y,mx::float32,s),silu(mx::astype(z,mx::float32,s)),s),x.dtype(),s);if(operators)check_gate(ungated,z,y,p+"/output-gate",true);
   return linear(mx::reshape(y,{batch,t,vd},s),p+".out_proj");
@@ -119,6 +123,10 @@ extern "C" int rs_qwen_quant(void* store,const char* module,int group,int bits,c
 static int qwen_forward_core(void* store,int gpu,const rs_qwen_config* config,const rs_qwen_layer* layers,size_t layer_count,const uint32_t* tokens,size_t count,size_t offset,const float* old_state,size_t old_count,float* new_state,size_t new_count,float* logits,size_t logits_count,int projection_checks,const uint32_t* projection_outputs,size_t projection_output_count,float* trace,size_t trace_count,char* error,size_t capacity,const std::vector<mx::array>* device_old=nullptr,std::vector<mx::array>* device_next=nullptr,bool all_logits=false,std::optional<mx::array>* hidden=nullptr){return checked(error,capacity,[&]{
  if(!store||!config||!layers||!tokens||(!new_state&&!device_next)||!logits)throw std::invalid_argument("invalid model descriptor");auto c=*config;
  if(c.hidden<=0||c.hidden>8192||c.layers<=0||c.layers>64||c.vocab<=0||c.vocab>300000||c.interval<=0||c.layers%c.interval||c.context<=0||c.context>512||c.chunk<=0||c.chunk>8||count==0||count>size_t(c.chunk)||offset>size_t(c.context)||offset+count>size_t(c.context)||logits_count!=size_t(c.vocab)*(all_logits?count:1))throw std::invalid_argument("model geometry/capacity");
+ if(c.layer_group!=1&&c.layer_group!=4&&c.layer_group!=10&&c.layer_group!=40)throw std::invalid_argument("model layer group");
+ if(c.fused_recurrent<0||c.fused_recurrent>1)throw std::invalid_argument("recurrent kernel mode");
+ // Snapshot/trace controls use the original recurrence even in a tuned session.
+ if(!device_next||trace_count||projection_checks)c.fused_recurrent=0;
  if(layer_count!=size_t(c.layers))throw std::invalid_argument("IR layer count");
  for(size_t i=0;i<layer_count;++i)if(layers[i].index!=i||layers[i].mixer>1||layers[i].mixer!=uint32_t((i+1)%c.interval==0))throw std::invalid_argument("IR layer program");
  for(auto d:{c.q_heads,c.kv_heads,c.head_dim,c.key_heads,c.value_heads,c.key_dim,c.value_dim,c.conv,c.experts,c.top,c.intermediate,c.shared})if(d<=0||d>8192)throw std::invalid_argument("model dimension bounds");
@@ -137,7 +145,9 @@ static int qwen_forward_core(void* store,int gpu,const rs_qwen_config* config,co
  if(c.activation_precision){embed_scales=mx::astype(embed_scales,mx::float32,s);embed_biases=mx::astype(embed_biases,mx::float32,s);}
  auto x=mx::reshape(mx::dequantize(mx::take(m.w(embed+".weight"),ids,0,s),embed_scales,embed_biases,group,bits,"affine",{},c.activation_precision?std::optional<mx::Dtype>{mx::float32}:std::nullopt,s),{1,int(count),c.hidden},s);
  if(m.operators)m.check_embedding(ids,x,embed,group,bits);
- size_t read=0,write=0,array_read=0;std::vector<mx::array> finite_checks;
+ size_t read=0,write=0,array_read=0;std::vector<mx::array> finite_checks,pending;
+ // Diagnostics/snapshot controls keep the original completion boundaries.
+ const int layer_group=(device_next&&!trace_count&&!projection_checks)?c.layer_group:1;
  auto state=[&](mx::Shape shape,mx::Dtype dtype){size_t n=1;for(auto d:shape)n*=d;auto a=mx::zeros(shape,dtype,s);if(offset){
    if(device_old){if(array_read>=device_old->size()||(*device_old)[array_read].shape()!=shape)throw std::invalid_argument("device state shape");a=mx::astype((*device_old)[array_read++],dtype,s);}
    else a=mx::astype(mx::array(old_state+read,shape,mx::float32),dtype,s);read+=n;
@@ -151,7 +161,9 @@ static int qwen_forward_core(void* store,int gpu,const rs_qwen_config* config,co
   std::vector<mx::array> evaluated={x};for(auto& a:next)evaluated.push_back(mx::contiguous(mx::astype(a,mx::float32,s),false,s));
   size_t state_end=evaluated.size();
   if(trace_count)for(auto a:{h,r,residual,mlp,x})evaluated.push_back(mx::contiguous(mx::astype(a,mx::float32,s),false,s));
-  mx::eval(evaluated);mx::synchronize(s);x=evaluated[0];
+  pending.insert(pending.end(),evaluated.begin(),evaluated.end());
+  if((layer+1)%layer_group==0||layer+1==c.layers){mx::eval(pending);mx::synchronize(s);pending.clear();}
+  x=evaluated[0];
   if(trace_count)for(size_t stage=0;stage<5;++stage){const auto& a=evaluated[state_end+stage];if(a.size()!=count*size_t(c.hidden))throw std::invalid_argument("trace shape");std::memcpy(trace+(size_t(layer)*5+stage)*count*c.hidden,a.data<float>(),a.size()*4);}
   for(size_t i=1;i<state_end;++i){const auto& a=evaluated[i];if(write+a.size()>new_count)throw std::invalid_argument("state write overflow");if(device_next){finite_checks.push_back(mx::all(mx::isfinite(a,s),s));device_next->push_back(a);}
    else std::memcpy(new_state+write,a.data<float>(),a.size()*4);write+=a.size();}

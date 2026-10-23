@@ -1,8 +1,8 @@
 ---
 title: "Next stages toward an Apple native inference server"
 document_type: "architecture"
-version: "1.1.0"
-date: "2026-10-23T12:43:42Z"
+version: "1.2.0"
+date: "2026-10-23T20:58:00Z"
 implementation_date: null
 author: "Codex for Stewart Barteau"
 reviewers: []
@@ -15,7 +15,7 @@ related_files:
     lines: "1-1148"
     role: "config"
   - path: "Cargo.toml"
-    lines: "1-102"
+    lines: "1-106"
     role: "config"
   - path: "backend/rapid_worker.py"
     lines: "1-165"
@@ -27,7 +27,7 @@ related_files:
     lines: "1-394"
     role: "primary"
   - path: "examples/native_device_pressure.rs"
-    lines: "1-184"
+    lines: "1-196"
     role: "primary"
   - path: "examples/native_device_reference.rs"
     lines: "1-166"
@@ -57,7 +57,7 @@ related_files:
     lines: "1-186"
     role: "primary"
   - path: "examples/native_physical_batch.rs"
-    lines: "1-213"
+    lines: "1-232"
     role: "primary"
   - path: "examples/native_seed_qualification.rs"
     lines: "1-271"
@@ -174,7 +174,7 @@ related_files:
     lines: "1-81"
     role: "test"
   - path: "judges/native_physical_http.py"
-    lines: "1-88"
+    lines: "1-93"
     role: "test"
   - path: "judges/native_seed_http.py"
     lines: "1-84"
@@ -186,7 +186,7 @@ related_files:
     lines: "1-29"
     role: "test"
   - path: "judges/physical_throughput_verify.py"
-    lines: "1-80"
+    lines: "1-90"
     role: "test"
   - path: "judges/projection_reference.cpp"
     lines: "1-53"
@@ -243,13 +243,13 @@ related_files:
     lines: "1-30"
     role: "primary"
   - path: "native/qwen_batch.inc"
-    lines: "1-40"
+    lines: "1-41"
     role: "primary"
   - path: "native/qwen_device.inc"
-    lines: "1-61"
+    lines: "1-63"
     role: "primary"
   - path: "native/qwen_model.inc"
-    lines: "1-173"
+    lines: "1-185"
     role: "primary"
   - path: "native/qwen_mtp.inc"
     lines: "1-55"
@@ -354,7 +354,7 @@ related_files:
     lines: "1-193"
     role: "primary"
   - path: "src/serving/native_device.rs"
-    lines: "1-1001"
+    lines: "1-1046"
     role: "primary"
   - path: "src/serving/native_device_scheduler.rs"
     lines: "1-205"
@@ -369,7 +369,7 @@ related_files:
     lines: "1-214"
     role: "primary"
   - path: "src/serving/native_http.rs"
-    lines: "1-333"
+    lines: "1-460"
     role: "primary"
   - path: "src/serving/native_ingestion.rs"
     lines: "1-272"
@@ -393,7 +393,7 @@ related_files:
     lines: "1-275"
     role: "primary"
   - path: "src/serving/native_mtp_device.rs"
-    lines: "1-436"
+    lines: "1-438"
     role: "primary"
   - path: "src/serving/native_mtp_scheduler.rs"
     lines: "1-1057"
@@ -402,7 +402,7 @@ related_files:
     lines: "1-273"
     role: "primary"
   - path: "src/serving/native_qwen.rs"
-    lines: "1-694"
+    lines: "1-698"
     role: "primary"
   - path: "src/serving/native_reference.rs"
     lines: "1-100"
@@ -420,7 +420,7 @@ related_files:
     lines: "1-220"
     role: "primary"
   - path: "src/serving/qwen_tests.rs"
-    lines: "1-568"
+    lines: "1-570"
     role: "primary"
   - path: "src/serving/rapid.rs"
     lines: "1-265"
@@ -540,10 +540,10 @@ related_files:
     lines: "1-13"
     role: "primary"
   - path: "ts/http-bench-config.test.ts"
-    lines: "1-14"
+    lines: "1-31"
     role: "test"
   - path: "ts/http-bench-config.ts"
-    lines: "1-27"
+    lines: "1-30"
     role: "primary"
   - path: "ts/http-bench.ts"
     lines: "1-55"
@@ -937,3 +937,16 @@ Next measure alternating scalar/physical HTTP 1k/1500/2k token windows at one/th
 The target-only HTTP matrix now measures 1k/1500/2k arrival windows with exact-reference parity across 16,000 closed-loop tokens and independent open-arrival pressure. Consult the bound throughput scorecard before quoting gains. Keep scalar default: short-context speed evidence does not qualify agent/model quality or sustained batching.
 
 Next measure native synchronization, full-state finite scans, model operators and full-vocabulary export separately before claiming a bandwidth/compute ceiling. The source audit identifies 40 per-layer eval/synchronize boundaries, 80 state-finiteness reductions and 993,280-byte full-logit export per scalar step; their separate time costs remain unmeasured. Then increase useful physical packing coverage across unequal materialized positions with a separate state/mask/RoPE design and numerical/rollback gates. Address target prefill and first-token latency; physical decode packing alone does not fix them. Isolate removal/deferment of per-layer synchronization as its own numeric, memory and cancellation ablation. Then qualify sustained arrivals, deep-context/paged state, MTP packing and the custom Dspark proposer separately. Native post-reservation fault injection and full held-out qualification remain open.
+
+
+## Current execution optimization checkpoint — 2026-10-23
+
+Target-only completion grouping and native fused recurrence now have explicit flags, preserved reference defaults and strict native qualification under `evidence/native-layer-groups/`. These experiments do not qualify the 100+ tok/s or >=90% draft acceptance objectives. The native fused/group-10 short smoke measured 25.76 post-first decode tok/s; that is not an HTTP throughput claim. Group-only arithmetic remained bitwise equal to the snapshot reference; fused arithmetic passed the preregistered limits with exact frozen tokens, but is not bitwise identical to the reference.
+
+Next, in order:
+
+1. Candidate HTTP binding is complete: 4,000 closed-window tokens plus 200 open/warmup tokens passed independent stream/timing/accounting checks. Single-lane decode measured 25.78 tok/s; aggregate one/three-lane throughput was 22.28/25.01 tok/s including prefill. Run a fresh matched reference/reverse-order comparison before attributing a speedup. Keep scalar/reference defaults.
+2. Measure host graph construction, eval/completion wait, export and bridge wall time without extra barriers. Follow the compiled recurrent-block design in NATIVE_TUNING_PLAN.md if host dispatch remains material; do not guess a bandwidth ceiling.
+3. Qualify fused attention and any separately labeled lower-precision model lane against their own controls and the complete held-out suites. Preserve integer-only custom Metal arithmetic.
+4. Integrate the qualified target path into compatible native MTP/custom drafting, efficient multi-token verification, and automaton profitability scheduling. Acceptance and end-to-end speed are independent gates.
+5. Complete heterogeneous-position continuous batching and native paging with unified KV/convolution/recurrent rollback. Benchmark cold/warm TTFT, ITL tails, per-lane and aggregate throughput, memory and held-out coding quality before promotion.

@@ -37,6 +37,8 @@ impl Fixture {
             chunk: 8,
             rope_dims: 4,
             activation_precision: 1,
+            layer_group: 1,
+            fused_recurrent: 0,
             epsilon: 1e-6,
             theta: 10000.,
         };
