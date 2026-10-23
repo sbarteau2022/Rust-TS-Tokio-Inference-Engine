@@ -1,7 +1,7 @@
 //! Experimental greedy draft transactions. No production scheduler/default change.
-use super::{DeviceState, QwenDeviceExecutor};
+use super::{CompletionGuard, DeviceState, QwenDeviceExecutor};
 use anyhow::{ensure, Result};
-use std::sync::Arc;
+use std::sync::{atomic::AtomicU64, Arc};
 
 /// Only executor evaluation constructs this binding of state and next-token logits.
 #[derive(Clone)]
@@ -133,6 +133,26 @@ impl QwenDeviceExecutor {
         draft: Vec<u32>,
         eos: &[u32],
     ) -> Result<GreedyTransaction> {
+        self.greedy_verify_guarded(cursor, draft, eos, None).await
+    }
+    pub async fn greedy_verify_guarded(
+        &self,
+        cursor: &GreedyCursor,
+        draft: Vec<u32>,
+        eos: &[u32],
+        completion: Option<CompletionGuard>,
+    ) -> Result<GreedyTransaction> {
+        self.greedy_verify_accounted(cursor, draft, eos, completion, None)
+            .await
+    }
+    pub(super) async fn greedy_verify_accounted(
+        &self,
+        cursor: &GreedyCursor,
+        draft: Vec<u32>,
+        eos: &[u32],
+        completion: Option<CompletionGuard>,
+        calls: Option<Arc<AtomicU64>>,
+    ) -> Result<GreedyTransaction> {
         ensure!(!cursor.terminal, "cannot decode terminal cursor");
         let remaining = 512usize.saturating_sub(cursor.state.position());
         ensure!(
@@ -148,7 +168,15 @@ impl QwenDeviceExecutor {
         let block = if draft.is_empty() {
             None
         } else {
-            Some(self.verify_block(&cursor.state, draft.clone()).await?)
+            Some(
+                self.verify_block_guarded(
+                    &cursor.state,
+                    draft.clone(),
+                    completion.clone(),
+                    calls.clone(),
+                )
+                .await?,
+            )
         };
         let rows = block.as_ref().map_or(&[][..], |b| b.logits.as_slice());
         let decision = plan(&cursor.logits, &draft, rows, eos, remaining)?;
@@ -167,13 +195,25 @@ impl QwenDeviceExecutor {
         } else if decision.accepted == draft.len() && !draft.is_empty() {
             let block = block.expect("nonempty draft evaluated");
             let result = self
-                .step(&block.state, vec![*decision.emitted.last().expect("bonus")])
+                .step_guarded(
+                    &block.state,
+                    vec![*decision.emitted.last().expect("bonus")],
+                    completion.clone(),
+                    calls.clone(),
+                )
                 .await?;
             (result.state, result.logits, 2, 0)
         } else {
             drop(block); // Reclaim rejected recurrent/convolution/KV state before replay.
             let replayed = decision.emitted.len();
-            let result = self.step(&cursor.state, decision.emitted.clone()).await?;
+            let result = self
+                .step_guarded(
+                    &cursor.state,
+                    decision.emitted.clone(),
+                    completion.clone(),
+                    calls.clone(),
+                )
+                .await?;
             (
                 result.state,
                 result.logits,

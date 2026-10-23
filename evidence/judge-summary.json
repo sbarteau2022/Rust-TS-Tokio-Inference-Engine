@@ -31,7 +31,7 @@
     4,
     5
   ],
-  "native_capture": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/artifacts/judge-1792727097335113000.gputrace",
+  "native_capture": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/artifacts/judge-1792729721461274000.gputrace",
   "source_manifest": "source-sha256.json",
-  "unix_time": 1792727097.5306292
+  "unix_time": 1792729721.652661
 }

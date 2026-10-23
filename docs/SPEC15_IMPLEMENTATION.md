@@ -1,7 +1,7 @@
 ---
 title: "Spec 15 — exact prefix blocks and plan-scoped cache control"
 document_type: "implementation"
-version: "1.0.0"
+version: "1.1.0"
 date: "2026-10-22T06:27:43Z"
 implementation_date: null
 author: "Codex for Stewart Barteau"
@@ -15,13 +15,16 @@ related_files:
     lines: "1-1015"
     role: "config"
   - path: "Cargo.toml"
-    lines: "1-49"
+    lines: "1-53"
     role: "config"
   - path: "backend/rapid_worker.py"
     lines: "1-165"
     role: "primary"
   - path: "build.rs"
     lines: "1-62"
+    role: "primary"
+  - path: "examples/native_automaton_smoke.rs"
+    lines: "1-394"
     role: "primary"
   - path: "examples/native_device_pressure.rs"
     lines: "1-184"
@@ -132,7 +135,7 @@ related_files:
     lines: "1-35"
     role: "test"
   - path: "judges/run.py"
-    lines: "1-220"
+    lines: "1-221"
     role: "test"
   - path: "judges/speculative_report.py"
     lines: "1-74"
@@ -209,8 +212,11 @@ related_files:
   - path: "src/backend.rs"
     lines: "1-614"
     role: "primary"
+  - path: "src/cache/drafts.rs"
+    lines: "1-592"
+    role: "primary"
   - path: "src/cache/mod.rs"
-    lines: "1-1068"
+    lines: "1-1078"
     role: "primary"
   - path: "src/chain.rs"
     lines: "1-50"
@@ -266,11 +272,14 @@ related_files:
   - path: "src/serving/model_ir.rs"
     lines: "1-244"
     role: "primary"
+  - path: "src/serving/native_automaton.rs"
+    lines: "1-324"
+    role: "primary"
   - path: "src/serving/native_boundary.rs"
     lines: "1-193"
     role: "primary"
   - path: "src/serving/native_device.rs"
-    lines: "1-607"
+    lines: "1-687"
     role: "primary"
   - path: "src/serving/native_device_scheduler.rs"
     lines: "1-178"
@@ -297,13 +306,13 @@ related_files:
     lines: "1-273"
     role: "primary"
   - path: "src/serving/native_qwen.rs"
-    lines: "1-678"
+    lines: "1-688"
     role: "primary"
   - path: "src/serving/native_reference.rs"
     lines: "1-100"
     role: "primary"
   - path: "src/serving/native_speculative.rs"
-    lines: "1-340"
+    lines: "1-380"
     role: "primary"
   - path: "src/serving/native_state.rs"
     lines: "1-194"
@@ -343,6 +352,9 @@ related_files:
     role: "test"
   - path: "tests/cordic.rs"
     lines: "1-264"
+    role: "test"
+  - path: "tests/draft_admission.rs"
+    lines: "1-380"
     role: "test"
   - path: "tests/fixed_point.rs"
     lines: "1-146"
@@ -479,3 +491,45 @@ The key integration lesson is that completion ownership must protect cache locks
 # Changelog
 
 1.0.0 — Amended Spec 15 controller, mandatory configuration, exact prefix/work-tree join, native completion leases, explicit inactive sampling policy, pressure/adversarial tests, CLI evidence, and next steps.
+
+
+# Draft workload design contract
+
+Spec 15 draft workload implementation contract, 2026-10-22
+
+Extend the existing Controller State with an optional proposer workload table, not a
+second supervisor. Configuration remains mandatory/nonproduction. Reuse its owner
+namespace, audit epoch, bounded queue depth/expiry, rate classes, pressure multiplier
+and Q1.31 round-to-nearest-even decay. Draft work has a separate explicit native-work
+capacity; opaque CPU cache blocks are not represented as native KV. Cache exact
+coverage remains unchanged and separate from draft acceptance/progress counters.
+
+A proposer is keyed by registration ID plus exact model/tokenizer/quantization/private
+namespace identity. Proposal keys reuse H(identity,parent,tokens), not token-only
+hashes. Registration is bounded; proposed length <=8; queue tickets are single-use,
+continuation-first, expire by audit epochs, and pressure refusals are counted. Audit
+cannot advance with a running draft lease. Shared cache+draft queue depth is bounded.
+
+Per-proposer trust is Q1.31. Accepted work adds bounded configured mass; the normal
+cache audit decays mass exactly once using the configured rate/pressure classes.
+Eligibility requires trust, a bounded cold qualification allowance, or an explicitly
+configured epoch-spaced probe. After qualification, compare measured total proposer
+cost per published committed token against a matching-identity baseline; acceptance
+alone cannot win. Baseline and ledger records use integer nanoseconds/counts. No
+production tuning constants or preloaded credit from old smoke numbers.
+
+A private background native adapter owns the draft lease through proposal/verification
+and response handoff. Each native command also retains an Arc to that lease: cancelling
+an async future or shutting down Tokio cannot release admission before native completion.
+Unpublished results report zero published committed tokens, retain measured attempted
+cost, and safely retire state. Aborted/incomplete outcomes are visible and cannot count
+as profitable evidence. Plugin computation must uphold the same completion guard
+contract; only bounded CPU retrieval is supplied initially, no trained MTP installed.
+
+Tests: epochs and integer oracle, identity separation, queue bound/priority/expiry,
+profit benching/probes, counter overflow atomicity, cancellation and actual Combined
+native output/state preservation, full regressions. Canonical SPEC15_SOURCE.md body
+stays as the supplied source; record this extension in the implementation document.
+
+
+Draft-workload implementation and qualification are documented in SPEC15_DRAFT_ADMISSION.md. The original supplied Spec 15 source body is preserved. A failed or incomplete outcome cannot earn false progress: lifetime gaps remain visible, while a later epoch-spaced probe may establish a fresh complete-observation eligibility window. Qualification trials are reserved at start to prevent concurrent overspending. Multi-proposer selection is deterministic and uses exact cost comparisons. This is an opt-in native adapter; production serving and trained MTP remain unqualified.

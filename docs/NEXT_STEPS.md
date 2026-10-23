@@ -15,13 +15,16 @@ related_files:
     lines: "1-1015"
     role: "config"
   - path: "Cargo.toml"
-    lines: "1-49"
+    lines: "1-53"
     role: "config"
   - path: "backend/rapid_worker.py"
     lines: "1-165"
     role: "primary"
   - path: "build.rs"
     lines: "1-62"
+    role: "primary"
+  - path: "examples/native_automaton_smoke.rs"
+    lines: "1-394"
     role: "primary"
   - path: "examples/native_device_pressure.rs"
     lines: "1-184"
@@ -132,7 +135,7 @@ related_files:
     lines: "1-35"
     role: "test"
   - path: "judges/run.py"
-    lines: "1-220"
+    lines: "1-221"
     role: "test"
   - path: "judges/speculative_report.py"
     lines: "1-74"
@@ -209,8 +212,11 @@ related_files:
   - path: "src/backend.rs"
     lines: "1-614"
     role: "primary"
+  - path: "src/cache/drafts.rs"
+    lines: "1-592"
+    role: "primary"
   - path: "src/cache/mod.rs"
-    lines: "1-1068"
+    lines: "1-1078"
     role: "primary"
   - path: "src/chain.rs"
     lines: "1-50"
@@ -266,11 +272,14 @@ related_files:
   - path: "src/serving/model_ir.rs"
     lines: "1-244"
     role: "primary"
+  - path: "src/serving/native_automaton.rs"
+    lines: "1-324"
+    role: "primary"
   - path: "src/serving/native_boundary.rs"
     lines: "1-193"
     role: "primary"
   - path: "src/serving/native_device.rs"
-    lines: "1-607"
+    lines: "1-687"
     role: "primary"
   - path: "src/serving/native_device_scheduler.rs"
     lines: "1-178"
@@ -297,13 +306,13 @@ related_files:
     lines: "1-273"
     role: "primary"
   - path: "src/serving/native_qwen.rs"
-    lines: "1-678"
+    lines: "1-688"
     role: "primary"
   - path: "src/serving/native_reference.rs"
     lines: "1-100"
     role: "primary"
   - path: "src/serving/native_speculative.rs"
-    lines: "1-340"
+    lines: "1-380"
     role: "primary"
   - path: "src/serving/native_state.rs"
     lines: "1-194"
@@ -343,6 +352,9 @@ related_files:
     role: "test"
   - path: "tests/cordic.rs"
     lines: "1-264"
+    role: "test"
+  - path: "tests/draft_admission.rs"
+    lines: "1-380"
     role: "test"
   - path: "tests/fixed_point.rs"
     lines: "1-146"
@@ -666,8 +678,7 @@ It returns all candidate-position logits and commits unified state with bounded
 replay. Retrieval accepts 25.31% of proposals on four authored code/security probes
 but does not improve measured throughput. It remains off the production scheduler.
 
-1. Build a measured per-request cost controller that can choose no speculation.
-Then audit/train a compatible custom MTP or hybrid proposal head, with separate
+1. Spec 15 now supplies optional measured draft admission/arbitration and can choose no speculation (SPEC15_DRAFT_ADMISSION.md). Next audit/train a compatible custom MTP or hybrid proposal head, with separate
 training/calibration/qualification data and Rust-native execution. Do not activate
 checkpoint MTP tensors based solely on their presence.
 2. Derive and qualify factorized recurrent acceptance to reduce replay, retaining
@@ -679,3 +690,11 @@ missing attention or skipped layers are separately labeled approximate modes.
 4. Repeat sustained alternating no-speculation/speculation windows, include prefill,
 TTFT/tail latency, concurrency and quality. Four 64-token probes are not completed
 agents. Native MTP, mixed speculative tensor batching and broad readiness remain open.
+
+
+## After Spec 15 proposer integration
+
+The shared admission/arbitration interface and native completion guards are implemented. Keep them opt-in. Supply a qualified Rust-native MTP/custom proposer next; retrieval remains subject to measured cost rather than acceptance alone. Serving still needs actual streaming/continuous scheduling, namespace-scoped cost windows, a quiescent audit driver and state-safe tensor batching. Measure real agent TTFT/inter-token tails and multi-lane throughput only after those integrations. Exact paging, compressed KV, physical command-buffer proof, AMX/ANE and active production sampling remain separate gates.
+
+
+The next proposer needs a worker-confined hidden-state tap bound to the same native state version, a checkpoint-bound head artifact and separate training/calibration/qualification data. Implement it through DraftProposer with the completion guard, then compare held-out output preservation and total proposal/verification/replay cost. The plugin interface alone does not supply hidden features or trained weights. Before production admission, qualify observation-window length and a justified gain margin using sustained alternating windows; the current strict empirical cost comparison can change verdict on timing noise.

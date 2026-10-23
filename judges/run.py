@@ -52,6 +52,7 @@ def main():
     run(["cargo", "test", "--locked", "--example", "native_device_reference"], "native-device-example-tests.log")
     run(["cargo", "test", "--locked", "--example", "native_device_pressure"], "native-device-pressure-example-tests.log")
     run(["cargo", "test", "--locked", "--example", "native_speculative_smoke"], "native-speculative-example-tests.log")
+    run(["cargo", "test", "--locked", "--example", "native_automaton_smoke"], "native-automaton-example-tests.log")
     run([sys.executable,"judges/generate_cordic.py","--check"],"cordic-table-check.log")
     # Step 0: deterministic bindings and both requested compiler gates.
     with tempfile.TemporaryDirectory() as tmp:

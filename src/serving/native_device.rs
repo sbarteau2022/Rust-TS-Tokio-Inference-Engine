@@ -66,6 +66,7 @@ enum Work {
         state: DeviceState,
         ir: ModelStepIr,
         all_logits: bool,
+        _completion: Option<CompletionGuard>,
         reply: oneshot::Sender<Result<DeviceStep>>,
         _permit: OwnedSemaphorePermit,
     },
@@ -165,7 +166,7 @@ impl QwenDeviceExecutor {
                             work = rx.recv() => {
                                 let Some(work)=work else { break; };
                                 match work {
-                                    Work::Step { state,ir,all_logits,reply,_permit } => {
+                                    Work::Step { state,ir,all_logits,_completion,reply,_permit } => {
                                         let usage=session.stats()?;
                                         let required=(architecture.state_len(state.position()+ir.len())*4) as u64;
                                         let result=if faulted {
@@ -255,17 +256,28 @@ impl QwenDeviceExecutor {
         .await
     }
     pub async fn execute(&self, state: &DeviceState, ir: ModelStepIr) -> Result<DeviceStep> {
-        self.execute_mode(state, ir, false).await
+        self.execute_mode(state, ir, false, None, None).await
     }
     /// Experimental verifier ABI; no candidate is committed by this call.
     pub async fn verify_block(&self, state: &DeviceState, tokens: Vec<u32>) -> Result<DeviceBlock> {
+        self.verify_block_guarded(state, tokens, None, None).await
+    }
+    pub(super) async fn verify_block_guarded(
+        &self,
+        state: &DeviceState,
+        tokens: Vec<u32>,
+        completion: Option<CompletionGuard>,
+        calls: Option<Arc<AtomicU64>>,
+    ) -> Result<DeviceBlock> {
         let ir = ModelStepIr::compile(
             StepKind::Prefill,
             state.position(),
             tokens,
             self.architecture.vocab as u32,
         )?;
-        let result = self.execute_mode(state, ir, true).await?;
+        let result = self
+            .execute_mode(state, ir, true, completion, calls)
+            .await?;
         Ok(DeviceBlock {
             state: result.state,
             logits: result
@@ -280,6 +292,8 @@ impl QwenDeviceExecutor {
         state: &DeviceState,
         ir: ModelStepIr,
         all_logits: bool,
+        completion: Option<CompletionGuard>,
+        calls: Option<Arc<AtomicU64>>,
     ) -> Result<DeviceStep> {
         self.validate(state)?;
         ensure!(
@@ -306,11 +320,30 @@ impl QwenDeviceExecutor {
                 state: state.clone(),
                 ir,
                 all_logits,
+                _completion: completion,
                 reply,
                 _permit: permit,
             })
             .map_err(|_| anyhow::anyhow!("device work queue full/closed"))?;
+        if let Some(calls) = calls {
+            calls.fetch_add(1, Ordering::Relaxed);
+        }
         received.await.context("device worker stopped")?
+    }
+    pub(super) async fn step_guarded(
+        &self,
+        state: &DeviceState,
+        tokens: Vec<u32>,
+        completion: Option<CompletionGuard>,
+        calls: Option<Arc<AtomicU64>>,
+    ) -> Result<DeviceStep> {
+        let ir = ModelStepIr::compile(
+            StepKind::Prefill,
+            state.position(),
+            tokens,
+            self.architecture.vocab as u32,
+        )?;
+        self.execute_mode(state, ir, false, completion, calls).await
     }
     /// Offline A/B only: share immutable weights with the CPU-snapshot reference.
     pub fn reference_empty_state(&self) -> ModelState {
@@ -595,6 +628,53 @@ mod tests {
         for i in 0..3 {
             assert_eq!(queued.try_recv().unwrap(), i);
         }
+    }
+    #[test]
+    fn native_command_retains_completion_guard_after_runtime_abort() {
+        struct Marker(Arc<AtomicBool>);
+        impl Drop for Marker {
+            fn drop(&mut self) {
+                self.0.store(true, Ordering::SeqCst);
+            }
+        }
+        let dropped = Arc::new(AtomicBool::new(false));
+        let marker = dropped.clone();
+        let (sent, received) = std::sync::mpsc::channel();
+        std::thread::spawn(move || {
+            let runtime = tokio::runtime::Builder::new_current_thread()
+                .build()
+                .unwrap();
+            runtime.block_on(async move {
+                let permit = Arc::new(Semaphore::new(1)).acquire_owned().await.unwrap();
+                let (reply, receive) = oneshot::channel();
+                let guard: CompletionGuard = Arc::new(Marker(marker));
+                let work = Work::Step {
+                    state: DeviceState {
+                        owner: 1,
+                        token: None,
+                    },
+                    ir: ModelStepIr::compile(StepKind::Decode, 0, vec![1], 2).unwrap(),
+                    all_logits: false,
+                    _completion: Some(guard.clone()),
+                    reply,
+                    _permit: permit,
+                };
+                tokio::spawn(async move {
+                    let _guard = guard;
+                    let _ = receive.await;
+                });
+                sent.send(work)
+                    .unwrap_or_else(|_| panic!("test worker disconnected"));
+                tokio::task::yield_now().await;
+            });
+            drop(runtime); // Aborts waiter while the native command remains owned.
+        })
+        .join()
+        .unwrap();
+        let work = received.recv().unwrap();
+        assert!(!dropped.load(Ordering::SeqCst));
+        drop(work);
+        assert!(dropped.load(Ordering::SeqCst));
     }
     #[tokio::test]
     async fn invalid_budget_rejects_before_loading_weights() {

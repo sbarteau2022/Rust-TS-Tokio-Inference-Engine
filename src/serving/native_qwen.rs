@@ -676,3 +676,13 @@ pub use device_scheduler::{ScheduledDevice, StateMode};
 #[path = "native_speculative.rs"]
 mod speculative;
 pub use speculative::{GreedyCursor, GreedyTransaction, SuffixDraft};
+
+/// Ownership held by each native command until its completion.
+pub type CompletionGuard = Arc<dyn Send + Sync>;
+
+#[path = "native_automaton.rs"]
+mod automaton;
+pub use automaton::{
+    AutomatonCursor, AutomatonProposer, AutomatonStep, DraftProposer, ProposalContext,
+    ProposalFuture, RetrievalProposer,
+};

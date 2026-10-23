@@ -1,5 +1,7 @@
 //! Spec 15 controller. Opaque exact payloads; no pretend model attention or learned predictor.
-use anyhow::{bail, ensure, Result};
+use anyhow::{bail, ensure, Context, Result};
+mod drafts;
+pub use drafts::*;
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 use std::{
@@ -197,6 +199,7 @@ struct State {
     expired: u64,
     degraded: u64,
     freed: u64,
+    drafts: Option<drafts::Drafts>,
 }
 #[derive(Clone)]
 pub struct Controller {
@@ -480,6 +483,7 @@ impl Controller {
                 expired: 0,
                 degraded: 0,
                 freed: 0,
+                drafts: None,
             })),
         })
     }
@@ -609,8 +613,9 @@ impl Controller {
             bail!("pressure: context exceeds pool");
         }
         // Existing queued work cannot be bypassed by a new direct admission.
-        let queued = state.tickets.values().filter(|t| !t.ready).count();
-        let ready = (needed == 0 || queued == 0)
+        let cache_queued = state.tickets.values().filter(|t| !t.ready).count();
+        let queued = cache_queued + state.drafts.as_ref().map_or(0, |d| d.queued());
+        let ready = (needed == 0 || cache_queued == 0)
             && needed <= state.available()
             && !state.in_progress(branch);
         if !ready && queued >= state.config.queue_depth {
@@ -861,8 +866,8 @@ impl Controller {
     ) -> Result<Audit> {
         let mut state = self.state()?;
         ensure!(
-            state.active == 0,
-            "audit boundary requires completed native steps"
+            state.active == 0 && state.drafts.as_ref().is_none_or(|d| d.active() == 0),
+            "audit boundary requires completed native steps and draft leases"
         );
         ensure!(
             state.epoch.checked_add(1) == Some(epoch),
@@ -890,6 +895,11 @@ impl Controller {
             .filter(|d| !state.blocks.contains_key(&d.key))
             .cloned()
             .collect();
+        let config = state.config.clone();
+        if let Some(drafts) = state.drafts.as_mut() {
+            drafts.audit(pressure, &config)?;
+            drafts.expire(epoch, config.max_wait_epochs);
+        }
         state.epoch = epoch;
         let budget = (state.config.capacity_blocks as u64
             * u64::from(state.config.anchor_fraction_q31)

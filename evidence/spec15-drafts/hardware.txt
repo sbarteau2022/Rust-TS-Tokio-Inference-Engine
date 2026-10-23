@@ -1,0 +1,5 @@
+Apple M5 Pro
+51539607552
+ProductName:		macOS
+ProductVersion:		27.0.1
+BuildVersion:		26A434

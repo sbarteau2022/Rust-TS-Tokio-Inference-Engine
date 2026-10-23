@@ -1,0 +1,28 @@
+{
+  "pass": true,
+  "rust_tests": {
+    "default": 136,
+    "debug": 136,
+    "minimal": 96
+  },
+  "new_policy_tests": 9,
+  "pressure_audit_cycles": 10000,
+  "runtime_abort_native_command_guard_test": true,
+  "combined_output_pairs": 4,
+  "combined_tokens": 256,
+  "default_cases": 60,
+  "default_steps": 360,
+  "default_bitwise_preserved": true,
+  "default_historical_trajectories_preserved": 60,
+  "default_quality": [
+    15,
+    20,
+    23
+  ],
+  "native_sanitizer_checks": 70030,
+  "table_sanitizer_checks": 96024,
+  "ordered_judge_pass": true,
+  "final_ordered_judge_after_all_code_changes": true,
+  "production_qualified": false,
+  "independent_review": false
+}

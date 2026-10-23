@@ -1,8 +1,8 @@
 ---
 title: "Rust Server — Apple native kernel compiler and runtime"
 document_type: "implementation"
-version: "1.22.0"
-date: "2026-10-23T03:45:56Z"
+version: "1.23.0"
+date: "2026-10-23T04:28:10Z"
 implementation_date: null
 author: "Codex for Stewart Barteau"
 reviewers: []
@@ -15,13 +15,16 @@ related_files:
     lines: "1-1015"
     role: "config"
   - path: "Cargo.toml"
-    lines: "1-49"
+    lines: "1-53"
     role: "config"
   - path: "backend/rapid_worker.py"
     lines: "1-165"
     role: "primary"
   - path: "build.rs"
     lines: "1-62"
+    role: "primary"
+  - path: "examples/native_automaton_smoke.rs"
+    lines: "1-394"
     role: "primary"
   - path: "examples/native_device_pressure.rs"
     lines: "1-184"
@@ -132,7 +135,7 @@ related_files:
     lines: "1-35"
     role: "test"
   - path: "judges/run.py"
-    lines: "1-220"
+    lines: "1-221"
     role: "test"
   - path: "judges/speculative_report.py"
     lines: "1-74"
@@ -209,8 +212,11 @@ related_files:
   - path: "src/backend.rs"
     lines: "1-614"
     role: "primary"
+  - path: "src/cache/drafts.rs"
+    lines: "1-592"
+    role: "primary"
   - path: "src/cache/mod.rs"
-    lines: "1-1068"
+    lines: "1-1078"
     role: "primary"
   - path: "src/chain.rs"
     lines: "1-50"
@@ -266,11 +272,14 @@ related_files:
   - path: "src/serving/model_ir.rs"
     lines: "1-244"
     role: "primary"
+  - path: "src/serving/native_automaton.rs"
+    lines: "1-324"
+    role: "primary"
   - path: "src/serving/native_boundary.rs"
     lines: "1-193"
     role: "primary"
   - path: "src/serving/native_device.rs"
-    lines: "1-607"
+    lines: "1-687"
     role: "primary"
   - path: "src/serving/native_device_scheduler.rs"
     lines: "1-178"
@@ -297,13 +306,13 @@ related_files:
     lines: "1-273"
     role: "primary"
   - path: "src/serving/native_qwen.rs"
-    lines: "1-678"
+    lines: "1-688"
     role: "primary"
   - path: "src/serving/native_reference.rs"
     lines: "1-100"
     role: "primary"
   - path: "src/serving/native_speculative.rs"
-    lines: "1-340"
+    lines: "1-380"
     role: "primary"
   - path: "src/serving/native_state.rs"
     lines: "1-194"
@@ -343,6 +352,9 @@ related_files:
     role: "test"
   - path: "tests/cordic.rs"
     lines: "1-264"
+    role: "test"
+  - path: "tests/draft_admission.rs"
+    lines: "1-380"
     role: "test"
   - path: "tests/fixed_point.rs"
     lines: "1-146"
@@ -425,6 +437,8 @@ tags: [rust, tokio, metal, typescript-7.1, tsrs, flatbuffers]
 ## Executive Summary
 
 A TypeScript trace reaches pure integer Metal kernels through Rust, shared buffers and Tokio receipts. The default build now also has an in-process Rust-owned MLX tensor executor with a compiled C++ bridge, typed graphs and completion-owned resource admission; it uses no Python worker or JSON transport. The earlier external model adapter is disabled by default. Full native Qwen generation, tensor batching and AMX/ANE remain unqualified; see [native backend design and framework synthesis](docs/NATIVE_MLX_BACKEND.md).
+
+Spec 15 now owns opt-in proposer admission and deterministic arbitration: bounded qualification/probes, measured cost per committed token, and audit-epoch trust decay. Native draft leases survive waiter cancellation through backend completion. Retrieval is the supplied plugin; no trained MTP is active. See [design, configuration and evidence](docs/SPEC15_DRAFT_ADMISSION.md). Cache declared-context coverage and speculative committed tokens per target call are separate audit figures.
 
 ## Problem Statement
 
@@ -973,3 +987,15 @@ and original held-out misses remain unchanged.
 
 1.22.0 — 2026-10-22 — Research-grounded opt-in native block verification, Rust
 hybrid-state transactions and retained negative-performance retrieval smoke.
+
+
+## Spec 15 proposer admission and native completion
+
+[Design and measured evidence](docs/SPEC15_DRAFT_ADMISSION.md): retrieval and future MTP/custom plugins share the existing automaton's bounded admission, exact identity, measured cost gate and fixed-point epoch trust decay. Qualification trials reserve capacity before work starts; native commands retain leases independently of cancelled waiters. Failed bonus allocation charges both admitted target calls and publishes zero tokens. Configuration is explicit and opt-in; no trained MTP or serving default is enabled.
+
+On the Combined checkpoint, four cap64 probes preserve all 256 output IDs. Decode-only baseline **20.11 tok/s** versus automaton **20.21 tok/s** is a +0.50% single-window difference, **not an established speedup**. Acceptance is **61/241 (25.31%)**, with **233 target calls / 256 committed tokens (1.0987 tokens/call)**. Cache declared-context coverage remains a separate metric. The empirical gate ended profitable on this short sample; sustained alternating cost/quality windows must precede promotion. TTFT, client inter-token latency, multi-lane streams and completed agent throughput remain unmeasured here.
+
+1.23.0 — 2026-10-22 — Spec 15 proposer arbitration/admission, bounded qualification and probes, epoch trust decay, native completion guards, failure-inclusive target-call accounting, pressure tests and Combined evidence.
+
+
+Spec 15 phase validation: **136 default / 136 debug-validation / 96 minimal-feature Rust tests**, 10,000 audit cycles, TS 7.1/tsrs and native numerical/pressure gates passed. Default preservation remains bitwise over 60 cases / 360 steps; speculative replay is numerically qualified and does not claim bitwise equivalence. Original quality misses remain unchanged. Source, binaries, configuration and raw results are bound in [the evidence manifest](evidence/spec15-drafts/manifest.sha256).

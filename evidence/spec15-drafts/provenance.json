@@ -1,0 +1,25 @@
+{
+  "recorded_at": "2026-10-23T04:35:40.579476+00:00",
+  "base_commit": "d1f79c3441180748468cb249b91cda64c1152f1c",
+  "model_path": "/Users/stewartbarteau/models/fused/Qwen3.6-MoE-Combined",
+  "identity": "509cc92543203798f2db08b6fb6cbb38a80942fc0437ae81a3ef9ff27720915b",
+  "policy": "BENCH-MODE / explicit nonproduction DraftPolicy",
+  "qualification_trials": 64,
+  "probe_every_epochs": 2,
+  "audit_driver": "one epoch after each request",
+  "source": "final source hashes and binaries; full ordered judge after qualification reservations and target-command accounting",
+  "spec15_supplied_body_sha256": "cc46c832ef6ee5a0e12ce9acece85df3742b60172fa32c8bad9da7018c13f50f",
+  "runtime_transport": "Rust-owned C++ MLX ABI; no Python worker/JSON transport",
+  "defaults_changed": false,
+  "trained_MTP": false,
+  "limits": [
+    "four authored cap64 greedy requests",
+    "fixed baseline-first order",
+    "decode only; no load/prefill/network/client TTFT",
+    "single sequence, no confidence interval",
+    "idle pre-existing external server observed at port8001; host not isolated",
+    "no trained MTP, tensor batching, paging, or approximate early exit",
+    "internal response handoff is not end-client delivery"
+  ],
+  "review": "implementer adversarial review; no independent approval"
+}

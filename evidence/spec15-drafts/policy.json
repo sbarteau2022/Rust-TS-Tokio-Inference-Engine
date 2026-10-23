@@ -1,0 +1,36 @@
+{
+  "mode": "BENCH-MODE",
+  "production_qualified": false,
+  "draft_policy": {
+    "max_proposers": 4,
+    "work_limit": 3,
+    "initial_mass": 2147483647,
+    "admission_mass": 268435455,
+    "reward_mass": 536870911,
+    "qualification_trials": 64,
+    "probe_every_epochs": 2
+  },
+  "cache_config": {
+    "capacity_blocks": 8,
+    "bytes_per_block": 64,
+    "max_branches": 64,
+    "max_declared_tokens": 4096,
+    "max_leases": 16,
+    "anchor_fraction_q31": 1073741824,
+    "dead_threshold": 2,
+    "rates_q31": [
+      268435456,
+      1073741824,
+      2147483647
+    ],
+    "pressure_multipliers_q31": [
+      2147483648,
+      4294967296,
+      8589934592
+    ],
+    "queue_depth": 4,
+    "max_wait_epochs": 3
+  },
+  "cost_scope": "bench:code-cap64",
+  "audit": "one quiescent epoch per completed request"
+}
