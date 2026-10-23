@@ -68,6 +68,11 @@ pub trait ModelBackend: Send + 'static {
     /// History is immutable. State is committed by the host only after complete batch validation.
     /// The backend must retain native resources through completion, even if this future is dropped.
     fn step(&mut self, batch: Vec<StepInput>) -> BackendFuture<'_>;
+    /// Quiescent hook after complete batch validation, before any token publication.
+    /// Failure poisons admission. The scheduler owns and awaits this boundary.
+    fn validated_boundary(&mut self) -> ReleaseFuture<'_> {
+        Box::pin(async { Ok(()) })
+    }
     /// Discard per-sequence recurrent/temporary state; called after step completion.
     fn release(&mut self, sequence: u64) -> ReleaseFuture<'_>;
     /// Drain executor-owned work and release native parameter stores on orderly shutdown.
@@ -628,6 +633,10 @@ async fn run<B: ModelBackend>(
             }
             Ok(by_id)
         });
+        let validated = match validated {
+            Ok(outputs) => backend.validated_boundary().await.map(|()| outputs),
+            Err(error) => Err(error),
+        };
         match validated {
             Err(e) => {
                 c.poisoned.store(true, Ordering::Release);

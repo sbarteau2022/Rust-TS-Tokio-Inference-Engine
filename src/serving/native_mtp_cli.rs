@@ -111,7 +111,8 @@ pub async fn run(prompt: &str, max_new: usize, flags: &[String]) -> Result<()> {
         tokenizer.eos(),
         options.width,
         "local-native-mtp-cli".into(),
-    )?;
+    )?
+    .with_exclusive_metadata_audits();
     let config = Config {
         version: 1,
         max_queued: 3,
@@ -123,7 +124,7 @@ pub async fn run(prompt: &str, max_new: usize, flags: &[String]) -> Result<()> {
         model_memory_bytes: 1024 * 1024 * 1024,
         max_in_flight: 3,
     };
-    println!("EXPERIMENTAL-NATIVE-MTP identity={} width={} stream_capacity={} policy={:?} context=511 in_flight=3 physical_tensor_batching=false http=false production_qualified=false",executor.identity(),options.width,options.capacity,options.policy);
+    println!("EXPERIMENTAL-NATIVE-MTP identity={} width={} stream_capacity={} policy={:?} context=511 in_flight=3 physical_tensor_batching=false http=false production_qualified=false audit_clock=validated-batches",executor.identity(),options.width,options.capacity,options.policy);
     let engine = Engine::new(config, backend.storage(), backend)?;
     let mut request = engine.submit_stream(ids, max_new, options.capacity)?;
     while let Some(event) = request.next_token().await {
@@ -145,14 +146,10 @@ pub async fn run(prompt: &str, max_new: usize, flags: &[String]) -> Result<()> {
         stats.memory_used == 0 && !stats.admission_closed,
         "MTP scheduler drain"
     );
-    // Audits require a quiescent native boundary: stream consumption can overlap
-    // the worker's next target call. Audit only after the scheduler has drained.
-    controller.audit(
-        1,
-        &[],
-        executor.stats().await?.logical_bytes,
-        crate::cache::Pressure::Normal,
-    )?;
+    println!(
+        "AUDIT epochs={} clock=validated-batches pressure=normal metadata_only=true",
+        controller.stats()?.epoch
+    );
     let native = Arc::try_unwrap(executor)
         .map_err(|_| anyhow::anyhow!("MTP executor retained"))?
         .shutdown()

@@ -82,13 +82,15 @@ async fn main() -> Result<()> {
         baseline = tx.cursor;
     }
     drop(baseline);
+    let audit_controller = controller()?;
     let backend = ScheduledMtp::new(
-        controller()?,
+        audit_controller.clone(),
         executor.clone(),
         eos.clone(),
         4,
         "scheduler-mtp".into(),
-    )?;
+    )?
+    .with_exclusive_metadata_audits();
     let engine = Engine::new(config(), backend.storage(), backend)?;
     let mut jobs = Vec::new();
     for cap in [1, 8, 16] {
@@ -107,6 +109,11 @@ async fn main() -> Result<()> {
         generations.push(result);
     }
     let stats = engine.shutdown().await?;
+    let audit_epochs = audit_controller.stats()?.epoch;
+    ensure!(
+        audit_epochs == u64::try_from(stats.iterations)?,
+        "one audit per validated scheduler batch"
+    );
     ensure!(
         stats.completed == 3 && stats.memory_used == 0 && !stats.admission_closed,
         "scheduler stream drain"
@@ -117,7 +124,8 @@ async fn main() -> Result<()> {
         eos,
         4,
         "scheduler-mtp-cancel".into(),
-    )?;
+    )?
+    .with_exclusive_metadata_audits();
     let engine = Engine::new(config(), backend.storage(), backend)?;
     let mut slow = engine.submit_stream(prompt.clone(), 32, 1)?;
     ensure!(slow.next_token().await.is_some(), "slow first token");
@@ -137,7 +145,7 @@ async fn main() -> Result<()> {
         .shutdown()
         .await?;
     ensure!(native.logical_bytes == 0, "native state drain");
-    let report = serde_json::json!({"pass":true,"lanes":3,"iteration_scheduling":true,"physical_tensor_batching":false,"http_streaming":false,"output_limits":[1,8,16],"generations":generations,"stats":stats,"cancellation":canceled,"shutdown_bytes":native.logical_bytes,"throughput_claim":false});
+    let report = serde_json::json!({"pass":true,"lanes":3,"iteration_scheduling":true,"physical_tensor_batching":false,"http_streaming":false,"output_limits":[1,8,16],"generations":generations,"stats":stats,"cancellation":canceled,"shutdown_bytes":native.logical_bytes,"throughput_claim":false,"audit_epochs":audit_epochs,"audit_clock":"validated-batches"});
     std::fs::write(
         Path::new(&out).join("summary.json"),
         serde_json::to_string_pretty(&report)?,

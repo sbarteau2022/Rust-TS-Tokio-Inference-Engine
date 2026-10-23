@@ -2,7 +2,7 @@
 title: "Implementation file map and evidence index"
 document_type: "implementation"
 version: "1.0.0"
-date: "2026-10-23T10:40:39Z"
+date: "2026-10-23T10:45:32Z"
 implementation_date: null
 author: "Codex for Stewart Barteau"
 reviewers: []
@@ -48,7 +48,7 @@ related_files:
     lines: "1-160"
     role: "primary"
   - path: "examples/native_mtp_scheduler_smoke.rs"
-    lines: "1-147"
+    lines: "1-155"
     role: "primary"
   - path: "examples/native_mtp_smoke.rs"
     lines: "1-186"
@@ -333,7 +333,7 @@ related_files:
     lines: "1-206"
     role: "primary"
   - path: "src/serving/native_mtp_cli.rs"
-    lines: "1-223"
+    lines: "1-220"
     role: "primary"
   - path: "src/serving/native_mtp_decode.rs"
     lines: "1-273"
@@ -342,7 +342,7 @@ related_files:
     lines: "1-436"
     role: "primary"
   - path: "src/serving/native_mtp_scheduler.rs"
-    lines: "1-686"
+    lines: "1-722"
     role: "primary"
   - path: "src/serving/native_ops.rs"
     lines: "1-273"
@@ -369,7 +369,7 @@ related_files:
     lines: "1-265"
     role: "primary"
   - path: "src/serving/scheduler.rs"
-    lines: "1-753"
+    lines: "1-762"
     role: "primary"
   - path: "src/serving/weights.rs"
     lines: "1-395"
@@ -423,7 +423,7 @@ related_files:
     lines: "1-341"
     role: "test"
   - path: "tests/serving.rs"
-    lines: "1-532"
+    lines: "1-577"
     role: "test"
   - path: "ts/generated/trace.ts"
     lines: "1-5"
@@ -493,7 +493,7 @@ Exact text line references for this local implementation. Binary fixtures have n
 | `examples/native_mtp_automaton_smoke.rs` | 1–262 | primary |
 | `examples/native_mtp_bench.rs` | 1–130 | primary |
 | `examples/native_mtp_decode_smoke.rs` | 1–160 | primary |
-| `examples/native_mtp_scheduler_smoke.rs` | 1–147 | primary |
+| `examples/native_mtp_scheduler_smoke.rs` | 1–155 | primary |
 | `examples/native_mtp_smoke.rs` | 1–186 | primary |
 | `examples/native_speculative_smoke.rs` | 1–370 | primary |
 | `examples/native_suite_reference.rs` | 1–198 | primary |
@@ -588,10 +588,10 @@ Exact text line references for this local implementation. Binary fixtures have n
 | `src/serving/native_mlx.rs` | 1–950 | primary |
 | `src/serving/native_mtp.rs` | 1–468 | primary |
 | `src/serving/native_mtp_automaton.rs` | 1–206 | primary |
-| `src/serving/native_mtp_cli.rs` | 1–223 | primary |
+| `src/serving/native_mtp_cli.rs` | 1–220 | primary |
 | `src/serving/native_mtp_decode.rs` | 1–273 | primary |
 | `src/serving/native_mtp_device.rs` | 1–436 | primary |
-| `src/serving/native_mtp_scheduler.rs` | 1–686 | primary |
+| `src/serving/native_mtp_scheduler.rs` | 1–722 | primary |
 | `src/serving/native_ops.rs` | 1–273 | primary |
 | `src/serving/native_qwen.rs` | 1–694 | primary |
 | `src/serving/native_reference.rs` | 1–100 | primary |
@@ -600,7 +600,7 @@ Exact text line references for this local implementation. Binary fixtures have n
 | `src/serving/native_tokenizer.rs` | 1–213 | primary |
 | `src/serving/qwen_tests.rs` | 1–568 | primary |
 | `src/serving/rapid.rs` | 1–265 | primary |
-| `src/serving/scheduler.rs` | 1–753 | primary |
+| `src/serving/scheduler.rs` | 1–762 | primary |
 | `src/serving/weights.rs` | 1–395 | primary |
 | `src/telemetry.rs` | 1–26 | primary |
 | `src/trace_generated.rs` | 1–1523 | primary |
@@ -618,7 +618,7 @@ Exact text line references for this local implementation. Binary fixtures have n
 | `tests/production_pipeline.rs` | 1–315 | test |
 | `tests/rapid_rpc.rs` | 1–76 | test |
 | `tests/resources.rs` | 1–341 | test |
-| `tests/serving.rs` | 1–532 | test |
+| `tests/serving.rs` | 1–577 | test |
 | `ts/generated/trace.ts` | 1–5 | primary |
 | `ts/generated/wire/add.ts` | 1–68 | primary |
 | `ts/generated/wire/cordic.ts` | 1–78 | primary |
@@ -634,9 +634,9 @@ Exact text line references for this local implementation. Binary fixtures have n
 | `ts/trace.test.ts` | 1–45 | test |
 | `ts/trace.ts` | 1–73 | primary |
 | `tsconfig.json` | 1–1 | config |
-| `README.md` | 1–1112 | primary |
+| `README.md` | 1–1116 | primary |
 | `docs/ACCELERATOR_ROADMAP.md` | 1–525 | primary |
-| `docs/ADVERSARIAL_REVIEW.md` | 1–721 | primary |
+| `docs/ADVERSARIAL_REVIEW.md` | 1–723 | primary |
 | `docs/ASYNC_COMPLETION.md` | 1–558 | primary |
 | `docs/DESIGN.md` | 1–512 | primary |
 | `docs/DEVICE_STATE_IMPLEMENTATION.md` | 1–650 | primary |
@@ -653,9 +653,9 @@ Exact text line references for this local implementation. Binary fixtures have n
 | `docs/NATIVE_QWEN_GENERATION.md` | 1–878 | primary |
 | `docs/NATIVE_SPECULATIVE_VERIFIER.md` | 1–596 | primary |
 | `docs/NATIVE_SUITE_REFERENCE.md` | 1–609 | primary |
-| `docs/NATIVE_TUNING_PLAN.md` | 1–653 | primary |
+| `docs/NATIVE_TUNING_PLAN.md` | 1–661 | primary |
 | `docs/NATIVE_WEIGHTS_EXECUTION.md` | 1–535 | primary |
-| `docs/NEXT_STEPS.md` | 1–768 | primary |
+| `docs/NEXT_STEPS.md` | 1–770 | primary |
 | `docs/PRODUCTION_PIPELINE.md` | 1–542 | primary |
 | `docs/RESOURCE_BACKEND_DESIGN.md` | 1–522 | primary |
 | `docs/RESOURCE_IMPLEMENTATION.md` | 1–579 | primary |

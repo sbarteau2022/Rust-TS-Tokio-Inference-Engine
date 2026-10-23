@@ -48,7 +48,7 @@ related_files:
     lines: "1-160"
     role: "primary"
   - path: "examples/native_mtp_scheduler_smoke.rs"
-    lines: "1-147"
+    lines: "1-155"
     role: "primary"
   - path: "examples/native_mtp_smoke.rs"
     lines: "1-186"
@@ -333,7 +333,7 @@ related_files:
     lines: "1-206"
     role: "primary"
   - path: "src/serving/native_mtp_cli.rs"
-    lines: "1-223"
+    lines: "1-220"
     role: "primary"
   - path: "src/serving/native_mtp_decode.rs"
     lines: "1-273"
@@ -342,7 +342,7 @@ related_files:
     lines: "1-436"
     role: "primary"
   - path: "src/serving/native_mtp_scheduler.rs"
-    lines: "1-686"
+    lines: "1-722"
     role: "primary"
   - path: "src/serving/native_ops.rs"
     lines: "1-273"
@@ -369,7 +369,7 @@ related_files:
     lines: "1-265"
     role: "primary"
   - path: "src/serving/scheduler.rs"
-    lines: "1-753"
+    lines: "1-762"
     role: "primary"
   - path: "src/serving/weights.rs"
     lines: "1-395"
@@ -423,7 +423,7 @@ related_files:
     lines: "1-341"
     role: "test"
   - path: "tests/serving.rs"
-    lines: "1-532"
+    lines: "1-577"
     role: "test"
   - path: "ts/generated/trace.ts"
     lines: "1-5"
@@ -719,3 +719,5 @@ The real cancellation harness uses a current-thread Tokio runtime so the detache
 Streaming validates whole backend batches before enqueueing events. The scheduler is the sole stream producer; it checks capacity before encoding, so a receiver can only increase available space during native work. A closed receiver cancels; an impossible full send poisons admission rather than dropping a token silently. A full lane yields other active lanes. A shared Notify wakes consumption/cancellation/admission/shutdown, avoiding busy encoding or a wait-loop spin. Final result drains its own stream; shutdown explicitly errors an undrained blocking stream and releases state. Tests cover capacity extremes, event/final timestamp and token equality, slow-reader fairness, encode pause, result convenience draining, cancellation, shutdown and malformed batches that must publish no tokens.
 
 MTP rows hold a virtual consumed position distinct from the private ahead-of-publication target cursor. Input IDs must match the last published token; verified pending IDs remain request-local and bounded by the scheduler's remaining output budget. Three real-model lanes and 1/8/16-token limits check buffered order against the independent sequential target path. Choice masks and external histories are unsupported and rejected. The profile conservatively exposes context 511 because its native state consumes every returned token within context 512. This is shared iteration scheduling, not physical tensor batching or HTTP serving.
+
+Live audit boundary review: request-side event consumption cannot establish native quiescence. The scheduler now awaits the hook only after successful whole-batch validation; malformed batches skip it, and hook failure follows the poisoned-admission cleanup path before publication. Opt-in MTP metadata audits reject payload blocks, reservations and open branches, preserving the distinction from a shared KV cache planner. The API requires exclusive ownership of the controller audit clock; unrelated concurrent users can force explicit epoch/lease errors and are unsupported. Buffered receipts advance the declared batch clock even without a new target call. This can affect admission profitability and must be measured, not assumed beneficial.

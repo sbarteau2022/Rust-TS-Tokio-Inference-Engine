@@ -1,7 +1,7 @@
 ---
 title: "Rust Server — Apple native kernel compiler and runtime"
 document_type: "implementation"
-version: "1.30.0"
+version: "1.31.0"
 date: "2026-10-23T05:21:07Z"
 implementation_date: null
 author: "Codex for Stewart Barteau"
@@ -48,7 +48,7 @@ related_files:
     lines: "1-160"
     role: "primary"
   - path: "examples/native_mtp_scheduler_smoke.rs"
-    lines: "1-147"
+    lines: "1-155"
     role: "primary"
   - path: "examples/native_mtp_smoke.rs"
     lines: "1-186"
@@ -333,7 +333,7 @@ related_files:
     lines: "1-206"
     role: "primary"
   - path: "src/serving/native_mtp_cli.rs"
-    lines: "1-223"
+    lines: "1-220"
     role: "primary"
   - path: "src/serving/native_mtp_decode.rs"
     lines: "1-273"
@@ -342,7 +342,7 @@ related_files:
     lines: "1-436"
     role: "primary"
   - path: "src/serving/native_mtp_scheduler.rs"
-    lines: "1-686"
+    lines: "1-722"
     role: "primary"
   - path: "src/serving/native_ops.rs"
     lines: "1-273"
@@ -369,7 +369,7 @@ related_files:
     lines: "1-265"
     role: "primary"
   - path: "src/serving/scheduler.rs"
-    lines: "1-753"
+    lines: "1-762"
     role: "primary"
   - path: "src/serving/weights.rs"
     lines: "1-395"
@@ -423,7 +423,7 @@ related_files:
     lines: "1-341"
     role: "test"
   - path: "tests/serving.rs"
-    lines: "1-532"
+    lines: "1-577"
     role: "test"
   - path: "ts/generated/trace.ts"
     lines: "1-5"
@@ -1105,8 +1105,12 @@ cargo run --release --locked -- native-mtp-generate 'Complete: 1, 2, 3,' 8 \
   --initial-mass 2147483647 --admission-mass 268435455 --reward-mass 536870911
 ```
 
-All seven flags are required; duplicates, unknown names and invalid bounds fail before model loading. Output is a typed token-event text log followed by final decoded text, without a Python worker or JSON transport. The CLI uses the designated Combined model, FP32/regular state, up to 128 output tokens, effective context 511, logical in-flight limit 3 and the fixed bounded draft-metadata scaffold documented in the tuning plan. It is not an HTTP server. The CLI audits once after scheduler drain at normal pressure. Live audit-epoch decay/probing requires a scheduler-owned quiescent audit hook and remains unfinished; library integrations must supply their own safe audit driver.
+All seven flags are required; duplicates, unknown names and invalid bounds fail before model loading. Output is a typed token-event text log followed by final decoded text, without a Python worker or JSON transport. The CLI uses the designated Combined model, FP32/regular state, up to 128 output tokens, effective context 511, logical in-flight limit 3 and the fixed bounded draft-metadata scaffold documented in the tuning plan. It is not an HTTP server. The CLI opts into one Normal-pressure audit epoch per fully validated scheduler batch, before token publication. This experimental batch clock includes buffered-token batches, drives actual proposer trust decay/probes and refuses payload-cache controllers; no adaptive pressure estimator is active.
 
 1.30.0 — Shared Engine bounded token streaming, explicit remaining-output budget, state-safe MTP scheduler bridge and opt-in policy flags. HTTP transport, physical tensor batching, sustained mixed-workload qualification and unified controller/serving configuration fingerprints remain unfinished.
 
 Streaming checkpoint validation: **153 default / 153 debug-validation / 101 minimal-feature Rust tests**, strict Clippy, TS 7.1/tsrs and native/GPU judges passed. The designated model passed the three-lane correctness gate and eight-token CLI run. [Bound source, commands and raw evidence](evidence/native-mtp-stream/qualification.json). Live audit decay, HTTP and sustained throughput qualification remain open.
+
+Live audit integration: Engine now owns a quiescent `validated_boundary` after whole-batch validation and before token publication. Failure closes admission and releases affected rows without publishing their output. ScheduledMtp opts in only for its exclusively owned draft-metadata controller; other backends retain a no-op default. Native completion guards have ended before the audit. This clock counts validated batches, including buffered publication, rather than target calls or delivered tokens. Shared payload-cache live-set planning and adaptive pressure remain unfinished.
+
+Live audit checkpoint: **154 default / 154 debug-validation / 102 minimal-feature Rust tests**, strict Clippy, TS 7.1/tsrs and native/GPU judges passed. Native three-lane output parity, capacity-one backpressure, cancellation and zero-state drain passed with 18 audit epochs matching validated batch iterations. [Raw evidence and source bindings](evidence/native-mtp-live-audit/qualification.json). No throughput gain is inferred from this correctness gate.

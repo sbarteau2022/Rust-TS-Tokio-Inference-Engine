@@ -48,7 +48,7 @@ related_files:
     lines: "1-160"
     role: "primary"
   - path: "examples/native_mtp_scheduler_smoke.rs"
-    lines: "1-147"
+    lines: "1-155"
     role: "primary"
   - path: "examples/native_mtp_smoke.rs"
     lines: "1-186"
@@ -333,7 +333,7 @@ related_files:
     lines: "1-206"
     role: "primary"
   - path: "src/serving/native_mtp_cli.rs"
-    lines: "1-223"
+    lines: "1-220"
     role: "primary"
   - path: "src/serving/native_mtp_decode.rs"
     lines: "1-273"
@@ -342,7 +342,7 @@ related_files:
     lines: "1-436"
     role: "primary"
   - path: "src/serving/native_mtp_scheduler.rs"
-    lines: "1-686"
+    lines: "1-722"
     role: "primary"
   - path: "src/serving/native_ops.rs"
     lines: "1-273"
@@ -369,7 +369,7 @@ related_files:
     lines: "1-265"
     role: "primary"
   - path: "src/serving/scheduler.rs"
-    lines: "1-753"
+    lines: "1-762"
     role: "primary"
   - path: "src/serving/weights.rs"
     lines: "1-395"
@@ -423,7 +423,7 @@ related_files:
     lines: "1-341"
     role: "test"
   - path: "tests/serving.rs"
-    lines: "1-532"
+    lines: "1-577"
     role: "test"
   - path: "ts/generated/trace.ts"
     lines: "1-5"
@@ -651,3 +651,11 @@ The bridge advertises context 511 because it consumes the last returned output i
 The CLI owns its controller and advances one audit epoch after scheduler drain at explicit Normal pressure, with native logical state bytes supplied as the outside-cache estimate. Auditing per consumed event failed because the worker may already own another native lease. Live decay/probing requires a scheduler-owned quiescent audit hook and remains unfinished. Other embeddings of ScheduledMtp must provide an audit driver appropriate to their shared controller; blindly auditing an unrelated shared payload cache with an empty live set is not supported. Engine configuration fingerprints cover serving settings, not controller policy. The CLI prints the complete policy, model identity and width; preserve that header and full command with measurements. A unified configuration fingerprint remains a promotion requirement.
 
 Observed shared-scheduler smoke: three lanes completed exact output limits 1/8/16 with IDs equal to the sequential target; the final scheduler had zero failed/canceled requests and zero logical used bytes. A second run held a capacity-one stream while another request finished eight tokens, then canceled the held stream; one completion and one cancellation were accounted and native shutdown bytes were zero. Token timestamps include grouped verification gaps followed by rapid buffered publication. They must not be interpreted as uniform per-token model execution or an HTTP benchmark.
+
+## Preregistered live audit boundary
+
+Add a default no-op asynchronous backend boundary hook to Engine. Invoke it exactly once after successful whole-batch validation and before publishing any token. Failed steps and malformed batches never audit. Hook failure closes admission and fails the batch before publication. ScheduledMtp may opt into one Normal-pressure epoch per validated batch only for its exclusively owned draft-metadata controller; refuse controllers with payload branches/blocks/reservations. Native completion guards must be gone at this point. Buffered publication batches also advance epochs: this is an explicit batch clock, not a target-call or token clock. Cancellation retains existing cleanup semantics. No production sampling policy changes.
+
+Controls: generic Engine tests must prove hook ordering, error refusal and no audit on malformed output; native smoke must preserve exact three-lane outputs, cancellation and zero resident drain with live audits enabled. Re-run default/debug/minimal suites, strict Clippy and native/GPU judges. CLI uses this explicit experimental batch clock; throughput must be remeasured rather than transferred from the earlier pilot. Shared payload-cache audit planning and adaptive pressure remain outside this metadata-only hook.
+
+Implementation of the preregistered boundary is now present: `ModelBackend::validated_boundary` is awaited by Engine between validation and publication, and `ScheduledMtp::with_exclusive_metadata_audits` enables Normal-pressure batch epochs. The CLI and native three-lane smoke opt in. This supersedes the earlier drain-only CLI limitation above; a controller shared with other runtimes or payload-cache branches still requires a global live-set planner and is not supported by this adapter. `AUDIT epochs=...` reports the actual controller clock after CLI shutdown. No new environment variables or production sampling modes are introduced.

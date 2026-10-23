@@ -288,7 +288,16 @@ impl<D: MtpDriver> Core<D> {
     }
 }
 
-pub struct ScheduledMtp(Core<NativeMtpDriver>);
+pub struct ScheduledMtp(Core<NativeMtpDriver>, crate::cache::Controller, bool);
+
+impl ScheduledMtp {
+    /// Caller must exclusively own this draft-only metadata controller's audit clock.
+    /// Payload-cache controllers are refused at every boundary.
+    pub fn with_exclusive_metadata_audits(mut self) -> Self {
+        self.2 = true;
+        self
+    }
+}
 
 impl ScheduledMtp {
     pub fn new(
@@ -304,14 +313,18 @@ impl ScheduledMtp {
             "{}:experimental-spec15-mtp-width{width}-fp32-v1",
             executor.identity()
         );
-        let lane = AutomatonMtp::register(controller, executor.clone(), namespace)?;
-        Ok(Self(Core {
-            driver: NativeMtpDriver { executor, lane },
-            rows: BTreeMap::new(),
-            width,
-            eos,
-            identity,
-        }))
+        let lane = AutomatonMtp::register(controller.clone(), executor.clone(), namespace)?;
+        Ok(Self(
+            Core {
+                driver: NativeMtpDriver { executor, lane },
+                rows: BTreeMap::new(),
+                width,
+                eos,
+                identity,
+            },
+            controller,
+            false,
+        ))
     }
 
     pub fn storage(&self) -> Storage {
@@ -326,6 +339,29 @@ impl ModelBackend for ScheduledMtp {
 
     fn step(&mut self, batch: Vec<StepInput>) -> BackendFuture<'_> {
         Box::pin(async move { self.0.step(batch).await })
+    }
+
+    fn validated_boundary(&mut self) -> ReleaseFuture<'_> {
+        Box::pin(async move {
+            if self.2 {
+                let stats = self.1.stats()?;
+                ensure!(
+                    stats.open_branches == 0
+                        && stats.resident_blocks == 0
+                        && stats.reserved_blocks == 0,
+                    "metadata audit cannot own payload cache plans"
+                );
+                let epoch = stats.epoch.checked_add(1).context("audit epoch overflow")?;
+                let native = self.0.driver.executor.stats().await?;
+                self.1.audit(
+                    epoch,
+                    &[],
+                    native.logical_bytes,
+                    crate::cache::Pressure::Normal,
+                )?;
+            }
+            Ok(())
+        })
     }
 
     fn release(&mut self, sequence: u64) -> ReleaseFuture<'_> {

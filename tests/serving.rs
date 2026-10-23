@@ -139,6 +139,8 @@ fn global_byte_budget_concurrent_reservations() {
 }
 #[derive(Clone)]
 struct Oracle {
+    boundaries: Arc<AtomicUsize>,
+    boundary_failure: bool,
     codec: Codec,
     seen: Arc<Mutex<Vec<(u64, usize, usize)>>>,
     released: Arc<AtomicUsize>,
@@ -148,6 +150,8 @@ struct Oracle {
 }
 fn oracle() -> Oracle {
     Oracle {
+        boundaries: Arc::default(),
+        boundary_failure: false,
         codec: Codec::regular(2).unwrap(),
         seen: Arc::default(),
         released: Arc::default(),
@@ -167,6 +171,13 @@ impl ModelBackend for Oracle {
             max_in_flight: 3,
             eos_tokens: vec![999],
         }
+    }
+    fn validated_boundary(&mut self) -> ReleaseFuture<'_> {
+        Box::pin(async move {
+            self.boundaries.fetch_add(1, Ordering::SeqCst);
+            ensure!(!self.boundary_failure, "injected audit failure");
+            Ok(())
+        })
     }
     fn step(&mut self, batch: Vec<StepInput>) -> BackendFuture<'_> {
         Box::pin(async move {
@@ -528,5 +539,39 @@ async fn undrained_stream_shutdown_reports_gap_and_drop_cancels() -> Result<()> 
     );
     assert!(bad.result().await.is_err());
     assert!(engine.shutdown().await?.admission_closed);
+    Ok(())
+}
+
+#[tokio::test]
+async fn validated_boundary_precedes_publication_and_fails_closed() -> Result<()> {
+    for fault in [0, 1] {
+        let mut backend = oracle();
+        backend.fault = fault;
+        let count = backend.boundaries.clone();
+        let engine = Engine::new(config(), backend.codec.clone(), backend)?;
+        let mut request = engine.submit_stream(vec![1], 1, 1)?;
+        if fault == 0 {
+            assert!(request.next_token().await.is_some());
+            assert_eq!(count.load(Ordering::SeqCst), 1);
+            assert_eq!(request.result().await?.tokens.len(), 1);
+        } else {
+            assert!(request.next_token().await.is_none());
+            assert!(request.result().await.is_err());
+            assert_eq!(count.load(Ordering::SeqCst), 0);
+        }
+        let stats = engine.shutdown().await?;
+        assert_eq!(stats.memory_used, 0);
+    }
+    let mut backend = oracle();
+    backend.boundary_failure = true;
+    let count = backend.boundaries.clone();
+    let engine = Engine::new(config(), backend.codec.clone(), backend)?;
+    let mut request = engine.submit_stream(vec![1], 2, 1)?;
+    assert!(request.next_token().await.is_none());
+    assert!(request.result().await.is_err());
+    assert_eq!(count.load(Ordering::SeqCst), 1);
+    let stats = engine.shutdown().await?;
+    assert!(stats.admission_closed);
+    assert_eq!(stats.memory_used, 0);
     Ok(())
 }
