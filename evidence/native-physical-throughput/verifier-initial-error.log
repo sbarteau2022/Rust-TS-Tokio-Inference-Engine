@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/judges/physical_throughput_verify.py", line 80, in <module>
+    else:verify(Path(sys.argv[1]))
+         ~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/judges/physical_throughput_verify.py", line 63, in verify
+    close(load[key]['mean'],statistics.mean(values));close(load[key]['p95'],sorted(values)[math.ceil(len(values)*.95)-1])
+                            ^^^^^^^^^^
+NameError: name 'statistics' is not defined. Did you forget to import 'statistics'?

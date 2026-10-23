@@ -1,0 +1,71 @@
+{
+  "pass": true,
+  "closed_tokens": 8000,
+  "open_success_tokens": 384,
+  "profiles": [
+    {
+      "profile": "target",
+      "successful_requests": 71,
+      "open_accepted": 6,
+      "open_rejected": 10,
+      "drain": {
+        "http": {
+          "active_connections": 0,
+          "active_producers": 0,
+          "accepted_connections": 81,
+          "rejected_requests": 10,
+          "queued_finishes": 71,
+          "deadlines": 0,
+          "disconnected": 0,
+          "stopped": 0,
+          "producer_errors": 0,
+          "connection_errors": 0
+        },
+        "scheduler": {
+          "admitted": 71,
+          "completed": 71,
+          "failed": 0,
+          "cancelled": 0,
+          "iterations": 3104,
+          "memory_used": 0,
+          "memory_peak": 797376512,
+          "admission_closed": false
+        },
+        "native_bytes": 0,
+        "audit_epochs": 0
+      }
+    },
+    {
+      "profile": "target-physical",
+      "successful_requests": 71,
+      "open_accepted": 6,
+      "open_rejected": 10,
+      "drain": {
+        "http": {
+          "active_connections": 0,
+          "active_producers": 0,
+          "accepted_connections": 81,
+          "rejected_requests": 10,
+          "queued_finishes": 71,
+          "deadlines": 0,
+          "disconnected": 0,
+          "stopped": 0,
+          "producer_errors": 0,
+          "connection_errors": 0
+        },
+        "scheduler": {
+          "admitted": 71,
+          "completed": 71,
+          "failed": 0,
+          "cancelled": 0,
+          "iterations": 3105,
+          "memory_used": 0,
+          "memory_peak": 1318387712,
+          "admission_closed": false
+        },
+        "native_bytes": 0,
+        "audit_epochs": 0
+      }
+    }
+  ]
+}

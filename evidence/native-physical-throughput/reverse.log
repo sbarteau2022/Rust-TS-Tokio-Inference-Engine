@@ -1,0 +1,7 @@
+CELL profile=target-physical lanes=1 tokens=2000 tps=16.985
+CELL profile=target-physical lanes=3 tokens=2000 tps=18.260
+OPEN profile=target-physical accepted=6 rejected=10 tokens=192
+CELL profile=target lanes=1 tokens=2000 tps=16.132
+CELL profile=target lanes=3 tokens=2000 tps=16.730
+OPEN profile=target accepted=6 rejected=10 tokens=192
+PASS HTTP controls 8000 exact-reference closed-loop tokens

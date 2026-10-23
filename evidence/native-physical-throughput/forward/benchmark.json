@@ -1,0 +1,23 @@
+{
+  "argv": [
+    "/opt/homebrew/Cellar/node/26.9.0/bin/node",
+    "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/ts/http-bench.ts",
+    "evidence/native-physical-throughput/forward",
+    "--profiles",
+    "target,target-physical",
+    "--arrival",
+    "closed+open",
+    "--tokens-per-cell",
+    "2000"
+  ],
+  "options": {
+    "profiles": [
+      "target",
+      "target-physical"
+    ],
+    "arrival": "closed+open",
+    "tokens": 2000
+  },
+  "benchmark_source_sha256": "b9e0a41ba112e956207b70a6f75fc5b97d1e9394cc3192343b86094b0d97a249",
+  "native_binary_sha256": "b7e49563aa2fda7cf9ef6338fc4ef3b9174efd400a49f5e4c0a515e133021e13"
+}

@@ -1,7 +1,7 @@
 ---
 title: "Rust Server — Apple native kernel compiler and runtime"
 document_type: "implementation"
-version: "1.41.0"
+version: "1.42.0"
 date: "2026-10-23T12:43:42Z"
 implementation_date: null
 author: "Codex for Stewart Barteau"
@@ -184,6 +184,9 @@ related_files:
     role: "test"
   - path: "judges/operator_reference.cpp"
     lines: "1-29"
+    role: "test"
+  - path: "judges/physical_throughput_verify.py"
+    lines: "1-80"
     role: "test"
   - path: "judges/projection_reference.cpp"
     lines: "1-53"
@@ -537,13 +540,13 @@ related_files:
     lines: "1-13"
     role: "primary"
   - path: "ts/http-bench-config.test.ts"
-    lines: "1-6"
+    lines: "1-14"
     role: "test"
   - path: "ts/http-bench-config.ts"
-    lines: "1-21"
+    lines: "1-27"
     role: "primary"
   - path: "ts/http-bench.ts"
-    lines: "1-48"
+    lines: "1-55"
     role: "primary"
   - path: "ts/http-client.test.ts"
     lines: "1-18"
@@ -1391,3 +1394,26 @@ Physical mode explicitly increases both logical state budgets to **2 GiB** and r
 Reproduce the bounded functional check with `python3 judges/native_physical_http.py NEW_EVIDENCE_DIRECTORY` after `cargo build --locked --release`. It requires actual packed calls, exact recorded scalar token parity at one/three lanes, deadline, disconnect/recovery, Rust/TS AMST readers and zero charged state at shutdown. This is experimental FP32 model execution; it does not qualify MTP packing, held-out agent quality or a speed improvement. Native post-reservation fault injection and sustained 1k/1500/2k scalar/physical benchmarks remain promotion gates.
 
 Final scheduler gate: **185 default / 185 debug Rust checks**, 121 minimal tests, 22 TS tests, TS 7.1/tsrs, strict Clippy and schema/native/GPU judges passed. The final HTTP run recorded **7 packed calls / 21 rows**, exact scalar reference tokens and zero charged state at drain. [Bound scheduler evidence](evidence/native-physical-scheduler/qualification.json). Performance windows and native injected-fault promotion gates remain open.
+
+## Physical target throughput smoke
+
+The offline TS benchmark now distinguishes `target` (explicit scalar) and `target-physical` (explicit physical) while both execute target-only inference. Example: `node --import tsx ts/http-bench.ts NEW_DIRECTORY --profiles target,target-physical --arrival closed+open --tokens-per-cell 2000`; reverse the profile order into another new directory. Each cell archives exactly 2,000 reference-matching tokens with cumulative 1k/1500/2k arrival windows, at one and three lanes. It also retains independently scheduled open arrivals, bounded rejection and completion-owned native packing counters. Warmups, shared caches, logical budget differences and sequential lane-cell order are disclosed confounds. Draft acceptance is N/A with speculation off.
+
+Verify every saved frame, timing calculation, reference token, receipt and packing counter with `python3 judges/physical_throughput_verify.py DIRECTORY`. Closed waves are not continuous batching; open arrivals exercise admission but do not qualify sustained heterogeneous packing. See the preregistration in [the tuning plan](docs/NATIVE_TUNING_PLAN.md). Results will be bound to the unchanged native binary and exact benchmark sources.
+
+## Measured physical target throughput
+
+Apple M5 Pro, 48 GiB; designated Combined checkpoint, speculation off, in-flight limit 3, prefill chunk 8. Two profile orders, one/three lanes, 2,000 exact-reference tokens per cell: **16,000 closed-loop tokens**, plus independently scheduled open-arrival pressure. Native binary unchanged from the qualified scheduler checkpoint.
+
+| Execution | Lanes | Overall tok/s | Post-first tok/s per lane | TTFT mean ms | ITL p95 ms |
+|---|---:|---:|---:|---:|---:|
+| target | 1 | 16.61 | 19.61 | 625 | 54.5 |
+| target | 3 | 16.96 | 6.84 | 1796 | 158.1 |
+| target-physical | 1 | 17.08 | 20.19 | 612 | 51.8 |
+| target-physical | 3 | 18.72 | 7.75 | 1803 | 158.3 |
+
+Three-lane physical/scalar changes were **+11.65% / +9.15%** in the two orders. These are observed short-context results, not confidence intervals or production promotion. Single-lane no-packing controls also vary, so do not assign this entire difference causally to tensor packing. Draft acceptance is **N/A**. TTFT includes request queue/prefill; per-lane decode excludes its first token; overall throughput includes the full timed cell. Callback gaps can differ from native publication gaps; both and all 1k/1500/2k windows are archived.
+
+Packing is opportunistic and its counters cover whole profile runs, including warmup/open arrivals. Logical state reservations increase in physical mode; no process-memory savings are claimed. Open arrivals test bounded admission, not sustained heterogeneous batching. Keep scalar default. Next target packing coverage for unequal positions, prefill/first-token latency and a separately controlled per-layer synchronization ablation. [Bound throughput scorecard](evidence/native-physical-throughput/qualification.json).
+
+Throughput checkpoint regression gates: **185 default / 185 debug Rust checks**, **23 TS tests**, TS **7.1/tsrs**, strict Clippy and schema/native/GPU judges passed. Independent Rust archive validation and offline timing/counter corruption controls passed for both orders. All servers drained; native binary hash remained unchanged across measurement and regression. The measured throughput is not a hardware ceiling: source audit finds 40 per-layer eval/synchronize boundaries, 80 full-state finite reductions and 993,280 bytes of logits exported per scalar step. Attribute their costs with profiling before changing validation or claiming a compute/bandwidth limit.

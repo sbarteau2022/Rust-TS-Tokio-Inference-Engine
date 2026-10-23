@@ -185,6 +185,9 @@ related_files:
   - path: "judges/operator_reference.cpp"
     lines: "1-29"
     role: "test"
+  - path: "judges/physical_throughput_verify.py"
+    lines: "1-80"
+    role: "test"
   - path: "judges/projection_reference.cpp"
     lines: "1-53"
     role: "test"
@@ -537,13 +540,13 @@ related_files:
     lines: "1-13"
     role: "primary"
   - path: "ts/http-bench-config.test.ts"
-    lines: "1-6"
+    lines: "1-14"
     role: "test"
   - path: "ts/http-bench-config.ts"
-    lines: "1-21"
+    lines: "1-27"
     role: "primary"
   - path: "ts/http-bench.ts"
-    lines: "1-48"
+    lines: "1-55"
     role: "primary"
   - path: "ts/http-client.test.ts"
     lines: "1-18"
@@ -883,3 +886,15 @@ Expose opt-in `--tensor-batching scalar|physical` for target HTTP only; reject M
 Execute exact-geometry cohorts transactionally: only multirow Decode cohorts at positive equal positions use the native packed graph; prefill, singleton and incompatible cohorts execute scalar. Preserve original response order and commit no parent until every cohort passes cardinality, position, vocabulary and finite-logit checks. Cancellation or a later cohort failure drops all provisional children. Count actual successfully completed packed calls/rows and scalar calls at the adapter boundary; these are completion counters, not intent or throughput claims. Require malformed-cardinality and later-cohort rollback tests plus existing cancellation/permutation gates, then real HTTP three-lane parity and zero drain before any performance claim. Physical mode remains experimental and unqualified until those live gates pass; MTP and per-layer synchronization remain unchanged.
 
 Scheduler adversarial review: native packing may retain B-row backing after a sibling exits, so physical mode increases per-sequence reservation rather than charging only the visible row. Parents remain leased until the complete transaction commits; worst-case three packed parents plus three packed children fit the explicit logical budget. Group callbacks return owned children; cardinality mismatch, invalid logits, later failure and dropped futures therefore reclaim all provisional leases without changing committed parents. The scalar default uses its original input-order execution path. Adapter counters advance only after successful executor completion and can include later-rolled-back work; they do not represent committed tokens. Engine retains completion ownership during HTTP cancellation. Remaining limits: no native post-publication injected fault, no heterogeneous padding, no MTP packing, no sustained performance or held-out quality promotion from this functional gate.
+
+### Physical HTTP throughput smoke preregistration
+
+Compare target scalar versus target physical, order scalar/physical then physical/scalar, each with a fresh owned server and an eight-token warmup. Each server runs closed synchronized waves at one and three lanes with exactly 2,000 generated tokens per cell; retain cumulative 1k/1500/2k arrival windows. Preserve the four existing prompts, reference tokens, greedy target path, prefill chunk 8, stream capacity 1, three in-flight limit and per-layer synchronization. The only server differences are the explicit tensor-batching mode and its preregistered backing-aware logical reservation budget. Shared host/compiler caches and ordered one-before-three lane cells remain confounds; keep both orders, commands and binary hashes.
+
+Extend only offline TS benchmark controls to label target-physical separately and verify the corresponding native metadata flag. Require every token to match the frozen reference, every archive to pass the Rust reader, zero unfinished native ownership/failed or cancelled requests at drain, and actual packed completion counters for physical runs (scalar must report zero). Independently recompute clocks, windows and token totals. Report client TTFT, callback/publication ITL, per-lane post-first decode throughput, aggregate throughput, open-arrival outcomes and total packed-call/row coverage. Draft acceptance is not applicable with speculation disabled. Closed waves are not continuous batching; bounded open arrivals exercise scheduler admission but do not prove sustained heterogeneous tensor scaling. Any quality/parity, drain or accounting failure blocks a speed claim. Do not promote physical mode by default from this short-context smoke.
+
+### Throughput-bound source audit and next discriminator
+
+The current 40-layer target graph calls eval plus synchronize inside every layer (native/qwen_model.inc), retains 80 state-finiteness reductions before returning, and exports 248,320 FP32 logits (993,280 bytes) per scalar step for native/Rust validation and greedy selection. The packed graph retains the same per-layer boundaries and full-state finite checks. This is a correctness-first native graph, not a qualified fused production implementation. In the first scalar one-lane HTTP cell, mean callback versus native-publication gaps were 49.427147 versus 49.427710 ms; that measurement does not implicate HTTP transport as the principal inter-token delay.
+
+These observations do not attribute wall time to synchronization, finite checks, quantized projections, recurrent update, attention, MoE or full-vocabulary export separately. Next preregister native stage timing/dispatch counts and MLX peak memory before claiming a bandwidth or ALU ceiling. Isolate boundary grouping/deferred evaluation, then sampled versus full diagnostic state scans, then device-side greedy selection with lowest-ID tie/finite-policy parity; preserve immutable parent rollback and exact tokens. Keep any validation-posture change explicit and separate from the inactive production sampling-policy draft. Unequal-position packing requires its own RoPE/mask/state-layout design. Do not combine these ablations and assign their total gain to one optimization.

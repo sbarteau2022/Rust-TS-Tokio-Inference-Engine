@@ -1,0 +1,20 @@
+[
+  {
+    "profile": "target",
+    "lanes": 1,
+    "tokens": 2000,
+    "aggregate_tps": 17.124964734998304,
+    "ttft_mean_ms": 608.8978489115834,
+    "itl_p95_ms": 51.07495903968811,
+    "post_first_per_lane_tps": 20.23179685138944
+  },
+  {
+    "profile": "target",
+    "lanes": 3,
+    "tokens": 2000,
+    "aggregate_tps": 17.194793506991445,
+    "ttft_mean_ms": 1763.2425207532942,
+    "itl_p95_ms": 152.27645897865295,
+    "post_first_per_lane_tps": 6.930240075441088
+  }
+]

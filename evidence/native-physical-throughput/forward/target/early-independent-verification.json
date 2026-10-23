@@ -1,0 +1,31 @@
+{
+  "pass": true,
+  "requests": 71,
+  "tokens": 4200,
+  "drain": {
+    "http": {
+      "active_connections": 0,
+      "active_producers": 0,
+      "accepted_connections": 81,
+      "rejected_requests": 10,
+      "queued_finishes": 71,
+      "deadlines": 0,
+      "disconnected": 0,
+      "stopped": 0,
+      "producer_errors": 0,
+      "connection_errors": 0
+    },
+    "scheduler": {
+      "admitted": 71,
+      "completed": 71,
+      "failed": 0,
+      "cancelled": 0,
+      "iterations": 3104,
+      "memory_used": 0,
+      "memory_peak": 797376512,
+      "admission_closed": false
+    },
+    "native_bytes": 0,
+    "audit_epochs": 0
+  }
+}

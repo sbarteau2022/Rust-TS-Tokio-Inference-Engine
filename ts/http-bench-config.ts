@@ -1,5 +1,5 @@
 /** Offline benchmark controls and bounded arrival/lifetime primitives. */
-export const profileLabels={target:'Target',mtp:'Mtp','mtp-audited':'Audited'} as const;
+export const profileLabels={target:'Target','target-physical':'Target',mtp:'Mtp','mtp-audited':'Audited'} as const;
 export type Profile=keyof typeof profileLabels;
 export function benchOptions(args:string[]){
  if(args.length!==6)throw Error('required --profiles ORDER --arrival closed|closed+open --tokens-per-cell N');
@@ -18,4 +18,10 @@ export async function openLoop<T>(count:number,interval:number,origin:number,clo
 export async function waitForExit(exited:Promise<unknown>,ms:number):Promise<boolean>{
  if(!Number.isInteger(ms)||ms<1||ms>60000)throw Error('exit timeout bounds');let timer:ReturnType<typeof setTimeout>|undefined;
  try{return await Promise.race([exited.then(()=>true),new Promise<boolean>(resolve=>{timer=setTimeout(()=>resolve(false),ms);})]);}finally{clearTimeout(timer);}
+}
+
+/** One explicit native execution/memory mode for every benchmark label. */
+export function executionFlags(profile:Profile):string[]{
+ if(!Object.hasOwn(profileLabels,profile))throw Error('invalid profile');
+ return ['--execution-profile',profile==='target-physical'?'target':profile,'--tensor-batching',profile==='target-physical'?'physical':'scalar'];
 }

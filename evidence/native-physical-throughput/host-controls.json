@@ -1,0 +1,26 @@
+[
+  {
+    "command": [
+      "sysctl",
+      "-n",
+      "machdep.cpu.brand_string"
+    ],
+    "stdout": "Apple M5 Pro\n"
+  },
+  {
+    "command": [
+      "sysctl",
+      "-n",
+      "hw.memsize"
+    ],
+    "stdout": "51539607552\n"
+  },
+  {
+    "command": [
+      "pmset",
+      "-g",
+      "therm"
+    ],
+    "stdout": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded\n"
+  }
+]

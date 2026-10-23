@@ -185,6 +185,9 @@ related_files:
   - path: "judges/operator_reference.cpp"
     lines: "1-29"
     role: "test"
+  - path: "judges/physical_throughput_verify.py"
+    lines: "1-80"
+    role: "test"
   - path: "judges/projection_reference.cpp"
     lines: "1-53"
     role: "test"
@@ -537,13 +540,13 @@ related_files:
     lines: "1-13"
     role: "primary"
   - path: "ts/http-bench-config.test.ts"
-    lines: "1-6"
+    lines: "1-14"
     role: "test"
   - path: "ts/http-bench-config.ts"
-    lines: "1-21"
+    lines: "1-27"
     role: "primary"
   - path: "ts/http-bench.ts"
-    lines: "1-48"
+    lines: "1-55"
     role: "primary"
   - path: "ts/http-client.test.ts"
     lines: "1-18"
@@ -927,3 +930,10 @@ Before promotion, test scheduler atomic commit under mixed eligible/ineligible c
 Physical target scheduling is now explicitly selectable with `--tensor-batching physical`, with a larger conservative 2 GiB logical-state budget. Scalar remains default and MTP profiles reject this mode before loading weights. Completion counters distinguish packed graphs/rows from fallback scalar calls; mixed-cohort transactions restore input order and retain all-or-nothing parent publication.
 
 Next measure alternating scalar/physical HTTP 1k/1500/2k token windows at one/three lanes, then sustained arrivals and unequal prompt lengths. Report TTFT, inter-token tails, total/decode throughput, actual packing ratio, queue rejection, per-lane fairness and MLX physical memory separately. No speed claim follows from the bounded functional gate. Add native post-reservation fault injection before production promotion. Keep per-layer synchronization removal a separate ablation; MTP packing, native paging/compressed KV, custom Dspark and full held-out qualification remain open.
+
+
+## After the two-order physical throughput smoke
+
+The target-only HTTP matrix now measures 1k/1500/2k arrival windows with exact-reference parity across 16,000 closed-loop tokens and independent open-arrival pressure. Consult the bound throughput scorecard before quoting gains. Keep scalar default: short-context speed evidence does not qualify agent/model quality or sustained batching.
+
+Next measure native synchronization, full-state finite scans, model operators and full-vocabulary export separately before claiming a bandwidth/compute ceiling. The source audit identifies 40 per-layer eval/synchronize boundaries, 80 state-finiteness reductions and 993,280-byte full-logit export per scalar step; their separate time costs remain unmeasured. Then increase useful physical packing coverage across unequal materialized positions with a separate state/mask/RoPE design and numerical/rollback gates. Address target prefill and first-token latency; physical decode packing alone does not fix them. Isolate removal/deferment of per-layer synchronization as its own numeric, memory and cancellation ablation. Then qualify sustained arrivals, deep-context/paged state, MTP packing and the custom Dspark proposer separately. Native post-reservation fault injection and full held-out qualification remain open.

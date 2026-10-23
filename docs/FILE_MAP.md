@@ -2,7 +2,7 @@
 title: "Implementation file map and evidence index"
 document_type: "implementation"
 version: "1.0.0"
-date: "2026-10-23T18:56:54Z"
+date: "2026-10-23T19:50:57Z"
 implementation_date: null
 author: "Codex for Stewart Barteau"
 reviewers: []
@@ -184,6 +184,9 @@ related_files:
     role: "test"
   - path: "judges/operator_reference.cpp"
     lines: "1-29"
+    role: "test"
+  - path: "judges/physical_throughput_verify.py"
+    lines: "1-80"
     role: "test"
   - path: "judges/projection_reference.cpp"
     lines: "1-53"
@@ -537,13 +540,13 @@ related_files:
     lines: "1-13"
     role: "primary"
   - path: "ts/http-bench-config.test.ts"
-    lines: "1-6"
+    lines: "1-14"
     role: "test"
   - path: "ts/http-bench-config.ts"
-    lines: "1-21"
+    lines: "1-27"
     role: "primary"
   - path: "ts/http-bench.ts"
-    lines: "1-48"
+    lines: "1-55"
     role: "primary"
   - path: "ts/http-client.test.ts"
     lines: "1-18"
@@ -647,6 +650,7 @@ Exact text line references for this local implementation. Binary fixtures have n
 | `judges/native_seed_http.py` | 1–84 | test |
 | `judges/native_stream_disconnect.py` | 1–36 | test |
 | `judges/operator_reference.cpp` | 1–29 | test |
+| `judges/physical_throughput_verify.py` | 1–80 | test |
 | `judges/projection_reference.cpp` | 1–53 | test |
 | `judges/resources.py` | 1–35 | test |
 | `judges/run.py` | 1–241 | test |
@@ -764,9 +768,9 @@ Exact text line references for this local implementation. Binary fixtures have n
 | `ts/generated/wire/store.ts` | 1–61 | primary |
 | `ts/generated/wire/trace.ts` | 1–91 | primary |
 | `ts/generated/wire.ts` | 1–13 | primary |
-| `ts/http-bench-config.test.ts` | 1–6 | test |
-| `ts/http-bench-config.ts` | 1–21 | primary |
-| `ts/http-bench.ts` | 1–48 | primary |
+| `ts/http-bench-config.test.ts` | 1–14 | test |
+| `ts/http-bench-config.ts` | 1–27 | primary |
+| `ts/http-bench.ts` | 1–55 | primary |
 | `ts/http-client.test.ts` | 1–18 | test |
 | `ts/http-client.ts` | 1–12 | primary |
 | `ts/http-metrics.test.ts` | 1–8 | test |
@@ -778,38 +782,38 @@ Exact text line references for this local implementation. Binary fixtures have n
 | `ts/trace.test.ts` | 1–45 | test |
 | `ts/trace.ts` | 1–73 | primary |
 | `tsconfig.json` | 1–1 | config |
-| `README.md` | 1–1393 | primary |
-| `docs/ACCELERATOR_ROADMAP.md` | 1–633 | primary |
-| `docs/ADVERSARIAL_REVIEW.md` | 1–891 | primary |
-| `docs/ASYNC_COMPLETION.md` | 1–666 | primary |
-| `docs/DESIGN.md` | 1–620 | primary |
-| `docs/DEVICE_STATE_IMPLEMENTATION.md` | 1–758 | primary |
-| `docs/DEVICE_STATE_OWNERSHIP.md` | 1–757 | primary |
-| `docs/FILE_MAP.md` | 1–820 | primary |
-| `docs/FIXED_POINT.md` | 1–690 | primary |
-| `docs/Failures.md` | 1–618 | primary |
-| `docs/GRID_THROUGHPUT.md` | 1–649 | primary |
-| `docs/MODEL_ADVERSARIAL_REVIEW.md` | 1–631 | primary |
-| `docs/MODEL_INTEGRATION.md` | 1–738 | primary |
-| `docs/NATIVE_DISCRIMINATORS.md` | 1–677 | primary |
-| `docs/NATIVE_LAYER_REFERENCE.md` | 1–765 | primary |
-| `docs/NATIVE_MLX_BACKEND.md` | 1–703 | primary |
-| `docs/NATIVE_QWEN_GENERATION.md` | 1–986 | primary |
-| `docs/NATIVE_SPECULATIVE_VERIFIER.md` | 1–704 | primary |
-| `docs/NATIVE_SUITE_REFERENCE.md` | 1–717 | primary |
-| `docs/NATIVE_TUNING_PLAN.md` | 1–885 | primary |
-| `docs/NATIVE_WEIGHTS_EXECUTION.md` | 1–643 | primary |
-| `docs/NEXT_STEPS.md` | 1–929 | primary |
-| `docs/PRODUCTION_PIPELINE.md` | 1–650 | primary |
-| `docs/RESOURCE_BACKEND_DESIGN.md` | 1–630 | primary |
-| `docs/RESOURCE_IMPLEMENTATION.md` | 1–687 | primary |
-| `docs/SAMPLING_POLICY_STATUS.md` | 1–611 | primary |
-| `docs/SERVING_ARCHITECTURE.md` | 1–755 | primary |
-| `docs/SOURCE_SPEC.md` | 1–806 | primary |
-| `docs/SPEC15_DRAFT_ADMISSION.md` | 1–661 | primary |
-| `docs/SPEC15_IMPLEMENTATION.md` | 1–685 | primary |
-| `docs/SPEC15_SOURCE.md` | 1–843 | primary |
-| `docs/SPECULATIVE_RESEARCH_2026_10.md` | 1–710 | primary |
+| `README.md` | 1–1419 | primary |
+| `docs/ACCELERATOR_ROADMAP.md` | 1–636 | primary |
+| `docs/ADVERSARIAL_REVIEW.md` | 1–894 | primary |
+| `docs/ASYNC_COMPLETION.md` | 1–669 | primary |
+| `docs/DESIGN.md` | 1–623 | primary |
+| `docs/DEVICE_STATE_IMPLEMENTATION.md` | 1–761 | primary |
+| `docs/DEVICE_STATE_OWNERSHIP.md` | 1–760 | primary |
+| `docs/FILE_MAP.md` | 1–824 | primary |
+| `docs/FIXED_POINT.md` | 1–693 | primary |
+| `docs/Failures.md` | 1–621 | primary |
+| `docs/GRID_THROUGHPUT.md` | 1–652 | primary |
+| `docs/MODEL_ADVERSARIAL_REVIEW.md` | 1–634 | primary |
+| `docs/MODEL_INTEGRATION.md` | 1–741 | primary |
+| `docs/NATIVE_DISCRIMINATORS.md` | 1–680 | primary |
+| `docs/NATIVE_LAYER_REFERENCE.md` | 1–768 | primary |
+| `docs/NATIVE_MLX_BACKEND.md` | 1–706 | primary |
+| `docs/NATIVE_QWEN_GENERATION.md` | 1–989 | primary |
+| `docs/NATIVE_SPECULATIVE_VERIFIER.md` | 1–707 | primary |
+| `docs/NATIVE_SUITE_REFERENCE.md` | 1–720 | primary |
+| `docs/NATIVE_TUNING_PLAN.md` | 1–900 | primary |
+| `docs/NATIVE_WEIGHTS_EXECUTION.md` | 1–646 | primary |
+| `docs/NEXT_STEPS.md` | 1–939 | primary |
+| `docs/PRODUCTION_PIPELINE.md` | 1–653 | primary |
+| `docs/RESOURCE_BACKEND_DESIGN.md` | 1–633 | primary |
+| `docs/RESOURCE_IMPLEMENTATION.md` | 1–690 | primary |
+| `docs/SAMPLING_POLICY_STATUS.md` | 1–614 | primary |
+| `docs/SERVING_ARCHITECTURE.md` | 1–758 | primary |
+| `docs/SOURCE_SPEC.md` | 1–809 | primary |
+| `docs/SPEC15_DRAFT_ADMISSION.md` | 1–664 | primary |
+| `docs/SPEC15_IMPLEMENTATION.md` | 1–688 | primary |
+| `docs/SPEC15_SOURCE.md` | 1–846 | primary |
+| `docs/SPECULATIVE_RESEARCH_2026_10.md` | 1–713 | primary |
 
 # Evidence
 

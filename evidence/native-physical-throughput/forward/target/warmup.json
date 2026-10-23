@@ -1,0 +1,51 @@
+{
+  "ordinal": -1,
+  "prompt": 0,
+  "start": 843127635.5405,
+  "end": 843134803.120833,
+  "arrivals": [
+    843134450.793375,
+    843134501.209791,
+    843134551.067125,
+    843134600.331166,
+    843134649.838875,
+    843134699.354458,
+    843134748.961291,
+    843134798.510916
+  ],
+  "publication": [
+    6800.885,
+    6852.82,
+    6902.686,
+    6952.072,
+    7001.596,
+    7051.02,
+    7100.632,
+    7150.21
+  ],
+  "tokens": [
+    71093,
+    34602,
+    198,
+    9299,
+    5003,
+    884,
+    62,
+    15
+  ],
+  "metadata": {
+    "version": 1,
+    "kind": 0,
+    "sequence": "0",
+    "index": 0,
+    "tokenId": 0,
+    "elapsedUs": "0",
+    "text": "",
+    "modelIdentity": "509cc92543203798f2db08b6fb6cbb38a80942fc0437ae81a3ef9ff27720915b",
+    "profile": "EXPERIMENTAL-NATIVE-HTTP execution=Target seed_mode=eager width=4 stream_capacity=1 policy=DraftPolicy { max_proposers: 1, work_limit: 3, initial_mass: 2147483647, admission_mass: 268435455, reward_mass: 536870911, qualification_trials: 64, probe_every_epochs: 2 } context=511 in_flight=3 body_timeout_ms=1000 max_connections=8 physical_tensor_batching=false state_budget_bytes=1073741824 production_qualified=false audit_clock=disabled",
+    "outputTokens": 0,
+    "stop": 0,
+    "errorCode": 0
+  },
+  "metadataArrival": 843127650.42775
+}

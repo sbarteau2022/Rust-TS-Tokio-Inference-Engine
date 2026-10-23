@@ -1,0 +1,6 @@
+{
+  "packed_calls": 296,
+  "packed_rows": 592,
+  "scalar_calls": 4088,
+  "scope": "successful adapter completions over warmup, closed cells and open arrivals; not per-cell or committed-token counters"
+}

@@ -1,0 +1,3 @@
+READY http://127.0.0.1:54311 identity=509cc92543203798f2db08b6fb6cbb38a80942fc0437ae81a3ef9ff27720915b
+BATCH_METRICS BatchCounters { packed_calls: 296, packed_rows: 592, scalar_calls: 4088 }
+DRAIN http=Stats { active_connections: 0, active_producers: 0, accepted_connections: 81, rejected_requests: 10, queued_finishes: 71, deadlines: 0, disconnected: 0, stopped: 0, producer_errors: 0, connection_errors: 0 } scheduler=Stats { admitted: 71, completed: 71, failed: 0, cancelled: 0, iterations: 3105, memory_used: 0, memory_peak: 1318387712, admission_closed: false } native_bytes=0 audit_epochs=0
