@@ -1,0 +1,27 @@
+{
+  "command": [
+    "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/target/release/rust-server",
+    "native-mtp-serve",
+    "127.0.0.1:52504",
+    "1000",
+    "8",
+    "--execution-profile",
+    "target",
+    "--draft-width",
+    "4",
+    "--stream-capacity",
+    "1",
+    "--qualification-trials",
+    "64",
+    "--probe-epochs",
+    "2",
+    "--initial-mass",
+    "2147483647",
+    "--admission-mass",
+    "268435455",
+    "--reward-mass",
+    "536870911"
+  ],
+  "model": "/Users/stewartbarteau/models/fused/Qwen3.6-MoE-Combined",
+  "binary_sha256": "047777b2ef96477a8948f74720595446400d28f314aab5794776a879922d6b6a"
+}

@@ -164,6 +164,9 @@ related_files:
   - path: "judges/model_ab.py"
     lines: "1-93"
     role: "test"
+  - path: "judges/native_batch_http.py"
+    lines: "1-81"
+    role: "test"
   - path: "judges/native_http_smoke.py"
     lines: "1-81"
     role: "test"
@@ -308,6 +311,9 @@ related_files:
   - path: "src/sampled.rs"
     lines: "1-193"
     role: "primary"
+  - path: "src/serving/batch_transaction.rs"
+    lines: "1-430"
+    role: "primary"
   - path: "src/serving/choices.rs"
     lines: "1-133"
     role: "primary"
@@ -324,7 +330,7 @@ related_files:
     lines: "1-280"
     role: "primary"
   - path: "src/serving/mod.rs"
-    lines: "1-117"
+    lines: "1-119"
     role: "primary"
   - path: "src/serving/model_ir.rs"
     lines: "1-244"
@@ -339,7 +345,7 @@ related_files:
     lines: "1-809"
     role: "primary"
   - path: "src/serving/native_device_scheduler.rs"
-    lines: "1-178"
+    lines: "1-131"
     role: "primary"
   - path: "src/serving/native_device_smoke.rs"
     lines: "1-162"
@@ -830,3 +836,25 @@ Before enabling this candidate: compare old/eager and deferred full outputs and 
 Keep eager as default. Add an explicit HTTP `--seed-mode eager|deferred` control (deferred is refused for the target-only backend before model load) and an opt-in ScheduledMtp builder. Rows carry a typed Ready/SeedPending(seed) state; the cursor retains its actual materialized prefix and is not relabeled as already advanced. On the next decode, require empty buffered output, advance via the exact existing no_draft operation, require its sole emitted token equals the previously published seed, discard that duplicate receipt, then obtain the next speculative output. Failure leaves the old row snapshot unchanged and normal Engine poison/release rules apply.
 
 Expose diagnostic counters for backend prefill-seed receipts, deferred advancement attempts/completions and pending-seed releases. These are not end-user delivery acknowledgements. The existing controller baseline records seed maintenance once when it actually runs; one-token/EOS/canceled pending rows incur no fabricated maintenance or target-call record. Engine output counts remain authoritative for delivered/committed tokens; controller baseline progress may lag a prefill-derived seed until its later maintenance. Counters must not call this another newly delivered token. This first version still performs shifted draft prefill before the seed; deferring all draft prefill is outside its scope.
+
+## Physical batching stage 1 — typed scalar transaction preregistration
+
+Audit: native/qwen_model.inc hardcodes batch dimension one in attention, GatedDelta and embedding reshapes. native/qwen_device.inc owns 80 state arrays per immutable native version, with completion evaluated before publishing a state-table handle. ScheduledDevice already delays map updates until all scalar rows finish, but this discipline is handwritten and separate from the proposed packing contract. Treating concurrent streams or a list of row calls as physical batching would be incorrect.
+
+Implement a private typed PreparedBatch/CompletedBatch boundary for the target scheduler. Preparation owns cloned parent leases and typed ModelStepIr per row, validates the entire request set before model work, and derives compatible cohorts by exact kind, position and token count. Reject duplicate sequences, external histories, invalid output budgets/masks, resident-row overflow and parent-position mismatch. The model/config/quant identity is fixed by the owning ScheduledDevice executor; no caller-supplied cross-executor handles or identity labels enter this plan. Initial preparation may create empty Rust parent values but must issue no native work.
+
+Execution remains explicitly scalar and preserves input order. Each result must have expected materialized position and finite full-vocabulary logits before selection; validate all rows before exposing any commit. PreparedBatch retains an exclusive borrow of the exact committed map through execution; CompletedBatch consumes itself to install every next parent together without accepting a replacement map. A compile-fail documentation gate proves the map cannot be mutated while that transaction is retained. On later-row failure, completed provisional leases drop while original map leases remain. Cancellation cannot interrupt native ownership: Engine retains the step future through completion, then applies release. This stage does not support SeedPending, MTP branches, padding/masks for heterogeneous positions inside one tensor, or physical tensor fusion. Cohorts are geometry metadata only and must not be reported as packed GPU work.
+
+Preregister gates: duplicate/invalid later row causes zero execute callbacks; complete row permutations preserve sequence-to-parent/output mapping and deterministic cohort assignment; later native/selection/position/nonfinite failure leaves every committed parent unchanged and drops all provisional leases; success releases old parents only at atomic commit; native real-model target HTTP single/three-lane token parity, deadline, disconnect/recovery and drained memory. Keep the existing MTP suite and eager default unchanged. Run default/debug/minimal suites, TS 7.1/tsrs and strict Clippy. No throughput claim or new tuning flag is warranted for this refactor.
+
+Stage 2 requires a separate native ABI and graph design for batch-shaped linear/MoE operations, per-row attention offsets/masks and recurrent/convolution views. Preserve a scalar control lane. Demand exact selected-token parity and unified-state comparison, row permutation/cancellation/failure isolation and measured packed-row/padding telemetry. Only after these gates may the command surface expose an opt-in physical mode; performance promotion needs alternating-order HTTP 1k/1500/2k windows and sustained one/three-lane arrivals without a tail/fairness regression. Numerical differences from batched matrix geometry must be measured, never hidden by relaxing token parity.
+
+### Stage-2 graph/ABI sketch — not implemented
+
+Initial cohort: B=1..3 target decode rows, one input token each, identical materialized position P, one native session/model/quant/FP32 activation profile. Preserve scalar fallback for all other geometry and the existing MTP adapter. Proposed native batch_step takes B validated immutable parent handles and B tokens, and returns B child handles plus B×248320 logits as one completion-owned result. Validate all descriptors, generations, vocabulary and combined slot/byte capacity before reserving any child. On reserve/evaluation/finite-check/publication failure, roll back every reserved child, including any already inserted payload; return no successful subset. Rust may expose no partial CompletedBatch.
+
+The actual architecture has 30 recurrent layers and 10 full-attention layers, two state arrays per layer. Required packed layouts: hidden [B,1,2048]; convolution [B,3,8192]; recurrent [B,32,128,128]; each attention K/V [B,2,P,256], advancing to P+1. Q uses [B,16,1,256]. Flattening MoE to [B,2048] is valid only with independent top-8 routing, scores and expert reduction for each original row. Generalize every batch-one reshape/slice/diagnostic assumption; do not flatten batch into time or silently change recurrent update ordering. Equal P avoids a first-version padding/mask policy, but still requires per-row RoPE/state isolation and permutation controls.
+
+Memory gate: slicing one row from a packed child may retain the complete packed allocation. A view's logical row size cannot be used as proof of owned physical bytes. Choose and qualify either explicitly detached row storage or a completion-safe shared backing lease with a charge retained until the final row releases it. Include gathered inputs, packed intermediates, output splitting and cancellation-retained backing in peak/budget telemetry. Do not assume contiguous() guarantees detachment. Native reserve rollback and ownership tests must cover one surviving row after siblings cancel.
+
+A separate source-audit finding is the current per-layer eval+synchronize in qwen_forward_core. Deferring those boundaries could reduce host waits but grows the lazy graph and changes memory liveness. Treat that as a separate ablation with native state/finite-output/peak-memory/cancellation gates; do not combine it with the first batching trial and attribute a combined speed change solely to tensor packing. No gain is established by this audit.

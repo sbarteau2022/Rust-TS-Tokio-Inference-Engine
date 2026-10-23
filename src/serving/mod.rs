@@ -115,3 +115,5 @@ pub mod native_http;
 #[cfg(feature = "native-mlx")]
 pub mod native_text_stream;
 pub mod stream_wire;
+
+pub mod batch_transaction;

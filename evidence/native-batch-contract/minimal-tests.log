@@ -1,0 +1,247 @@
+   Compiling rust-server v0.1.0 (/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine)
+warning: methods `projection_outputs`, `diagnostic_flags`, and `ffi_ids` are never used
+   --> src/serving/model_ir.rs:86:19
+    |
+ 27 | impl ModelStepIr {
+    | ---------------- methods in this implementation
+...
+ 86 |     pub(super) fn projection_outputs(&self) -> &[u32] {
+    |                   ^^^^^^^^^^^^^^^^^^
+...
+ 99 |     pub(super) fn diagnostic_flags(&self) -> i32 {
+    |                   ^^^^^^^^^^^^^^^^
+...
+125 |     pub(super) fn ffi_ids(&self) -> &[u32] {
+    |                   ^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `rust-server` (lib) generated 1 warning
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 4.65s
+warning: the following packages contain code that will be rejected by a future version of Rust: block v0.1.6
+note: to see what the problems were, use the option `--future-incompat-report`, or run `cargo report future-incompatibilities --id 1`
+     Running unittests src/lib.rs (target/debug/deps/rust_server-5adb2aedae6c6e06)
+
+running 25 tests
+test serving::choices::tests::malformed_contracts_fail_closed ... ok
+test backend::tests::key_identity_covers_every_compile_dimension ... ok
+test completion::tests::dropped_waiter_keeps_permit_until_callback ... ok
+test completion::tests::failed_and_duplicate_completion_release_exactly_once ... ok
+test serving::model_ir::tests::typed_program_and_steps_validate_bounds ... ok
+test serving::batch_transaction::tests::cohorts_describe_geometry_without_reordering_rows ... ok
+test cache::tests::reference_underflow_is_a_named_transactional_refusal ... ok
+test serving::choices::tests::shared_and_terminal_prefixes_and_stable_selection ... ok
+test serving::batch_transaction::tests::dropping_completed_batch_is_rollback_not_commit ... ok
+test serving::batch_transaction::tests::later_row_failure_drops_provisionals_and_preserves_all_parents ... ok
+test serving::batch_transaction::tests::interrupted_scalar_future_cannot_publish_a_partial_batch ... ok
+test serving::batch_transaction::tests::permutations_commit_same_sequence_state_and_release_old_leases ... ok
+test serving::batch_transaction::tests::malformed_native_results_cannot_create_a_commit ... ok
+test serving::batch_transaction::tests::invalid_batches_release_prepared_leases_before_any_execution ... ok
+test serving::model_ir::tests::core_runtime_has_no_lexical_dependency ... ok
+test runtime::tests::background_mismatch_rejects_new_admission ... ok
+test sampled::tests::mismatch_latches_failure_and_drains ... ok
+test serving::stream_wire::tests::invalid_sequences_versions_eof_and_bounds ... ok
+test serving::stream_wire::tests::fragmented_coalesced_and_terminals ... ok
+test serving::stream_wire::tests::errors_limits_and_broken_writer_are_explicit ... ok
+test serving::stream_wire::tests::malformed_mutations_never_panic_and_poison_is_sticky ... ok
+test serving::http::tests::full_network_slot_stops_receiving_scheduler_tokens ... ok
+test gpu::completion_tests::native_completion_holds_two_or_three_permits_and_resources ... ok
+test backend::tests::completion_error_recycles_only_after_native_completion ... ok
+test backend::tests::compile_failure_does_not_poison_cache ... ok
+
+test result: ok. 25 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.23s
+
+     Running unittests src/main.rs (target/debug/deps/rust_server-7b91e0878c95e8b6)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/adversarial.rs (target/debug/deps/adversarial-7a6f31e2961d207a)
+
+running 13 tests
+test unsupported_version_union_and_operation_budget ... ok
+test constructor_without_tokio_is_an_error ... ok
+test residency_is_consumed_by_emitter ... ok
+test mutations_fail_closed ... ok
+test integer_json_and_binding_rejection ... ok
+test borrowed_lowering_matches_debug_projection ... ok
+test valid_wire_corruption_is_contained ... ok
+test malformed_wire_never_panics ... ok
+test uma_alignment_and_budgets ... ok
+test tampered_plan_and_extreme_integer_cancellation ... ok
+test concurrent_producers_are_bounded ... ok
+test pressure_failure_recovery_and_cancellation ... ok
+test gpu_edge_cases ... ok
+
+test result: ok. 13 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.19s
+
+     Running tests/async_completion.rs (target/debug/deps/async_completion-73aa1223d3647ec4)
+
+running 5 tests
+test unsupported_limits_fail_before_work_starts ... ok
+test semaphore_caps_and_canceled_waiters_do_not_leak ... ok
+test wrong_gate_and_encoding_errors_return_permits_without_submission ... ok
+test dropping_runtime_drains_accepted_jobs ... ok
+test both_limits_route_six_families_under_pressure_and_recover ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 3.74s
+
+     Running tests/cache_control.rs (target/debug/deps/cache_control-efcb256140060169)
+
+running 12 tests
+test epochs_and_fixed_point_match_independent_division_oracle ... ok
+test invalid_configuration_and_unknown_fields_fail_closed ... ok
+test unknown_reservations_are_not_tokens_and_queue_is_bounded ... ok
+test duplicate_prefill_execution_and_close_during_callback_are_safe ... ok
+test anchors_degrade_visibly_and_holds_survive_pressure ... ok
+test partial_tail_fork_is_immutable_and_locks_bar_write_forks ... ok
+test decay_ties_thresholds_and_one_level_per_boundary ... ok
+test continuation_queue_priority_expiry_and_no_resident_reprefill ... ok
+test exact_prefix_identity_is_path_and_namespace_dependent ... ok
+test prefix_inflight_is_deduplicated_and_producer_errors_release_reservations ... ok
+test random_pressure_operations_preserve_bounds_and_parentage ... ok
+test cached_gpu_receipts_release_leases_on_native_completion ... ok
+
+test result: ok. 12 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.18s
+
+     Running tests/cordic.rs (target/debug/deps/cordic-5b54c1a3e3d182e8)
+
+running 5 tests
+test cordic_graph_mutations_fail_closed ... ok
+test quadrant_axes_tiny_vectors_and_tanh_monotonicity ... ok
+test runtime_cordic_receipts_and_failure_recovery ... ok
+test cordic_dynamic_shapes_tails_and_pool_reuse ... ok
+test all_cordic_gpu_outputs_exact_and_accurate ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.79s
+
+     Running tests/draft_admission.rs (target/debug/deps/draft_admission-7d2244a92c2d1bb6)
+
+running 11 tests
+test foreign_handles_inactive_policy_and_invalid_inputs ... ok
+test concurrent_qualification_cannot_overspend_the_trial_budget ... ok
+test bounded_pressure_abandonment_and_exact_decay ... ok
+test overflow_is_transactional_and_false_progress_is_rejected ... ok
+test continuation_queue_expiry_cancellation_and_epoch_barrier ... ok
+test prefill_and_drafts_share_the_queue_bound_without_fake_kv_residency ... ok
+test plugins_are_arbitrated_by_cost_with_bounded_requalification ... ok
+test mtp_seed_geometry_cannot_forge_progress_or_binding ... ok
+test measured_profit_and_identity_not_acceptance_authorize_work ... ok
+test mtp_known_seed_is_bound_but_never_earns_learned_credit ... ok
+test ten_thousand_audit_cycles_preserve_bounds_and_progress ... ok
+
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.50s
+
+     Running tests/fixed_point.rs (target/debug/deps/fixed_point-ce172269a4028691)
+
+running 4 tests
+test integer_only_emission_and_truthful_contract ... ok
+test widened_elementwise_add_and_negative_relu ... ok
+test explicit_widening_floor_shift_and_final_saturation ... ok
+test full_range_randomized_gpu_parity_and_repeatability ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.22s
+
+     Running tests/grid.rs (target/debug/deps/grid-aa35d5300e59c495)
+
+running 2 tests
+test reject_invalid_width_before_workers ... ok
+test all_widths_families_and_tails ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.37s
+
+     Running tests/http.rs (target/debug/deps/http-07aca42eeba85802)
+
+running 4 tests
+test loopback_concurrent_amst_and_discovery ... ok
+test invalid_controls_bodies_and_authority_never_admit ... ok
+test deadline_and_disconnect_preserve_inflight_ownership ... ok
+test slow_headers_body_and_shutdown_are_bounded ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.21s
+
+     Running tests/native_execution.rs (target/debug/deps/native_execution-5c29f2e2e7ff4a9d)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/native_mlx.rs (target/debug/deps/native_mlx-2e67451d5c046823)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/output_choices.rs (target/debug/deps/output_choices-05d05977d0981ee3)
+
+running 2 tests
+test unsupported_invalid_and_lying_backends_fail_closed ... ok
+test isolated_contracts_eos_receipts_and_cancelled_rows ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/production_pipeline.rs (target/debug/deps/production_pipeline-80e15bd32c21732d)
+
+running 7 tests
+test aggregate_chain_residency_rejected_before_dispatch ... ok
+test late_chain_encoding_error_submits_nothing_and_releases_permit ... ok
+test rejects_chain_bounds_shapes_and_bindings_then_recovers ... ok
+test maximum_chain_and_canceled_receipts_keep_resources_alive ... ok
+test chains_are_exact_at_all_grids_and_both_caps ... ok
+test samples_exactly_every_thousand_successful_receipts ... ok
+test sampled_chain_checks_all_intermediate_stages ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.42s
+
+     Running tests/rapid_rpc.rs (target/debug/deps/rapid_rpc-bf5ea7734737155a)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/resources.rs (target/debug/deps/resources-f09a602e2ceaecce)
+
+running 10 tests
+test invalid_configs_are_refused_before_allocating ... ok
+test elementwise_wire_validation_and_capabilities ... ok
+test page_granularity_is_reserved_before_admission ... ok
+test lru_and_kernel_family_separation ... ok
+test zero_retention_and_failed_jobs_never_leak_pool_accounting ... ok
+test hard_memory_bound_dynamic_shapes_and_recovery ... ok
+test pipeline_source_bytes_are_bounded_independently_of_entry_count ... ok
+test warmed_jobs_reuse_pipeline_and_every_buffer ... ok
+test runtime_routes_both_families_and_retains_resources ... ok
+test second_family_tails_extremes_and_no_stale_output ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.81s
+
+     Running tests/serving.rs (target/debug/deps/serving-8e57fd80e2dc2894)
+
+running 18 tests
+test turbo_integer_shapes_identity_and_untrusted_bytes ... ok
+test config_unknown_fields_and_limits_are_explicit ... ok
+test bounded_admission_does_not_spawn_unbounded_work ... ok
+test panicked_backend_closes_admission_and_reports_unfinished_work ... ok
+test cancellation_retains_inflight_state_until_completion ... ok
+test scheduler_oom_invalid_requests_and_eos ... ok
+test batch_validation_is_atomic_and_response_order_is_not_assumed ... ok
+test validated_boundary_precedes_publication_and_fails_closed ... ok
+test scheduler_real_kv_consumption_chunk_invariance_and_drain ... ok
+test undrained_stream_shutdown_reports_gap_and_drop_cancels ... ok
+test runtime_accepts_both_typed_host_codecs ... ok
+test malformed_backend_batches_and_release_errors_latch_admission ... ok
+test bounded_stream_matches_final_receipt_and_nonstreaming_output ... ok
+test backpressured_stream_yields_other_lanes_and_result_drains ... ok
+test regular_exact_lifetimes_and_budget_pressure ... ok
+test global_byte_budget_concurrent_reservations ... ok
+test turbo_rotation_inverse_and_extreme_integer_oracle ... ok
+test ten_thousand_token_steps_remain_bounded ... ok
+
+test result: ok. 18 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.19s
+
+     Running unittests examples/stream_wire_fixture.rs (target/debug/examples/stream_wire_fixture-bca5ca4adfc0e2f8)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s

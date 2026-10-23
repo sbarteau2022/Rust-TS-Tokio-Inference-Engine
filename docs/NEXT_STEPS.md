@@ -164,6 +164,9 @@ related_files:
   - path: "judges/model_ab.py"
     lines: "1-93"
     role: "test"
+  - path: "judges/native_batch_http.py"
+    lines: "1-81"
+    role: "test"
   - path: "judges/native_http_smoke.py"
     lines: "1-81"
     role: "test"
@@ -308,6 +311,9 @@ related_files:
   - path: "src/sampled.rs"
     lines: "1-193"
     role: "primary"
+  - path: "src/serving/batch_transaction.rs"
+    lines: "1-430"
+    role: "primary"
   - path: "src/serving/choices.rs"
     lines: "1-133"
     role: "primary"
@@ -324,7 +330,7 @@ related_files:
     lines: "1-280"
     role: "primary"
   - path: "src/serving/mod.rs"
-    lines: "1-117"
+    lines: "1-119"
     role: "primary"
   - path: "src/serving/model_ir.rs"
     lines: "1-244"
@@ -339,7 +345,7 @@ related_files:
     lines: "1-809"
     role: "primary"
   - path: "src/serving/native_device_scheduler.rs"
-    lines: "1-178"
+    lines: "1-131"
     role: "primary"
   - path: "src/serving/native_device_smoke.rs"
     lines: "1-162"
@@ -893,3 +899,9 @@ The SeedPending/Ready experiment is implemented behind `--seed-mode deferred`; e
 Two alternating orders show roughly 7% lower Rust publication TTFT, but first-to-second gaps worsen substantially while mixed-length aggregate throughput changes by less than 1%. Do not promote this as a throughput optimization or change the default. HTTP timing A/B at fixed 1k/1500/2k windows is still required for a network latency claim. A useful next design must remove or overlap initialization work rather than merely postpone it; deferring shifted draft prefill requires independently leased hidden windows and exact state/cancellation gates.
 
 Next design the typed per-row physical-batching contract against the scalar executor: input geometry, model/config identity, unified KV/convolution/recurrent ownership, cancellation, partial failure and transactional rollback must be explicit before fusion. Then implement and compare one/three lanes, mixed lengths and sustained arrivals with exact output/state controls. Native paging/compressed KV and the custom Dspark target taps/backbone remain subsequent integrations. Queue-time instrumentation, deep-context testing and broad held-out agent/model qualification remain open; no production sampling values have been activated.
+
+## After typed scalar batch transaction integration
+
+The target scheduler now uses PreparedBatch → CompletedBatch → commit, with the exact state map exclusively borrowed across execution. Parent leases, all-row validation, provisional rollback and compatible geometry cohorts are explicit. Execution remains scalar and MTP still uses its existing transaction path. No physical-batching flag or performance claim follows from this foundation.
+
+Next preregister the batch-shaped native ABI/graph: define state gather/scatter for all 80 arrays, per-row offsets/masks, mixed-length policy, MoE routing geometry, immutable parent/child leases and atomic publication after complete evaluation. Start with equal-position one-token target decode behind an explicit opt-in; keep heterogeneous rows on scalar fallback until masks/state layout qualify. Compare tokens and unified state against scalar execution under row permutations, cancellation, failure, resident pressure and backpressure. Do not fuse MTP branches or SeedPending rows until their parent/rollback semantics are represented explicitly. Only then measure actual physical rows, per-lane fairness, HTTP TTFT/ITL and aggregate throughput at fixed windows and sustained arrivals. Paging/compressed KV, the custom Dspark proposer and broad held-out qualification remain subsequent gates.

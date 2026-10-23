@@ -2,7 +2,7 @@
 title: "Implementation file map and evidence index"
 document_type: "implementation"
 version: "1.0.0"
-date: "2026-10-23T15:40:16Z"
+date: "2026-10-23T17:13:33Z"
 implementation_date: null
 author: "Codex for Stewart Barteau"
 reviewers: []
@@ -164,6 +164,9 @@ related_files:
   - path: "judges/model_ab.py"
     lines: "1-93"
     role: "test"
+  - path: "judges/native_batch_http.py"
+    lines: "1-81"
+    role: "test"
   - path: "judges/native_http_smoke.py"
     lines: "1-81"
     role: "test"
@@ -308,6 +311,9 @@ related_files:
   - path: "src/sampled.rs"
     lines: "1-193"
     role: "primary"
+  - path: "src/serving/batch_transaction.rs"
+    lines: "1-430"
+    role: "primary"
   - path: "src/serving/choices.rs"
     lines: "1-133"
     role: "primary"
@@ -324,7 +330,7 @@ related_files:
     lines: "1-280"
     role: "primary"
   - path: "src/serving/mod.rs"
-    lines: "1-117"
+    lines: "1-119"
     role: "primary"
   - path: "src/serving/model_ir.rs"
     lines: "1-244"
@@ -339,7 +345,7 @@ related_files:
     lines: "1-809"
     role: "primary"
   - path: "src/serving/native_device_scheduler.rs"
-    lines: "1-178"
+    lines: "1-131"
     role: "primary"
   - path: "src/serving/native_device_smoke.rs"
     lines: "1-162"
@@ -625,6 +631,7 @@ Exact text line references for this local implementation. Binary fixtures have n
 | `judges/layer_reference.py` | 1–185 | test |
 | `judges/macro.py` | 1–14 | test |
 | `judges/model_ab.py` | 1–93 | test |
+| `judges/native_batch_http.py` | 1–81 | test |
 | `judges/native_http_smoke.py` | 1–81 | test |
 | `judges/native_seed_http.py` | 1–84 | test |
 | `judges/native_stream_disconnect.py` | 1–36 | test |
@@ -673,17 +680,18 @@ Exact text line references for this local implementation. Binary fixtures have n
 | `src/main.rs` | 1–472 | primary |
 | `src/runtime.rs` | 1–366 | primary |
 | `src/sampled.rs` | 1–193 | primary |
+| `src/serving/batch_transaction.rs` | 1–430 | primary |
 | `src/serving/choices.rs` | 1–133 | primary |
 | `src/serving/completion_ledger.rs` | 1–100 | primary |
 | `src/serving/config.rs` | 1–51 | primary |
 | `src/serving/http.rs` | 1–685 | primary |
 | `src/serving/kv.rs` | 1–280 | primary |
-| `src/serving/mod.rs` | 1–117 | primary |
+| `src/serving/mod.rs` | 1–119 | primary |
 | `src/serving/model_ir.rs` | 1–244 | primary |
 | `src/serving/native_automaton.rs` | 1–328 | primary |
 | `src/serving/native_boundary.rs` | 1–193 | primary |
 | `src/serving/native_device.rs` | 1–809 | primary |
-| `src/serving/native_device_scheduler.rs` | 1–178 | primary |
+| `src/serving/native_device_scheduler.rs` | 1–131 | primary |
 | `src/serving/native_device_smoke.rs` | 1–162 | primary |
 | `src/serving/native_diagnose.rs` | 1–104 | primary |
 | `src/serving/native_extended.rs` | 1–214 | primary |
@@ -758,38 +766,38 @@ Exact text line references for this local implementation. Binary fixtures have n
 | `ts/trace.test.ts` | 1–45 | test |
 | `ts/trace.ts` | 1–73 | primary |
 | `tsconfig.json` | 1–1 | config |
-| `README.md` | 1–1347 | primary |
-| `docs/ACCELERATOR_ROADMAP.md` | 1–618 | primary |
-| `docs/ADVERSARIAL_REVIEW.md` | 1–862 | primary |
-| `docs/ASYNC_COMPLETION.md` | 1–651 | primary |
-| `docs/DESIGN.md` | 1–605 | primary |
-| `docs/DEVICE_STATE_IMPLEMENTATION.md` | 1–743 | primary |
-| `docs/DEVICE_STATE_OWNERSHIP.md` | 1–742 | primary |
-| `docs/FILE_MAP.md` | 1–800 | primary |
-| `docs/FIXED_POINT.md` | 1–675 | primary |
-| `docs/Failures.md` | 1–603 | primary |
-| `docs/GRID_THROUGHPUT.md` | 1–634 | primary |
-| `docs/MODEL_ADVERSARIAL_REVIEW.md` | 1–616 | primary |
-| `docs/MODEL_INTEGRATION.md` | 1–723 | primary |
-| `docs/NATIVE_DISCRIMINATORS.md` | 1–662 | primary |
-| `docs/NATIVE_LAYER_REFERENCE.md` | 1–750 | primary |
-| `docs/NATIVE_MLX_BACKEND.md` | 1–688 | primary |
-| `docs/NATIVE_QWEN_GENERATION.md` | 1–971 | primary |
-| `docs/NATIVE_SPECULATIVE_VERIFIER.md` | 1–689 | primary |
-| `docs/NATIVE_SUITE_REFERENCE.md` | 1–702 | primary |
-| `docs/NATIVE_TUNING_PLAN.md` | 1–832 | primary |
-| `docs/NATIVE_WEIGHTS_EXECUTION.md` | 1–628 | primary |
-| `docs/NEXT_STEPS.md` | 1–895 | primary |
-| `docs/PRODUCTION_PIPELINE.md` | 1–635 | primary |
-| `docs/RESOURCE_BACKEND_DESIGN.md` | 1–615 | primary |
-| `docs/RESOURCE_IMPLEMENTATION.md` | 1–672 | primary |
-| `docs/SAMPLING_POLICY_STATUS.md` | 1–596 | primary |
-| `docs/SERVING_ARCHITECTURE.md` | 1–740 | primary |
-| `docs/SOURCE_SPEC.md` | 1–791 | primary |
-| `docs/SPEC15_DRAFT_ADMISSION.md` | 1–646 | primary |
-| `docs/SPEC15_IMPLEMENTATION.md` | 1–670 | primary |
-| `docs/SPEC15_SOURCE.md` | 1–828 | primary |
-| `docs/SPECULATIVE_RESEARCH_2026_10.md` | 1–695 | primary |
+| `README.md` | 1–1361 | primary |
+| `docs/ACCELERATOR_ROADMAP.md` | 1–624 | primary |
+| `docs/ADVERSARIAL_REVIEW.md` | 1–874 | primary |
+| `docs/ASYNC_COMPLETION.md` | 1–657 | primary |
+| `docs/DESIGN.md` | 1–611 | primary |
+| `docs/DEVICE_STATE_IMPLEMENTATION.md` | 1–749 | primary |
+| `docs/DEVICE_STATE_OWNERSHIP.md` | 1–748 | primary |
+| `docs/FILE_MAP.md` | 1–808 | primary |
+| `docs/FIXED_POINT.md` | 1–681 | primary |
+| `docs/Failures.md` | 1–609 | primary |
+| `docs/GRID_THROUGHPUT.md` | 1–640 | primary |
+| `docs/MODEL_ADVERSARIAL_REVIEW.md` | 1–622 | primary |
+| `docs/MODEL_INTEGRATION.md` | 1–729 | primary |
+| `docs/NATIVE_DISCRIMINATORS.md` | 1–668 | primary |
+| `docs/NATIVE_LAYER_REFERENCE.md` | 1–756 | primary |
+| `docs/NATIVE_MLX_BACKEND.md` | 1–694 | primary |
+| `docs/NATIVE_QWEN_GENERATION.md` | 1–977 | primary |
+| `docs/NATIVE_SPECULATIVE_VERIFIER.md` | 1–695 | primary |
+| `docs/NATIVE_SUITE_REFERENCE.md` | 1–708 | primary |
+| `docs/NATIVE_TUNING_PLAN.md` | 1–860 | primary |
+| `docs/NATIVE_WEIGHTS_EXECUTION.md` | 1–634 | primary |
+| `docs/NEXT_STEPS.md` | 1–907 | primary |
+| `docs/PRODUCTION_PIPELINE.md` | 1–641 | primary |
+| `docs/RESOURCE_BACKEND_DESIGN.md` | 1–621 | primary |
+| `docs/RESOURCE_IMPLEMENTATION.md` | 1–678 | primary |
+| `docs/SAMPLING_POLICY_STATUS.md` | 1–602 | primary |
+| `docs/SERVING_ARCHITECTURE.md` | 1–746 | primary |
+| `docs/SOURCE_SPEC.md` | 1–797 | primary |
+| `docs/SPEC15_DRAFT_ADMISSION.md` | 1–652 | primary |
+| `docs/SPEC15_IMPLEMENTATION.md` | 1–676 | primary |
+| `docs/SPEC15_SOURCE.md` | 1–834 | primary |
+| `docs/SPECULATIVE_RESEARCH_2026_10.md` | 1–701 | primary |
 
 # Evidence
 

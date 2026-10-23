@@ -11,7 +11,7 @@ enum State {
     Snapshot(ModelState),
     Device(DeviceState),
 }
-impl State {
+impl super::super::batch_transaction::Parent for State {
     fn position(&self) -> usize {
         match self {
             Self::Snapshot(s) => s.position(),
@@ -76,82 +76,35 @@ impl ModelBackend for ScheduledDevice {
     }
     fn step(&mut self, batch: Vec<StepInput>) -> BackendFuture<'_> {
         Box::pin(async move {
-            ensure!(
-                !batch.is_empty() && batch.len() <= 3,
-                "device scheduler row cap"
-            );
-            let mut seen = BTreeSet::new();
-            let mut prepared = Vec::new();
-            let new_count = batch
-                .iter()
-                .filter(|i| !self.states.contains_key(&i.sequence))
-                .count();
-            ensure!(
-                self.states.len() + new_count <= 3,
-                "device scheduler sequence cap"
-            );
-            for item in batch {
-                ensure!(
-                    seen.insert(item.sequence) && item.history.is_empty(),
-                    "duplicate row/external history"
-                );
-                ensure!(
-                    self.states.get(&item.sequence).map_or(0, State::position) == item.position,
-                    "device scheduler position"
-                );
-                if let Some(mask) = &item.allowed_tokens {
-                    ensure!(
-                        !mask.is_empty() && mask.len() <= 32 && mask.iter().all(|t| *t < 248320),
-                        "device scheduler token mask"
-                    );
-                }
-                let ir = ModelStepIr::compile(item.kind, item.position, item.tokens, 248320)?;
-                ensure!(
-                    ir.len() <= 8 && item.position + ir.len() <= 512,
-                    "device scheduler geometry"
-                );
-                prepared.push((item.sequence, item.prompt_complete, item.allowed_tokens, ir));
-            }
-            let mut next = Vec::new();
-            let mut outputs = Vec::new();
-            for (sequence, complete, allowed, ir) in prepared {
-                let old = self
-                    .states
-                    .get(&sequence)
-                    .cloned()
-                    .unwrap_or_else(|| match self.mode {
-                        StateMode::Snapshot => {
-                            State::Snapshot(self.executor.reference_empty_state())
+            use super::super::batch_transaction::PreparedBatch;
+            let prepared = PreparedBatch::prepare(
+                batch,
+                &mut self.states,
+                || match self.mode {
+                    StateMode::Snapshot => State::Snapshot(self.executor.reference_empty_state()),
+                    StateMode::Device => State::Device(self.executor.empty_state()),
+                },
+                248320,
+            )?;
+            let executor = self.executor.clone();
+            let completed = prepared
+                .execute(move |old, ir| {
+                    let executor = executor.clone();
+                    async move {
+                        match old {
+                            State::Snapshot(old) => {
+                                let result = executor.reference_execute(&old, ir).await?;
+                                Ok((State::Snapshot(result.state), result.logits))
+                            }
+                            State::Device(old) => {
+                                let result = executor.execute(&old, ir).await?;
+                                Ok((State::Device(result.state), result.logits))
+                            }
                         }
-                        StateMode::Device => State::Device(self.executor.empty_state()),
-                    });
-                let (state, logits) = match old {
-                    State::Snapshot(old) => {
-                        let result = self.executor.reference_execute(&old, ir).await?;
-                        (State::Snapshot(result.state), result.logits)
                     }
-                    State::Device(old) => {
-                        let result = self.executor.execute(&old, ir).await?;
-                        (State::Device(result.state), result.logits)
-                    }
-                };
-                let token = if complete {
-                    Some(super::super::choices::select(&logits, allowed.as_deref())?)
-                } else {
-                    None
-                };
-                outputs.push(StepOutput {
-                    sequence,
-                    kv: Vec::new(),
-                    next_token: token,
-                    state_bytes: state.bytes(),
-                });
-                next.push((sequence, state));
-            }
-            for (id, state) in next {
-                self.states.insert(id, state);
-            }
-            Ok(outputs)
+                })
+                .await?;
+            Ok(completed.commit())
         })
     }
     fn release(&mut self, sequence: u64) -> ReleaseFuture<'_> {

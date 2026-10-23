@@ -164,6 +164,9 @@ related_files:
   - path: "judges/model_ab.py"
     lines: "1-93"
     role: "test"
+  - path: "judges/native_batch_http.py"
+    lines: "1-81"
+    role: "test"
   - path: "judges/native_http_smoke.py"
     lines: "1-81"
     role: "test"
@@ -308,6 +311,9 @@ related_files:
   - path: "src/sampled.rs"
     lines: "1-193"
     role: "primary"
+  - path: "src/serving/batch_transaction.rs"
+    lines: "1-430"
+    role: "primary"
   - path: "src/serving/choices.rs"
     lines: "1-133"
     role: "primary"
@@ -324,7 +330,7 @@ related_files:
     lines: "1-280"
     role: "primary"
   - path: "src/serving/mod.rs"
-    lines: "1-117"
+    lines: "1-119"
     role: "primary"
   - path: "src/serving/model_ir.rs"
     lines: "1-244"
@@ -339,7 +345,7 @@ related_files:
     lines: "1-809"
     role: "primary"
   - path: "src/serving/native_device_scheduler.rs"
-    lines: "1-178"
+    lines: "1-131"
     role: "primary"
   - path: "src/serving/native_device_smoke.rs"
     lines: "1-162"
@@ -860,3 +866,9 @@ A later-row failure test also completes one deferred maintenance before failing 
 The real Combined gate passed four bitwise target/draft primitive comparisons and 160 exact-reference mixed-length streams across two seed orders and one/three lanes, then forced EOS and cancellation. HTTP deferred mode passed parity, deadline, disconnect/recovery, native/TS readers and drained shutdown. Actual CLI negative controls reject unknown/duplicate seed modes and deferred target-only execution before startup. An additional rollback test initially failed to compile because StepInput is intentionally non-Clone; the fixture now builds independent inputs, without changing production behavior.
 
 The measured tradeoff is adverse for promotion: roughly 7% lower Rust publication TTFT accompanies longer first-to-second gaps and worse ITL tails, with less than 1% aggregate throughput change. This is not a server speed win. Preserve eager default and distinguish the native timing pilot from HTTP functional smoke. Bitwise state checks cover the native primitive sequence; complete scheduler output is separately checked against prior references. Neither establishes broad model quality, physical batching, sustained service latency or independently exposed complete scheduler row-state parity.
+
+## Typed scalar batch transaction review
+
+The first batching stage refactors the target scalar adapter; it does not alter native kernels or claim physical batching. PreparedBatch owns parent clones and exclusively borrows the exact destination map. CompletedBatch cannot be redirected to another map; the borrow prevents concurrent mutation until failure, drop or commit. Every input is validated before an execute callback. All result positions, vocabulary lengths and finite logits must pass before a commit exists. Full-token greedy selection reuses its existing finite check rather than adding a second scan. Partial-prefill logits are checked for finite values without independent CPU model recomputation.
+
+Synthetic gates cover duplicate/invalid later rows, resident-row overflow, geometry cohorts with retained input order, failed second-row work, wrong-position/nonfinite/truncated results, explicit rollback by dropping completed work, sequence permutations and exact lease release at commit. These prove the generic transaction discipline, not native bitwise tensor batching. The existing Engine cancellation contract still owns in-flight native completion; dropping an arbitrary public transaction future is not itself a GPU cancellation mechanism. Native target HTTP smoke is the integration gate for this adapter change; physical graph parity, native multi-row failure injection and MTP transaction integration remain future gates.

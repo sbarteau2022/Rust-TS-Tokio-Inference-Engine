@@ -1,7 +1,7 @@
 ---
 title: "Rust Server — Apple native kernel compiler and runtime"
 document_type: "implementation"
-version: "1.38.0"
+version: "1.39.0"
 date: "2026-10-23T12:43:42Z"
 implementation_date: null
 author: "Codex for Stewart Barteau"
@@ -164,6 +164,9 @@ related_files:
   - path: "judges/model_ab.py"
     lines: "1-93"
     role: "test"
+  - path: "judges/native_batch_http.py"
+    lines: "1-81"
+    role: "test"
   - path: "judges/native_http_smoke.py"
     lines: "1-81"
     role: "test"
@@ -308,6 +311,9 @@ related_files:
   - path: "src/sampled.rs"
     lines: "1-193"
     role: "primary"
+  - path: "src/serving/batch_transaction.rs"
+    lines: "1-430"
+    role: "primary"
   - path: "src/serving/choices.rs"
     lines: "1-133"
     role: "primary"
@@ -324,7 +330,7 @@ related_files:
     lines: "1-280"
     role: "primary"
   - path: "src/serving/mod.rs"
-    lines: "1-117"
+    lines: "1-119"
     role: "primary"
   - path: "src/serving/model_ir.rs"
     lines: "1-244"
@@ -339,7 +345,7 @@ related_files:
     lines: "1-809"
     role: "primary"
   - path: "src/serving/native_device_scheduler.rs"
-    lines: "1-178"
+    lines: "1-131"
     role: "primary"
   - path: "src/serving/native_device_smoke.rs"
     lines: "1-162"
@@ -1345,3 +1351,11 @@ Deferred-seed results: **2,528 exact-reference tokens / 160 streams**, four bitw
 | 3 | deferred | 13.469 | 1855.15 | 379.60 | 271.68 |
 
 TTFT falls roughly 7%, but the first-to-second gap and tail worsen; aggregate throughput changes by less than 1%. **Keep eager as default.** Deferred HTTP smoke is functional evidence, not a network speed claim. Current regression gates: **172 default / 172 debug / 111 minimal Rust tests**, 22 TS tests, TS 7.1/tsrs, strict Clippy, schema/native/GPU judges. [Bound seed evidence](evidence/native-seed/qualification.json). Next design state-safe physical batching, then native paging/KV and custom Dspark; broad held-out quality remains unqualified.
+
+## Typed batch transaction boundary
+
+`serving::batch_transaction` now separates validated preparation, scalar execution and all-row commit. The target ScheduledDevice adapter uses this boundary for snapshot/device state. A PreparedBatch retains an exclusive borrow of the exact committed map plus cloned parent leases; only a fully validated CompletedBatch can consume that borrow and replace all parents. Dropping or failing a batch releases provisional states and preserves committed parents. Engine completion ownership remains responsible for dispatched native work through cancellation.
+
+Geometry cohorts describe compatible kind/position/token-count rows without changing scalar input order. They are planning metadata, not packed GPU rows. No physical tensor batching or speed gain is claimed, no tuning flag is added, and the MTP/SeedPending path is unchanged. Native graph batch-one reshapes and unified attention/convolution/recurrent state still require a separate graph/ABI implementation before physical mode can be enabled. See the stage-1 preregistration and stage-2 gates in [the tuning plan](docs/NATIVE_TUNING_PLAN.md).
+
+Transaction checkpoint validation: **180 default / 180 debug Rust checks** (including the exclusive-map-borrow compile-fail gate), **118 minimal Rust tests**, 22 TS tests, TS 7.1/tsrs, strict Clippy and schema/native/GPU judges passed. Native target HTTP passed 48 archived exact-reference tokens plus the eight-token TS client, one/three lanes, deadline, disconnect/recovery and zero charged native state at drain. [Bound transaction evidence](evidence/native-batch-contract/qualification.json). No throughput improvement or physical tensor execution is claimed.
