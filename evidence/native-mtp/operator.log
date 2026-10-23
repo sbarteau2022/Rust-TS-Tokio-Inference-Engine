@@ -1,0 +1,189 @@
+   Compiling rust-server v0.1.0 (/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine)
+warning: rust-server@0.1.0: In file included from native/mlx_bridge.cpp:2:
+warning: rust-server@0.1.0: In file included from /Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/vendor/mlx/include/mlx/mlx.h:5:
+warning: rust-server@0.1.0: In file included from /Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/vendor/mlx/include/mlx/array.h:11:
+warning: rust-server@0.1.0: /Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/vendor/mlx/include/mlx/allocator.h:50:36: warning: unused parameter 'ptr' [-Wunused-parameter]
+warning: rust-server@0.1.0:    50 |   virtual Buffer make_buffer(void* ptr, size_t size) {
+warning: rust-server@0.1.0:       |                                    ^
+warning: rust-server@0.1.0: /Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/vendor/mlx/include/mlx/allocator.h:50:48: warning: unused parameter 'size' [-Wunused-parameter]
+warning: rust-server@0.1.0:    50 |   virtual Buffer make_buffer(void* ptr, size_t size) {
+warning: rust-server@0.1.0:       |                                                ^
+warning: rust-server@0.1.0: /Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/vendor/mlx/include/mlx/allocator.h:53:31: warning: unused parameter 'buffer' [-Wunused-parameter]
+warning: rust-server@0.1.0:    53 |   virtual void release(Buffer buffer) {}
+warning: rust-server@0.1.0:       |                               ^
+warning: rust-server@0.1.0: In file included from native/mlx_bridge.cpp:2:
+warning: rust-server@0.1.0: In file included from /Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/vendor/mlx/include/mlx/mlx.h:5:
+warning: rust-server@0.1.0: In file included from /Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/vendor/mlx/include/mlx/array.h:13:
+warning: rust-server@0.1.0: In file included from /Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/vendor/mlx/include/mlx/dtype.h:9:
+warning: rust-server@0.1.0: In file included from /Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/vendor/mlx/include/mlx/types/complex.h:5:
+warning: rust-server@0.1.0: In file included from /Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/vendor/mlx/include/mlx/types/half_types.h:32:
+warning: rust-server@0.1.0: /Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/vendor/mlx/include/mlx/types/bf16.h:29:3: warning: definition of implicit copy assignment operator for '_MLX_BFloat16' is deprecated because it has a user-declared copy constructor [-Wdeprecated-copy]
+warning: rust-server@0.1.0:    29 |   _MLX_BFloat16(_MLX_BFloat16 const&) = default;
+warning: rust-server@0.1.0:       |   ^
+warning: rust-server@0.1.0: /Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/vendor/mlx/include/mlx/types/bf16.h:38:19: note: in implicit copy assignment operator for 'mlx::core::_MLX_BFloat16' first required here
+warning: rust-server@0.1.0:    38 |     return (*this = _MLX_BFloat16(x));
+warning: rust-server@0.1.0:       |                   ^
+warning: rust-server@0.1.0: 4 warnings generated.
+    Finished `release` profile [optimized] target(s) in 6.77s
+warning: the following packages contain code that will be rejected by a future version of Rust: block v0.1.6
+note: to see what the problems were, use the option `--future-incompat-report`, or run `cargo report future-incompatibilities --id 1`
+     Running `target/release/examples/native_mtp_smoke /tmp/mtp-operator-debug-final-20261023`
+OPERATOR-ORACLE operation=language_model.model.embed_tokens/embedding elements=2048 nrmse=0 max_abs=0
+OPERATOR-ORACLE operation=language_model.mtp.pre_fc_norm_embedding.weight/rms elements=2048 nrmse=6.67850068e-08 max_abs=3.52907378e-07
+OPERATOR-ORACLE operation=language_model.mtp.pre_fc_norm_hidden.weight/rms elements=2048 nrmse=3.53627264e-08 max_abs=2.39346094e-07
+OPERATOR-ORACLE operation=language_model.mtp.fc/dense-projection elements=8 nrmse=1.23463842e-07 max_abs=7.89677342e-08
+OPERATOR-ORACLE operation=language_model.mtp.layers.0.input_layernorm.weight/rms elements=2048 nrmse=4.10651581e-08 max_abs=6.55921562e-07
+PROJECTION-ORACLE module=language_model.mtp.layers.0.self_attn.q_proj bits=5 group=128 rows=1 channels=8 width=2048 channel_start=-1 nrmse=1.62862751e-07 max_abs=7.52558296e-07
+OPERATOR-ORACLE operation=language_model.mtp.layers.0.self_attn.q_norm.weight/rms elements=4096 nrmse=5.02797525e-08 max_abs=1.03271694e-06
+PROJECTION-ORACLE module=language_model.mtp.layers.0.self_attn.k_proj bits=5 group=128 rows=1 channels=8 width=2048 channel_start=-1 nrmse=4.2285466e-07 max_abs=5.56549111e-07
+OPERATOR-ORACLE operation=language_model.mtp.layers.0.self_attn.k_norm.weight/rms elements=512 nrmse=5.14459684e-08 max_abs=1.14776343e-06
+PROJECTION-ORACLE module=language_model.mtp.layers.0.self_attn.v_proj bits=6 group=128 rows=1 channels=8 width=2048 channel_start=-1 nrmse=7.32066975e-08 max_abs=1.20629038e-06
+OPERATOR-ORACLE operation=language_model.mtp.layers.0.self_attn/q-rope elements=4096 nrmse=0 max_abs=0
+OPERATOR-ORACLE operation=language_model.mtp.layers.0.self_attn/k-rope elements=512 nrmse=0 max_abs=0
+ATTENTION-ORACLE layer=language_model.mtp.layers.0.self_attn offset=0 tokens=1 nrmse=0 max_abs=0
+OPERATOR-ORACLE operation=language_model.mtp.layers.0.self_attn/output-gate elements=4096 nrmse=3.78129823e-08 max_abs=1.87525307e-07
+PROJECTION-ORACLE module=language_model.mtp.layers.0.self_attn.o_proj bits=4 group=64 rows=1 channels=8 width=4096 channel_start=-1 nrmse=2.42245137e-07 max_abs=3.18375847e-07
+OPERATOR-ORACLE operation=language_model.mtp.layers.0.post_attention_layernorm.weight/rms elements=2048 nrmse=3.58925053e-08 max_abs=6.61019754e-07
+OPERATOR-ORACLE operation=language_model.mtp.layers.0.mlp.gate/dense-projection elements=8 nrmse=4.07413525e-08 max_abs=4.59041298e-07
+OPERATOR-ORACLE operation=language_model.mtp.layers.0.mlp/softmax elements=256 nrmse=7.63926007e-08 max_abs=1.65284461e-09
+OPERATOR-ORACLE operation=language_model.mtp.layers.0.mlp/routing-weights elements=8 nrmse=5.13154539e-08 max_abs=1.03220281e-08
+PROJECTION-ORACLE module=language_model.mtp.layers.0.mlp.switch_mlp.up_proj/row=0/expert=12/slot=0 bits=4 group=64 rows=1 channels=8 width=2048 channel_start=-1 nrmse=1.67204761e-07 max_abs=8.79019368e-07
+PROJECTION-ORACLE module=language_model.mtp.layers.0.mlp.switch_mlp.up_proj/row=0/expert=157/slot=7 bits=4 group=64 rows=1 channels=8 width=2048 channel_start=-1 nrmse=2.41085574e-07 max_abs=8.8401449e-07
+PROJECTION-ORACLE module=language_model.mtp.layers.0.mlp.switch_mlp.gate_proj/row=0/expert=12/slot=0 bits=4 group=64 rows=1 channels=8 width=2048 channel_start=-1 nrmse=8.9762337e-08 max_abs=2.53414483e-07
+PROJECTION-ORACLE module=language_model.mtp.layers.0.mlp.switch_mlp.gate_proj/row=0/expert=157/slot=7 bits=4 group=64 rows=1 channels=8 width=2048 channel_start=-1 nrmse=1.22882073e-07 max_abs=6.44388223e-07
+OPERATOR-ORACLE operation=silu elements=4096 nrmse=3.89981334e-08 max_abs=1.8434826e-07
+PROJECTION-ORACLE module=language_model.mtp.layers.0.mlp.switch_mlp.down_proj/row=0/expert=12/slot=0 bits=4 group=64 rows=1 channels=8 width=512 channel_start=-1 nrmse=2.78128827e-07 max_abs=1.41431739e-07
+PROJECTION-ORACLE module=language_model.mtp.layers.0.mlp.switch_mlp.down_proj/row=0/expert=157/slot=7 bits=4 group=64 rows=1 channels=8 width=512 channel_start=-1 nrmse=3.9226203e-07 max_abs=1.84272039e-07
+PROJECTION-ORACLE module=language_model.mtp.layers.0.mlp.shared_expert.gate_proj bits=8 group=128 rows=1 channels=8 width=2048 channel_start=-1 nrmse=1.07871631e-07 max_abs=5.38001546e-07
+OPERATOR-ORACLE operation=silu elements=512 nrmse=3.07115151e-08 max_abs=4.85174386e-07
+PROJECTION-ORACLE module=language_model.mtp.layers.0.mlp.shared_expert.up_proj bits=8 group=128 rows=1 channels=8 width=2048 channel_start=-1 nrmse=8.1631341e-08 max_abs=5.85052058e-07
+PROJECTION-ORACLE module=language_model.mtp.layers.0.mlp.shared_expert.down_proj bits=8 group=128 rows=1 channels=8 width=512 channel_start=-1 nrmse=3.34345347e-07 max_abs=7.01051615e-07
+PROJECTION-ORACLE module=language_model.mtp.layers.0.mlp.shared_expert_gate bits=8 group=64 rows=1 channels=1 width=2048 channel_start=-1 nrmse=2.93637816e-08 max_abs=3.36064625e-08
+OPERATOR-ORACLE operation=language_model.mtp.layers.0.mlp/mixture elements=2048 nrmse=4.78892768e-08 max_abs=7.19579789e-08
+OPERATOR-ORACLE operation=language_model.mtp.layers.0.mlp/shared-gating-add elements=2048 nrmse=6.26156027e-08 max_abs=5.20978561e-07
+OPERATOR-ORACLE operation=language_model.mtp.norm.weight/rms elements=2048 nrmse=3.77840185e-08 max_abs=6.98511771e-07
+PROJECTION-ORACLE module=language_model.lm_head bits=4 group=64 rows=1 channels=8 width=2048 channel_start=-1 nrmse=1.76324827e-07 max_abs=8.44155366e-07
+OPERATOR-ORACLE operation=language_model.model.embed_tokens/embedding elements=4096 nrmse=0 max_abs=0
+OPERATOR-ORACLE operation=language_model.mtp.pre_fc_norm_embedding.weight/rms elements=4096 nrmse=6.30603007e-08 max_abs=4.4443764e-07
+OPERATOR-ORACLE operation=language_model.mtp.pre_fc_norm_hidden.weight/rms elements=4096 nrmse=3.87692066e-08 max_abs=6.96293267e-07
+OPERATOR-ORACLE operation=language_model.mtp.fc/dense-projection elements=16 nrmse=1.54183655e-07 max_abs=1.25128444e-07
+OPERATOR-ORACLE operation=language_model.mtp.layers.0.input_layernorm.weight/rms elements=4096 nrmse=5.22835821e-08 max_abs=1.17750602e-06
+PROJECTION-ORACLE module=language_model.mtp.layers.0.self_attn.q_proj bits=5 group=128 rows=2 channels=8 width=2048 channel_start=-1 nrmse=4.21369407e-08 max_abs=2.15450295e-07
+OPERATOR-ORACLE operation=language_model.mtp.layers.0.self_attn.q_norm.weight/rms elements=8192 nrmse=5.64037673e-08 max_abs=1.01267735e-06
+PROJECTION-ORACLE module=language_model.mtp.layers.0.self_attn.k_proj bits=5 group=128 rows=2 channels=8 width=2048 channel_start=-1 nrmse=8.2694539e-08 max_abs=1.29804028e-07
+OPERATOR-ORACLE operation=language_model.mtp.layers.0.self_attn.k_norm.weight/rms elements=1024 nrmse=3.88348959e-08 max_abs=8.89197258e-07
+PROJECTION-ORACLE module=language_model.mtp.layers.0.self_attn.v_proj bits=6 group=128 rows=2 channels=8 width=2048 channel_start=-1 nrmse=4.64557627e-08 max_abs=7.25717918e-07
+OPERATOR-ORACLE operation=language_model.mtp.layers.0.self_attn/q-rope elements=8192 nrmse=2.15775068e-08 max_abs=7.25893737e-07
+OPERATOR-ORACLE operation=language_model.mtp.layers.0.self_attn/k-rope elements=1024 nrmse=1.50864732e-08 max_abs=3.75093212e-07
+ATTENTION-ORACLE layer=language_model.mtp.layers.0.self_attn offset=0 tokens=2 nrmse=1.33680629e-07 max_abs=5.65422064e-06
+OPERATOR-ORACLE operation=language_model.mtp.layers.0.self_attn/output-gate elements=8192 nrmse=4.18144553e-08 max_abs=3.38806837e-07
+PROJECTION-ORACLE module=language_model.mtp.layers.0.self_attn.o_proj bits=4 group=64 rows=2 channels=8 width=4096 channel_start=-1 nrmse=8.5366378e-08 max_abs=7.6552926e-08
+OPERATOR-ORACLE operation=language_model.mtp.layers.0.post_attention_layernorm.weight/rms elements=4096 nrmse=4.36317186e-08 max_abs=9.30079473e-07
+OPERATOR-ORACLE operation=language_model.mtp.layers.0.mlp.gate/dense-projection elements=16 nrmse=4.54863231e-08 max_abs=5.1292649e-07
+OPERATOR-ORACLE operation=language_model.mtp.layers.0.mlp/softmax elements=512 nrmse=5.80330631e-08 max_abs=1.74263724e-09
+OPERATOR-ORACLE operation=language_model.mtp.layers.0.mlp/routing-weights elements=16 nrmse=5.39597112e-08 max_abs=1.53070407e-08
+PROJECTION-ORACLE module=language_model.mtp.layers.0.mlp.switch_mlp.up_proj/row=0/expert=12/slot=0 bits=4 group=64 rows=1 channels=8 width=2048 channel_start=-1 nrmse=1.30879037e-07 max_abs=6.65901567e-07
+PROJECTION-ORACLE module=language_model.mtp.layers.0.mlp.switch_mlp.up_proj/row=0/expert=157/slot=7 bits=4 group=64 rows=1 channels=8 width=2048 channel_start=-1 nrmse=1.59528074e-07 max_abs=5.59936652e-07
+PROJECTION-ORACLE module=language_model.mtp.layers.0.mlp.switch_mlp.up_proj/row=1/expert=132/slot=0 bits=4 group=64 rows=1 channels=8 width=2048 channel_start=-1 nrmse=1.63698068e-07 max_abs=5.99003714e-07
+PROJECTION-ORACLE module=language_model.mtp.layers.0.mlp.switch_mlp.up_proj/row=1/expert=135/slot=7 bits=4 group=64 rows=1 channels=8 width=2048 channel_start=-1 nrmse=8.22484987e-08 max_abs=2.63429861e-07
+PROJECTION-ORACLE module=language_model.mtp.layers.0.mlp.switch_mlp.gate_proj/row=0/expert=12/slot=0 bits=4 group=64 rows=1 channels=8 width=2048 channel_start=-1 nrmse=1.19429232e-07 max_abs=3.18673562e-07
+PROJECTION-ORACLE module=language_model.mtp.layers.0.mlp.switch_mlp.gate_proj/row=0/expert=157/slot=7 bits=4 group=64 rows=1 channels=8 width=2048 channel_start=-1 nrmse=1.77768067e-07 max_abs=1.33035791e-06
+PROJECTION-ORACLE module=language_model.mtp.layers.0.mlp.switch_mlp.gate_proj/row=1/expert=132/slot=0 bits=4 group=64 rows=1 channels=8 width=2048 channel_start=-1 nrmse=1.32444117e-07 max_abs=3.62265164e-07
+PROJECTION-ORACLE module=language_model.mtp.layers.0.mlp.switch_mlp.gate_proj/row=1/expert=135/slot=7 bits=4 group=64 rows=1 channels=8 width=2048 channel_start=-1 nrmse=5.80101763e-08 max_abs=3.44467794e-07
+OPERATOR-ORACLE operation=silu elements=8192 nrmse=3.66324928e-08 max_abs=2.54687384e-07
+PROJECTION-ORACLE module=language_model.mtp.layers.0.mlp.switch_mlp.down_proj/row=0/expert=12/slot=0 bits=4 group=64 rows=1 channels=8 width=512 channel_start=-1 nrmse=2.86118549e-07 max_abs=1.48144918e-07
+PROJECTION-ORACLE module=language_model.mtp.layers.0.mlp.switch_mlp.down_proj/row=0/expert=157/slot=7 bits=4 group=64 rows=1 channels=8 width=512 channel_start=-1 nrmse=3.62574764e-07 max_abs=1.92471861e-07
+PROJECTION-ORACLE module=language_model.mtp.layers.0.mlp.switch_mlp.down_proj/row=1/expert=132/slot=0 bits=4 group=64 rows=1 channels=8 width=512 channel_start=-1 nrmse=3.04116033e-07 max_abs=8.54157722e-08
+PROJECTION-ORACLE module=language_model.mtp.layers.0.mlp.switch_mlp.down_proj/row=1/expert=135/slot=7 bits=4 group=64 rows=1 channels=8 width=512 channel_start=-1 nrmse=1.58891798e-07 max_abs=1.38518935e-07
+PROJECTION-ORACLE module=language_model.mtp.layers.0.mlp.shared_expert.gate_proj bits=8 group=128 rows=2 channels=8 width=2048 channel_start=-1 nrmse=6.10688005e-08 max_abs=4.87639803e-07
+OPERATOR-ORACLE operation=silu elements=1024 nrmse=2.93226713e-08 max_abs=4.85564783e-07
+PROJECTION-ORACLE module=language_model.mtp.layers.0.mlp.shared_expert.up_proj bits=8 group=128 rows=2 channels=8 width=2048 channel_start=-1 nrmse=4.73961921e-08 max_abs=5.68153507e-07
+PROJECTION-ORACLE module=language_model.mtp.layers.0.mlp.shared_expert.down_proj bits=8 group=128 rows=2 channels=8 width=512 channel_start=-1 nrmse=9.60940651e-08 max_abs=2.03697613e-07
+PROJECTION-ORACLE module=language_model.mtp.layers.0.mlp.shared_expert_gate bits=8 group=64 rows=2 channels=1 width=2048 channel_start=-1 nrmse=4.59948594e-08 max_abs=6.4815513e-08
+OPERATOR-ORACLE operation=language_model.mtp.layers.0.mlp/mixture elements=4096 nrmse=4.05157596e-08 max_abs=5.12502503e-08
+OPERATOR-ORACLE operation=language_model.mtp.layers.0.mlp/shared-gating-add elements=4096 nrmse=3.61063037e-08 max_abs=1.73058359e-07
+OPERATOR-ORACLE operation=language_model.mtp.norm.weight/rms elements=4096 nrmse=3.8982101e-08 max_abs=1.5787179e-06
+PROJECTION-ORACLE module=language_model.lm_head bits=4 group=64 rows=1 channels=8 width=2048 channel_start=-1 nrmse=1.39234106e-07 max_abs=6.42495815e-07
+OPERATOR-ORACLE operation=language_model.model.embed_tokens/embedding elements=8192 nrmse=0 max_abs=0
+OPERATOR-ORACLE operation=language_model.mtp.pre_fc_norm_embedding.weight/rms elements=8192 nrmse=5.29286153e-08 max_abs=4.4443764e-07
+OPERATOR-ORACLE operation=language_model.mtp.pre_fc_norm_hidden.weight/rms elements=8192 nrmse=4.0118176e-08 max_abs=6.96293267e-07
+OPERATOR-ORACLE operation=language_model.mtp.fc/dense-projection elements=32 nrmse=1.65527989e-07 max_abs=1.25128444e-07
+OPERATOR-ORACLE operation=language_model.mtp.layers.0.input_layernorm.weight/rms elements=8192 nrmse=5.10707093e-08 max_abs=2.01900598e-06
+PROJECTION-ORACLE module=language_model.mtp.layers.0.self_attn.q_proj bits=5 group=128 rows=4 channels=8 width=2048 channel_start=-1 nrmse=5.32914355e-08 max_abs=3.43185997e-07
+OPERATOR-ORACLE operation=language_model.mtp.layers.0.self_attn.q_norm.weight/rms elements=16384 nrmse=5.19859594e-08 max_abs=1.11063504e-06
+PROJECTION-ORACLE module=language_model.mtp.layers.0.self_attn.k_proj bits=5 group=128 rows=4 channels=8 width=2048 channel_start=-1 nrmse=8.03625979e-08 max_abs=1.3110796e-07
+OPERATOR-ORACLE operation=language_model.mtp.layers.0.self_attn.k_norm.weight/rms elements=2048 nrmse=4.28708694e-08 max_abs=8.89197258e-07
+PROJECTION-ORACLE module=language_model.mtp.layers.0.self_attn.v_proj bits=6 group=128 rows=4 channels=8 width=2048 channel_start=-1 nrmse=4.77976079e-08 max_abs=7.25717918e-07
+OPERATOR-ORACLE operation=language_model.mtp.layers.0.self_attn/q-rope elements=16384 nrmse=2.72663874e-08 max_abs=7.47164357e-07
+OPERATOR-ORACLE operation=language_model.mtp.layers.0.self_attn/k-rope elements=2048 nrmse=1.70229516e-08 max_abs=3.75093212e-07
+ATTENTION-ORACLE layer=language_model.mtp.layers.0.self_attn offset=0 tokens=4 nrmse=1.51381721e-07 max_abs=5.65422064e-06
+OPERATOR-ORACLE operation=language_model.mtp.layers.0.self_attn/output-gate elements=16384 nrmse=4.28203536e-08 max_abs=3.38806837e-07
+PROJECTION-ORACLE module=language_model.mtp.layers.0.self_attn.o_proj bits=4 group=64 rows=4 channels=8 width=4096 channel_start=-1 nrmse=9.37536981e-08 max_abs=7.6552926e-08
+OPERATOR-ORACLE operation=language_model.mtp.layers.0.post_attention_layernorm.weight/rms elements=8192 nrmse=4.50917482e-08 max_abs=9.30079473e-07
+OPERATOR-ORACLE operation=language_model.mtp.layers.0.mlp.gate/dense-projection elements=32 nrmse=4.5620681e-08 max_abs=6.10789339e-07
+OPERATOR-ORACLE operation=language_model.mtp.layers.0.mlp/softmax elements=1024 nrmse=6.23133256e-08 max_abs=3.01864774e-09
+OPERATOR-ORACLE operation=language_model.mtp.layers.0.mlp/routing-weights elements=32 nrmse=5.09659632e-08 max_abs=1.53070407e-08
+PROJECTION-ORACLE module=language_model.mtp.layers.0.mlp.switch_mlp.up_proj/row=0/expert=12/slot=0 bits=4 group=64 rows=1 channels=8 width=2048 channel_start=-1 nrmse=1.30879037e-07 max_abs=6.65901567e-07
+PROJECTION-ORACLE module=language_model.mtp.layers.0.mlp.switch_mlp.up_proj/row=0/expert=157/slot=7 bits=4 group=64 rows=1 channels=8 width=2048 channel_start=-1 nrmse=1.59528074e-07 max_abs=5.59936652e-07
+PROJECTION-ORACLE module=language_model.mtp.layers.0.mlp.switch_mlp.up_proj/row=3/expert=223/slot=0 bits=4 group=64 rows=1 channels=8 width=2048 channel_start=-1 nrmse=1.62802819e-07 max_abs=2.83027831e-07
+PROJECTION-ORACLE module=language_model.mtp.layers.0.mlp.switch_mlp.up_proj/row=3/expert=125/slot=7 bits=4 group=64 rows=1 channels=8 width=2048 channel_start=-1 nrmse=2.35540933e-07 max_abs=8.32222781e-07
+PROJECTION-ORACLE module=language_model.mtp.layers.0.mlp.switch_mlp.gate_proj/row=0/expert=12/slot=0 bits=4 group=64 rows=1 channels=8 width=2048 channel_start=-1 nrmse=1.19429232e-07 max_abs=3.18673562e-07
+PROJECTION-ORACLE module=language_model.mtp.layers.0.mlp.switch_mlp.gate_proj/row=0/expert=157/slot=7 bits=4 group=64 rows=1 channels=8 width=2048 channel_start=-1 nrmse=1.77768067e-07 max_abs=1.33035791e-06
+PROJECTION-ORACLE module=language_model.mtp.layers.0.mlp.switch_mlp.gate_proj/row=3/expert=223/slot=0 bits=4 group=64 rows=1 channels=8 width=2048 channel_start=-1 nrmse=1.00513845e-07 max_abs=2.22615979e-07
+PROJECTION-ORACLE module=language_model.mtp.layers.0.mlp.switch_mlp.gate_proj/row=3/expert=125/slot=7 bits=4 group=64 rows=1 channels=8 width=2048 channel_start=-1 nrmse=7.72346498e-08 max_abs=2.06984041e-07
+OPERATOR-ORACLE operation=silu elements=16384 nrmse=3.66243875e-08 max_abs=2.54687384e-07
+PROJECTION-ORACLE module=language_model.mtp.layers.0.mlp.switch_mlp.down_proj/row=0/expert=12/slot=0 bits=4 group=64 rows=1 channels=8 width=512 channel_start=-1 nrmse=2.86118549e-07 max_abs=1.48144918e-07
+PROJECTION-ORACLE module=language_model.mtp.layers.0.mlp.switch_mlp.down_proj/row=0/expert=157/slot=7 bits=4 group=64 rows=1 channels=8 width=512 channel_start=-1 nrmse=3.62574764e-07 max_abs=1.92471861e-07
+PROJECTION-ORACLE module=language_model.mtp.layers.0.mlp.switch_mlp.down_proj/row=3/expert=223/slot=0 bits=4 group=64 rows=1 channels=8 width=512 channel_start=-1 nrmse=4.69001976e-07 max_abs=1.1125611e-07
+PROJECTION-ORACLE module=language_model.mtp.layers.0.mlp.switch_mlp.down_proj/row=3/expert=125/slot=7 bits=4 group=64 rows=1 channels=8 width=512 channel_start=-1 nrmse=5.82714632e-07 max_abs=1.46030989e-07
+PROJECTION-ORACLE module=language_model.mtp.layers.0.mlp.shared_expert.gate_proj bits=8 group=128 rows=4 channels=8 width=2048 channel_start=-1 nrmse=5.37683494e-08 max_abs=4.87639803e-07
+OPERATOR-ORACLE operation=silu elements=2048 nrmse=2.98738538e-08 max_abs=4.85564783e-07
+PROJECTION-ORACLE module=language_model.mtp.layers.0.mlp.shared_expert.up_proj bits=8 group=128 rows=4 channels=8 width=2048 channel_start=-1 nrmse=6.04365862e-08 max_abs=8.57985226e-07
+PROJECTION-ORACLE module=language_model.mtp.layers.0.mlp.shared_expert.down_proj bits=8 group=128 rows=4 channels=8 width=512 channel_start=-1 nrmse=1.06888675e-07 max_abs=2.03697613e-07
+PROJECTION-ORACLE module=language_model.mtp.layers.0.mlp.shared_expert_gate bits=8 group=64 rows=4 channels=1 width=2048 channel_start=-1 nrmse=4.8213346e-08 max_abs=6.79393135e-08
+OPERATOR-ORACLE operation=language_model.mtp.layers.0.mlp/mixture elements=8192 nrmse=4.24145322e-08 max_abs=5.12502503e-08
+OPERATOR-ORACLE operation=language_model.mtp.layers.0.mlp/shared-gating-add elements=8192 nrmse=3.84872935e-08 max_abs=1.87289593e-07
+OPERATOR-ORACLE operation=language_model.mtp.norm.weight/rms elements=8192 nrmse=5.50541782e-08 max_abs=3.53248667e-06
+PROJECTION-ORACLE module=language_model.lm_head bits=4 group=64 rows=1 channels=8 width=2048 channel_start=-1 nrmse=1.48956714e-07 max_abs=1.2583669e-06
+OPERATOR-ORACLE operation=language_model.model.embed_tokens/embedding elements=16384 nrmse=0 max_abs=0
+OPERATOR-ORACLE operation=language_model.mtp.pre_fc_norm_embedding.weight/rms elements=16384 nrmse=5.08190923e-08 max_abs=9.92270001e-07
+OPERATOR-ORACLE operation=language_model.mtp.pre_fc_norm_hidden.weight/rms elements=16384 nrmse=4.0848308e-08 max_abs=6.96293267e-07
+OPERATOR-ORACLE operation=language_model.mtp.fc/dense-projection elements=64 nrmse=1.72697223e-07 max_abs=1.25128444e-07
+OPERATOR-ORACLE operation=language_model.mtp.layers.0.input_layernorm.weight/rms elements=16384 nrmse=6.1625939e-08 max_abs=3.17956369e-06
+PROJECTION-ORACLE module=language_model.mtp.layers.0.self_attn.q_proj bits=5 group=128 rows=8 channels=8 width=2048 channel_start=-1 nrmse=5.95914004e-08 max_abs=5.81035882e-07
+OPERATOR-ORACLE operation=language_model.mtp.layers.0.self_attn.q_norm.weight/rms elements=32768 nrmse=5.15066781e-08 max_abs=1.17828936e-06
+PROJECTION-ORACLE module=language_model.mtp.layers.0.self_attn.k_proj bits=5 group=128 rows=8 channels=8 width=2048 channel_start=-1 nrmse=9.06520464e-08 max_abs=1.93356318e-07
+OPERATOR-ORACLE operation=language_model.mtp.layers.0.self_attn.k_norm.weight/rms elements=4096 nrmse=5.13514964e-08 max_abs=1.50569402e-06
+PROJECTION-ORACLE module=language_model.mtp.layers.0.self_attn.v_proj bits=6 group=128 rows=8 channels=8 width=2048 channel_start=-1 nrmse=5.39700495e-08 max_abs=7.25717918e-07
+OPERATOR-ORACLE operation=language_model.mtp.layers.0.self_attn/q-rope elements=32768 nrmse=3.39004515e-08 max_abs=1.22579775e-06
+OPERATOR-ORACLE operation=language_model.mtp.layers.0.self_attn/k-rope elements=4096 nrmse=1.9922586e-08 max_abs=4.19176823e-07
+ATTENTION-ORACLE layer=language_model.mtp.layers.0.self_attn offset=0 tokens=8 nrmse=1.68664499e-07 max_abs=5.65422064e-06
+OPERATOR-ORACLE operation=language_model.mtp.layers.0.self_attn/output-gate elements=32768 nrmse=4.48734483e-08 max_abs=3.38806837e-07
+PROJECTION-ORACLE module=language_model.mtp.layers.0.self_attn.o_proj bits=4 group=64 rows=8 channels=8 width=4096 channel_start=-1 nrmse=1.04930148e-07 max_abs=7.6552926e-08
+OPERATOR-ORACLE operation=language_model.mtp.layers.0.post_attention_layernorm.weight/rms elements=16384 nrmse=5.27363406e-08 max_abs=2.49385937e-06
+OPERATOR-ORACLE operation=language_model.mtp.layers.0.mlp.gate/dense-projection elements=64 nrmse=4.79464133e-08 max_abs=7.35200461e-07
+OPERATOR-ORACLE operation=language_model.mtp.layers.0.mlp/softmax elements=2048 nrmse=6.36864516e-08 max_abs=3.28810803e-09
+OPERATOR-ORACLE operation=language_model.mtp.layers.0.mlp/routing-weights elements=64 nrmse=5.56180045e-08 max_abs=2.5440662e-08
+PROJECTION-ORACLE module=language_model.mtp.layers.0.mlp.switch_mlp.up_proj/row=0/expert=12/slot=0 bits=4 group=64 rows=1 channels=8 width=2048 channel_start=-1 nrmse=1.30879037e-07 max_abs=6.65901567e-07
+PROJECTION-ORACLE module=language_model.mtp.layers.0.mlp.switch_mlp.up_proj/row=0/expert=157/slot=7 bits=4 group=64 rows=1 channels=8 width=2048 channel_start=-1 nrmse=1.59528074e-07 max_abs=5.59936652e-07
+PROJECTION-ORACLE module=language_model.mtp.layers.0.mlp.switch_mlp.up_proj/row=7/expert=238/slot=0 bits=4 group=64 rows=1 channels=8 width=2048 channel_start=-1 nrmse=2.30148885e-07 max_abs=6.20414763e-07
+PROJECTION-ORACLE module=language_model.mtp.layers.0.mlp.switch_mlp.up_proj/row=7/expert=12/slot=7 bits=4 group=64 rows=1 channels=8 width=2048 channel_start=-1 nrmse=2.81787133e-07 max_abs=7.85814034e-07
+PROJECTION-ORACLE module=language_model.mtp.layers.0.mlp.switch_mlp.gate_proj/row=0/expert=12/slot=0 bits=4 group=64 rows=1 channels=8 width=2048 channel_start=-1 nrmse=1.19429232e-07 max_abs=3.18673562e-07
+PROJECTION-ORACLE module=language_model.mtp.layers.0.mlp.switch_mlp.gate_proj/row=0/expert=157/slot=7 bits=4 group=64 rows=1 channels=8 width=2048 channel_start=-1 nrmse=1.77768067e-07 max_abs=1.33035791e-06
+PROJECTION-ORACLE module=language_model.mtp.layers.0.mlp.switch_mlp.gate_proj/row=7/expert=238/slot=0 bits=4 group=64 rows=1 channels=8 width=2048 channel_start=-1 nrmse=1.37111128e-07 max_abs=4.13817354e-07
+PROJECTION-ORACLE module=language_model.mtp.layers.0.mlp.switch_mlp.gate_proj/row=7/expert=12/slot=7 bits=4 group=64 rows=1 channels=8 width=2048 channel_start=-1 nrmse=8.81032298e-08 max_abs=2.77518427e-07
+OPERATOR-ORACLE operation=silu elements=32768 nrmse=3.71638959e-08 max_abs=3.00548374e-07
+PROJECTION-ORACLE module=language_model.mtp.layers.0.mlp.switch_mlp.down_proj/row=0/expert=12/slot=0 bits=4 group=64 rows=1 channels=8 width=512 channel_start=-1 nrmse=2.86118549e-07 max_abs=1.48144918e-07
+PROJECTION-ORACLE module=language_model.mtp.layers.0.mlp.switch_mlp.down_proj/row=0/expert=157/slot=7 bits=4 group=64 rows=1 channels=8 width=512 channel_start=-1 nrmse=3.62574764e-07 max_abs=1.92471861e-07
+PROJECTION-ORACLE module=language_model.mtp.layers.0.mlp.switch_mlp.down_proj/row=7/expert=238/slot=0 bits=4 group=64 rows=1 channels=8 width=512 channel_start=-1 nrmse=4.301997e-07 max_abs=7.19958242e-08
+PROJECTION-ORACLE module=language_model.mtp.layers.0.mlp.switch_mlp.down_proj/row=7/expert=12/slot=7 bits=4 group=64 rows=1 channels=8 width=512 channel_start=-1 nrmse=2.99504498e-07 max_abs=7.49002318e-08
+PROJECTION-ORACLE module=language_model.mtp.layers.0.mlp.shared_expert.gate_proj bits=8 group=128 rows=8 channels=8 width=2048 channel_start=-1 nrmse=6.69721474e-08 max_abs=5.2201599e-07
+OPERATOR-ORACLE operation=silu elements=4096 nrmse=2.97257783e-08 max_abs=4.85564783e-07
+PROJECTION-ORACLE module=language_model.mtp.layers.0.mlp.shared_expert.up_proj bits=8 group=128 rows=8 channels=8 width=2048 channel_start=-1 nrmse=6.24035082e-08 max_abs=8.57985226e-07
+PROJECTION-ORACLE module=language_model.mtp.layers.0.mlp.shared_expert.down_proj bits=8 group=128 rows=8 channels=8 width=512 channel_start=-1 nrmse=1.07085722e-07 max_abs=2.03697613e-07
+PROJECTION-ORACLE module=language_model.mtp.layers.0.mlp.shared_expert_gate bits=8 group=64 rows=8 channels=1 width=2048 channel_start=-1 nrmse=3.89363237e-08 max_abs=6.79393135e-08
+OPERATOR-ORACLE operation=language_model.mtp.layers.0.mlp/mixture elements=16384 nrmse=4.51887572e-08 max_abs=9.82882107e-08
+OPERATOR-ORACLE operation=language_model.mtp.layers.0.mlp/shared-gating-add elements=16384 nrmse=3.87022814e-08 max_abs=1.87289593e-07
+OPERATOR-ORACLE operation=language_model.mtp.norm.weight/rms elements=16384 nrmse=4.84850266e-08 max_abs=3.53248667e-06
+PROJECTION-ORACLE module=language_model.lm_head bits=4 group=64 rows=1 channels=8 width=2048 channel_start=-1 nrmse=1.09872696e-07 max_abs=1.0717253e-06
+{"branch_bitwise":true,"cancellation_drained":true,"cases":[{"count":1,"draft_token":16,"hidden_relative_l2":0.0,"kv_relative_l2":0.0,"logit_relative_l2":0.0},{"count":2,"draft_token":37726,"hidden_relative_l2":4.855408411816123e-7,"kv_relative_l2":1.4187176497786942e-7,"logit_relative_l2":5.43158193940836e-7},{"count":4,"draft_token":61,"hidden_relative_l2":4.056997739458544e-7,"kv_relative_l2":1.9564285524346679e-7,"logit_relative_l2":4.6675745995944716e-7},{"count":8,"draft_token":10,"hidden_relative_l2":4.681829367031549e-7,"kv_relative_l2":2.526957830420728e-7,"logit_relative_l2":3.9361490591393144e-7}],"combined_budget":true,"context":512,"logical_bytes_at_shutdown":0,"pass":true,"scalar_debug_probes":true,"speculative_serving_qualified":false,"transfer_accounting":"session ABI counters; explicit debug scalar snapshots are not counted"}

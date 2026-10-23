@@ -55,3 +55,11 @@ required-features = ["native-mlx"]
 [[example]]
 name = "native_hidden_smoke"
 required-features = ["native-mlx"]
+
+[[example]]
+name = "native_mtp_smoke"
+required-features = ["native-mlx"]
+
+[[example]]
+name = "native_mtp_decode_smoke"
+required-features = ["native-mlx"]

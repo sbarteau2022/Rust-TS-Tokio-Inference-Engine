@@ -20,3 +20,10 @@
   if(!std::isfinite(nrmse)||nrmse>1e-4)throw std::runtime_error("projection differs from sampled scalar FP64 oracle: "+label);
   }
  }
+
+ void check_dense(const mx::array& x,const mx::array& y,const mx::array& weight,const std::string& label){
+  size_t width=x.shape(-1),rows=x.size()/width,outputs=weight.shape(0);if(!rows||rows>8||weight.ndim()!=2||size_t(weight.shape(1))!=width)throw std::invalid_argument("dense probe bounds");
+  auto input=cpu_values(x),matrix=cpu_values(weight);std::vector<int32_t> ids;for(int i=0;i<8;++i)ids.push_back(i*(outputs-1)/7);
+  std::vector<double> expected;for(size_t row=0;row<rows;++row)for(auto out:ids){double sum=0;for(size_t col=0;col<width;++col)sum+=double(input[row*width+col])*matrix[size_t(out)*width+col];expected.push_back(sum);}
+  check_operator(label+"/dense-projection",expected,mx::take(y,mx::array(ids.data(),{8},mx::int32),-1,s));
+ }

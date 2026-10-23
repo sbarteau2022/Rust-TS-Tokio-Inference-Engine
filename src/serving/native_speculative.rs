@@ -378,3 +378,5 @@ mod tests {
         }
     }
 }
+
+include!("native_mtp_decode.rs");

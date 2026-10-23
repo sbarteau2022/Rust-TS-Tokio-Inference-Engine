@@ -60,7 +60,12 @@ pub struct DeviceStats {
     pub mlx_peak_bytes: u64,
     pub invalidated_at_shutdown: u64,
 }
+#[path = "native_mtp_device.rs"]
+mod mtp;
+pub use mtp::{MtpState, MtpStep};
 enum Work {
+    Mtp(mtp::MtpWork),
+    MtpSnapshot(MtpState, oneshot::Sender<Result<Vec<f32>>>),
     Reference(
         ModelState,
         ModelStepIr,
@@ -122,6 +127,7 @@ pub struct QwenDeviceExecutor {
     owner: u64,
     architecture: Architecture,
     identity: String,
+    mtp_enabled: bool,
 }
 impl QwenDeviceExecutor {
     pub async fn open(device: Device, slots: usize, logical_byte_limit: u64) -> Result<Self> {
@@ -131,9 +137,10 @@ impl QwenDeviceExecutor {
                 && logical_byte_limit <= 8 * 1024 * 1024 * 1024,
             "device resident budget bounds"
         );
-        tokio::task::spawn_blocking(move || Self::start(device, slots, logical_byte_limit)).await?
+        tokio::task::spawn_blocking(move || Self::start(device, slots, logical_byte_limit, false))
+            .await?
     }
-    fn start(device: Device, slots: usize, limit: u64) -> Result<Self> {
+    fn start(device: Device, slots: usize, limit: u64, mtp_enabled: bool) -> Result<Self> {
         let manifest = Manifest::read(Path::new(
             include_str!("../../fixtures/native-model.path").trim(),
         ))?;
@@ -144,6 +151,8 @@ impl QwenDeviceExecutor {
         let (tx, mut rx) = mpsc::channel(3);
         let (releases, mut retire) = mpsc::unbounded_channel();
         let worker_releases = releases.clone();
+        let (mtp_releases, mut mtp_retire) = mpsc::unbounded_channel();
+        let worker_mtp_releases = mtp_releases.clone();
         let (ready, received) = std::sync::mpsc::sync_channel(1);
         let closed = Arc::new(AtomicBool::new(false));
         let worker_closed = closed.clone();
@@ -159,6 +168,16 @@ impl QwenDeviceExecutor {
                 let handle = unsafe { rs_qwen_device_create(weights.0,i32::from(device==Device::Gpu),&architecture,program.layers().as_ptr(),program.layers().len(),slots,limit,e.as_mut_ptr(),e.len()) };
                 ensure!(!handle.is_null(), "device session: {}", unsafe { CStr::from_ptr(e.as_ptr()) }.to_string_lossy());
                 let session = Session(handle);
+                let mtp_weights=if mtp_enabled {
+                    let layout=super::super::native_mtp::MtpSidecar::read(&manifest)?;
+                    let store=NativeWeights::open_mtp(&manifest,&layout)?;
+                    for (name,q) in &manifest.overrides {if name.starts_with("language_model.mtp.") {
+                        let name=CString::new(name.as_str())?;
+                        native_status(unsafe{rs_qwen_quant(store.0,name.as_ptr(),q.group,q.bits,e.as_mut_ptr(),e.len())},&e)?;
+                    }}
+                    native_status(unsafe{mtp::rs_qwen_device_mtp_attach(session.0,store.0,e.as_mut_ptr(),e.len())},&e)?;
+                    Some(store)
+                }else{None};
                 let runtime = tokio::runtime::Builder::new_current_thread().build()?;
                 let _ = ready.send(Ok(()));
                 let mut faulted=false;
@@ -166,12 +185,22 @@ impl QwenDeviceExecutor {
                     loop {
                         // Drain releases before accepting a new reservation.
                         while let Ok(id) = retire.try_recv() { session.release(&id)?; }
+                        while let Ok(id)=mtp_retire.try_recv(){session.release_mtp(&id)?;}
                         tokio::select! {
                             biased;
                             id = retire.recv() => { if let Some(id)=id { session.release(&id)?; } }
+                            id=mtp_retire.recv()=>{if let Some(id)=id{session.release_mtp(&id)?;}}
                             work = rx.recv() => {
                                 let Some(work)=work else { break; };
                                 match work {
+                                    Work::MtpSnapshot(state,reply)=>{let _=reply.send(mtp::snapshot(&session,&state));}
+                                    Work::Mtp(work)=>{
+                                        let usage=session.stats()?;
+                                        let result=if faulted {Err(anyhow::anyhow!("device admission closed"))}
+                                        else if usage.residents>=slots as u64 || work.required()>limit.saturating_sub(usage.logical_bytes){Err(anyhow::anyhow!("MTP resident budget exhausted"))}
+                                        else {let result=mtp::forward(&session,&manifest,owner,&worker_mtp_releases,&work);if result.is_err(){faulted=true;worker_closed.store(true,Ordering::Release);}result};
+                                        work.finish(result);
+                                    }
                                     Work::Step { state,ir,all_logits,capture_hidden,_completion,reply,_permit } => {
                                         let usage=session.stats()?;
                                         let required=((architecture.state_len(state.position()+ir.len())+if capture_hidden {ir.len()*architecture.hidden as usize}else{0})*4) as u64;
@@ -206,11 +235,13 @@ impl QwenDeviceExecutor {
                         }
                     }
                     while let Ok(id)=retire.try_recv() { session.release(&id)?; }
+                    while let Ok(id)=mtp_retire.try_recv(){session.release_mtp(&id)?;}
                     let mut invalidated=0;let mut e=[0;1024];
                     native_status(unsafe {rs_qwen_device_drain(session.0,&mut invalidated,e.as_mut_ptr(),e.len())},&e)?;
                     let mut stats=session.stats()?;stats.invalidated_at_shutdown=invalidated;
                     ensure!(stats.residents==0 && stats.logical_bytes==0,"native device drain residual");
                     drop(session); // All arrays retired before weights and cleanup.
+                    drop(mtp_weights);
                     Ok(stats)
                 })
             })();
@@ -231,6 +262,7 @@ impl QwenDeviceExecutor {
             owner,
             architecture,
             identity,
+            mtp_enabled,
         })
     }
     pub fn identity(&self) -> &str {

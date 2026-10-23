@@ -73,6 +73,10 @@ async fn main() -> Result<()> {
     let tokenizer = NativeTokenizer::load(&manifest)?;
     let eos = tokenizer.eos();
     let executor = QwenDeviceExecutor::open(Device::Gpu, 8, 768 * 1024 * 1024).await?;
+    ensure!(
+        executor.empty_mtp_state().is_err(),
+        "default executor must not enable MTP"
+    );
     let mut log = std::fs::File::create(out.join("suite.jsonl"))?;
     let mut maxima = [0.; 6];
     let mut quality = [0; 3];

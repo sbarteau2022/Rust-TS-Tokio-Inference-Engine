@@ -31,6 +31,7 @@ fn main() {
         println!("cargo:rerun-if-changed=native/qwen_model.inc");
         println!("cargo:rerun-if-changed=native/qwen_device.inc");
         println!("cargo:rerun-if-changed=native/state_table.h");
+        println!("cargo:rerun-if-changed=native/qwen_mtp.inc");
         for item in [
             "include",
             "lib/libmlx.dylib",

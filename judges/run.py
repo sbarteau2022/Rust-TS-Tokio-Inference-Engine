@@ -54,6 +54,12 @@ def main():
     run(["cargo", "test", "--locked", "--example", "native_speculative_smoke"], "native-speculative-example-tests.log")
     run(["cargo", "test", "--locked", "--example", "native_automaton_smoke"], "native-automaton-example-tests.log")
     run(["cargo", "test", "--locked", "--example", "native_hidden_smoke"], "native-hidden-example-tests.log")
+    run(["cargo", "test", "--locked", "--example", "native_mtp_smoke"], "native-mtp-example-tests.log")
+    run(["cargo", "test", "--locked", "--example", "native_mtp_decode_smoke"], "native-mtp-decode-example-tests.log")
+    run(["c++", "-std=c++20", "-O2", "-Ivendor/mlx/include", "judges/dense_precision.cpp", "-Lvendor/mlx/lib", "-lmlx", "-Wl,-rpath,"+str(ROOT/"vendor/mlx/lib"), "-o", "artifacts/dense-precision-judge"], "dense-precision-build.log")
+    run(["artifacts/dense-precision-judge"], "dense-precision-default.log")
+    run(["artifacts/dense-precision-judge"], "dense-precision-disabled.log",env=dict(ENV,MLX_ENABLE_TF32="0"))
+
     run([sys.executable,"judges/generate_cordic.py","--check"],"cordic-table-check.log")
     # Step 0: deterministic bindings and both requested compiler gates.
     with tempfile.TemporaryDirectory() as tmp:

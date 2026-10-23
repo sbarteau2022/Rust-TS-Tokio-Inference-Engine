@@ -15,13 +15,13 @@ related_files:
     lines: "1-1015"
     role: "config"
   - path: "Cargo.toml"
-    lines: "1-57"
+    lines: "1-65"
     role: "config"
   - path: "backend/rapid_worker.py"
     lines: "1-165"
     role: "primary"
   - path: "build.rs"
-    lines: "1-62"
+    lines: "1-63"
     role: "primary"
   - path: "examples/native_automaton_smoke.rs"
     lines: "1-394"
@@ -30,13 +30,19 @@ related_files:
     lines: "1-184"
     role: "primary"
   - path: "examples/native_device_reference.rs"
-    lines: "1-162"
+    lines: "1-166"
     role: "primary"
   - path: "examples/native_discriminators.rs"
     lines: "1-145"
     role: "primary"
   - path: "examples/native_hidden_smoke.rs"
     lines: "1-170"
+    role: "primary"
+  - path: "examples/native_mtp_decode_smoke.rs"
+    lines: "1-90"
+    role: "primary"
+  - path: "examples/native_mtp_smoke.rs"
+    lines: "1-186"
     role: "primary"
   - path: "examples/native_speculative_smoke.rs"
     lines: "1-370"
@@ -110,6 +116,9 @@ related_files:
   - path: "judges/cordic.py"
     lines: "1-30"
     role: "test"
+  - path: "judges/dense_precision.cpp"
+    lines: "1-21"
+    role: "test"
   - path: "judges/device_abi.cpp"
     lines: "1-49"
     role: "test"
@@ -138,7 +147,7 @@ related_files:
     lines: "1-35"
     role: "test"
   - path: "judges/run.py"
-    lines: "1-222"
+    lines: "1-228"
     role: "test"
   - path: "judges/speculative_report.py"
     lines: "1-74"
@@ -171,7 +180,7 @@ related_files:
     lines: "1-178"
     role: "primary"
   - path: "native/mlx_bridge.h"
-    lines: "1-96"
+    lines: "1-112"
     role: "primary"
   - path: "native/operator_probe.inc"
     lines: "1-28"
@@ -180,16 +189,19 @@ related_files:
     lines: "1-58"
     role: "primary"
   - path: "native/projection_probe.inc"
-    lines: "1-22"
+    lines: "1-29"
     role: "primary"
   - path: "native/projection_reference.h"
     lines: "1-30"
     role: "primary"
   - path: "native/qwen_device.inc"
-    lines: "1-56"
+    lines: "1-59"
     role: "primary"
   - path: "native/qwen_model.inc"
     lines: "1-173"
+    role: "primary"
+  - path: "native/qwen_mtp.inc"
+    lines: "1-55"
     role: "primary"
   - path: "native/state_table.h"
     lines: "1-38"
@@ -282,7 +294,7 @@ related_files:
     lines: "1-193"
     role: "primary"
   - path: "src/serving/native_device.rs"
-    lines: "1-766"
+    lines: "1-798"
     role: "primary"
   - path: "src/serving/native_device_scheduler.rs"
     lines: "1-178"
@@ -308,17 +320,23 @@ related_files:
   - path: "src/serving/native_mtp.rs"
     lines: "1-468"
     role: "primary"
+  - path: "src/serving/native_mtp_decode.rs"
+    lines: "1-108"
+    role: "primary"
+  - path: "src/serving/native_mtp_device.rs"
+    lines: "1-417"
+    role: "primary"
   - path: "src/serving/native_ops.rs"
     lines: "1-273"
     role: "primary"
   - path: "src/serving/native_qwen.rs"
-    lines: "1-688"
+    lines: "1-690"
     role: "primary"
   - path: "src/serving/native_reference.rs"
     lines: "1-100"
     role: "primary"
   - path: "src/serving/native_speculative.rs"
-    lines: "1-380"
+    lines: "1-382"
     role: "primary"
   - path: "src/serving/native_state.rs"
     lines: "1-194"
@@ -523,3 +541,39 @@ Local engineering distinction: the inspected Rapid explicit-sidecar injection pa
 Observed focused results: post-norm scalar maximum relative L2 7.650997966225019e-8; single-row/batched logit maximum relative L2 2.460363544993645e-7. Matched all-position logits and unified state were bitwise equal. Frozen default preservation: 60 cases / 360 steps, all six drift maxima zero, no residual residency; quality remains [15, 20, 23] in suites of [16, 20, 24]. No throughput is measured by this boundary qualification.
 
 1.1.0 — Implement and qualify opt-in post-norm payload ownership, scalar normalization, bitwise default preservation and context-512 device pressure/recovery. MTP forward and performance remain unqualified.
+
+## Native MTP forward design — next implementation
+
+Open MTP explicitly; ordinary executor startup must not load or execute the sidecar. Keep target and MTP weight stores separate. Apply every sidecar module's affine override and support BF16 fusion/router projections explicitly. Use the sidecar's sanitized norm weights without the main-store MTP-presence offset heuristic. Fuse normalized token embeddings before normalized target hidden activations, then run the attention/MoE layer, sidecar output norm and shared target vocabulary head.
+
+Draft KV and hidden output belong to an independent immutable state table, with distinct owner IDs and the same combined slot/byte budget as target state. Prefill consumes shifted tokens paired with exact rows from a captured target version; its cache position must equal that hidden window's start plus the selected row. Autoregressive extension consumes only the preceding draft version's final hidden row. No pooled GPU memory or hidden activations cross into CPU control messages. Rejected branches retire entire draft versions. Completion guards and semaphore permits persist through native completion; shutdown drains both tables. Qualify projected values, chunk/serial behavior, parent isolation, cancellation and exhaustion before presenting this operator as a usable speculative decoder.
+
+## MTP operator implementation and precision finding — 2026-10-23
+
+The native operator now implements sanitized sidecar norms, embedding-before-hidden fusion, gated attention, routed/shared experts and the shared target output projection. Native draft state has a distinct owner namespace, immutable KV and post-norm output, shared total slot/byte limits and independent retirement. Rust source handles retain exact input versions through completion. Open via `QwenDeviceExecutor::open_mtp`; ordinary `open` does not load the sidecar. `mtp_prefill` takes an explicitly shifted token sequence and selected target-hidden rows; `mtp_next` extends only its own parent. Diagnostic snapshots include draft KV and hidden values, and are not internal transport. These are Rust APIs, not new native-generate flags.
+
+The first dense fusion scalar check failed at relative L2 4.01944918e-4 with ordinary batched FP32 matmul. A separate same-operand GPU microprobe measured 0.00356262 relative L2 for plain matmul and 1.48387e-6 for row-wise matrix-vector dispatch; disabling MLX_ENABLE_TF32 in a separate process reduced plain error to 1.97098e-6 while leaving row-wise error unchanged. This supports a reduced-precision dispatch explanation on this hardware. MLX documents potentially reduced float32 matrix-family precision in its [numerical precision guide](https://ml-explore.github.io/mlx/build/html/usage/precision.html). The chosen bounded row-wise dispatch avoids changing process-wide target settings. It passes the original scalar gate; no tolerance was widened to accept the failed fusion result. This is a numerical correction, not a measured throughput improvement.
+
+Reproduce the full operator gate with `cargo run --release --locked --features debug-validation --example native_mtp_smoke -- NEW_DIRECTORY`. Debug probes sample eight channels per dense/affine projection and bounded routed expert rows/slots, validate normalization/routing/gates and use scalar attention checks. They do not compare every weight or constitute an independently implemented full-model MTP reference. The example tests 1/2/4/8-token prefill against serial steps, immutable branch reproducibility, alignment/vocabulary refusals, combined pressure, cancellation, parent preservation, recovery and the 512-position draft-context boundary. Debug CPU snapshots are deliberately outside hot-path ABI transfer counters; do not interpret those counters as proving no diagnostic CPU work.
+
+The verifier integration must account for any first token already known from target logits separately from newly predicted MTP tokens; counting that seed as a learned draft success would inflate acceptance. Target verification/replay must also retain the hidden windows required for exact draft-state reconstruction after rejection. This operator does not yet provide those serving semantics, a scheduler profile, acceptance rates or throughput claims.
+
+## Existing Dspark proposer inventory — 2026-10-23
+
+User authorized using the custom Dspark already paired with the model. Local inspection found the cached `Koopah/Qwen3.6-35B-A3B-NVFP4-DSPARK` snapshot `815f706fe138402c9e446b2e2787da23ff7ba9e7`, separate from Combined's MTP sidecar. [Local inventory](../evidence/dspark-local-inventory.json) binds configuration, tensor-header metadata and installed reference source hashes. The 3,060,342,130-byte file contains 75 tensors. Header/configuration inspection does not verify every weight byte or establish compatibility with the fine-tuned Combined target. No second custom artifact has been identified.
+
+This is a six-layer, hidden-2048 draft backbone with vocabulary 248,320, rank-256 learned Markov correction and a confidence projection over 2,304 features. Its configuration requests target layers `[1,6,11,16,22,27,32,37]`. The installed implementation applies token-transition logits sequentially across the predicted block and can estimate proposal confidence. These differ materially from the one-layer native MTP operator. The existing post-final-norm payload alone cannot satisfy this drafter: implement version-bound intermediate layer taps, their normalization/concatenation projection, distinct positional/attention geometry and draft cache semantics before advertising native Dspark support. Keep intermediate activations device-owned and charge their residency to the shared budget.
+
+Integration order: finish MTP accepted/rejected-state synchronization under the existing exact greedy verifier; add the Dspark native weight/layout contract and eight target taps; port draft backbone, Markov correction and confidence math through Rust-owned MLX; qualify scalar operators and frozen full-graph proposals; then register a separate Spec 15 proposer identity. Confidence may trim draft work, never bypass target verification or commit state. Keep per-proposer cost, learned-token acceptance, rollback and epoch-decayed admission ledgers separate. Run MTP-only, Dspark-only and controller-arbitrated trials against identical greedy baseline outputs before selecting a default.
+
+The local `~/opus-dspark-up.sh` launcher selects the older named checkpoint directory, `--mode dspark --max-draft 4 --kv-bits 8 --max-batch 1`; process inspection matched those arguments on port 8001. This is an observed comparison lane, not the native server profile or proof it serves Combined. Do not silently switch target weights or invoke its Python worker in the Rust path. User's Dspark(2) naming does not establish the live cap: the observed process uses 4. Recheck settings and complete weight/config identity before a matched benchmark. No service was restarted.
+
+## Transactional MTP decode correctness profile
+
+`mtp_start` captures prompt hidden windows, pairing each with the next prompt token or the target-greedy seed at the prompt boundary. `mtp_decode` proposes up to eight tokens including that known seed, verifies all positions using the existing exact greedy decision rule, discards provisional target/draft branches and replays the authoritative committed tokens from the immutable parent. Each replay window updates draft KV from target hidden activations and shifted committed tokens; the last shifted token is the next target-greedy seed. Published cursors bind synchronized target and draft positions. Cancellation cannot mutate the input cursor. EOS stops proposal extension; a terminal receipt cannot decode again. Context remains bounded to 512.
+
+This initial correctness profile always replays, including full acceptance. It is intentionally not the profitable serving profile: measure target verification plus replay calls, autoregressive proposal calls and synchronization calls separately. `learned_proposed` and `learned_accepted` exclude the known seed. No throughput claim follows from the real-text gate. The next optimization should reuse accepted target hidden windows and draft prefixes without changing these transactional semantics. Spec 15 plugin completion guards and scheduler integration remain required before enabling production draft admission.
+
+Reproduce with `cargo run --release --locked --example native_mtp_decode_smoke -- NEW_DIRECTORY`. The gate compares each emitted token against independent sequential target decode, checks committed unified state at the existing numerical tolerance and checks parent state bitwise, across widths 1/2/4/8. It records actual learned acceptance rather than synthetic oracle acceptance.
+
+Observed initial real-text gate: all four widths passed sequential target token equality, committed unified-state tolerance and bitwise parent preservation. The simple sequence prompt produced learned acceptance counts 0/0 (width 1), 4/4 (width 2), 12/12 (width 4), and 15/21 (width 8) over four transactions per width, with EOS reached in the last case. These are prompt-specific smoke counts, not a representative acceptance estimate. Width 8 exercised rejected proposals and multi-window replay; target command counts include that replay. No elapsed throughput was measured.

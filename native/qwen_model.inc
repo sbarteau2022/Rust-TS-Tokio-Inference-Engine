@@ -6,7 +6,7 @@
 #include "operator_reference.h"
 namespace {
 struct Qwen {
- Weights& weights;rs_qwen_config c;mx::Stream s;bool shift=false,reference=false,operators=false,full_reference=false;std::vector<int32_t> head_channels;
+ Weights& weights;rs_qwen_config c;mx::Stream s;bool dense=false,shift=false,reference=false,operators=false,full_reference=false;std::vector<int32_t> head_channels;
  Qwen(Weights& w,rs_qwen_config cfg,bool gpu):weights(w),c(cfg),s(mx::default_stream(mx::Device(gpu?mx::Device::gpu:mx::Device::cpu))){
   for(const auto& [key,value]:w.arrays)if(key.find("mtp.")!=std::string::npos || (key.ends_with("conv1d.weight")&&value.shape(-1)!=1))shift=true;
  }
@@ -16,7 +16,7 @@ struct Qwen {
  mx::array silu(const mx::array& x){auto y=mx::multiply(x,mx::sigmoid(x,s),s);if(operators)check_operator("silu",scalar_reference::silu(cpu_values(x)),y);return y;}
  mx::array norm(const mx::array& x,const std::string& key,bool offset=true){auto weight=mx::astype(w(key),x.dtype(),s);if(shift&&offset)weight=mx::add(weight,mx::array(1.f),s);auto y=mx::fast::rms_norm(x,weight,c.epsilon,s);if(operators)check_operator(key+"/rms",scalar_reference::rms(cpu_values(x),cpu_values(weight),x.shape(-1),c.epsilon),y);return y;}
 #include "projection_probe.inc"
- mx::array linear(const mx::array& x,const std::string& p){auto [g,b]=quant(p);auto y=mx::quantized_matmul(x,w(p+".weight"),w(p+".scales"),w(p+".biases"),true,g,b,"affine",s);if(reference)check_projection(x,y,w(p+".weight"),w(p+".scales"),w(p+".biases"),g,b,p);return y;}
+ mx::array linear(const mx::array& x,const std::string& p){if(dense&&w(p+".weight").dtype()==mx::bfloat16){if(w(p+".weight").ndim()!=2)throw std::invalid_argument("MTP dense projection rank");auto matrix=mx::transpose(mx::astype(w(p+".weight"),mx::float32,s),{1,0},s);auto flat=mx::reshape(x,{-1,x.shape(-1)},s);if(flat.shape(0)>8)throw std::invalid_argument("MTP dense row cap");std::vector<mx::array> rows;for(int row=0;row<flat.shape(0);++row)rows.push_back(mx::matmul(mx::take(flat,row,0,s),matrix,s));auto shape=x.shape();shape.back()=w(p+".weight").shape(0);auto y=mx::reshape(mx::stack(rows,0,s),shape,s);if(reference)check_dense(x,y,w(p+".weight"),p);return y;}auto [g,b]=quant(p);auto y=mx::quantized_matmul(x,w(p+".weight"),w(p+".scales"),w(p+".biases"),true,g,b,"affine",s);if(reference)check_projection(x,y,w(p+".weight"),w(p+".scales"),w(p+".biases"),g,b,p);return y;}
  mx::array expert(const mx::array& x,const mx::array& idx,const std::string& p){
   auto [g,b]=quant(p);auto y=mx::gather_qmm(x,w(p+".weight"),w(p+".scales"),w(p+".biases"),{},idx,true,g,b,"affine",{},false,s);
   if(reference){

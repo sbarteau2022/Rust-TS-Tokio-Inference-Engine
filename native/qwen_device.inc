@@ -3,10 +3,10 @@
 namespace {
 struct DevicePayload {std::vector<mx::array> arrays;std::optional<mx::array> hidden;};
 struct DeviceSession {
- void* weights;int gpu;rs_qwen_config config;std::vector<rs_qwen_layer> layers;
- StateTable<DevicePayload> table;
+ void* weights;void* mtp_weights=nullptr;int gpu;size_t slots;uint64_t limit;rs_qwen_config config;std::vector<rs_qwen_layer> layers;
+ StateTable<DevicePayload> table;StateTable<DevicePayload> drafts;
  uint64_t exports=0,uploads=0,steps=0;
- DeviceSession(void* w,int g,rs_qwen_config c,const rs_qwen_layer* l,size_t n,uint64_t owner,size_t slots,uint64_t bytes):weights(w),gpu(g),config(c),layers(l,l+n),table(owner,slots,bytes){}
+ DeviceSession(void* w,int g,rs_qwen_config c,const rs_qwen_layer* l,size_t n,uint64_t owner,size_t slots,uint64_t bytes):weights(w),gpu(g),slots(slots),limit(bytes),config(c),layers(l,l+n),table(owner,slots,bytes),drafts(owner+1,slots,bytes){}
 };
 }
 extern "C" void* rs_qwen_device_create(void* weights,int gpu,const rs_qwen_config* config,const rs_qwen_layer* layers,size_t count,size_t slots,uint64_t bytes,char* error,size_t capacity){
@@ -15,7 +15,7 @@ extern "C" void* rs_qwen_device_create(void* weights,int gpu,const rs_qwen_confi
  // This ABI is deliberately restricted to the qualified architecture and FP32 profile.
  if(c.hidden!=2048||c.layers!=40||c.vocab!=248320||c.q_heads!=16||c.kv_heads!=2||c.head_dim!=256||c.key_heads!=16||c.value_heads!=32||c.key_dim!=128||c.value_dim!=128||c.conv!=4||c.interval!=4||c.context!=512||c.chunk!=8||c.activation_precision!=1||c.experts!=256||c.top!=8||c.intermediate!=512||c.shared!=512||c.rope_dims!=64||c.epsilon!=1e-6f||c.theta!=10000000.f||!(c.group==32||c.group==64||c.group==128)||!(c.bits==2||c.bits==3||c.bits==4||c.bits==5||c.bits==6||c.bits==8))throw std::invalid_argument("device session architecture/profile");
  for(size_t i=0;i<count;++i)if(layers[i].index!=i||layers[i].mixer!=uint32_t((i+1)%4==0))throw std::invalid_argument("device session program");
- static std::atomic<uint64_t> next{1};auto owner=next.load();for(;;){if(!owner||owner==UINT64_MAX)throw std::overflow_error("session owner exhausted");if(next.compare_exchange_weak(owner,owner+1))break;}
+ static std::atomic<uint64_t> next{1};auto owner=next.load();for(;;){if(!owner||owner>=UINT64_MAX-1)throw std::overflow_error("session owner exhausted");if(next.compare_exchange_weak(owner,owner+2))break;}
  result=new DeviceSession(weights,gpu,c,layers,count,owner,slots,bytes);
  });return result;
 }
@@ -25,6 +25,7 @@ static int device_step(void* handle,const StateId* previous,size_t position,cons
  if((position==0)!=(!previous))throw std::invalid_argument("device previous state presence");
  const std::vector<mx::array>* old=nullptr;if(previous){if(previous->position!=position)throw std::invalid_argument("device position mismatch");old=&session.table.get(*previous).arrays;}
  auto state_count=qwen_state_count(c,position+count);auto hidden_bytes=capture_hidden?count*size_t(c.hidden)*4:0;
+ if(session.table.residents()+session.drafts.residents()>=session.slots || state_count*4+hidden_bytes>session.limit-session.table.bytes()-session.drafts.bytes())throw std::runtime_error("combined resident budget exhausted");
  auto id=session.table.reserve(position+count,state_count*4+hidden_bytes);
  try{
   DevicePayload next;
@@ -44,13 +45,15 @@ extern "C" int rs_qwen_device_snapshot(void* handle,const StateId* id,float* out
  for(const auto& a:arrays){if(a.size()>count-offset)throw std::runtime_error("snapshot array capacity");std::memcpy(output+offset,a.data<float>(),a.size()*4);offset+=a.size();}
  if(offset!=count)throw std::runtime_error("snapshot accounting");session.exports+=count*4;
 });}
-extern "C" int rs_qwen_device_stats(void* handle,uint64_t* output,size_t count,char* error,size_t capacity){return checked(error,capacity,[&]{if(!handle||!output||count!=7)throw std::invalid_argument("stats capacity");auto& s=*static_cast<DeviceSession*>(handle);output[0]=s.table.residents();output[1]=s.table.bytes();output[2]=s.exports;output[3]=s.uploads;output[4]=s.steps;output[5]=mx::get_active_memory();output[6]=mx::get_peak_memory();});}
+extern "C" int rs_qwen_device_stats(void* handle,uint64_t* output,size_t count,char* error,size_t capacity){return checked(error,capacity,[&]{if(!handle||!output||count!=7)throw std::invalid_argument("stats capacity");auto& s=*static_cast<DeviceSession*>(handle);output[0]=s.table.residents()+s.drafts.residents();output[1]=s.table.bytes()+s.drafts.bytes();output[2]=s.exports;output[3]=s.uploads;output[4]=s.steps;output[5]=mx::get_active_memory();output[6]=mx::get_peak_memory();});}
 extern "C" void rs_qwen_device_destroy(void* handle){delete static_cast<DeviceSession*>(handle);}
 
-extern "C" int rs_qwen_device_drain(void* handle,uint64_t* invalidated,char* error,size_t capacity){return checked(error,capacity,[&]{if(!handle||!invalidated)throw std::invalid_argument("drain descriptor");auto& s=*static_cast<DeviceSession*>(handle);*invalidated=s.table.residents();s.table.clear();if(s.table.residents()||s.table.bytes())throw std::runtime_error("device drain residual");});}
+extern "C" int rs_qwen_device_drain(void* handle,uint64_t* invalidated,char* error,size_t capacity){return checked(error,capacity,[&]{if(!handle||!invalidated)throw std::invalid_argument("drain descriptor");auto& s=*static_cast<DeviceSession*>(handle);*invalidated=s.table.residents()+s.drafts.residents();s.table.clear();s.drafts.clear();if(s.table.residents()||s.table.bytes()||s.drafts.residents()||s.drafts.bytes())throw std::runtime_error("device drain residual");});}
 
 extern "C" int rs_qwen_device_hidden_snapshot(void* handle,const StateId* id,float* output,size_t count,char* error,size_t capacity){return checked(error,capacity,[&]{
  if(!handle||!id||!output)throw std::invalid_argument("hidden snapshot descriptor");auto& s=*static_cast<DeviceSession*>(handle);const auto& value=s.table.get(*id).hidden;
  if(!value||value->dtype()!=mx::float32||value->size()!=count)throw std::invalid_argument("missing hidden or snapshot capacity");
  std::memcpy(output,value->data<float>(),count*4);s.exports+=count*4;
 });}
+
+#include "qwen_mtp.inc"

@@ -1,0 +1,110 @@
+{
+  "cases": [
+    {
+      "draft_calls": 4,
+      "learned_accepted": 0,
+      "learned_proposed": 0,
+      "target_calls": 8,
+      "text": "4, 5, 6,",
+      "tokens": [
+        19,
+        11,
+        220,
+        20,
+        11,
+        220,
+        21,
+        11
+      ],
+      "width": 1
+    },
+    {
+      "draft_calls": 4,
+      "learned_accepted": 4,
+      "learned_proposed": 4,
+      "target_calls": 8,
+      "text": "4, 5, 6, 7, ",
+      "tokens": [
+        19,
+        11,
+        220,
+        20,
+        11,
+        220,
+        21,
+        11,
+        220,
+        22,
+        11,
+        220
+      ],
+      "width": 2
+    },
+    {
+      "draft_calls": 12,
+      "learned_accepted": 12,
+      "learned_proposed": 12,
+      "target_calls": 8,
+      "text": "4, 5, 6, 7, 8, 9, 10",
+      "tokens": [
+        19,
+        11,
+        220,
+        20,
+        11,
+        220,
+        21,
+        11,
+        220,
+        22,
+        11,
+        220,
+        23,
+        11,
+        220,
+        24,
+        11,
+        220,
+        16,
+        15
+      ],
+      "width": 4
+    },
+    {
+      "draft_calls": 24,
+      "learned_accepted": 15,
+      "learned_proposed": 21,
+      "target_calls": 10,
+      "text": "4, 5, 6, 7, 8, 9, 10...",
+      "tokens": [
+        19,
+        11,
+        220,
+        20,
+        11,
+        220,
+        21,
+        11,
+        220,
+        22,
+        11,
+        220,
+        23,
+        11,
+        220,
+        24,
+        11,
+        220,
+        16,
+        15,
+        1076,
+        248046
+      ],
+      "width": 8
+    }
+  ],
+  "pass": true,
+  "profile": "authoritative-replay-correctness-only",
+  "serving_qualified": false,
+  "throughput_claim": false
+}
