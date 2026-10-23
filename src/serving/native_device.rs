@@ -328,13 +328,24 @@ impl QwenDeviceExecutor {
     }
     /// Opt-in MTP input boundary: captures every post-norm row with unified state.
     pub async fn hidden_block(&self, state: &DeviceState, tokens: Vec<u32>) -> Result<DeviceBlock> {
+        self.hidden_block_guarded(state, tokens, None, None).await
+    }
+    pub(super) async fn hidden_block_guarded(
+        &self,
+        state: &DeviceState,
+        tokens: Vec<u32>,
+        completion: Option<CompletionGuard>,
+        calls: Option<Arc<AtomicU64>>,
+    ) -> Result<DeviceBlock> {
         let ir = ModelStepIr::compile(
             StepKind::Prefill,
             state.position(),
             tokens,
             self.architecture.vocab as u32,
         )?;
-        let result = self.execute_mode(state, ir, true, true, None, None).await?;
+        let result = self
+            .execute_mode(state, ir, true, true, completion, calls)
+            .await?;
         Ok(DeviceBlock {
             state: result.state,
             logits: result

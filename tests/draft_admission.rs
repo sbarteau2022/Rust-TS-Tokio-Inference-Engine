@@ -39,6 +39,7 @@ fn queued(a: DraftAdmission) -> DraftTicket {
 fn complete(p: DraftPermit, ns: u64, tokens: u64) {
     p.bind(&[2, 3]).unwrap();
     p.finish(DraftOutcome {
+        known_prefix: 0,
         proposed: 2,
         accepted: 2,
         committed: tokens,
@@ -162,6 +163,7 @@ fn bounded_pressure_abandonment_and_exact_decay() {
     held.bind(&[2, 3]).unwrap();
     assert!(held.bind(&[2]).is_err());
     held.finish(DraftOutcome {
+        known_prefix: 0,
         proposed: 2,
         accepted: 3,
         committed: 1,
@@ -329,6 +331,7 @@ fn overflow_is_transactional_and_false_progress_is_rejected() {
     p.bind(&[2, 3]).unwrap();
     assert!(p
         .finish(DraftOutcome {
+            known_prefix: 0,
             proposed: 2,
             accepted: 2,
             committed: 2,
@@ -351,6 +354,7 @@ fn overflow_is_transactional_and_false_progress_is_rejected() {
     p.bind(&[2]).unwrap();
     assert!(p
         .finish(DraftOutcome {
+            known_prefix: 0,
             proposed: 2,
             accepted: 2,
             committed: 3,
@@ -377,4 +381,95 @@ fn concurrent_qualification_cannot_overspend_the_trial_budget() {
     complete(first, 10, 2);
     assert!(c.poll_draft(second).is_err()); // Baseline absent, qualification exhausted.
     assert_eq!(c.draft_ledger(id).unwrap().observations, 1);
+}
+
+#[test]
+fn mtp_known_seed_is_bound_but_never_earns_learned_credit() {
+    for learned in 0..=7u64 {
+        for accepted in 0..=learned {
+            let c = cache(1);
+            let id = c.register_proposer("mtp".into(), identity()).unwrap();
+            let parent = prefix_key(&identity(), &[1]).unwrap();
+            let p = ready(
+                c.request_draft(id, parent, learned as usize + 1, true)
+                    .unwrap(),
+            );
+            p.bind(&vec![2; learned as usize + 1]).unwrap();
+            p.finish(DraftOutcome {
+                known_prefix: 1,
+                proposed: learned,
+                accepted,
+                committed: accepted + 2,
+                target_calls: 2,
+                cost_ns: 100,
+                failed: false,
+            })
+            .unwrap();
+            let l = c.draft_ledger(id).unwrap();
+            assert_eq!(
+                (l.known_prefix, l.proposed, l.accepted, l.committed),
+                (1, learned, accepted, accepted + 2)
+            );
+            assert_eq!(c.draft_stats().unwrap().active, 0);
+        }
+    }
+    // Seed-only work cannot earn a speculative reward or profitable admission.
+    let c = cache(1);
+    let id = c.register_proposer("seed-only".into(), identity()).unwrap();
+    let parent = prefix_key(&identity(), &[1]).unwrap();
+    c.record_no_draft(id, 10, 1).unwrap();
+    let p = ready(c.request_draft(id, parent, 1, true).unwrap());
+    p.bind(&[2]).unwrap();
+    p.finish(DraftOutcome {
+        known_prefix: 1,
+        proposed: 0,
+        accepted: 0,
+        committed: 1,
+        target_calls: 1,
+        cost_ns: 100,
+        failed: false,
+    })
+    .unwrap();
+    assert_eq!(c.draft_ledger(id).unwrap().accepted, 0);
+    assert!(!c.draft_ledger(id).unwrap().profitable);
+}
+
+#[test]
+fn mtp_seed_geometry_cannot_forge_progress_or_binding() {
+    for (known, proposed, accepted, committed, bound) in [
+        (2, 0, 0, 1, 2),
+        (1, 8, 0, 1, 8),
+        (1, 1, 0, 3, 2),
+        (1, 1, 1, 3, 1),
+        (u64::MAX, 0, 0, 0, 1),
+    ] {
+        let c = cache(1);
+        let id = c.register_proposer("mtp-fault".into(), identity()).unwrap();
+        let parent = prefix_key(&identity(), &[1]).unwrap();
+        let p = ready(c.request_draft(id, parent, 8, true).unwrap());
+        p.bind(&vec![2; bound]).unwrap();
+        assert!(p
+            .finish(DraftOutcome {
+                known_prefix: known,
+                proposed,
+                accepted,
+                committed,
+                target_calls: 1,
+                cost_ns: 100,
+                failed: false
+            })
+            .is_err());
+        let l = c.draft_ledger(id).unwrap();
+        assert_eq!(
+            (
+                l.observations,
+                l.known_prefix,
+                l.proposed,
+                l.accepted,
+                l.committed
+            ),
+            (0, 0, 0, 0, 0)
+        );
+        assert_eq!(l.unfinished, 1);
+    }
 }

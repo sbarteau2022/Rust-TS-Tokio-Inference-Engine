@@ -293,6 +293,7 @@ impl AutomatonProposer {
             };
             let mut outcome = match &result {
                 Ok(t) => DraftOutcome {
+                    known_prefix: 0,
                     proposed: t.proposed as u64,
                     accepted: t.accepted as u64,
                     committed: t.emitted.len() as u64,
@@ -301,6 +302,7 @@ impl AutomatonProposer {
                     failed: false,
                 },
                 Err(_) => DraftOutcome {
+                    known_prefix: 0,
                     proposed: attempted_proposed as u64,
                     accepted: 0,
                     committed: 0,
@@ -322,3 +324,5 @@ impl AutomatonProposer {
         result
     }
 }
+
+include!("native_mtp_automaton.rs");

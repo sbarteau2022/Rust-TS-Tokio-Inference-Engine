@@ -28,6 +28,8 @@ pub enum DraftAdmission {
 }
 #[derive(Clone, Copy, Debug)]
 pub struct DraftOutcome {
+    /// Known target prefix; excluded from learned proposal/reward counts.
+    pub known_prefix: u64,
     pub proposed: u64,
     pub accepted: u64,
     /// Final cursor handed to the response channel, not end-user delivery proof.
@@ -40,6 +42,7 @@ pub struct DraftOutcome {
 }
 #[derive(Clone, Default, Debug, Serialize)]
 pub struct DraftLedger {
+    pub known_prefix: u64,
     pub observations: u64,
     pub proposed: u64,
     pub accepted: u64,
@@ -512,9 +515,10 @@ impl DraftPermit {
     }
     pub fn finish(mut self, outcome: DraftOutcome) -> Result<()> {
         ensure!(
-            outcome.proposed <= 8
+            outcome.known_prefix <= 1
+                && outcome.proposed <= 8 - outcome.known_prefix
                 && outcome.accepted <= outcome.proposed
-                && outcome.committed <= outcome.accepted + 1
+                && outcome.committed <= outcome.known_prefix + outcome.accepted + 1
                 && outcome.target_calls <= 2
                 && outcome.cost_ns > 0
                 && (outcome.failed || outcome.target_calls > 0)
@@ -526,7 +530,9 @@ impl DraftPermit {
         let id = self.ticket.context("consumed draft permit")?;
         let t = d.pending.get(&id).context("missing draft permit")?;
         ensure!(
-            t.running && t.key.is_some() && t.bound == Some(outcome.proposed as usize),
+            t.running
+                && t.key.is_some()
+                && t.bound == Some((outcome.known_prefix + outcome.proposed) as usize),
             "unbound draft outcome"
         );
         let p = d.proposers.get(&t.proposer).unwrap();
@@ -543,6 +549,7 @@ impl DraftPermit {
         add!(window_observations, 1);
         add!(window_cost_ns, outcome.cost_ns);
         add!(window_committed, outcome.committed);
+        add!(known_prefix, outcome.known_prefix);
         add!(proposed, outcome.proposed);
         add!(accepted, outcome.accepted);
         add!(committed, outcome.committed);

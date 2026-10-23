@@ -1,0 +1,45 @@
+warning: rust-server@0.1.0: In file included from native/mlx_bridge.cpp:2:
+warning: rust-server@0.1.0: In file included from /Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/vendor/mlx/include/mlx/mlx.h:5:
+warning: rust-server@0.1.0: In file included from /Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/vendor/mlx/include/mlx/array.h:11:
+warning: rust-server@0.1.0: /Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/vendor/mlx/include/mlx/allocator.h:50:36: warning: unused parameter 'ptr' [-Wunused-parameter]
+warning: rust-server@0.1.0:    50 |   virtual Buffer make_buffer(void* ptr, size_t size) {
+warning: rust-server@0.1.0:       |                                    ^
+warning: rust-server@0.1.0: /Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/vendor/mlx/include/mlx/allocator.h:50:48: warning: unused parameter 'size' [-Wunused-parameter]
+warning: rust-server@0.1.0:    50 |   virtual Buffer make_buffer(void* ptr, size_t size) {
+warning: rust-server@0.1.0:       |                                                ^
+warning: rust-server@0.1.0: /Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/vendor/mlx/include/mlx/allocator.h:53:31: warning: unused parameter 'buffer' [-Wunused-parameter]
+warning: rust-server@0.1.0:    53 |   virtual void release(Buffer buffer) {}
+warning: rust-server@0.1.0:       |                               ^
+warning: rust-server@0.1.0: In file included from native/mlx_bridge.cpp:2:
+warning: rust-server@0.1.0: In file included from /Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/vendor/mlx/include/mlx/mlx.h:5:
+warning: rust-server@0.1.0: In file included from /Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/vendor/mlx/include/mlx/array.h:13:
+warning: rust-server@0.1.0: In file included from /Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/vendor/mlx/include/mlx/dtype.h:9:
+warning: rust-server@0.1.0: In file included from /Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/vendor/mlx/include/mlx/types/complex.h:5:
+warning: rust-server@0.1.0: In file included from /Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/vendor/mlx/include/mlx/types/half_types.h:32:
+warning: rust-server@0.1.0: /Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/vendor/mlx/include/mlx/types/bf16.h:29:3: warning: definition of implicit copy assignment operator for '_MLX_BFloat16' is deprecated because it has a user-declared copy constructor [-Wdeprecated-copy]
+warning: rust-server@0.1.0:    29 |   _MLX_BFloat16(_MLX_BFloat16 const&) = default;
+warning: rust-server@0.1.0:       |   ^
+warning: rust-server@0.1.0: /Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/vendor/mlx/include/mlx/types/bf16.h:38:19: note: in implicit copy assignment operator for 'mlx::core::_MLX_BFloat16' first required here
+warning: rust-server@0.1.0:    38 |     return (*this = _MLX_BFloat16(x));
+warning: rust-server@0.1.0:       |                   ^
+warning: rust-server@0.1.0: 4 warnings generated.
+   Compiling rust-server v0.1.0 (/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 2.74s
+warning: the following packages contain code that will be rejected by a future version of Rust: block v0.1.6
+note: to see what the problems were, use the option `--future-incompat-report`, or run `cargo report future-incompatibilities --id 1`
+     Running tests/draft_admission.rs (target/debug/deps/draft_admission-911e937cffc3cc22)
+
+running 11 tests
+test foreign_handles_inactive_policy_and_invalid_inputs ... ok
+test concurrent_qualification_cannot_overspend_the_trial_budget ... ok
+test overflow_is_transactional_and_false_progress_is_rejected ... ok
+test bounded_pressure_abandonment_and_exact_decay ... ok
+test continuation_queue_expiry_cancellation_and_epoch_barrier ... ok
+test prefill_and_drafts_share_the_queue_bound_without_fake_kv_residency ... ok
+test measured_profit_and_identity_not_acceptance_authorize_work ... ok
+test mtp_seed_geometry_cannot_forge_progress_or_binding ... ok
+test plugins_are_arbitrated_by_cost_with_bounded_requalification ... ok
+test mtp_known_seed_is_bound_but_never_earns_learned_credit ... ok
+test ten_thousand_audit_cycles_preserve_bounds_and_progress ... ok
+
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.50s

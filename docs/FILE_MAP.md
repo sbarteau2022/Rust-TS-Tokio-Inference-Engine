@@ -2,7 +2,7 @@
 title: "Implementation file map and evidence index"
 document_type: "implementation"
 version: "1.0.0"
-date: "2026-10-23T05:56:44Z"
+date: "2026-10-23T06:10:12Z"
 implementation_date: null
 author: "Codex for Stewart Barteau"
 reviewers: []
@@ -15,7 +15,7 @@ related_files:
     lines: "1-1015"
     role: "config"
   - path: "Cargo.toml"
-    lines: "1-69"
+    lines: "1-73"
     role: "config"
   - path: "backend/rapid_worker.py"
     lines: "1-165"
@@ -37,6 +37,9 @@ related_files:
     role: "primary"
   - path: "examples/native_hidden_smoke.rs"
     lines: "1-170"
+    role: "primary"
+  - path: "examples/native_mtp_automaton_smoke.rs"
+    lines: "1-218"
     role: "primary"
   - path: "examples/native_mtp_bench.rs"
     lines: "1-130"
@@ -150,7 +153,7 @@ related_files:
     lines: "1-35"
     role: "test"
   - path: "judges/run.py"
-    lines: "1-229"
+    lines: "1-230"
     role: "test"
   - path: "judges/speculative_report.py"
     lines: "1-74"
@@ -231,7 +234,7 @@ related_files:
     lines: "1-614"
     role: "primary"
   - path: "src/cache/drafts.rs"
-    lines: "1-592"
+    lines: "1-599"
     role: "primary"
   - path: "src/cache/mod.rs"
     lines: "1-1078"
@@ -291,13 +294,13 @@ related_files:
     lines: "1-244"
     role: "primary"
   - path: "src/serving/native_automaton.rs"
-    lines: "1-324"
+    lines: "1-328"
     role: "primary"
   - path: "src/serving/native_boundary.rs"
     lines: "1-193"
     role: "primary"
   - path: "src/serving/native_device.rs"
-    lines: "1-798"
+    lines: "1-809"
     role: "primary"
   - path: "src/serving/native_device_scheduler.rs"
     lines: "1-178"
@@ -323,11 +326,14 @@ related_files:
   - path: "src/serving/native_mtp.rs"
     lines: "1-468"
     role: "primary"
+  - path: "src/serving/native_mtp_automaton.rs"
+    lines: "1-98"
+    role: "primary"
   - path: "src/serving/native_mtp_decode.rs"
-    lines: "1-130"
+    lines: "1-149"
     role: "primary"
   - path: "src/serving/native_mtp_device.rs"
-    lines: "1-417"
+    lines: "1-436"
     role: "primary"
   - path: "src/serving/native_ops.rs"
     lines: "1-273"
@@ -381,7 +387,7 @@ related_files:
     lines: "1-264"
     role: "test"
   - path: "tests/draft_admission.rs"
-    lines: "1-380"
+    lines: "1-475"
     role: "test"
   - path: "tests/fixed_point.rs"
     lines: "1-146"
@@ -467,7 +473,7 @@ Exact text line references for this local implementation. Binary fixtures have n
 | --- | --- | --- |
 | `.gitignore` | 1–9 | config |
 | `Cargo.lock` | 1–1015 | config |
-| `Cargo.toml` | 1–69 | config |
+| `Cargo.toml` | 1–73 | config |
 | `backend/rapid_worker.py` | 1–165 | primary |
 | `build.rs` | 1–63 | primary |
 | `examples/native_automaton_smoke.rs` | 1–394 | primary |
@@ -475,6 +481,7 @@ Exact text line references for this local implementation. Binary fixtures have n
 | `examples/native_device_reference.rs` | 1–166 | primary |
 | `examples/native_discriminators.rs` | 1–145 | primary |
 | `examples/native_hidden_smoke.rs` | 1–170 | primary |
+| `examples/native_mtp_automaton_smoke.rs` | 1–218 | primary |
 | `examples/native_mtp_bench.rs` | 1–130 | primary |
 | `examples/native_mtp_decode_smoke.rs` | 1–160 | primary |
 | `examples/native_mtp_smoke.rs` | 1–186 | primary |
@@ -512,7 +519,7 @@ Exact text line references for this local implementation. Binary fixtures have n
 | `judges/operator_reference.cpp` | 1–29 | test |
 | `judges/projection_reference.cpp` | 1–53 | test |
 | `judges/resources.py` | 1–35 | test |
-| `judges/run.py` | 1–229 | test |
+| `judges/run.py` | 1–230 | test |
 | `judges/speculative_report.py` | 1–74 | test |
 | `judges/state_table.cpp` | 1–21 | test |
 | `judges/suite_reference.py` | 1–248 | test |
@@ -539,7 +546,7 @@ Exact text line references for this local implementation. Binary fixtures have n
 | `run.sh` | 1–5 | primary |
 | `schema/trace.fbs` | 1–12 | primary |
 | `src/backend.rs` | 1–614 | primary |
-| `src/cache/drafts.rs` | 1–592 | primary |
+| `src/cache/drafts.rs` | 1–599 | primary |
 | `src/cache/mod.rs` | 1–1078 | primary |
 | `src/chain.rs` | 1–50 | primary |
 | `src/completion.rs` | 1–218 | primary |
@@ -559,9 +566,9 @@ Exact text line references for this local implementation. Binary fixtures have n
 | `src/serving/kv.rs` | 1–280 | primary |
 | `src/serving/mod.rs` | 1–107 | primary |
 | `src/serving/model_ir.rs` | 1–244 | primary |
-| `src/serving/native_automaton.rs` | 1–324 | primary |
+| `src/serving/native_automaton.rs` | 1–328 | primary |
 | `src/serving/native_boundary.rs` | 1–193 | primary |
-| `src/serving/native_device.rs` | 1–798 | primary |
+| `src/serving/native_device.rs` | 1–809 | primary |
 | `src/serving/native_device_scheduler.rs` | 1–178 | primary |
 | `src/serving/native_device_smoke.rs` | 1–162 | primary |
 | `src/serving/native_diagnose.rs` | 1–104 | primary |
@@ -570,8 +577,9 @@ Exact text line references for this local implementation. Binary fixtures have n
 | `src/serving/native_layer_reference.rs` | 1–93 | primary |
 | `src/serving/native_mlx.rs` | 1–950 | primary |
 | `src/serving/native_mtp.rs` | 1–468 | primary |
-| `src/serving/native_mtp_decode.rs` | 1–130 | primary |
-| `src/serving/native_mtp_device.rs` | 1–417 | primary |
+| `src/serving/native_mtp_automaton.rs` | 1–98 | primary |
+| `src/serving/native_mtp_decode.rs` | 1–149 | primary |
+| `src/serving/native_mtp_device.rs` | 1–436 | primary |
 | `src/serving/native_ops.rs` | 1–273 | primary |
 | `src/serving/native_qwen.rs` | 1–690 | primary |
 | `src/serving/native_reference.rs` | 1–100 | primary |
@@ -589,7 +597,7 @@ Exact text line references for this local implementation. Binary fixtures have n
 | `tests/async_completion.rs` | 1–192 | test |
 | `tests/cache_control.rs` | 1–419 | test |
 | `tests/cordic.rs` | 1–264 | test |
-| `tests/draft_admission.rs` | 1–380 | test |
+| `tests/draft_admission.rs` | 1–475 | test |
 | `tests/fixed_point.rs` | 1–146 | test |
 | `tests/grid.rs` | 1–41 | test |
 | `tests/native_execution.rs` | 1–486 | test |
@@ -614,38 +622,38 @@ Exact text line references for this local implementation. Binary fixtures have n
 | `ts/trace.test.ts` | 1–45 | test |
 | `ts/trace.ts` | 1–73 | primary |
 | `tsconfig.json` | 1–1 | config |
-| `README.md` | 1–1066 | primary |
-| `docs/ACCELERATOR_ROADMAP.md` | 1–510 | primary |
-| `docs/ADVERSARIAL_REVIEW.md` | 1–690 | primary |
-| `docs/ASYNC_COMPLETION.md` | 1–543 | primary |
-| `docs/DESIGN.md` | 1–497 | primary |
-| `docs/DEVICE_STATE_IMPLEMENTATION.md` | 1–635 | primary |
-| `docs/DEVICE_STATE_OWNERSHIP.md` | 1–634 | primary |
-| `docs/FILE_MAP.md` | 1–656 | primary |
-| `docs/FIXED_POINT.md` | 1–567 | primary |
-| `docs/Failures.md` | 1–495 | primary |
-| `docs/GRID_THROUGHPUT.md` | 1–526 | primary |
-| `docs/MODEL_ADVERSARIAL_REVIEW.md` | 1–508 | primary |
-| `docs/MODEL_INTEGRATION.md` | 1–615 | primary |
-| `docs/NATIVE_DISCRIMINATORS.md` | 1–554 | primary |
-| `docs/NATIVE_LAYER_REFERENCE.md` | 1–642 | primary |
-| `docs/NATIVE_MLX_BACKEND.md` | 1–580 | primary |
-| `docs/NATIVE_QWEN_GENERATION.md` | 1–863 | primary |
-| `docs/NATIVE_SPECULATIVE_VERIFIER.md` | 1–581 | primary |
-| `docs/NATIVE_SUITE_REFERENCE.md` | 1–594 | primary |
-| `docs/NATIVE_TUNING_PLAN.md` | 1–606 | primary |
-| `docs/NATIVE_WEIGHTS_EXECUTION.md` | 1–520 | primary |
-| `docs/NEXT_STEPS.md` | 1–745 | primary |
-| `docs/PRODUCTION_PIPELINE.md` | 1–527 | primary |
-| `docs/RESOURCE_BACKEND_DESIGN.md` | 1–507 | primary |
-| `docs/RESOURCE_IMPLEMENTATION.md` | 1–564 | primary |
-| `docs/SAMPLING_POLICY_STATUS.md` | 1–488 | primary |
-| `docs/SERVING_ARCHITECTURE.md` | 1–632 | primary |
-| `docs/SOURCE_SPEC.md` | 1–683 | primary |
-| `docs/SPEC15_DRAFT_ADMISSION.md` | 1–538 | primary |
-| `docs/SPEC15_IMPLEMENTATION.md` | 1–562 | primary |
-| `docs/SPEC15_SOURCE.md` | 1–720 | primary |
-| `docs/SPECULATIVE_RESEARCH_2026_10.md` | 1–587 | primary |
+| `README.md` | 1–1080 | primary |
+| `docs/ACCELERATOR_ROADMAP.md` | 1–516 | primary |
+| `docs/ADVERSARIAL_REVIEW.md` | 1–706 | primary |
+| `docs/ASYNC_COMPLETION.md` | 1–549 | primary |
+| `docs/DESIGN.md` | 1–503 | primary |
+| `docs/DEVICE_STATE_IMPLEMENTATION.md` | 1–641 | primary |
+| `docs/DEVICE_STATE_OWNERSHIP.md` | 1–640 | primary |
+| `docs/FILE_MAP.md` | 1–664 | primary |
+| `docs/FIXED_POINT.md` | 1–573 | primary |
+| `docs/Failures.md` | 1–501 | primary |
+| `docs/GRID_THROUGHPUT.md` | 1–532 | primary |
+| `docs/MODEL_ADVERSARIAL_REVIEW.md` | 1–514 | primary |
+| `docs/MODEL_INTEGRATION.md` | 1–621 | primary |
+| `docs/NATIVE_DISCRIMINATORS.md` | 1–560 | primary |
+| `docs/NATIVE_LAYER_REFERENCE.md` | 1–648 | primary |
+| `docs/NATIVE_MLX_BACKEND.md` | 1–586 | primary |
+| `docs/NATIVE_QWEN_GENERATION.md` | 1–869 | primary |
+| `docs/NATIVE_SPECULATIVE_VERIFIER.md` | 1–587 | primary |
+| `docs/NATIVE_SUITE_REFERENCE.md` | 1–600 | primary |
+| `docs/NATIVE_TUNING_PLAN.md` | 1–622 | primary |
+| `docs/NATIVE_WEIGHTS_EXECUTION.md` | 1–526 | primary |
+| `docs/NEXT_STEPS.md` | 1–755 | primary |
+| `docs/PRODUCTION_PIPELINE.md` | 1–533 | primary |
+| `docs/RESOURCE_BACKEND_DESIGN.md` | 1–513 | primary |
+| `docs/RESOURCE_IMPLEMENTATION.md` | 1–570 | primary |
+| `docs/SAMPLING_POLICY_STATUS.md` | 1–494 | primary |
+| `docs/SERVING_ARCHITECTURE.md` | 1–638 | primary |
+| `docs/SOURCE_SPEC.md` | 1–689 | primary |
+| `docs/SPEC15_DRAFT_ADMISSION.md` | 1–544 | primary |
+| `docs/SPEC15_IMPLEMENTATION.md` | 1–568 | primary |
+| `docs/SPEC15_SOURCE.md` | 1–726 | primary |
+| `docs/SPECULATIVE_RESEARCH_2026_10.md` | 1–593 | primary |
 
 # Evidence
 

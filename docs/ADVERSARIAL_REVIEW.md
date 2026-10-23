@@ -15,7 +15,7 @@ related_files:
     lines: "1-1015"
     role: "config"
   - path: "Cargo.toml"
-    lines: "1-69"
+    lines: "1-73"
     role: "config"
   - path: "backend/rapid_worker.py"
     lines: "1-165"
@@ -37,6 +37,9 @@ related_files:
     role: "primary"
   - path: "examples/native_hidden_smoke.rs"
     lines: "1-170"
+    role: "primary"
+  - path: "examples/native_mtp_automaton_smoke.rs"
+    lines: "1-218"
     role: "primary"
   - path: "examples/native_mtp_bench.rs"
     lines: "1-130"
@@ -150,7 +153,7 @@ related_files:
     lines: "1-35"
     role: "test"
   - path: "judges/run.py"
-    lines: "1-229"
+    lines: "1-230"
     role: "test"
   - path: "judges/speculative_report.py"
     lines: "1-74"
@@ -231,7 +234,7 @@ related_files:
     lines: "1-614"
     role: "primary"
   - path: "src/cache/drafts.rs"
-    lines: "1-592"
+    lines: "1-599"
     role: "primary"
   - path: "src/cache/mod.rs"
     lines: "1-1078"
@@ -291,13 +294,13 @@ related_files:
     lines: "1-244"
     role: "primary"
   - path: "src/serving/native_automaton.rs"
-    lines: "1-324"
+    lines: "1-328"
     role: "primary"
   - path: "src/serving/native_boundary.rs"
     lines: "1-193"
     role: "primary"
   - path: "src/serving/native_device.rs"
-    lines: "1-798"
+    lines: "1-809"
     role: "primary"
   - path: "src/serving/native_device_scheduler.rs"
     lines: "1-178"
@@ -323,11 +326,14 @@ related_files:
   - path: "src/serving/native_mtp.rs"
     lines: "1-468"
     role: "primary"
+  - path: "src/serving/native_mtp_automaton.rs"
+    lines: "1-98"
+    role: "primary"
   - path: "src/serving/native_mtp_decode.rs"
-    lines: "1-130"
+    lines: "1-149"
     role: "primary"
   - path: "src/serving/native_mtp_device.rs"
-    lines: "1-417"
+    lines: "1-436"
     role: "primary"
   - path: "src/serving/native_ops.rs"
     lines: "1-273"
@@ -381,7 +387,7 @@ related_files:
     lines: "1-264"
     role: "test"
   - path: "tests/draft_admission.rs"
-    lines: "1-380"
+    lines: "1-475"
     role: "test"
   - path: "tests/fixed_point.rs"
     lines: "1-146"
@@ -688,3 +694,13 @@ Transactional decode restores from the committed draft parent after every propos
 ## Accepted-window reuse review
 
 Reuse is allowed only when every proposed token matches target greedy verification. Partial acceptance cannot truncate unified recurrent/convolution state: it drops the provisional state before replay. A target bonus is separately evaluated; EOS and output-budget exhaustion can finish on the verified block without bonus. Draft state always resynchronizes from target hidden rows, never from speculative recursive hidden values. The debug reference retains unconditional target replay. Tests compare decisions, unified state, exact covered token counts and forwarded-work savings from identical parents. The bounded API includes bonus/correction output in its limit. Measured target-token savings are not proof of latency improvement because splitting synchronization can add MTP calls.
+
+## Stateful MTP admission review
+
+The controller counts the known seed separately from learned proposals and rewards only learned acceptance. Adversarial geometry tests reject multiple/overflowing known prefixes, over-cap total candidates, mismatched branch bindings and extra claimed committed progress. Full candidate identity remains bound to the committed parent. Existing retrieval outcomes use known-prefix zero; the existing profitability, queue, epoch and 10,000-audit tests remain mandatory.
+
+The real-model gate compares controller-admitted tokens with independent sequential target decode and checks unified state. Cancellation drops the result receiver after admission: native work drains, the ledger gains cost/observations but no published progress, the committed parent stays bitwise unchanged and unfinished remains zero. Shared resident-table pressure is injected after target verification but before draft synchronization; the failed transaction records one target call, zero accepted/committed tokens and a failure, then recovers after freeing pressure. Controller pressure cancels queued metadata and runs a one-token maintained-state fallback. A deliberately held control permit is abandoned only in the test; its unfinished accounting is expected, unlike receiver cancellation. Shutdown must drain all logical bytes. These are correctness controls, not representative throughput or production policy settings.
+
+Remaining boundaries: prompt initialization cost is reported outside decode admission; fallback baseline includes MTP maintenance under a distinct profile identity; common typed-cursor arbitration with retrieval/Dspark, streaming, sustained multi-lane scheduling and target-only fallback without maintained draft state remain unfinished.
+
+The real cancellation harness uses a current-thread Tokio runtime so the detached proposer cannot finish before the waiter is canceled during its first poll. Native execution still runs on its separate worker. This removes a timing-dependent cancellation-test race; the harness then yields and waits for command/accounting drain.

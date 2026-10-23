@@ -16,6 +16,17 @@ pub struct MtpTransaction {
     pub replayed_target_tokens: usize,
     pub target_forward_tokens: usize,
 }
+pub(super) struct MtpPrepared {
+    cursor: MtpCursor,
+    tokens: Vec<u32>,
+    draft_calls: usize,
+    remaining: usize,
+    eos: Vec<u32>,
+    completion: Option<super::CompletionGuard>,
+}
+impl MtpPrepared {
+    pub(super) fn tokens(&self) -> &[u32] { &self.tokens }
+}
 impl MtpCursor {
     pub fn target(&self) -> &GreedyCursor { &self.target }
 }
@@ -60,6 +71,10 @@ impl QwenDeviceExecutor {
         self.mtp_decode_mode(cursor, width, usize::MAX, eos, false).await
     }
     async fn mtp_decode_mode(&self, cursor: &MtpCursor, width: usize, output_budget: usize, eos: &[u32], reuse: bool) -> Result<MtpTransaction> {
+        let prepared = self.mtp_prepare(cursor, width, output_budget, eos, None).await?;
+        self.mtp_commit(prepared, reuse, None).await
+    }
+    pub(super) async fn mtp_prepare(&self, cursor: &MtpCursor, width: usize, output_budget: usize, eos: &[u32], completion: Option<super::CompletionGuard>) -> Result<MtpPrepared> {
         ensure!(!cursor.target.terminal && (1..=8).contains(&width), "MTP terminal/width");
         let remaining = 512usize.saturating_sub(cursor.target.state.position()).min(output_budget);
         ensure!(remaining > 0, "MTP context exhausted");
@@ -73,16 +88,20 @@ impl QwenDeviceExecutor {
             let token = winner(&draft_logits)?;
             tokens.push(token);
             if tokens.len() < count && !eos.contains(&token) {
-                let step = self.mtp_next(&branch, token).await?;
+                let step = self.mtp_next_guarded(&branch, token, completion.clone()).await?;
                 branch = step.state;
                 draft_logits = step.logits;
                 draft_calls += 1;
             }
         }
         drop(branch);
+        Ok(MtpPrepared { cursor: cursor.clone(), tokens, draft_calls, remaining, eos: eos.to_vec(), completion })
+    }
+    pub(super) async fn mtp_commit(&self, prepared: MtpPrepared, reuse: bool, calls: Option<Arc<AtomicU64>>) -> Result<MtpTransaction> {
+        let MtpPrepared { cursor, tokens, mut draft_calls, remaining, eos, completion } = prepared;
         let proposed = tokens.len();
-        let block = self.hidden_block(&cursor.target.state, tokens.clone()).await?;
-        let decision = plan(&cursor.target.logits, &tokens, &block.logits, eos, remaining)?;
+        let block = self.hidden_block_guarded(&cursor.target.state, tokens.clone(), completion.clone(), calls.clone()).await?;
+        let decision = plan(&cursor.target.logits, &tokens, &block.logits, &eos, remaining)?;
         let reused_target_tokens = if reuse && decision.accepted == proposed { proposed } else { 0 };
         let mut verified = if reused_target_tokens > 0 { Some(block) } else { drop(block); None };
         let mut state = cursor.target.state.clone();
@@ -96,7 +115,7 @@ impl QwenDeviceExecutor {
             let chunk = &decision.emitted[start..start + count];
             let block = if let Some(block) = verified.take() { block } else {
                 target_calls += 1;
-                self.hidden_block(&state, chunk.to_vec()).await?
+                self.hidden_block_guarded(&state, chunk.to_vec(), completion.clone(), calls.clone()).await?
             };
             logits = block.logits.last().expect("nonempty replay").clone();
             let next = if start + chunk.len() < decision.emitted.len() {
@@ -104,7 +123,7 @@ impl QwenDeviceExecutor {
             } else { winner(&logits)? };
             let mut shifted = chunk[1..].to_vec();
             shifted.push(next);
-            let result = self.mtp_prefill(&draft, &block.state, 0, shifted).await?;
+            let result = self.mtp_prefill_guarded(&draft, &block.state, 0, shifted, completion.clone()).await?;
             draft_calls += 1;
             draft = result.state.clone();
             latest = Some(result);

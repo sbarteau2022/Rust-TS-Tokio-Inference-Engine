@@ -1,7 +1,7 @@
 ---
 title: "Rust Server — Apple native kernel compiler and runtime"
 document_type: "implementation"
-version: "1.28.0"
+version: "1.29.0"
 date: "2026-10-23T05:21:07Z"
 implementation_date: null
 author: "Codex for Stewart Barteau"
@@ -15,7 +15,7 @@ related_files:
     lines: "1-1015"
     role: "config"
   - path: "Cargo.toml"
-    lines: "1-69"
+    lines: "1-73"
     role: "config"
   - path: "backend/rapid_worker.py"
     lines: "1-165"
@@ -37,6 +37,9 @@ related_files:
     role: "primary"
   - path: "examples/native_hidden_smoke.rs"
     lines: "1-170"
+    role: "primary"
+  - path: "examples/native_mtp_automaton_smoke.rs"
+    lines: "1-218"
     role: "primary"
   - path: "examples/native_mtp_bench.rs"
     lines: "1-130"
@@ -150,7 +153,7 @@ related_files:
     lines: "1-35"
     role: "test"
   - path: "judges/run.py"
-    lines: "1-229"
+    lines: "1-230"
     role: "test"
   - path: "judges/speculative_report.py"
     lines: "1-74"
@@ -231,7 +234,7 @@ related_files:
     lines: "1-614"
     role: "primary"
   - path: "src/cache/drafts.rs"
-    lines: "1-592"
+    lines: "1-599"
     role: "primary"
   - path: "src/cache/mod.rs"
     lines: "1-1078"
@@ -291,13 +294,13 @@ related_files:
     lines: "1-244"
     role: "primary"
   - path: "src/serving/native_automaton.rs"
-    lines: "1-324"
+    lines: "1-328"
     role: "primary"
   - path: "src/serving/native_boundary.rs"
     lines: "1-193"
     role: "primary"
   - path: "src/serving/native_device.rs"
-    lines: "1-798"
+    lines: "1-809"
     role: "primary"
   - path: "src/serving/native_device_scheduler.rs"
     lines: "1-178"
@@ -323,11 +326,14 @@ related_files:
   - path: "src/serving/native_mtp.rs"
     lines: "1-468"
     role: "primary"
+  - path: "src/serving/native_mtp_automaton.rs"
+    lines: "1-98"
+    role: "primary"
   - path: "src/serving/native_mtp_decode.rs"
-    lines: "1-130"
+    lines: "1-149"
     role: "primary"
   - path: "src/serving/native_mtp_device.rs"
-    lines: "1-417"
+    lines: "1-436"
     role: "primary"
   - path: "src/serving/native_ops.rs"
     lines: "1-273"
@@ -381,7 +387,7 @@ related_files:
     lines: "1-264"
     role: "test"
   - path: "tests/draft_admission.rs"
-    lines: "1-380"
+    lines: "1-475"
     role: "test"
   - path: "tests/fixed_point.rs"
     lines: "1-146"
@@ -1029,7 +1035,7 @@ Spec 15 phase validation: **136 default / 136 debug-validation / 96 minimal-feat
 
 ## Native MTP artifact and tuning plan
 
-The Combined checkpoint contains a 42-tensor mixed-quantization MTP sidecar; it is not yet executed by the native server. [The tuning plan](docs/NATIVE_TUNING_PLAN.md) records actual CLI controls, proposed unified native configuration, integration order and matched Dspark(2) qualification. The 25.31% result belongs to suffix retrieval, not this MTP head.
+The Combined checkpoint contains a 42-tensor mixed-quantization MTP sidecar. Native execution and stateful admission are described in the later sections below. [The tuning plan](docs/NATIVE_TUNING_PLAN.md) records actual CLI controls, proposed unified native configuration, integration order and matched Dspark(2) qualification. The 25.31% result belongs to suffix retrieval, not this MTP head.
 
 Native sidecar ingestion is now available with `cargo run --release --locked -- native-mtp-inspect`. It validates the supported layout and mixed packing, then opens a separate MLX store. This is ingestion only; MTP forward execution and acceptance remain unqualified.
 
@@ -1039,7 +1045,7 @@ MTP ingestion checks passed: **141 default / 141 debug-validation / 96 minimal-f
 
 ## Device-owned MTP hidden boundary
 
-The opt-in `QwenDeviceExecutor::hidden_block` captures post-normalized activations with the exact target state version. Hidden bytes share the state reservation and completion lifetime; ordinary execution captures none. `hidden_snapshot` is a diagnostic export, not an internal transport. The [native tuning design](docs/NATIVE_TUNING_PLAN.md) records ownership and qualification; MTP forward execution is still pending.
+The opt-in `QwenDeviceExecutor::hidden_block` captures post-normalized activations with the exact target state version. Hidden bytes share the state reservation and completion lifetime; ordinary execution captures none. `hidden_snapshot` is a diagnostic export, not an internal transport. The [native tuning design](docs/NATIVE_TUNING_PLAN.md) records ownership and qualification; the later MTP operator and admission sections describe the current execution path.
 
 Hidden boundary qualification: 1/2/4/8-token matched all-position logits and unified states are bitwise preserved; independent scalar post-norm relative L2 ≤ 7.66e-8. The default frozen-suite gate retains bitwise equality across 60 cases / 360 steps, with existing quality scores unchanged (15/16 raw, 20/20 constrained, 23/24 domain). No MTP draft or speedup is claimed.
 
@@ -1064,3 +1070,11 @@ First warmed Rust-boundary pilot: **33.97 tok/s MTP width 4 versus 20.35 target-
 1.28.0 — Fully accepted target-window reuse, bounded total output receipts, debug replay reference and alternating native-boundary MTP pilot. Rejected unified states still replay from the committed parent.
 
 Accepted-window qualification: same-parent debug replay and sequential-target gates passed widths 1/2/4/8, including output-budget and EOS refusals. The final ordered judge passed **144 default / 144 debug-validation / 96 minimal-feature** Rust tests plus strict Clippy/compiler gates, TS 7.1/tsrs and native/GPU judges. [Bound reuse/pilot evidence](evidence/native-mtp-reuse/manifest.sha256) includes raw timings and the exact experimental scope. Spec 15 MTP admission, streaming latency and sustained multi-lane qualification remain unfinished.
+
+Stateful MTP admission is implemented through `AutomatonMtp` under the existing Spec 15 controller. Seed and learned-token accounting are separate; proposal/verification/synchronization commands retain the admission lease until native completion. Baseline fallback explicitly maintains draft state and charges that cost under a separate profile identity. The real-model cancellation/pressure gate passes; prior pilot timings are not measurements of this adapter.
+
+`cargo run --release --locked --example native_mtp_automaton_smoke -- NEW_DIRECTORY` exercises the real Combined model under `AutomatonMtp`. The focused gate passed exact target-token/state comparison, separate seed accounting, canceled receiver drain, bounded queue fallback and a forced post-verifier draft-sync allocation failure. That failed transaction charged its admitted target command and published zero progress; the parent recovered and shutdown drained to zero bytes. No adapter throughput or production qualification is claimed.
+
+1.29.0 — Stateful Spec 15 MTP admission with known-prefix accounting, opaque prepared branches, command-owned completion guards, failure-inclusive target calls and maintained-state baseline fallback.
+
+Stateful admission qualification: **146 default / 146 debug-validation / 98 minimal-feature** Rust tests passed, together with strict compiler/Clippy gates, TS 7.1/tsrs and native/GPU judges. [Bound admission evidence](evidence/native-mtp-admission/manifest.sha256) records current source, binary, raw controls and exact scope. Actual server-scheduler wiring, streaming, sustained multi-lane qualification and adapter performance measurement remain open.

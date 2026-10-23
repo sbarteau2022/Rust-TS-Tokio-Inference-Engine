@@ -1,7 +1,7 @@
 ---
 title: "Native MTP integration and tuning control plan"
 document_type: "architecture"
-version: "1.1.0"
+version: "1.3.0"
 date: "2026-10-23T05:04:01Z"
 implementation_date: null
 author: "Codex for Stewart Barteau"
@@ -15,7 +15,7 @@ related_files:
     lines: "1-1015"
     role: "config"
   - path: "Cargo.toml"
-    lines: "1-69"
+    lines: "1-73"
     role: "config"
   - path: "backend/rapid_worker.py"
     lines: "1-165"
@@ -37,6 +37,9 @@ related_files:
     role: "primary"
   - path: "examples/native_hidden_smoke.rs"
     lines: "1-170"
+    role: "primary"
+  - path: "examples/native_mtp_automaton_smoke.rs"
+    lines: "1-218"
     role: "primary"
   - path: "examples/native_mtp_bench.rs"
     lines: "1-130"
@@ -150,7 +153,7 @@ related_files:
     lines: "1-35"
     role: "test"
   - path: "judges/run.py"
-    lines: "1-229"
+    lines: "1-230"
     role: "test"
   - path: "judges/speculative_report.py"
     lines: "1-74"
@@ -231,7 +234,7 @@ related_files:
     lines: "1-614"
     role: "primary"
   - path: "src/cache/drafts.rs"
-    lines: "1-592"
+    lines: "1-599"
     role: "primary"
   - path: "src/cache/mod.rs"
     lines: "1-1078"
@@ -291,13 +294,13 @@ related_files:
     lines: "1-244"
     role: "primary"
   - path: "src/serving/native_automaton.rs"
-    lines: "1-324"
+    lines: "1-328"
     role: "primary"
   - path: "src/serving/native_boundary.rs"
     lines: "1-193"
     role: "primary"
   - path: "src/serving/native_device.rs"
-    lines: "1-798"
+    lines: "1-809"
     role: "primary"
   - path: "src/serving/native_device_scheduler.rs"
     lines: "1-178"
@@ -323,11 +326,14 @@ related_files:
   - path: "src/serving/native_mtp.rs"
     lines: "1-468"
     role: "primary"
+  - path: "src/serving/native_mtp_automaton.rs"
+    lines: "1-98"
+    role: "primary"
   - path: "src/serving/native_mtp_decode.rs"
-    lines: "1-130"
+    lines: "1-149"
     role: "primary"
   - path: "src/serving/native_mtp_device.rs"
-    lines: "1-417"
+    lines: "1-436"
     role: "primary"
   - path: "src/serving/native_ops.rs"
     lines: "1-273"
@@ -381,7 +387,7 @@ related_files:
     lines: "1-264"
     role: "test"
   - path: "tests/draft_admission.rs"
-    lines: "1-380"
+    lines: "1-475"
     role: "test"
   - path: "tests/fixed_point.rs"
     lines: "1-146"
@@ -604,3 +610,13 @@ The existing `DraftPermit::finish` requires bound candidate count = proposed cou
 Split MTP preparation from commit: an opaque prepared proposal retains the exact immutable parent, candidates and native completion guard; the controller binds candidates before verification. Commit must charge all admitted target commands even if later synchronization fails and must retain the draft permit through every target and MTP native completion. Caller cancellation reports zero published progress while the detached completion/accounting job drains. State publication remains atomic across target and draft. A baseline fallback must either synchronize draft state with explicit charged cost or invalidate it and charge rebuild cost on the next admission; stale draft reuse is forbidden. Namespace-scoped decode profitability must not hide MTP initialization or first-receipt overhead from end-to-end service reporting.
 
 Counter definition: the current experimental `replayed_target_tokens` field counts committed target tokens evaluated after the verifier, including an additional bonus. `target_forward_tokens` counts verifier tokens plus those evaluations. Use the explicit definition when interpreting raw smoke data; future serving telemetry should split correction/replay from fresh bonus tokens.
+
+## Stateful MTP admission implementation
+
+`AutomatonMtp` registers the existing mixed MTP path as a Spec 15 workload with its own maintenance-cost profile identity. `mtp_prepare` retains the exact cursor and completion guard, generates candidates, and exposes them only to the adapter for branch-key binding. `mtp_commit` verifies and synchronizes atomically. Every target command receives failure-inclusive accounting; every target and MTP command retains the admission guard through completion. The detached job publishes its result and finishes the existing DraftPermit ledger, or records zero published progress if the receiver was canceled. Runtime abort leaves unfinished accounting visible through the permit lifetime.
+
+`DraftOutcome.known_prefix` is bounded to one; binding covers known-prefix + learned-proposed tokens. Ledger known-prefix, proposed and accepted counters are separate. Committed output can include known-prefix + accepted learned tokens + one target bonus. Learned trust rewards ignore known-prefix. Existing proposers explicitly use zero known-prefix. Benched or queued work falls back to one target token and charged draft-state maintenance; queued tickets are canceled rather than silently retained. This maintained-state baseline is isolated from the retrieval adapter's cheaper no-maintenance baseline through profile identity. Prompt/MTP initialization is outside decode admission accounting and must remain included in service first-receipt reporting. The adapter does not add streaming, continuous batching or cross-profile proposer arbitration.
+
+Observed stateful admission smoke: three admitted transactions bound three known seeds and 11 learned proposals, accepted 11 learned tokens and published 16 total tokens across five admitted target commands. Canceling the next result receiver increased observation/cost and attempted seed/proposal counts while published committed tokens remained 16 and unfinished stayed zero. A separately injected post-verifier allocation failure recorded one admitted target command, one attempted known seed, one learned proposal, one failure and zero accepted/committed progress. Shutdown logical bytes were zero. These are constructed controls on one prompt, not an acceptance or performance estimate.
+
+1.3.0 — Record accepted-window pilot and implement stateful MTP admission, separate known-prefix ledger geometry and native completion-owned preparation/commit.

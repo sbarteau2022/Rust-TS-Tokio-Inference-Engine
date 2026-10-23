@@ -102,6 +102,17 @@ impl QwenDeviceExecutor {
         row: usize,
         tokens: Vec<u32>,
     ) -> Result<MtpStep> {
+        self.mtp_prefill_guarded(previous, hidden, row, tokens, None)
+            .await
+    }
+    pub(in crate::serving::native_qwen) async fn mtp_prefill_guarded(
+        &self,
+        previous: &MtpState,
+        hidden: &DeviceState,
+        row: usize,
+        tokens: Vec<u32>,
+        completion: Option<CompletionGuard>,
+    ) -> Result<MtpStep> {
         self.validate(hidden)?;
         ensure!(
             row <= hidden.hidden_rows
@@ -114,7 +125,7 @@ impl QwenDeviceExecutor {
             Source::Target(hidden.clone()),
             row,
             tokens,
-            None,
+            completion,
             false,
         )
         .await
@@ -145,13 +156,21 @@ impl QwenDeviceExecutor {
         .await
     }
     pub async fn mtp_next(&self, previous: &MtpState, token: u32) -> Result<MtpStep> {
+        self.mtp_next_guarded(previous, token, None).await
+    }
+    pub(in crate::serving::native_qwen) async fn mtp_next_guarded(
+        &self,
+        previous: &MtpState,
+        token: u32,
+        completion: Option<CompletionGuard>,
+    ) -> Result<MtpStep> {
         ensure!(previous.rows > 0, "MTP autoregressive source empty");
         self.mtp_execute(
             previous,
             Source::Draft(previous.clone()),
             previous.rows - 1,
             vec![token],
-            None,
+            completion,
             false,
         )
         .await

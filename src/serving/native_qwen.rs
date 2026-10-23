@@ -685,6 +685,6 @@ pub type CompletionGuard = Arc<dyn Send + Sync>;
 #[path = "native_automaton.rs"]
 mod automaton;
 pub use automaton::{
-    AutomatonCursor, AutomatonProposer, AutomatonStep, DraftProposer, ProposalContext,
-    ProposalFuture, RetrievalProposer,
+    AutomatonCursor, AutomatonMtp, AutomatonMtpCursor, AutomatonMtpStep, AutomatonProposer,
+    AutomatonStep, DraftProposer, ProposalContext, ProposalFuture, RetrievalProposer,
 };

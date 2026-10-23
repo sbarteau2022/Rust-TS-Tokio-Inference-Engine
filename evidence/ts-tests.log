@@ -2,11 +2,11 @@
 > apple-native-rust-server@0.1.0 test
 > tsx --test ts/*.test.ts
 
-✔ MVK records exact dependency order (1.074375ms)
-✔ invalid shapes and unsafe names rejected (0.121125ms)
-✔ undefined and invalid handles rejected (0.069917ms)
-✔ second kernel family records row-bias fusion (0.159833ms)
-✔ CORDIC functions serialize stable version-3 operation codes (0.300708ms)
+✔ MVK records exact dependency order (1.096458ms)
+✔ invalid shapes and unsafe names rejected (0.121458ms)
+✔ undefined and invalid handles rejected (0.071208ms)
+✔ second kernel family records row-bias fusion (0.160917ms)
+✔ CORDIC functions serialize stable version-3 operation codes (0.291583ms)
 ℹ tests 5
 ℹ suites 0
 ℹ pass 5
@@ -14,4 +14,4 @@
 ℹ cancelled 0
 ℹ skipped 0
 ℹ todo 0
-ℹ duration_ms 104.523083
+ℹ duration_ms 109.211916
