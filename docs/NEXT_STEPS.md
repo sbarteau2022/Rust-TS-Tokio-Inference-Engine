@@ -15,7 +15,7 @@ related_files:
     lines: "1-1015"
     role: "config"
   - path: "Cargo.toml"
-    lines: "1-65"
+    lines: "1-69"
     role: "config"
   - path: "backend/rapid_worker.py"
     lines: "1-165"
@@ -38,8 +38,11 @@ related_files:
   - path: "examples/native_hidden_smoke.rs"
     lines: "1-170"
     role: "primary"
+  - path: "examples/native_mtp_bench.rs"
+    lines: "1-130"
+    role: "primary"
   - path: "examples/native_mtp_decode_smoke.rs"
-    lines: "1-90"
+    lines: "1-160"
     role: "primary"
   - path: "examples/native_mtp_smoke.rs"
     lines: "1-186"
@@ -147,7 +150,7 @@ related_files:
     lines: "1-35"
     role: "test"
   - path: "judges/run.py"
-    lines: "1-228"
+    lines: "1-229"
     role: "test"
   - path: "judges/speculative_report.py"
     lines: "1-74"
@@ -321,7 +324,7 @@ related_files:
     lines: "1-468"
     role: "primary"
   - path: "src/serving/native_mtp_decode.rs"
-    lines: "1-108"
+    lines: "1-130"
     role: "primary"
   - path: "src/serving/native_mtp_device.rs"
     lines: "1-417"
@@ -736,3 +739,7 @@ Opt-in device-owned hidden payloads are implemented and the focused real-model 1
 The mixed MTP operator and conservative target-verified decoder now exist. Complete real-text width-1/2/4/8 qualification and bind its raw evidence. Then retain accepted hidden windows/draft prefixes to eliminate unconditional replay while preserving the same commit/rollback semantics. Integrate the stateful proposer with Spec 15 completion guards and failure-inclusive costs before enabling native scheduler admission. Measure actual net decode speed, TTFT and inter-token latency after this integration; no speedup is established yet.
 
 The cached Dspark proposer needs eight intermediate target taps, its own six-layer backbone and Markov/confidence operators; it cannot consume the existing final-norm MTP handle directly. Port as a second native proposer only after artifact compatibility and numerical gates, then arbitrate by measured committed progress per cost. Keep the designated Combined workhorse and existing comparison server identity separate.
+
+## After accepted-window reuse pilot
+
+The native width-4 pilot shows 33.97 versus 20.35 decode tok/s with output congruence, but first receipt is slower. Finish the current reuse/budget hardening gate, then connect the stateful MTP transaction to Spec 15 admission and completion-owned failure/cost accounting. Optimize target-first-token publication and reduce duplicate draft synchronization only under the same state gates. Extend measurement to 1k/1500/2k windows and single/multiple streaming lanes before any serving promotion. The six-layer cached Dspark remains a separate unported candidate; this pilot does not compare against it.

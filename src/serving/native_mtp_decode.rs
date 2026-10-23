@@ -1,4 +1,4 @@
-// Conservative transactional MTP decoding; replay costs are explicit.
+// Transactional MTP decoding with accepted target-window reuse.
 #[derive(Clone)]
 pub struct MtpCursor {
     target: GreedyCursor,
@@ -12,6 +12,9 @@ pub struct MtpTransaction {
     pub learned_accepted: usize,
     pub target_calls: usize,
     pub draft_calls: usize,
+    pub reused_target_tokens: usize,
+    pub replayed_target_tokens: usize,
+    pub target_forward_tokens: usize,
 }
 impl MtpCursor {
     pub fn target(&self) -> &GreedyCursor { &self.target }
@@ -43,12 +46,22 @@ impl QwenDeviceExecutor {
             draft: latest.expect("validated prompt"),
         })
     }
-    /// Exact greedy verification followed by authoritative hidden-state replay.
-    /// Always replay from the immutable committed parent, including full acceptance.
-    /// This correctness profile makes no profitability or scheduler claim.
+    /// Reuse fully accepted target windows; rejected unified state is replayed.
+    /// This experimental profile makes no profitability or scheduler claim.
     pub async fn mtp_decode(&self, cursor: &MtpCursor, width: usize, eos: &[u32]) -> Result<MtpTransaction> {
+        self.mtp_decode_bounded(cursor, width, usize::MAX, eos).await
+    }
+    /// Limit this transaction including any target bonus/correction token.
+    pub async fn mtp_decode_bounded(&self, cursor: &MtpCursor, width: usize, output_budget: usize, eos: &[u32]) -> Result<MtpTransaction> {
+        self.mtp_decode_mode(cursor, width, output_budget, eos, true).await
+    }
+    #[cfg(feature = "debug-validation")]
+    pub async fn mtp_decode_replay(&self, cursor: &MtpCursor, width: usize, eos: &[u32]) -> Result<MtpTransaction> {
+        self.mtp_decode_mode(cursor, width, usize::MAX, eos, false).await
+    }
+    async fn mtp_decode_mode(&self, cursor: &MtpCursor, width: usize, output_budget: usize, eos: &[u32], reuse: bool) -> Result<MtpTransaction> {
         ensure!(!cursor.target.terminal && (1..=8).contains(&width), "MTP terminal/width");
-        let remaining = 512usize.saturating_sub(cursor.target.state.position());
+        let remaining = 512usize.saturating_sub(cursor.target.state.position()).min(output_budget);
         ensure!(remaining > 0, "MTP context exhausted");
         ensure!(eos.iter().all(|&t| (t as usize) < cursor.target.logits.len()), "MTP EOS vocabulary");
         let count = width.min(remaining);
@@ -68,18 +81,23 @@ impl QwenDeviceExecutor {
         }
         drop(branch);
         let proposed = tokens.len();
-        let block = self.verify_block_guarded(&cursor.target.state, tokens.clone(), None, None).await?;
+        let block = self.hidden_block(&cursor.target.state, tokens.clone()).await?;
         let decision = plan(&cursor.target.logits, &tokens, &block.logits, eos, remaining)?;
-        drop(block);
+        let reused_target_tokens = if reuse && decision.accepted == proposed { proposed } else { 0 };
+        let mut verified = if reused_target_tokens > 0 { Some(block) } else { drop(block); None };
         let mut state = cursor.target.state.clone();
         let mut draft = cursor.draft.state.clone();
         let mut latest = None;
         let mut logits = Vec::new();
         let mut target_calls = 1;
-        for (index, chunk) in decision.emitted.chunks(8).enumerate() {
-            let start = index * 8;
-            let block = self.hidden_block(&state, chunk.to_vec()).await?;
-            target_calls += 1;
+        let mut start = 0;
+        while start < decision.emitted.len() {
+            let count = if start == 0 && reused_target_tokens > 0 { reused_target_tokens } else { (decision.emitted.len() - start).min(8) };
+            let chunk = &decision.emitted[start..start + count];
+            let block = if let Some(block) = verified.take() { block } else {
+                target_calls += 1;
+                self.hidden_block(&state, chunk.to_vec()).await?
+            };
             logits = block.logits.last().expect("nonempty replay").clone();
             let next = if start + chunk.len() < decision.emitted.len() {
                 decision.emitted[start + chunk.len()]
@@ -91,6 +109,7 @@ impl QwenDeviceExecutor {
             draft = result.state.clone();
             latest = Some(result);
             state = block.state;
+            start += count;
         }
         ensure!(state.position() == draft.position(), "MTP committed alignment");
         Ok(MtpTransaction {
@@ -98,6 +117,9 @@ impl QwenDeviceExecutor {
                 target: GreedyCursor { state, logits: Arc::new(logits), terminal: decision.terminal },
                 draft: latest.expect("nonempty greedy decision"),
             },
+            replayed_target_tokens: decision.emitted.len() - reused_target_tokens,
+            target_forward_tokens: proposed + decision.emitted.len() - reused_target_tokens,
+            reused_target_tokens,
             emitted: decision.emitted,
             learned_proposed: proposed.saturating_sub(1),
             learned_accepted: decision.accepted.saturating_sub(1),

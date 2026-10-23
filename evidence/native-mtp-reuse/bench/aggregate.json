@@ -1,0 +1,38 @@
+{
+  "profiles": [
+    {
+      "profile": "target-greedy",
+      "tokens": 256,
+      "decode_seconds": 12.579452711,
+      "decode_tok_s": 20.35064687481538,
+      "mean_first_receipt_ms": 656.483775875,
+      "amortized_ms_per_token": 49.13848715234375,
+      "median_run_receipt_p50_ms": 48.7529375,
+      "median_run_receipt_p95_ms": 49.1541045,
+      "learned_proposed": 0,
+      "learned_accepted": 0,
+      "target_calls": 256,
+      "draft_calls": 0,
+      "target_forward_tokens": 256
+    },
+    {
+      "profile": "mtp-width4-reuse",
+      "tokens": 256,
+      "decode_seconds": 7.536097792,
+      "decode_tok_s": 33.969835193985766,
+      "mean_first_receipt_ms": 802.862020875,
+      "amortized_ms_per_token": 29.437882,
+      "median_run_receipt_p50_ms": 132.6757705,
+      "median_run_receipt_p95_ms": 140.58383350000003,
+      "learned_proposed": 170,
+      "learned_accepted": 144,
+      "target_calls": 112,
+      "draft_calls": 204,
+      "target_forward_tokens": 336
+    }
+  ],
+  "decode_gain_percent": 66.92263102469043,
+  "scope": "Pilot only: four prompts, two alternating rounds, 32 tokens each, single lane, no streaming/continuous batching. First receipt is not HTTP TTFT; amortized milliseconds/token is not streaming ITL.",
+  "hardware": "Apple M5 Pro",
+  "physical_memory_bytes": 51539607552
+}

@@ -1,7 +1,7 @@
 ---
 title: "Rust Server — Apple native kernel compiler and runtime"
 document_type: "implementation"
-version: "1.27.0"
+version: "1.28.0"
 date: "2026-10-23T05:21:07Z"
 implementation_date: null
 author: "Codex for Stewart Barteau"
@@ -15,7 +15,7 @@ related_files:
     lines: "1-1015"
     role: "config"
   - path: "Cargo.toml"
-    lines: "1-65"
+    lines: "1-69"
     role: "config"
   - path: "backend/rapid_worker.py"
     lines: "1-165"
@@ -38,8 +38,11 @@ related_files:
   - path: "examples/native_hidden_smoke.rs"
     lines: "1-170"
     role: "primary"
+  - path: "examples/native_mtp_bench.rs"
+    lines: "1-130"
+    role: "primary"
   - path: "examples/native_mtp_decode_smoke.rs"
-    lines: "1-90"
+    lines: "1-160"
     role: "primary"
   - path: "examples/native_mtp_smoke.rs"
     lines: "1-186"
@@ -147,7 +150,7 @@ related_files:
     lines: "1-35"
     role: "test"
   - path: "judges/run.py"
-    lines: "1-228"
+    lines: "1-229"
     role: "test"
   - path: "judges/speculative_report.py"
     lines: "1-74"
@@ -321,7 +324,7 @@ related_files:
     lines: "1-468"
     role: "primary"
   - path: "src/serving/native_mtp_decode.rs"
-    lines: "1-108"
+    lines: "1-130"
     role: "primary"
   - path: "src/serving/native_mtp_device.rs"
     lines: "1-417"
@@ -1053,3 +1056,11 @@ Experimental `mtp_start` / `mtp_decode` now connect the native MTP operator to t
 1.27.0 — Native mixed MTP projections and immutable draft state, plus a conservative target-verified transactional decoder. The first real-text sequence-completion gate passes widths 1/2/4/8 against sequential greedy output and unified-state checks. It is a narrow correctness smoke, not held-out quality or performance qualification. Full acceptance still pays authoritative replay.
 
 Qualification evidence: [native MTP manifest](evidence/native-mtp/manifest.sha256) binds the operator gates, real-text transactional smoke, default frozen-suite preservation, pressure results and current-source ordered judge. The final judge passed **144 default / 144 debug-validation** Rust tests, strict compiler/Clippy gates, TS 7.1/tsrs, native/kernel checks and GPU capture. Minimal-feature coverage remains 96 tests. Existing held-out model misses remain unresolved.
+
+Accepted-window optimization: experimental MTP decoding now retains a fully accepted target block and synchronizes draft state from its authoritative hidden rows; rejected blocks still replay from the committed parent. Command counts and reused/replayed/forwarded token counts are explicit. The unconditional-replay reference remains available only with `debug-validation`. The focused same-parent replay comparison passes; final hardening evidence is recorded below.
+
+First warmed Rust-boundary pilot: **33.97 tok/s MTP width 4 versus 20.35 target-only (+66.9%)**, with **144/170 learned tokens accepted (84.7%)** and identical output IDs. Four prompts × two reversed-order rounds yielded 256 output tokens per profile. Mean first receipt was slower: **803 ms versus 656 ms**. This is a short, single-lane pilot without HTTP streaming or continuous batching; it is not a matched Dspark result or production promotion. See [measurement scope and reproduction](docs/NATIVE_TUNING_PLAN.md#first-warmed-native-mtp-pilot--observed-2026-10-23).
+
+1.28.0 — Fully accepted target-window reuse, bounded total output receipts, debug replay reference and alternating native-boundary MTP pilot. Rejected unified states still replay from the committed parent.
+
+Accepted-window qualification: same-parent debug replay and sequential-target gates passed widths 1/2/4/8, including output-budget and EOS refusals. The final ordered judge passed **144 default / 144 debug-validation / 96 minimal-feature** Rust tests plus strict Clippy/compiler gates, TS 7.1/tsrs and native/GPU judges. [Bound reuse/pilot evidence](evidence/native-mtp-reuse/manifest.sha256) includes raw timings and the exact experimental scope. Spec 15 MTP admission, streaming latency and sustained multi-lane qualification remain unfinished.

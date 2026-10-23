@@ -15,7 +15,7 @@ related_files:
     lines: "1-1015"
     role: "config"
   - path: "Cargo.toml"
-    lines: "1-65"
+    lines: "1-69"
     role: "config"
   - path: "backend/rapid_worker.py"
     lines: "1-165"
@@ -38,8 +38,11 @@ related_files:
   - path: "examples/native_hidden_smoke.rs"
     lines: "1-170"
     role: "primary"
+  - path: "examples/native_mtp_bench.rs"
+    lines: "1-130"
+    role: "primary"
   - path: "examples/native_mtp_decode_smoke.rs"
-    lines: "1-90"
+    lines: "1-160"
     role: "primary"
   - path: "examples/native_mtp_smoke.rs"
     lines: "1-186"
@@ -147,7 +150,7 @@ related_files:
     lines: "1-35"
     role: "test"
   - path: "judges/run.py"
-    lines: "1-228"
+    lines: "1-229"
     role: "test"
   - path: "judges/speculative_report.py"
     lines: "1-74"
@@ -321,7 +324,7 @@ related_files:
     lines: "1-468"
     role: "primary"
   - path: "src/serving/native_mtp_decode.rs"
-    lines: "1-108"
+    lines: "1-130"
     role: "primary"
   - path: "src/serving/native_mtp_device.rs"
     lines: "1-417"
@@ -681,3 +684,7 @@ Hidden activations are stored in an explicit optional payload, never appended to
 The mixed sidecar requires BF16 dense fusion/router support and exact per-module packed widths. The initial batched dense projection failed its scalar precision gate; bounded row-wise FP32 dispatch fixes that without widening tolerance or changing target-wide precision settings. Separate draft owner IDs prevent cross-table descriptor confusion; combined slots/bytes, cancellation, immutable branch repeatability and context-512 exhaustion are exercised by the operator gate. CPU MTP is refused because it is not qualified.
 
 Transactional decode restores from the committed draft parent after every proposal and uses target hidden rows with shifted committed tokens. Known target seeds are excluded from learned acceptance. Full acceptance still replays, so no acceptance-only profitability claim is valid. Widths outside 1..8, EOS vocabulary, terminal cursors and exhausted context are refused. Real-text output comparison must include sequential target selection and unified recurrent/convolution/KV state rather than just an attention cache or synthetic MTP arithmetic. Remaining risks: cross-geometry near-tie logits, no independent whole-MTP reference, no Spec 15 completion-guarded plugin yet, and intentional replay overhead. The profile remains experimental.
+
+## Accepted-window reuse review
+
+Reuse is allowed only when every proposed token matches target greedy verification. Partial acceptance cannot truncate unified recurrent/convolution state: it drops the provisional state before replay. A target bonus is separately evaluated; EOS and output-budget exhaustion can finish on the verified block without bonus. Draft state always resynchronizes from target hidden rows, never from speculative recursive hidden values. The debug reference retains unconditional target replay. Tests compare decisions, unified state, exact covered token counts and forwarded-work savings from identical parents. The bounded API includes bonus/correction output in its limit. Measured target-token savings are not proof of latency improvement because splitting synchronization can add MTP calls.

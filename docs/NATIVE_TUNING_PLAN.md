@@ -15,7 +15,7 @@ related_files:
     lines: "1-1015"
     role: "config"
   - path: "Cargo.toml"
-    lines: "1-65"
+    lines: "1-69"
     role: "config"
   - path: "backend/rapid_worker.py"
     lines: "1-165"
@@ -38,8 +38,11 @@ related_files:
   - path: "examples/native_hidden_smoke.rs"
     lines: "1-170"
     role: "primary"
+  - path: "examples/native_mtp_bench.rs"
+    lines: "1-130"
+    role: "primary"
   - path: "examples/native_mtp_decode_smoke.rs"
-    lines: "1-90"
+    lines: "1-160"
     role: "primary"
   - path: "examples/native_mtp_smoke.rs"
     lines: "1-186"
@@ -147,7 +150,7 @@ related_files:
     lines: "1-35"
     role: "test"
   - path: "judges/run.py"
-    lines: "1-228"
+    lines: "1-229"
     role: "test"
   - path: "judges/speculative_report.py"
     lines: "1-74"
@@ -321,7 +324,7 @@ related_files:
     lines: "1-468"
     role: "primary"
   - path: "src/serving/native_mtp_decode.rs"
-    lines: "1-108"
+    lines: "1-130"
     role: "primary"
   - path: "src/serving/native_mtp_device.rs"
     lines: "1-417"
@@ -577,3 +580,27 @@ This initial correctness profile always replays, including full acceptance. It i
 Reproduce with `cargo run --release --locked --example native_mtp_decode_smoke -- NEW_DIRECTORY`. The gate compares each emitted token against independent sequential target decode, checks committed unified state at the existing numerical tolerance and checks parent state bitwise, across widths 1/2/4/8. It records actual learned acceptance rather than synthetic oracle acceptance.
 
 Observed initial real-text gate: all four widths passed sequential target token equality, committed unified-state tolerance and bitwise parent preservation. The simple sequence prompt produced learned acceptance counts 0/0 (width 1), 4/4 (width 2), 12/12 (width 4), and 15/21 (width 8) over four transactions per width, with EOS reached in the last case. These are prompt-specific smoke counts, not a representative acceptance estimate. Width 8 exercised rejected proposals and multi-window replay; target command counts include that replay. No elapsed throughput was measured.
+
+## Accepted target-window reuse design
+
+Capture hidden rows during target block verification. When every proposed token is accepted, the verified target state is already the authoritative state for that entire block: retain it and synchronize draft KV from its hidden rows instead of forwarding those same target tokens again. An additional bonus token still gets its own target/hidden evaluation and draft synchronization. If any candidate is rejected, discard the entire provisional unified state and replay all emitted tokens from the immutable committed parent; recurrent/convolution state is never truncated. A terminal accepted block needs no bonus evaluation. Count reused target tokens, replayed target tokens and total forwarded target tokens, in addition to commands. Draft branches remain provisional and are reconstructed from authoritative hidden rows, because recursively predicted draft hidden values are not target hidden values. Keep the previous unconditional-replay path behind debug-validation for same-parent numerical and accounting comparison. No default speculative serving activation follows.
+
+`mtp_decode_bounded` caps the entire committed receipt, including a bonus/correction token; a budget of one must publish exactly one token without another target command. The correctness gate also refuses zero output budget and invalid EOS IDs.
+
+Pilot measurement command: `cargo run --release --locked --example native_mtp_bench -- NEW_DIRECTORY`. It runs the four frozen speculative prompts, 32 generated tokens maximum, twice with reversed baseline/MTP order after warming both profiles. Both use the same loaded Combined target and greedy output settings. It asserts token-ID equality across profiles and rounds. Timings exclude checkpoint loading and tokenization, include actual prompt processing for first receipt, and report decode-only tokens/s plus receipt intervals. MTP publishes grouped tokens at the Rust API, so first-receipt time and receipt intervals are not HTTP streaming TTFT/ITL. The pilot is single-lane, has no continuous batching, does not prove system isolation and cannot establish sustained agent throughput.
+
+## First warmed native MTP pilot — observed 2026-10-23
+
+On Apple M5 Pro / 48 GiB, the four frozen prompts × two reversed-order rounds produced 256 output tokens per profile with identical IDs. Aggregate decode throughput (total tokens / total measured decode time) was 20.3506468748 tok/s target-only and 33.9698351940 tok/s MTP width 4, a 66.9226% pilot gain. Learned acceptance was 144/170 (84.7059%); the known target seed is excluded. Target commands fell from 256 to 112, while MTP also incurred 204 draft calls. Total target-forwarded tokens were 256 baseline versus 336 speculative: batching/amortization can improve wall time even when the target processes more tokens. Do not equate command reduction with proportionate arithmetic savings.
+
+Mean first Rust receipt regressed from 656.484 ms to 802.862 ms because speculative preparation and grouped publication add work. Decode time amortized per emitted token was 49.1385 ms versus 29.4379 ms. Median of each run's receipt p50 was 48.7529 ms baseline versus 132.676 ms MTP; each MTP receipt can contain multiple tokens. These are not client TTFT, pooled percentile estimates or streaming inter-token timings. The pilot used a single lane, no continuous batching and no isolated-system guarantee. It is not a matched Dspark comparison, a held-out quality result, a sustained 1k/1500/2k window, or a production promotion.
+
+Next serving work should overlap/decouple target-first-token publication from MTP initialization, add completion-guarded stateful proposer admission under Spec 15, and measure longer alternating windows plus real streaming latency and mixed request lengths. Keep acceptance and profitability separate: first-receipt regression matters even when decode throughput improves.
+
+### Stateful Spec 15 adapter requirements discovered during integration audit
+
+The existing `DraftPermit::finish` requires bound candidate count = proposed count and committed ≤ accepted + 1. That geometry fits retrieval, but a trained MTP block includes one already-known target seed plus learned proposals and may add one target bonus. Do not inflate learned acceptance to fit the old contract. Add an explicit bounded known-prefix count (0 for existing proposers, at most 1 for this MTP profile), require bound count = known-prefix + learned-proposed, and cap committed ≤ known-prefix + learned-accepted + 1. Keep learned rewards based only on learned acceptance. Bind the full candidate sequence to the parent/version key. The optimized path remains at most two target commands; the debug unconditional-replay reference is not an admitted production path.
+
+Split MTP preparation from commit: an opaque prepared proposal retains the exact immutable parent, candidates and native completion guard; the controller binds candidates before verification. Commit must charge all admitted target commands even if later synchronization fails and must retain the draft permit through every target and MTP native completion. Caller cancellation reports zero published progress while the detached completion/accounting job drains. State publication remains atomic across target and draft. A baseline fallback must either synchronize draft state with explicit charged cost or invalidate it and charge rebuild cost on the next admission; stale draft reuse is forbidden. Namespace-scoped decode profitability must not hide MTP initialization or first-receipt overhead from end-to-end service reporting.
+
+Counter definition: the current experimental `replayed_target_tokens` field counts committed target tokens evaluated after the verifier, including an additional bonus. `target_forward_tokens` counts verifier tokens plus those evaluations. Use the explicit definition when interpreting raw smoke data; future serving telemetry should split correction/replay from fresh bonus tokens.

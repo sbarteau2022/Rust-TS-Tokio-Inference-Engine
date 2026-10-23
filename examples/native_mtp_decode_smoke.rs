@@ -28,12 +28,79 @@ async fn main() -> Result<()> {
             e.mtp_decode(&cursor, 9, &tokenizer.eos()).await.is_err(),
             "oversized width"
         );
+        ensure!(
+            e.mtp_decode_bounded(&cursor, width, 0, &tokenizer.eos())
+                .await
+                .is_err(),
+            "zero output budget"
+        );
+        ensure!(
+            e.mtp_decode(&cursor, width, &[u32::MAX]).await.is_err(),
+            "invalid EOS"
+        );
+        let limited = e
+            .mtp_decode_bounded(&cursor, width, 1, &tokenizer.eos())
+            .await?;
+        ensure!(
+            limited.emitted.len() == 1
+                && limited.reused_target_tokens == 1
+                && limited.target_calls == 1,
+            "one-token budget/accepted terminal window"
+        );
+        drop(limited);
         let parent = cursor.clone();
         let original = e.snapshot(parent.target().state()).await?;
         let mut emitted = Vec::new();
         let (mut proposed, mut accepted, mut target_calls, mut draft_calls) = (0, 0, 0, 0);
+        let (mut reused, mut replayed, mut forwarded) = (0, 0, 0);
         for _ in 0..4 {
             let tx = e.mtp_decode(&cursor, width, &tokenizer.eos()).await?;
+            ensure!(
+                tx.reused_target_tokens
+                    == if tx.learned_accepted == tx.learned_proposed {
+                        tx.learned_proposed + 1
+                    } else {
+                        0
+                    },
+                "reuse requires complete acceptance"
+            );
+            ensure!(
+                tx.replayed_target_tokens + tx.reused_target_tokens == tx.emitted.len(),
+                "committed coverage"
+            );
+            ensure!(
+                tx.target_forward_tokens == tx.learned_proposed + 1 + tx.replayed_target_tokens,
+                "forward accounting"
+            );
+            #[cfg(feature = "debug-validation")]
+            {
+                let reference = e
+                    .mtp_decode_replay(&cursor, width, &tokenizer.eos())
+                    .await?;
+                ensure!(
+                    reference.emitted == tx.emitted
+                        && reference.learned_accepted == tx.learned_accepted,
+                    "reuse/reference decision"
+                );
+                ensure!(
+                    reference.target_forward_tokens
+                        == tx.target_forward_tokens + tx.reused_target_tokens,
+                    "replay/reference work savings"
+                );
+                let a = e.snapshot(reference.cursor.target().state()).await?;
+                let b = e.snapshot(tx.cursor.target().state()).await?;
+                let err = (a
+                    .iter()
+                    .zip(&b)
+                    .map(|(a, b)| (*a as f64 - *b as f64).powi(2))
+                    .sum::<f64>()
+                    / a.iter()
+                        .map(|a| (*a as f64).powi(2))
+                        .sum::<f64>()
+                        .max(1e-30))
+                .sqrt();
+                ensure!(err <= 1e-5, "reuse/reference unified state {err}");
+            }
             // Independent sequential target decode from the identical committed parent.
             let mut baseline = cursor.target().clone();
             for &token in &tx.emitted {
@@ -60,6 +127,9 @@ async fn main() -> Result<()> {
             accepted += tx.learned_accepted;
             target_calls += tx.target_calls;
             draft_calls += tx.draft_calls;
+            reused += tx.reused_target_tokens;
+            replayed += tx.replayed_target_tokens;
+            forwarded += tx.target_forward_tokens;
             emitted.extend(tx.emitted);
             cursor = tx.cursor;
             if cursor.target().terminal() {
@@ -74,13 +144,13 @@ async fn main() -> Result<()> {
                 .all(|(a, b)| a.to_bits() == b.to_bits()),
             "mutated parent"
         );
-        cases.push(serde_json::json!({"width":width,"tokens":emitted,"text":tokenizer.decode(&emitted)?,"learned_proposed":proposed,"learned_accepted":accepted,"target_calls":target_calls,"draft_calls":draft_calls}));
+        cases.push(serde_json::json!({"width":width,"tokens":emitted,"text":tokenizer.decode(&emitted)?,"learned_proposed":proposed,"learned_accepted":accepted,"target_calls":target_calls,"draft_calls":draft_calls,"reused_target_tokens":reused,"replayed_target_tokens":replayed,"target_forward_tokens":forwarded}));
         drop(cursor);
         drop(parent);
     }
     let stats = e.shutdown().await?;
     ensure!(stats.logical_bytes == 0, "MTP decode drain");
-    let report = serde_json::json!({"pass":true,"cases":cases,"profile":"authoritative-replay-correctness-only","serving_qualified":false,"throughput_claim":false});
+    let report = serde_json::json!({"pass":true,"cases":cases,"profile":"accepted-target-window-reuse","same_parent_replay_reference":cfg!(feature="debug-validation"),"serving_qualified":false,"throughput_claim":false});
     std::fs::write(
         Path::new(&out).join("summary.json"),
         serde_json::to_string_pretty(&report)?,
