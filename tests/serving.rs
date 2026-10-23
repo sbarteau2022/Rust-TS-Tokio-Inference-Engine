@@ -251,6 +251,15 @@ async fn scheduler_real_kv_consumption_chunk_invariance_and_drain() -> Result<()
     let b = engine.submit(vec![8], 3)?;
     let a = a.result().await?;
     let b = b.result().await?;
+    for generation in [&a, &b] {
+        assert_eq!(generation.token_times_ms.len(), generation.tokens.len());
+        assert!(generation
+            .token_times_ms
+            .iter()
+            .all(|t| t.is_finite() && *t >= 0.));
+        assert!(generation.token_times_ms.windows(2).all(|w| w[1] >= w[0]));
+        assert!(generation.elapsed_ms >= *generation.token_times_ms.last().unwrap());
+    }
     assert_eq!(a.tokens, [16, 32, 64, 128]);
     assert_eq!(b.tokens, [9, 18, 36]);
     assert_eq!(a.finish_reason, "length");

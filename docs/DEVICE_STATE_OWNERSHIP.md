@@ -1,8 +1,8 @@
 ---
 title: "Completion-owned native device state — implementation contract"
 document_type: "architecture"
-version: "1.0.0"
-date: "2026-10-22T23:59:13Z"
+version: "1.1.0"
+date: "2026-10-23T00:42:45Z"
 implementation_date: null
 author: "Codex for Stewart Barteau"
 reviewers: []
@@ -15,13 +15,19 @@ related_files:
     lines: "1-1015"
     role: "config"
   - path: "Cargo.toml"
-    lines: "1-37"
+    lines: "1-45"
     role: "config"
   - path: "backend/rapid_worker.py"
     lines: "1-165"
     role: "primary"
   - path: "build.rs"
-    lines: "1-60"
+    lines: "1-62"
+    role: "primary"
+  - path: "examples/native_device_pressure.rs"
+    lines: "1-184"
+    role: "primary"
+  - path: "examples/native_device_reference.rs"
+    lines: "1-162"
     role: "primary"
   - path: "examples/native_discriminators.rs"
     lines: "1-145"
@@ -92,6 +98,12 @@ related_files:
   - path: "judges/cordic.py"
     lines: "1-30"
     role: "test"
+  - path: "judges/device_abi.cpp"
+    lines: "1-39"
+    role: "test"
+  - path: "judges/device_smoke_report.py"
+    lines: "1-38"
+    role: "test"
   - path: "judges/generate_cordic.py"
     lines: "1-44"
     role: "test"
@@ -114,13 +126,19 @@ related_files:
     lines: "1-35"
     role: "test"
   - path: "judges/run.py"
-    lines: "1-211"
+    lines: "1-218"
+    role: "test"
+  - path: "judges/state_table.cpp"
+    lines: "1-21"
     role: "test"
   - path: "judges/suite_reference.py"
     lines: "1-248"
     role: "test"
   - path: "judges/test_attention_profile.py"
     lines: "1-51"
+    role: "test"
+  - path: "judges/test_device_smoke_report.py"
+    lines: "1-26"
     role: "test"
   - path: "judges/test_layer_reference.py"
     lines: "1-56"
@@ -135,7 +153,7 @@ related_files:
     lines: "1-178"
     role: "primary"
   - path: "native/mlx_bridge.h"
-    lines: "1-67"
+    lines: "1-85"
     role: "primary"
   - path: "native/operator_probe.inc"
     lines: "1-28"
@@ -149,8 +167,14 @@ related_files:
   - path: "native/projection_reference.h"
     lines: "1-30"
     role: "primary"
+  - path: "native/qwen_device.inc"
+    lines: "1-45"
+    role: "primary"
   - path: "native/qwen_model.inc"
-    lines: "1-160"
+    lines: "1-171"
+    role: "primary"
+  - path: "native/state_table.h"
+    lines: "1-38"
     role: "primary"
   - path: "native/telemetry.cpp"
     lines: "1-23"
@@ -204,7 +228,7 @@ related_files:
     lines: "1-81"
     role: "primary"
   - path: "src/main.rs"
-    lines: "1-449"
+    lines: "1-451"
     role: "primary"
   - path: "src/runtime.rs"
     lines: "1-366"
@@ -225,13 +249,22 @@ related_files:
     lines: "1-280"
     role: "primary"
   - path: "src/serving/mod.rs"
-    lines: "1-102"
+    lines: "1-104"
     role: "primary"
   - path: "src/serving/model_ir.rs"
     lines: "1-244"
     role: "primary"
   - path: "src/serving/native_boundary.rs"
     lines: "1-193"
+    role: "primary"
+  - path: "src/serving/native_device.rs"
+    lines: "1-546"
+    role: "primary"
+  - path: "src/serving/native_device_scheduler.rs"
+    lines: "1-178"
+    role: "primary"
+  - path: "src/serving/native_device_smoke.rs"
+    lines: "1-162"
     role: "primary"
   - path: "src/serving/native_diagnose.rs"
     lines: "1-104"
@@ -252,7 +285,7 @@ related_files:
     lines: "1-273"
     role: "primary"
   - path: "src/serving/native_qwen.rs"
-    lines: "1-662"
+    lines: "1-674"
     role: "primary"
   - path: "src/serving/native_reference.rs"
     lines: "1-100"
@@ -270,7 +303,7 @@ related_files:
     lines: "1-265"
     role: "primary"
   - path: "src/serving/scheduler.rs"
-    lines: "1-632"
+    lines: "1-645"
     role: "primary"
   - path: "src/serving/weights.rs"
     lines: "1-395"
@@ -321,7 +354,7 @@ related_files:
     lines: "1-341"
     role: "test"
   - path: "tests/serving.rs"
-    lines: "1-426"
+    lines: "1-435"
     role: "test"
   - path: "ts/generated/trace.ts"
     lines: "1-5"
@@ -511,10 +544,37 @@ never silently fall back mid-sequence. Actual tensor batching follows this gate.
 
 Regular dense KV only. Paged KV, TurboQuant, shared writable batch buffers,
 longer context, drafting, AMX/ANE and production sampling remain separate work.
-No independent review, performance gain or implemented device-state capability
-is claimed. The design is ready for the checked-session implementation phase.
+The opt-in implementation is documented in DEVICE_STATE_IMPLEMENTATION.md. No
+independent review, broad workload qualification or production promotion is claimed.
+Snapshot defaults remain in place while measured scheduler performance is assessed.
 
 # Changelog
 
 1.0.0 — 2026-10-22 — Codex — Explicit ownership, completion, resource and
 cancellation contract with measured snapshot baseline and preregistered gates.
+
+## Opt-in scheduler smoke measurement contract
+
+The implementation may expose an explicitly experimental device-state scheduler
+adapter while retaining snapshot defaults. It must validate the entire batch before
+publication, keep six old/new versions for three sequence rows, and use a distinct
+backend fingerprint. Rows remain serial native calls; this is continuous scheduling,
+not tensor batching. An offline A/B smoke shares one immutable weight store and
+switches only snapshot/device state. Measure concurrency 1 and 3 with identical
+prompts and generated-token parity. Monotonic timestamps start at Rust submission;
+record each validated token's publication time, queue-inclusive first-token latency,
+inter-token p50/p95, request p50/p95, aggregate tokens/sec including EOS and separately
+excluding EOS. Exclude load/warmup from measured windows. This is a small scheduler
+smoke, not an HTTP endpoint or autonomous-agent workload qualification.
+
+Finite state validation remains mandatory before publication. The first measured
+implementation synchronized once per state array and regressed throughput despite
+zero state copies. The revised implementation collects scalar finite reductions
+for all 80 evaluated arrays and evaluates them with logits at the existing final
+completion barrier. It reads only scalar flags on the CPU; state arrays remain in
+MLX. It retains every prior layer completion boundary and the snapshot arithmetic.
+A failing flag rejects publication and latches admission closed. Re-run full-model
+state/logit/trace preservation and pressure before accepting the optimization.
+
+1.1.0 — 2026-10-22 — Opt-in implementation and scheduler measurement contract;
+consolidated finite-check completion and explicit tuning limitations.

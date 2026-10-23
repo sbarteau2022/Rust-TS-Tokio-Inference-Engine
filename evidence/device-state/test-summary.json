@@ -1,0 +1,12 @@
+{
+  "rust_passed": {
+    "default": 122,
+    "debug": 122,
+    "minimal": 87
+  },
+  "full_judge_pass": true,
+  "native_abi_checks": 70015,
+  "state_table_checks": 96024,
+  "ts_version": "Version 7.1.0-beta",
+  "independent_review": false
+}

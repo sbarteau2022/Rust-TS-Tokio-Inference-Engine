@@ -1,0 +1,5 @@
+{
+  "target/release/rust-server": "ba48fc7420e3fec3ab1e37dd7e78ac242ec2bc8f5711083ed763fc5373331bb5",
+  "target/release/examples/native_device_reference": "579442023c935197d763590ea30a03a5d5e8a48a8cb8a095ab795b79cf461672",
+  "target/release/examples/native_device_pressure": "ab649978e7c6b45ea43a9efb9492054a16675e7881bdb9a8e7a29dca3fade164"
+}

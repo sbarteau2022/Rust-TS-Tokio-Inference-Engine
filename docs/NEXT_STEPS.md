@@ -1,8 +1,8 @@
 ---
 title: "Next stages toward an Apple native inference server"
 document_type: "architecture"
-version: "1.0.0"
-date: "2026-10-22T23:59:13Z"
+version: "1.1.0"
+date: "2026-10-23T00:42:45Z"
 implementation_date: null
 author: "Codex for Stewart Barteau"
 reviewers: []
@@ -15,13 +15,19 @@ related_files:
     lines: "1-1015"
     role: "config"
   - path: "Cargo.toml"
-    lines: "1-37"
+    lines: "1-45"
     role: "config"
   - path: "backend/rapid_worker.py"
     lines: "1-165"
     role: "primary"
   - path: "build.rs"
-    lines: "1-60"
+    lines: "1-62"
+    role: "primary"
+  - path: "examples/native_device_pressure.rs"
+    lines: "1-184"
+    role: "primary"
+  - path: "examples/native_device_reference.rs"
+    lines: "1-162"
     role: "primary"
   - path: "examples/native_discriminators.rs"
     lines: "1-145"
@@ -92,6 +98,12 @@ related_files:
   - path: "judges/cordic.py"
     lines: "1-30"
     role: "test"
+  - path: "judges/device_abi.cpp"
+    lines: "1-39"
+    role: "test"
+  - path: "judges/device_smoke_report.py"
+    lines: "1-38"
+    role: "test"
   - path: "judges/generate_cordic.py"
     lines: "1-44"
     role: "test"
@@ -114,13 +126,19 @@ related_files:
     lines: "1-35"
     role: "test"
   - path: "judges/run.py"
-    lines: "1-211"
+    lines: "1-218"
+    role: "test"
+  - path: "judges/state_table.cpp"
+    lines: "1-21"
     role: "test"
   - path: "judges/suite_reference.py"
     lines: "1-248"
     role: "test"
   - path: "judges/test_attention_profile.py"
     lines: "1-51"
+    role: "test"
+  - path: "judges/test_device_smoke_report.py"
+    lines: "1-26"
     role: "test"
   - path: "judges/test_layer_reference.py"
     lines: "1-56"
@@ -135,7 +153,7 @@ related_files:
     lines: "1-178"
     role: "primary"
   - path: "native/mlx_bridge.h"
-    lines: "1-67"
+    lines: "1-85"
     role: "primary"
   - path: "native/operator_probe.inc"
     lines: "1-28"
@@ -149,8 +167,14 @@ related_files:
   - path: "native/projection_reference.h"
     lines: "1-30"
     role: "primary"
+  - path: "native/qwen_device.inc"
+    lines: "1-45"
+    role: "primary"
   - path: "native/qwen_model.inc"
-    lines: "1-160"
+    lines: "1-171"
+    role: "primary"
+  - path: "native/state_table.h"
+    lines: "1-38"
     role: "primary"
   - path: "native/telemetry.cpp"
     lines: "1-23"
@@ -204,7 +228,7 @@ related_files:
     lines: "1-81"
     role: "primary"
   - path: "src/main.rs"
-    lines: "1-449"
+    lines: "1-451"
     role: "primary"
   - path: "src/runtime.rs"
     lines: "1-366"
@@ -225,13 +249,22 @@ related_files:
     lines: "1-280"
     role: "primary"
   - path: "src/serving/mod.rs"
-    lines: "1-102"
+    lines: "1-104"
     role: "primary"
   - path: "src/serving/model_ir.rs"
     lines: "1-244"
     role: "primary"
   - path: "src/serving/native_boundary.rs"
     lines: "1-193"
+    role: "primary"
+  - path: "src/serving/native_device.rs"
+    lines: "1-546"
+    role: "primary"
+  - path: "src/serving/native_device_scheduler.rs"
+    lines: "1-178"
+    role: "primary"
+  - path: "src/serving/native_device_smoke.rs"
+    lines: "1-162"
     role: "primary"
   - path: "src/serving/native_diagnose.rs"
     lines: "1-104"
@@ -252,7 +285,7 @@ related_files:
     lines: "1-273"
     role: "primary"
   - path: "src/serving/native_qwen.rs"
-    lines: "1-662"
+    lines: "1-674"
     role: "primary"
   - path: "src/serving/native_reference.rs"
     lines: "1-100"
@@ -270,7 +303,7 @@ related_files:
     lines: "1-265"
     role: "primary"
   - path: "src/serving/scheduler.rs"
-    lines: "1-632"
+    lines: "1-645"
     role: "primary"
   - path: "src/serving/weights.rs"
     lines: "1-395"
@@ -321,7 +354,7 @@ related_files:
     lines: "1-341"
     role: "test"
   - path: "tests/serving.rs"
-    lines: "1-426"
+    lines: "1-435"
     role: "test"
   - path: "ts/generated/trace.ts"
     lines: "1-5"
@@ -582,3 +615,30 @@ batching, paged regular KV and separately qualified TurboQuant attention.
 4. Address remaining model behavior through fresh held-out bounded-profile
 experiments, preserving the existing 15/16 raw and 23/24 domain failures. MTP,
 AMX/ANE, physical MLX command-buffer caps and proposed sampling remain gated.
+
+
+## After completion-owned device state and the first scheduler smoke
+
+Implemented: checked native state versions; worker-only Rust reclamation;
+independent resident limits; explicit snapshot export/reference; opt-in scheduler
+adapter; monotonic token-publication timing; 1/3-lane A/B and retained first-run
+regression. Consolidated finite checks improve the observed paired aggregate
+output by 10–11%, with unchanged token trajectories. Both model quality misses
+remain; no default backend promotion is implied.
+
+1. Repeat randomized/alternating sustained snapshot/device windows across prompt
+lengths, generation lengths and concurrency, with thermal/load controls and
+confidence intervals. Add true client streaming/transport timing separately;
+current TTFT is Rust submission to internal validated token publication.
+2. Profile the remaining 40 layer completion boundaries, routing and projection
+kernels. Design graph-wide device evaluation behind an explicit capability gate;
+prove cancellation/peak-memory/state fidelity before removing barriers. Then
+implement state-safe tensor batching with per-sequence KV/convolution/recurrent
+ownership and benchmark aggregate throughput versus per-lane tail latency.
+3. Qualify paged regular KV and TurboQuant independently against this reference,
+with long-context held-out output checks. Do not infer codec correctness from
+state-transport parity. Drafting/custom head work needs measured quality and
+acceptance/verification overhead; speculative acceptance is currently N/A.
+4. Preserve original held-out failures and qualify fresh Rust/Cyber workloads.
+Physical MLX command-buffer limits, AMX/ANE, active dynamic production sampling
+and a broad Triton-style deployment claim remain separately gated.

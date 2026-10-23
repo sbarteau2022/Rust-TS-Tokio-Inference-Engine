@@ -153,6 +153,11 @@ impl Architecture {
             + full * 2 * self.kv_heads as usize * offset * self.head_dim as usize
     }
 }
+fn next_owner() -> Result<u64> {
+    static NEXT: AtomicU64 = AtomicU64::new(1);
+    NEXT.try_update(Ordering::Relaxed, Ordering::Relaxed, |v| v.checked_add(1))
+        .map_err(|_| anyhow::anyhow!("model owner exhausted"))
+}
 #[derive(Clone)]
 pub struct ModelState {
     owner: u64,
@@ -230,8 +235,7 @@ impl QwenExecutor {
             architecture.interval as usize,
         )?);
         let worker_program = program.clone();
-        static NEXT: AtomicU64 = AtomicU64::new(1);
-        let owner = NEXT.fetch_add(1, Ordering::Relaxed);
+        let owner = next_owner()?;
         let ledger = Ledger::new(Footprint {
             host_bytes: 768 * 1024 * 1024,
             tensor_bytes: 1536 * 1024 * 1024,
@@ -660,3 +664,11 @@ impl ModelBackend for ScheduledQwen {
 #[cfg(test)]
 #[path = "qwen_tests.rs"]
 mod tests;
+
+#[path = "native_device.rs"]
+mod device;
+pub use device::{DeviceState, DeviceStats, DeviceStep, QwenDeviceExecutor};
+
+#[path = "native_device_scheduler.rs"]
+mod device_scheduler;
+pub use device_scheduler::{ScheduledDevice, StateMode};

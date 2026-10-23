@@ -65,3 +65,21 @@ int rs_mlx_weight_bytes(void* store,const char* name,const int32_t* shape,size_t
 #ifdef __cplusplus
 }
 #endif
+#ifdef __cplusplus
+extern "C" {
+#endif
+/* Session handles are worker-confined; state IDs are validated value descriptors. */
+#ifndef RS_QWEN_STATE_ID_DEFINED
+#define RS_QWEN_STATE_ID_DEFINED
+typedef struct StateId {uint64_t owner,slot,generation,position,bytes;} StateId;
+#endif
+void* rs_qwen_device_create(void*,int,const rs_qwen_config*,const rs_qwen_layer*,size_t,size_t,uint64_t,char*,size_t);
+int rs_qwen_device_step(void*,const struct StateId*,size_t,const uint32_t*,size_t,struct StateId*,float*,size_t,float*,size_t,char*,size_t);
+int rs_qwen_device_release(void*,const struct StateId*,char*,size_t);
+int rs_qwen_device_snapshot(void*,const struct StateId*,float*,size_t,char*,size_t);
+int rs_qwen_device_stats(void*,uint64_t*,size_t,char*,size_t);
+int rs_qwen_device_drain(void*,uint64_t*,char*,size_t);
+void rs_qwen_device_destroy(void*);
+#ifdef __cplusplus
+}
+#endif

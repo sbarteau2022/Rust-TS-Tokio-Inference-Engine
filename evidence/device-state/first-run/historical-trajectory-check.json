@@ -1,0 +1,10 @@
+{
+  "executions": 60,
+  "exact_prompt_ids_tokens_text_finish_quality": true,
+  "baseline": "native-layer-reference/native-suite-reference evidence checkpoint 892e4a6",
+  "quality_unchanged": [
+    15,
+    20,
+    23
+  ]
+}

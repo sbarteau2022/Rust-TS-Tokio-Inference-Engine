@@ -1,8 +1,8 @@
 ---
 title: "Apple serving architecture, tuning controls, and qualification roadmap"
 document_type: "architecture"
-version: "1.0.0"
-date: "2026-10-22"
+version: "1.1.0"
+date: "2026-10-23T00:42:45Z"
 implementation_date: null
 author: "Codex for Stewart Barteau"
 reviewers: []
@@ -15,13 +15,19 @@ related_files:
     lines: "1-1015"
     role: "config"
   - path: "Cargo.toml"
-    lines: "1-37"
+    lines: "1-45"
     role: "config"
   - path: "backend/rapid_worker.py"
     lines: "1-165"
     role: "primary"
   - path: "build.rs"
-    lines: "1-60"
+    lines: "1-62"
+    role: "primary"
+  - path: "examples/native_device_pressure.rs"
+    lines: "1-184"
+    role: "primary"
+  - path: "examples/native_device_reference.rs"
+    lines: "1-162"
     role: "primary"
   - path: "examples/native_discriminators.rs"
     lines: "1-145"
@@ -92,6 +98,12 @@ related_files:
   - path: "judges/cordic.py"
     lines: "1-30"
     role: "test"
+  - path: "judges/device_abi.cpp"
+    lines: "1-39"
+    role: "test"
+  - path: "judges/device_smoke_report.py"
+    lines: "1-38"
+    role: "test"
   - path: "judges/generate_cordic.py"
     lines: "1-44"
     role: "test"
@@ -114,13 +126,19 @@ related_files:
     lines: "1-35"
     role: "test"
   - path: "judges/run.py"
-    lines: "1-211"
+    lines: "1-218"
+    role: "test"
+  - path: "judges/state_table.cpp"
+    lines: "1-21"
     role: "test"
   - path: "judges/suite_reference.py"
     lines: "1-248"
     role: "test"
   - path: "judges/test_attention_profile.py"
     lines: "1-51"
+    role: "test"
+  - path: "judges/test_device_smoke_report.py"
+    lines: "1-26"
     role: "test"
   - path: "judges/test_layer_reference.py"
     lines: "1-56"
@@ -135,7 +153,7 @@ related_files:
     lines: "1-178"
     role: "primary"
   - path: "native/mlx_bridge.h"
-    lines: "1-67"
+    lines: "1-85"
     role: "primary"
   - path: "native/operator_probe.inc"
     lines: "1-28"
@@ -149,8 +167,14 @@ related_files:
   - path: "native/projection_reference.h"
     lines: "1-30"
     role: "primary"
+  - path: "native/qwen_device.inc"
+    lines: "1-45"
+    role: "primary"
   - path: "native/qwen_model.inc"
-    lines: "1-160"
+    lines: "1-171"
+    role: "primary"
+  - path: "native/state_table.h"
+    lines: "1-38"
     role: "primary"
   - path: "native/telemetry.cpp"
     lines: "1-23"
@@ -204,7 +228,7 @@ related_files:
     lines: "1-81"
     role: "primary"
   - path: "src/main.rs"
-    lines: "1-449"
+    lines: "1-451"
     role: "primary"
   - path: "src/runtime.rs"
     lines: "1-366"
@@ -225,13 +249,22 @@ related_files:
     lines: "1-280"
     role: "primary"
   - path: "src/serving/mod.rs"
-    lines: "1-102"
+    lines: "1-104"
     role: "primary"
   - path: "src/serving/model_ir.rs"
     lines: "1-244"
     role: "primary"
   - path: "src/serving/native_boundary.rs"
     lines: "1-193"
+    role: "primary"
+  - path: "src/serving/native_device.rs"
+    lines: "1-546"
+    role: "primary"
+  - path: "src/serving/native_device_scheduler.rs"
+    lines: "1-178"
+    role: "primary"
+  - path: "src/serving/native_device_smoke.rs"
+    lines: "1-162"
     role: "primary"
   - path: "src/serving/native_diagnose.rs"
     lines: "1-104"
@@ -252,7 +285,7 @@ related_files:
     lines: "1-273"
     role: "primary"
   - path: "src/serving/native_qwen.rs"
-    lines: "1-662"
+    lines: "1-674"
     role: "primary"
   - path: "src/serving/native_reference.rs"
     lines: "1-100"
@@ -270,7 +303,7 @@ related_files:
     lines: "1-265"
     role: "primary"
   - path: "src/serving/scheduler.rs"
-    lines: "1-632"
+    lines: "1-645"
     role: "primary"
   - path: "src/serving/weights.rs"
     lines: "1-395"
@@ -321,7 +354,7 @@ related_files:
     lines: "1-341"
     role: "test"
   - path: "tests/serving.rs"
-    lines: "1-426"
+    lines: "1-435"
     role: "test"
   - path: "ts/generated/trace.ts"
     lines: "1-5"
@@ -506,3 +539,40 @@ The native lifetime and bounded-cache foundation is useful, but the missing mode
 # Implementation status update — 2026-10-22
 
 The first experimental model integration is now documented in [MODEL_INTEGRATION.md](MODEL_INTEGRATION.md): real Qwen through a private Rapid/MLX worker, bounded Rust token scheduling and explicit dual-codec prefix storage. `model-run` and `config check|print` are implemented with a subset of controls. Earlier command tables remain a proposal for the wider serving system. Genuine tensor batching, native packed attention, HTTP/gRPC and a full integer model are not completed by this milestone.
+
+## Native tuning status after device-state integration
+
+The native smoke currently fixes context 512, prefill chunks 8, scheduler token
+budget 24 and active sequence cap 3. It compares explicit snapshot/device APIs;
+its CLI accepts only a new output directory. The older 256/512 prefill candidates
+above are roadmap proposals and exceed the present native chunk cap. Legacy
+Python adapter flags are not native capabilities and are disabled by default.
+
+The next native flag design must expose resolved typed configuration and reject
+unsupported choices before loading, with no Python/JSON runtime transport:
+
+| Proposed control | Present support and promotion gate |
+| --- | --- |
+| `--state-backend snapshot|device` | Both explicit Rust adapters implemented; snapshot default; CLI sweep still proposed |
+| `--eval-boundary layer|step` | Layer only; graph-wide step evaluation requires fidelity, memory and cancellation proof |
+| `--prefill-chunk-tokens 1|2|4|8` | IR supports at most 8; smoke fixed 8; sweep not implemented |
+| `--max-batch-tokens`, `--max-active-sequences` | Smoke fixed 24 / 3; native tensor batching absent |
+| `--prefill-budget-tokens`, `--decode-priority`, `--max-queue-delay-us` | Proposed scheduling controls; measure fairness/starvation and TTFT/tail latency |
+| `--resident-state-slots`, `--resident-state-bytes` | Explicit executor API limits implemented; smoke fixed 8 / 768 MiB |
+| `--kv-layout regular|paged`, `--kv-codec fp32|turboquant` | Native regular FP32 only; reject paged/TurboQuant until qualified |
+| `--draft-mode off|custom-head` | Off only; draft/verifier accounting, acceptance and quality unimplemented |
+| `--automaton-mode off|audit|enforce`, `--automaton-policy PATH` | Proposed native binding; Spec 15 control-plane prototype is not enabled for this model lane |
+
+The versioned profile fingerprint must bind model/tokenizer, numerical policy,
+state/KV layout, draft artifact and automaton policy plus resolved flags. A policy
+change cannot reinterpret live state; drain or segregate generations. Never add
+an accepted flag that silently has no effect. Sampling proposals remain inactive;
+a tuning control cannot disable lifetime safety, completion, finite publication
+checks or output-quality gates. Native logical admissions do not establish a
+physical command-buffer limit.
+
+First optimize measured synchronization and state-safe tensor batching, then
+sweep prefill/decode scheduling, qualify paged state/attention, and add drafting
+and automaton policies. Use alternating sustained runs and quality constraints,
+not a single throughput winner. The ~18.3 aggregate tok/s six-request smoke is
+an untuned baseline, not a hardware ceiling or Triton-equivalent qualification.

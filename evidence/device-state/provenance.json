@@ -1,0 +1,19 @@
+{
+  "recorded_at": "2026-10-23T00:43:46.399086+00:00",
+  "base_commit": "892e4a656c7e87393cb7a112f93edbd0401be8e1",
+  "profile": "combined-fp32-explicit-attention-regular-kv",
+  "initial_profile": "80 per-array finite-check synchronizations",
+  "consolidated_profile": "80 scalar finite reductions evaluated with logits at the existing final barrier",
+  "default_backend_changed": false,
+  "tuning": "fixed 8 prefill, 24 scheduler tokens, 3 sequence cap; no sweep",
+  "first_run_source_caveat": "Exploratory initial executable was rebuilt before its digest was recorded; retain its raw measurements as exploratory, not a reproducible binary qualification. Final consolidated binaries and sources are hashed.",
+  "benchmark_limitations": [
+    "six requests per window",
+    "three authored prompts",
+    "fixed snapshot-then-device order",
+    "no confidence interval",
+    "offline scheduler only; no client streaming",
+    "no tensor batching, paging or speculative decoding"
+  ],
+  "independent_review": false
+}

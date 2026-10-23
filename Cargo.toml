@@ -35,3 +35,11 @@ required-features = ["native-mlx"]
 [[example]]
 name = "native_suite_reference"
 required-features = ["native-mlx"]
+
+[[example]]
+name = "native_device_reference"
+required-features = ["native-mlx"]
+
+[[example]]
+name = "native_device_pressure"
+required-features = ["native-mlx"]

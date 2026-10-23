@@ -11,12 +11,12 @@ use sha2::{Digest, Sha256};
 use std::{collections::BTreeSet, io::Write, path::PathBuf};
 
 #[derive(Clone, Debug, Serialize)]
-struct Case {
-    suite: String,
-    id: String,
-    prompt: String,
-    choices: Option<Vec<String>>,
-    expected: String,
+pub(crate) struct Case {
+    pub(crate) suite: String,
+    pub(crate) id: String,
+    pub(crate) prompt: String,
+    pub(crate) choices: Option<Vec<String>>,
+    pub(crate) expected: String,
 }
 fn rows(text: &str, count: usize, width: usize) -> Result<Vec<Vec<&str>>> {
     let rows: Vec<Vec<_>> = text.lines().map(|s| s.split('\t').collect()).collect();
@@ -31,7 +31,7 @@ fn rows(text: &str, count: usize, width: usize) -> Result<Vec<Vec<&str>>> {
     }
     Ok(rows)
 }
-fn inventory() -> Result<Vec<Case>> {
+pub(crate) fn inventory() -> Result<Vec<Case>> {
     let raw = rows(include_str!("../fixtures/native-heldout.tsv"), 16, 3)?;
     let extra = rows(include_str!("../fixtures/native-choice-heldout.tsv"), 4, 3)?;
     let domain = rows(include_str!("../fixtures/native-domain-heldout.tsv"), 24, 5)?;

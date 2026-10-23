@@ -1,0 +1,33 @@
+{
+  "bitwise_match": true,
+  "cases": 60,
+  "diagnostic_exported_bytes": 24067112960,
+  "elapsed_seconds": 68.055669708,
+  "identity": "509cc92543203798f2db08b6fb6cbb38a80942fc0437ae81a3ef9ff27720915b",
+  "maxima": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+  ],
+  "maxima_order": [
+    "logit_nrmse",
+    "logit_max_abs",
+    "trace_nrmse",
+    "trace_max_abs",
+    "state_nrmse",
+    "state_max_abs"
+  ],
+  "mlx_peak_bytes_process": 19818124756,
+  "production_qualified": false,
+  "quality": [
+    15,
+    20,
+    23
+  ],
+  "residents_after_drain": 0,
+  "steps": 360,
+  "uploaded_bytes": 0
+}

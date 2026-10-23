@@ -106,6 +106,9 @@ pub struct Generation {
     pub output_contract_fingerprint: Option<String>,
     pub tokens: Vec<u32>,
     pub iterations: usize,
+    /// Queue-inclusive monotonic offsets at validated token publication.
+    pub token_times_ms: Vec<f64>,
+    pub elapsed_ms: f64,
     pub experimental_codec: bool,
     pub finish_reason: String,
 }
@@ -130,6 +133,7 @@ pub struct Stats {
     pub admission_closed: bool,
 }
 struct Envelope {
+    admitted_at: std::time::Instant,
     choices: Option<Choices>,
     id: u64,
     prompt: Vec<u32>,
@@ -138,6 +142,7 @@ struct Envelope {
     reply: oneshot::Sender<Result<Generation>>,
 }
 struct Sequence {
+    token_times_ms: Vec<f64>,
     consumed: usize,
     managed_charge: Option<Charge>,
     envelope: Envelope,
@@ -295,6 +300,7 @@ impl Engine {
             .as_ref()
             .ok_or_else(|| anyhow::anyhow!("scheduler closed"))?
             .try_send(Envelope {
+                admitted_at: std::time::Instant::now(),
                 choices,
                 id,
                 prompt,
@@ -383,6 +389,7 @@ async fn run<B: ModelBackend>(
         if active.is_empty() {
             match rx.recv().await {
                 Some(e) => active.push_back(Sequence {
+                    token_times_ms: Vec::new(),
                     envelope: e,
                     consumed: 0,
                     managed_charge: None,
@@ -397,6 +404,7 @@ async fn run<B: ModelBackend>(
         while active.len() < config.max_sequences {
             match rx.try_recv() {
                 Ok(e) => active.push_back(Sequence {
+                    token_times_ms: Vec::new(),
                     envelope: e,
                     consumed: 0,
                     managed_charge: None,
@@ -574,6 +582,8 @@ async fn run<B: ModelBackend>(
                             s.iterations += 1;
                             if let Some(token) = output.next_token {
                                 s.generated.push(token);
+                                s.token_times_ms
+                                    .push(s.envelope.admitted_at.elapsed().as_secs_f64() * 1000.);
                             }
                             if s.generated.len() == s.envelope.max_new
                                 || s.generated
@@ -597,6 +607,9 @@ async fn run<B: ModelBackend>(
                                         .map(|c| c.fingerprint().to_owned()),
                                     tokens: s.generated.clone(),
                                     iterations: s.iterations,
+                                    token_times_ms: s.token_times_ms,
+                                    elapsed_ms: s.envelope.admitted_at.elapsed().as_secs_f64()
+                                        * 1000.,
                                     experimental_codec: storage.experimental(),
                                     finish_reason: if s
                                         .generated

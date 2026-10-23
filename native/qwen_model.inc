@@ -116,14 +116,14 @@ extern "C" int rs_qwen_quant(void* store,const char* module,int group,int bits,c
  if(!store||!module||!(group==32||group==64||group==128)||!(bits==2||bits==3||bits==4||bits==5||bits==6||bits==8))throw std::invalid_argument("invalid model quantization");
  static_cast<Weights*>(store)->quant[std::string(module)]={group,bits};
 });}
-extern "C" int rs_qwen_forward(void* store,int gpu,const rs_qwen_config* config,const rs_qwen_layer* layers,size_t layer_count,const uint32_t* tokens,size_t count,size_t offset,const float* old_state,size_t old_count,float* new_state,size_t new_count,float* logits,size_t logits_count,int projection_checks,const uint32_t* projection_outputs,size_t projection_output_count,float* trace,size_t trace_count,char* error,size_t capacity){return checked(error,capacity,[&]{
- if(!store||!config||!layers||!tokens||!new_state||!logits)throw std::invalid_argument("invalid model descriptor");auto c=*config;
+static int qwen_forward_core(void* store,int gpu,const rs_qwen_config* config,const rs_qwen_layer* layers,size_t layer_count,const uint32_t* tokens,size_t count,size_t offset,const float* old_state,size_t old_count,float* new_state,size_t new_count,float* logits,size_t logits_count,int projection_checks,const uint32_t* projection_outputs,size_t projection_output_count,float* trace,size_t trace_count,char* error,size_t capacity,const std::vector<mx::array>* device_old=nullptr,std::vector<mx::array>* device_next=nullptr){return checked(error,capacity,[&]{
+ if(!store||!config||!layers||!tokens||(!new_state&&!device_next)||!logits)throw std::invalid_argument("invalid model descriptor");auto c=*config;
  if(c.hidden<=0||c.hidden>8192||c.layers<=0||c.layers>64||c.vocab<=0||c.vocab>300000||c.interval<=0||c.layers%c.interval||c.context<=0||c.context>512||c.chunk<=0||c.chunk>8||count==0||count>size_t(c.chunk)||offset>size_t(c.context)||offset+count>size_t(c.context)||logits_count!=size_t(c.vocab))throw std::invalid_argument("model geometry/capacity");
  if(layer_count!=size_t(c.layers))throw std::invalid_argument("IR layer count");
  for(size_t i=0;i<layer_count;++i)if(layers[i].index!=i||layers[i].mixer>1||layers[i].mixer!=uint32_t((i+1)%c.interval==0))throw std::invalid_argument("IR layer program");
  for(auto d:{c.q_heads,c.kv_heads,c.head_dim,c.key_heads,c.value_heads,c.key_dim,c.value_dim,c.conv,c.experts,c.top,c.intermediate,c.shared})if(d<=0||d>8192)throw std::invalid_argument("model dimension bounds");
  if(c.activation_precision<0||c.activation_precision>1||c.q_heads%c.kv_heads||c.value_heads%c.key_heads||c.conv<2||c.top>c.experts||c.rope_dims<=0||c.rope_dims>c.head_dim||c.rope_dims%2||!std::isfinite(c.epsilon)||c.epsilon<=0||!std::isfinite(c.theta)||c.theta<=1)throw std::invalid_argument("model geometry mismatch");
- if(new_count!=qwen_state_count(c,offset+count)||(offset?old_count!=qwen_state_count(c,offset)||!old_state:old_count!=0))throw std::invalid_argument("model state length");
+ if(new_count!=qwen_state_count(c,offset+count)||(offset?old_count!=qwen_state_count(c,offset)||(!old_state&&!device_old):old_count!=0))throw std::invalid_argument("model state length");
  if(new_count>32*1024*1024)throw std::invalid_argument("model state byte cap");
  for(size_t i=0;i<count;++i)if(tokens[i]>=uint32_t(c.vocab))throw std::invalid_argument("token outside vocabulary");
  if(trace_count && (!trace||trace_count!=size_t(c.layers)*5*count*c.hidden||trace_count>64*5*8*8192))throw std::invalid_argument("trace capacity");
@@ -137,8 +137,11 @@ extern "C" int rs_qwen_forward(void* store,int gpu,const rs_qwen_config* config,
  if(c.activation_precision){embed_scales=mx::astype(embed_scales,mx::float32,s);embed_biases=mx::astype(embed_biases,mx::float32,s);}
  auto x=mx::reshape(mx::dequantize(mx::take(m.w(embed+".weight"),ids,0,s),embed_scales,embed_biases,group,bits,"affine",{},c.activation_precision?std::optional<mx::Dtype>{mx::float32}:std::nullopt,s),{1,int(count),c.hidden},s);
  if(m.operators)m.check_embedding(ids,x,embed,group,bits);
- size_t read=0,write=0;
- auto state=[&](mx::Shape shape,mx::Dtype dtype){size_t n=1;for(auto d:shape)n*=d;auto a=offset?mx::astype(mx::array(old_state+read,shape,mx::float32),dtype,s):mx::zeros(shape,dtype,s);if(offset)read+=n;return a;};
+ size_t read=0,write=0,array_read=0;std::vector<mx::array> finite_checks;
+ auto state=[&](mx::Shape shape,mx::Dtype dtype){size_t n=1;for(auto d:shape)n*=d;auto a=mx::zeros(shape,dtype,s);if(offset){
+   if(device_old){if(array_read>=device_old->size()||(*device_old)[array_read].shape()!=shape)throw std::invalid_argument("device state shape");a=mx::astype((*device_old)[array_read++],dtype,s);}
+   else a=mx::astype(mx::array(old_state+read,shape,mx::float32),dtype,s);read+=n;
+  }return a;};
  for(int layer=0;layer<c.layers;++layer){
   std::string prefix="language_model.model.layers."+std::to_string(layer);std::vector<mx::array> next;
   auto h=m.norm(x,prefix+".input_layernorm.weight");mx::array r=h;
@@ -150,11 +153,19 @@ extern "C" int rs_qwen_forward(void* store,int gpu,const rs_qwen_config* config,
   if(trace_count)for(auto a:{h,r,residual,mlp,x})evaluated.push_back(mx::contiguous(mx::astype(a,mx::float32,s),false,s));
   mx::eval(evaluated);mx::synchronize(s);x=evaluated[0];
   if(trace_count)for(size_t stage=0;stage<5;++stage){const auto& a=evaluated[state_end+stage];if(a.size()!=count*size_t(c.hidden))throw std::invalid_argument("trace shape");std::memcpy(trace+(size_t(layer)*5+stage)*count*c.hidden,a.data<float>(),a.size()*4);}
-  for(size_t i=1;i<state_end;++i){const auto& a=evaluated[i];if(write+a.size()>new_count)throw std::invalid_argument("state write overflow");std::memcpy(new_state+write,a.data<float>(),a.size()*4);write+=a.size();}
+  for(size_t i=1;i<state_end;++i){const auto& a=evaluated[i];if(write+a.size()>new_count)throw std::invalid_argument("state write overflow");if(device_next){finite_checks.push_back(mx::all(mx::isfinite(a,s),s));device_next->push_back(a);}
+   else std::memcpy(new_state+write,a.data<float>(),a.size()*4);write+=a.size();}
  }
  if(write!=new_count||read!=old_count)throw std::invalid_argument("state accounting mismatch");
  auto last=mx::take(m.norm(x,"language_model.model.norm.weight"),int(count)-1,1,s);
- auto output=mx::contiguous(mx::astype(m.linear(last,"language_model.lm_head"),mx::float32,s),false,s);mx::eval(output);mx::synchronize(s);
+ auto output=mx::contiguous(mx::astype(m.linear(last,"language_model.lm_head"),mx::float32,s),false,s);
+ std::vector<mx::array> final_outputs={output};final_outputs.insert(final_outputs.end(),finite_checks.begin(),finite_checks.end());mx::eval(final_outputs);mx::synchronize(s);
+ for(const auto& finite:finite_checks)if(!finite.item<bool>())throw std::runtime_error("nonfinite device state");
  if(output.size()!=logits_count)throw std::invalid_argument("logits shape mismatch");std::memcpy(logits,output.data<float>(),logits_count*4);
  }catch(...){try{mx::synchronize(s);}catch(...){}throw;}
 });}
+
+extern "C" int rs_qwen_forward(void* store,int gpu,const rs_qwen_config* config,const rs_qwen_layer* layers,size_t layer_count,const uint32_t* tokens,size_t count,size_t offset,const float* old_state,size_t old_count,float* new_state,size_t new_count,float* logits,size_t logits_count,int projection_checks,const uint32_t* projection_outputs,size_t projection_output_count,float* trace,size_t trace_count,char* error,size_t capacity){
+ return qwen_forward_core(store,gpu,config,layers,layer_count,tokens,count,offset,old_state,old_count,new_state,new_count,logits,logits_count,projection_checks,projection_outputs,projection_output_count,trace,trace_count,error,capacity);
+}
+#include "qwen_device.inc"

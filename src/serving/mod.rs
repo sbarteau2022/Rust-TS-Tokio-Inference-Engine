@@ -99,4 +99,6 @@ pub mod native_reference;
 pub mod native_ingestion;
 
 #[cfg(feature = "native-mlx")]
+pub mod native_device_smoke;
+#[cfg(feature = "native-mlx")]
 pub mod native_layer_reference;

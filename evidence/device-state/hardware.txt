@@ -1,0 +1,5 @@
+ProductName:		macOS
+ProductVersion:		27.0.1
+BuildVersion:		26A434
+machdep.cpu.brand_string: Apple M5 Pro
+hw.memsize: 51539607552

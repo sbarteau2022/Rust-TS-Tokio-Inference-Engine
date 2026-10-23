@@ -42,11 +42,14 @@ def main():
         versions[name] = subprocess.check_output(command, cwd=ROOT, env=ENV, text=True).strip()
     assert "7.1." in versions["typescript"] and "ts7.1" in json.loads((ROOT / "node_modules/tsrs/package.json").read_text())["version"]
     (EVIDENCE / "toolchain.json").write_text(json.dumps(versions, indent=2))
+    run([sys.executable,"judges/test_device_smoke_report.py"],"device-smoke-report-tests.log")
     run([sys.executable,"judges/test_attention_profile.py"],"attention-profile-tests.log")
     run([sys.executable,"judges/test_layer_reference.py"],"layer-reference-tests.log")
     run([sys.executable,"judges/test_suite_reference.py"],"suite-reference-tests.log")
     run(["cargo", "test", "--locked", "--example", "native_discriminators"], "native-discriminator-tests.log")
     run(["cargo", "test", "--locked", "--example", "native_suite_reference"], "native-suite-tests.log")
+    run(["cargo", "test", "--locked", "--example", "native_device_reference"], "native-device-example-tests.log")
+    run(["cargo", "test", "--locked", "--example", "native_device_pressure"], "native-device-pressure-example-tests.log")
     run([sys.executable,"judges/generate_cordic.py","--check"],"cordic-table-check.log")
     # Step 0: deterministic bindings and both requested compiler gates.
     with tempfile.TemporaryDirectory() as tmp:
@@ -63,6 +66,10 @@ def main():
     run(["artifacts/projection-reference-judge"], "projection-reference-tests.log")
     run(["c++", "-std=c++20", "-fsanitize=address,undefined", "-fno-omit-frame-pointer", "-Inative", "judges/operator_reference.cpp", "-o", "artifacts/operator-reference-judge"], "operator-reference-build.log")
     run(["artifacts/operator-reference-judge"], "operator-reference-tests.log")
+    run(["c++", "-std=c++20", "-fsanitize=address,undefined", "-fno-omit-frame-pointer", "-Inative", "judges/state_table.cpp", "-o", "artifacts/state-table-judge"], "state-table-build.log")
+    run(["artifacts/state-table-judge"], "state-table-tests.log")
+    run(["c++", "-std=c++20", "-fsanitize=address,undefined", "-fno-omit-frame-pointer", "-Inative", "-Ivendor/mlx/include", "native/mlx_bridge.cpp", "judges/device_abi.cpp", "-Lvendor/mlx/lib", "-lmlx", "-Wl,-rpath,"+str(ROOT/"vendor/mlx/lib"), "-o", "artifacts/device-abi-judge"], "device-abi-build.log")
+    run(["artifacts/device-abi-judge"], "device-abi-tests.log")
     run(["cargo", "build", "--locked"], "step0-cargo.log")
     run(["npx", "--no-install", "tsrs", "-p", "tsconfig.json"], "step0-tsrs.log")
     run(["npx", "--no-install", "tsc", "--noEmit", "-p", "tsconfig.json"], "step0-ts71.log")
@@ -183,7 +190,7 @@ def main():
     assert chain["flight"]["limit"]==3 and chain["flight"]["completed"]==chain["flight"]["submitted"]==1
     # Native backend has no interpreter/JSON transport. Legacy adapter is opt-in only.
     run([binary,"native-mlx"],"native-mlx-smoke.txt")
-    for command in [["model-run","fixtures/qwen-serving.json","fixtures/qwen-prompts.json","1"],["config","check","--config","fixtures/qwen-serving.json"],["native-mlx","--unknown"],["native-layer-reference"],["native-layer-reference","fixtures"],["native-layer-reference","unused","extra"]]:
+    for command in [["native-device-smoke"],["native-device-smoke","fixtures"],["native-device-smoke","unused","extra"],["model-run","fixtures/qwen-serving.json","fixtures/qwen-prompts.json","1"],["config","check","--config","fixtures/qwen-serving.json"],["native-mlx","--unknown"],["native-layer-reference"],["native-layer-reference","fixtures"],["native-layer-reference","unused","extra"]]:
         rejected=subprocess.run([binary,*command],cwd=ROOT,env=ENV,capture_output=True,timeout=10)
         assert rejected.returncode!=0, command
     run([binary,"cache-judge","fixtures/cache-config-bench.json"],"cache-judge.json")

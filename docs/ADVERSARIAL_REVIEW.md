@@ -1,8 +1,8 @@
 ---
 title: "Adversarial review of the native kernel prototype"
 document_type: "research"
-version: "1.0.0"
-date: "2026-10-22T23:59:13Z"
+version: "1.1.0"
+date: "2026-10-23T00:42:45Z"
 implementation_date: null
 author: "Codex for Stewart Barteau"
 reviewers: []
@@ -15,13 +15,19 @@ related_files:
     lines: "1-1015"
     role: "config"
   - path: "Cargo.toml"
-    lines: "1-37"
+    lines: "1-45"
     role: "config"
   - path: "backend/rapid_worker.py"
     lines: "1-165"
     role: "primary"
   - path: "build.rs"
-    lines: "1-60"
+    lines: "1-62"
+    role: "primary"
+  - path: "examples/native_device_pressure.rs"
+    lines: "1-184"
+    role: "primary"
+  - path: "examples/native_device_reference.rs"
+    lines: "1-162"
     role: "primary"
   - path: "examples/native_discriminators.rs"
     lines: "1-145"
@@ -92,6 +98,12 @@ related_files:
   - path: "judges/cordic.py"
     lines: "1-30"
     role: "test"
+  - path: "judges/device_abi.cpp"
+    lines: "1-39"
+    role: "test"
+  - path: "judges/device_smoke_report.py"
+    lines: "1-38"
+    role: "test"
   - path: "judges/generate_cordic.py"
     lines: "1-44"
     role: "test"
@@ -114,13 +126,19 @@ related_files:
     lines: "1-35"
     role: "test"
   - path: "judges/run.py"
-    lines: "1-211"
+    lines: "1-218"
+    role: "test"
+  - path: "judges/state_table.cpp"
+    lines: "1-21"
     role: "test"
   - path: "judges/suite_reference.py"
     lines: "1-248"
     role: "test"
   - path: "judges/test_attention_profile.py"
     lines: "1-51"
+    role: "test"
+  - path: "judges/test_device_smoke_report.py"
+    lines: "1-26"
     role: "test"
   - path: "judges/test_layer_reference.py"
     lines: "1-56"
@@ -135,7 +153,7 @@ related_files:
     lines: "1-178"
     role: "primary"
   - path: "native/mlx_bridge.h"
-    lines: "1-67"
+    lines: "1-85"
     role: "primary"
   - path: "native/operator_probe.inc"
     lines: "1-28"
@@ -149,8 +167,14 @@ related_files:
   - path: "native/projection_reference.h"
     lines: "1-30"
     role: "primary"
+  - path: "native/qwen_device.inc"
+    lines: "1-45"
+    role: "primary"
   - path: "native/qwen_model.inc"
-    lines: "1-160"
+    lines: "1-171"
+    role: "primary"
+  - path: "native/state_table.h"
+    lines: "1-38"
     role: "primary"
   - path: "native/telemetry.cpp"
     lines: "1-23"
@@ -204,7 +228,7 @@ related_files:
     lines: "1-81"
     role: "primary"
   - path: "src/main.rs"
-    lines: "1-449"
+    lines: "1-451"
     role: "primary"
   - path: "src/runtime.rs"
     lines: "1-366"
@@ -225,13 +249,22 @@ related_files:
     lines: "1-280"
     role: "primary"
   - path: "src/serving/mod.rs"
-    lines: "1-102"
+    lines: "1-104"
     role: "primary"
   - path: "src/serving/model_ir.rs"
     lines: "1-244"
     role: "primary"
   - path: "src/serving/native_boundary.rs"
     lines: "1-193"
+    role: "primary"
+  - path: "src/serving/native_device.rs"
+    lines: "1-546"
+    role: "primary"
+  - path: "src/serving/native_device_scheduler.rs"
+    lines: "1-178"
+    role: "primary"
+  - path: "src/serving/native_device_smoke.rs"
+    lines: "1-162"
     role: "primary"
   - path: "src/serving/native_diagnose.rs"
     lines: "1-104"
@@ -252,7 +285,7 @@ related_files:
     lines: "1-273"
     role: "primary"
   - path: "src/serving/native_qwen.rs"
-    lines: "1-662"
+    lines: "1-674"
     role: "primary"
   - path: "src/serving/native_reference.rs"
     lines: "1-100"
@@ -270,7 +303,7 @@ related_files:
     lines: "1-265"
     role: "primary"
   - path: "src/serving/scheduler.rs"
-    lines: "1-632"
+    lines: "1-645"
     role: "primary"
   - path: "src/serving/weights.rs"
     lines: "1-395"
@@ -321,7 +354,7 @@ related_files:
     lines: "1-341"
     role: "test"
   - path: "tests/serving.rs"
-    lines: "1-426"
+    lines: "1-435"
     role: "test"
   - path: "ts/generated/trace.ts"
     lines: "1-5"
@@ -532,3 +565,23 @@ The next device-state document is explicitly a design, with no implemented nativ
 session ABI or zero-copy capability claimed. It requires worker-only destruction,
 immutable branches, resident lifetime accounting and failure/cancelled-publication
 retirement before enabling serving. Physical command-buffer bounds remain separate.
+
+## Completion-owned device-state self-review
+
+The review challenged stale/forged geometry and ABA handles, arithmetic overflow,
+reservations that fail after encoding, a full inference queue during last-reference
+drop, dropped response receivers, shared-prefix mutation, shutdown with live
+references, and native array destruction while commands are readers. The design
+uses full native descriptors, no generation wrap, pre-encoding reservation,
+rollback-before-publication, a separate retirement channel, immutable evaluated
+arrays and worker-only FFI. Actual-model cancellation/branch/context tests remain
+separate from metadata-only sanitizer pressure. A discovered cross-executor
+snapshot-owner namespace collision was corrected by sharing one checked Rust owner
+allocator; native device owners retain their independent validation.
+
+The first performance claim was rejected by measurement: eliminating full-state
+copies regressed throughput 11–12% because finite checks added per-array barriers.
+The optimized path keeps validation but moves reductions to the final completion
+barrier; it requires a fresh full-model A/B and throughput run. Do not describe
+three logical lanes as three physical command buffers, tensor batching, client
+streaming or speculative acceptance. This is self-review, not independent review.

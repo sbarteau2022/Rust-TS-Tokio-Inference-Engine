@@ -1,0 +1,5 @@
+{
+  "executions": 60,
+  "exact_prompt_ids_tokens_text_finish_quality": true,
+  "baseline": "checkpoint 892e4a6 native-layer-reference phase"
+}
