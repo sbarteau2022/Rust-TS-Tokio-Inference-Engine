@@ -72,8 +72,12 @@ struct Qwen {
   auto k=mx::transpose(norm(mx::reshape(linear(x,p+".k_proj"),{batch,t,c.kv_heads,c.head_dim},s),p+".k_norm.weight"),{0,2,1,3},s);
   auto v=mx::transpose(mx::reshape(linear(x,p+".v_proj"),{batch,t,c.kv_heads,c.head_dim},s),{0,2,1,3},s);
   q=rope_checked(q,offset,p+"/q-rope");k=rope_checked(k,offset,p+"/k-rope");
-  if(offset){k=mx::concatenate({old_k,k},2,s);v=mx::concatenate({old_v,v},2,s);}
+  // Fixed-shape KV: old_k/old_v are preallocated context-cap buffers. New rows
+  // are written in place (slice_update); only the visible prefix is read back.
+  k=mx::slice_update(old_k,k,{0,0,offset,0},{batch,c.kv_heads,offset+t,c.head_dim},s);
+  v=mx::slice_update(old_v,v,{0,0,offset,0},{batch,c.kv_heads,offset+t,c.head_dim},s);
   next.push_back(k);next.push_back(v);
+  if(offset+t<c.context){k=mx::slice(k,{0,0,0,0},{batch,c.kv_heads,offset+t,c.head_dim},s);v=mx::slice(v,{0,0,0,0},{batch,c.kv_heads,offset+t,c.head_dim},s);}
   cut(projection_timer,OperatorStage::AttentionProjection,{qg[1],q,k,v});auto reduction_timer=stage();
   mx::array y=q;
   if(!diagnose&&!reference&&!operators&&c.fused_attention){
@@ -218,7 +222,7 @@ struct Qwen {
 };
 size_t qwen_state_count(const rs_qwen_config& c,size_t offset){
  size_t full=c.layers/c.interval,linear=c.layers-full;
- return linear*(size_t(c.conv-1)*(2*c.key_heads*c.key_dim+c.value_heads*c.value_dim)+size_t(c.value_heads)*c.value_dim*c.key_dim)+full*2*c.kv_heads*offset*c.head_dim;
+ return linear*(size_t(c.conv-1)*(2*c.key_heads*c.key_dim+c.value_heads*c.value_dim)+size_t(c.value_heads)*c.value_dim*c.key_dim)+full*2*c.kv_heads*size_t(c.context)*c.head_dim;
 }
 }
 extern "C" int rs_qwen_quant(void* store,const char* module,int group,int bits,char* error,size_t capacity){return checked(error,capacity,[&]{
@@ -276,7 +280,7 @@ static int qwen_forward_core(void* store,int gpu,const rs_qwen_config* config,co
   }else{
   auto norm_timer=m.stage();h=m.norm(x,prefix+".input_layernorm.weight");r=h;m.cut(norm_timer,OperatorStage::InputNorm,{h});
   if(layers[layer].mixer==0){int cd=2*c.key_heads*c.key_dim+c.value_heads*c.value_dim;auto conv=state({1,c.conv-1,cd},x.dtype());auto recurrent=state({1,c.value_heads,c.value_dim,c.key_dim},mx::float32);r=m.recurrent(h,prefix+".linear_attn",conv,recurrent,next);}
-  else{auto k=state({1,c.kv_heads,int(offset),c.head_dim},x.dtype());auto v=state({1,c.kv_heads,int(offset),c.head_dim},x.dtype());r=m.attention(h,prefix+".self_attn",int(offset),k,v,next,trace_count!=0);}
+  else{auto k=state({1,c.kv_heads,c.context,c.head_dim},x.dtype());auto v=state({1,c.kv_heads,c.context,c.head_dim},x.dtype());r=m.attention(h,prefix+".self_attn",int(offset),k,v,next,trace_count!=0);}
   if(c.compiled_decode&&layers[layer].mixer==1&&!trace_count&&!projection_checks&&!c.operator_profile){
    residual=mx::add(x,r,s);x=m.compiled_post_moe(residual,prefix);
   }else{

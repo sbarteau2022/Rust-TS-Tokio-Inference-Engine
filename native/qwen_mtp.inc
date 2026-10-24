@@ -4,7 +4,7 @@ extern "C" int rs_qwen_device_mtp_attach(void* handle,void* weights,char* error,
  if(!session.gpu)throw std::invalid_argument("MTP profile requires qualified GPU backend");
  if(session.mtp_weights||session.table.residents()||session.drafts.residents())throw std::invalid_argument("MTP attach must precede admission");session.mtp_weights=weights;
 });}
-static size_t mtp_bytes(size_t position,size_t count){return position*2*2*256*4+count*2048*4;}
+static size_t mtp_bytes(size_t cap,size_t count){return cap*2*2*256*4+count*2048*4;}
 extern "C" int rs_qwen_device_mtp_step(void* handle,const StateId* previous,const StateId* source,int draft_source,size_t row,const uint32_t* tokens,size_t count,StateId* output,float* logits,size_t logits_count,int diagnostics,char* error,size_t capacity){return checked(error,capacity,[&]{
  if(!handle||!source||!tokens||!output||!logits||draft_source<0||draft_source>1||diagnostics<0||diagnostics>1||!count||count>8)throw std::invalid_argument("MTP descriptor");
  auto& session=*static_cast<DeviceSession*>(handle);const auto& c=session.config;
@@ -20,8 +20,8 @@ extern "C" int rs_qwen_device_mtp_step(void* handle,const StateId* previous,cons
  if(draft_source){
   if(!previous||source->owner!=previous->owner||source->slot!=previous->slot||source->generation!=previous->generation||source->position!=previous->position||source->bytes!=previous->bytes||count!=1||row+1!=rows)throw std::invalid_argument("MTP autoregressive parent identity");
  }else if(source->position<rows||source->position-rows+row!=position)throw std::invalid_argument("MTP target hidden alignment");
- if(old&&(old->arrays.size()!=2||old->arrays[0].shape()!=mx::Shape{1,c.kv_heads,int(position),c.head_dim}||old->arrays[1].shape()!=old->arrays[0].shape()))throw std::invalid_argument("MTP KV geometry");
- auto bytes=mtp_bytes(position+count,count);
+ if(old&&(old->arrays.size()!=2||old->arrays[0].shape()!=mx::Shape{1,c.kv_heads,c.context,c.head_dim}||old->arrays[1].shape()!=old->arrays[0].shape()))throw std::invalid_argument("MTP KV geometry");
+ auto bytes=mtp_bytes(size_t(c.context),count);
  if(session.table.residents()+session.drafts.residents()>=session.slots||bytes>session.limit-session.table.bytes()-session.drafts.bytes())throw std::runtime_error("combined resident budget exhausted");
  auto stream=mx::default_stream(mx::Device(session.gpu?mx::Device::gpu:mx::Device::cpu));
  auto id=session.drafts.reserve(position+count,bytes);
@@ -37,7 +37,7 @@ extern "C" int rs_qwen_device_mtp_step(void* handle,const StateId* previous,cons
   std::string prefix="language_model.mtp";
   auto fused=mx::concatenate({draft.norm(token_embed,prefix+".pre_fc_norm_embedding.weight"),draft.norm(hidden,prefix+".pre_fc_norm_hidden.weight")},-1,s);
   auto x=draft.linear(fused,prefix+".fc");auto layer=prefix+".layers.0";
-  auto empty=mx::zeros({1,c.kv_heads,0,c.head_dim},mx::float32,s);DevicePayload next;
+  auto empty=mx::zeros({1,c.kv_heads,c.context,c.head_dim},mx::float32,s);DevicePayload next;
   auto attended=draft.attention(draft.norm(x,layer+".input_layernorm.weight"),layer+".self_attn",int(position),old?old->arrays[0]:empty,old?old->arrays[1]:empty,next.arrays,diagnostics!=0);
   auto residual=mx::add(x,attended,s);
   if(!diagnostics&&session.gpu&&c.compiled_decode&&!std::getenv("MLX_DISABLE_COMPILE"))x=draft.compiled_post_moe(residual,layer);

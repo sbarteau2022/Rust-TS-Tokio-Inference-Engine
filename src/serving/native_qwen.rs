@@ -185,14 +185,14 @@ impl Architecture {
             theta: 10000000.,
         })
     }
-    fn state_len(self, offset: usize) -> usize {
+    fn state_len(self, _offset: usize) -> usize {
         let full = (self.layers / self.interval) as usize;
         let linear = self.layers as usize - full;
         linear
             * ((self.conv - 1) as usize
                 * (2 * self.key_heads * self.key_dim + self.value_heads * self.value_dim) as usize
                 + (self.value_heads * self.value_dim * self.key_dim) as usize)
-            + full * 2 * self.kv_heads as usize * offset * self.head_dim as usize
+            + full * 2 * self.kv_heads as usize * self.context as usize * self.head_dim as usize
     }
 }
 fn next_owner() -> Result<u64> {

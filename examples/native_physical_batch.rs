@@ -53,7 +53,9 @@ async fn main() -> Result<()> {
         QwenDeviceExecutor::open_configured(
             Device::Gpu,
             32,
-            2 * 1024 * 1024 * 1024,
+            // Fixed-shape (context-cap) states are larger than the old
+            // position-sized accounting; the resident budget is sized for them.
+            4 * 1024 * 1024 * 1024,
             ExecutionTuning {
                 layer_group: group,
                 fused_recurrent: mode == "fused",
