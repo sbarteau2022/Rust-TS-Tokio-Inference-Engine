@@ -18,6 +18,7 @@ Status: implementation inventory, 2026-10-24. Native execution means Rust/Tokio 
 12. [Planned tuning controls](#planned-tuning-controls)
 13. [Measurement and promotion gates](#measurement-and-promotion-gates)
 14. [Parser sources and audit checks](#parser-sources-and-audit-checks)
+15. [Rust-boundary MTP phase diagnostics](#rust-boundary-mtp-phase-diagnostics)
 
 ## Native server command
 
@@ -107,7 +108,7 @@ Native TurboQuant KV, native paging, cache-tier promotion/Monte shuffle, quantiz
 
 `native_group_qualification` positional controls: NEW_DIRECTORY, GROUP, recurrent mode, timing, graph mode, attention mode, operator mode, `logits|sampled` step, `full|sampled|off` validation, `fp32|bf16` activation profile, and `reference|sorted|fused` expert mode. Defaults preserve FP32/full/reference controls. `sampled` step means GPU argmax, distinct from sampled validation.
 
-`native_mtp_bench NEW_DIRECTORY [WIDTH] [GRAPH] [GROUP]` accepts draft width 1–8 (default 4), `eager|compiled-decode` (default eager), and grouping 1/4/10/40 (default40). Compiled-MTP remains an explicit bounded experiment. Its warmed Rust-boundary 32-token decode result excludes HTTP and model loading.
+`native_mtp_bench NEW_DIRECTORY [WIDTH] [GRAPH] [GROUP] [EXPERT] [--capture-wait]` accepts draft width 1–8 (default 4), `eager|compiled-decode` (default eager), and grouping 1/4/10/40 (default40). Compiled-MTP remains an explicit bounded experiment. Its warmed Rust-boundary 32-token decode result excludes HTTP and model loading.
 
 `native_mtp_decode_smoke NEW_DIRECTORY [GRAPH] [GROUP]` exercises accepted-target-window commit, sequential target state/output parity, immutable parents and drain. Defaults eager/group40; compiled configurations remain bounded experiments and emit a flushed phase/memory journal.
 
@@ -198,3 +199,13 @@ Promotion requires rigorous full-state/logit comparison against the independent 
 Authoritative parsers: `src/main.rs`, `src/serving/native_http.rs`, `src/serving/native_mtp_cli.rs`, `ts/http-bench-config.ts`; scheduler validation: `src/serving/config.rs`. Native numerical configuration: `ExecutionTuning` and `Architecture`. Negative-test strings such as `--surprise` are intentionally unsupported. Read-only shutdown counters expose proposer and no-draft baseline commits separately; neither is silently substituted for delivered tokens. Every documented default must agree with parser/default construction; fail-closed parser tests cover duplicates, missing values, invalid enums and incompatible profiles.
 
 `native_mtp_smoke NEW_DIRECTORY [GRAPH] [GROUP]` now exposes the same bounded compiled component/pressure gate; defaults remain eager/group1. These positional example controls do not change server defaults.
+
+## Rust-boundary MTP phase diagnostics
+
+`cargo build --release --features mtp-phase-timing --example native_mtp_bench` enables diagnostic receipt and initial-prefill timings. The feature is off by default: ordinary builds contain no phase timers or additional metric fields. This is an offline benchmark control, not a production sampling mode or GPU timestamp facility. The benchmark labels `phase_timing` explicitly; do not compare a timed candidate with an untimed control and call the difference a kernel gain.
+
+`native_mtp_bench NEW_DIRECTORY [WIDTH] [GRAPH] [GROUP] [EXPERT]` additionally accepts `reference|sorted|fused` for the existing expert dispatch control (default reference). `native_mtp_smoke NEW_DIRECTORY [GRAPH] [GROUP] [EXPERT] [RECURRENT]` exposes the matching component gate; recurrent values are `reference|fused`, default reference for eager and fused for compiled, preserving earlier defaults. Expert controls do not change numerical tolerances or production defaults. Reports include selected expert/recurrence metadata. Benchmark reports record peak allocator bytes and shutdown logical bytes.
+
+Phases: target/draft prefill, autoregressive drafting, target verification, rejected-window target replay and committed draft-state refresh. Prepare/commit envelopes retain host/unclassified residue. Await times include scheduler/queue/completion latency. The independent phase reader checks frozen outputs, counters, no omitted receipts, positive/finite/integer durations, envelope bounds, reuse/replay accounting and the90% learned-acceptance gate.
+
+`--capture-wait` is accepted only by the offline benchmark with `mtp-phase-timing` enabled. After warmup it writes `capture-ready.json` with the owned PID and waits for `capture-go` for at most30 seconds; timeout drains and fails. The external recorder releases it only after Xcode’s tracing-started notification. Captured runs are labeled and refused by the throughput-control reader. This is not a server command flag.

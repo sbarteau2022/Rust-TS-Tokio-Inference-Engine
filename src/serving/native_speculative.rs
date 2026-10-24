@@ -181,7 +181,8 @@ impl QwenDeviceExecutor {
         calls: Option<Arc<AtomicU64>>,
     ) -> Result<GreedyTransaction> {
         ensure!(!cursor.terminal, "cannot decode terminal cursor");
-        let remaining = 512usize.saturating_sub(cursor.state.position());
+        let context_cap = self.context_capacity();
+        let remaining = context_cap.saturating_sub(cursor.state.position());
         ensure!(
             remaining > 0 && draft.len() <= 8 && draft.len() <= remaining,
             "greedy context/draft capacity"

@@ -31,6 +31,19 @@ impl ModelStepIr {
         tokens: Vec<u32>,
         vocabulary: u32,
     ) -> Result<Self> {
+        Self::compile_with_context(kind, position, tokens, vocabulary, 512)
+    }
+    pub fn compile_with_context(
+        kind: StepKind,
+        position: usize,
+        tokens: Vec<u32>,
+        vocabulary: u32,
+        max_context: usize,
+    ) -> Result<Self> {
+        ensure!(
+            (512..=262_144).contains(&max_context),
+            "IR context capacity bound"
+        );
         ensure!(
             vocabulary > 0
                 && vocabulary <= 300000
@@ -44,7 +57,9 @@ impl ModelStepIr {
             "decode IR requires one token"
         );
         ensure!(
-            position.checked_add(tokens.len()).is_some_and(|n| n <= 512),
+            position
+                .checked_add(tokens.len())
+                .is_some_and(|n| n <= max_context),
             "IR context bound"
         );
         Ok(Self {
@@ -201,6 +216,9 @@ mod tests {
         assert_eq!(step.ffi_ids(), &[99]);
         assert!(!step.projection_checks());
         assert!(step.projection_outputs().is_empty());
+        let long_step =
+            ModelStepIr::compile_with_context(StepKind::Decode, 262_143, vec![42], 100, 262_144)?;
+        assert_eq!(long_step.position().get(), 262_143);
         for invalid in [vec![], vec![1; 9], vec![100], vec![1, 1]] {
             assert!(step.clone().with_projection_outputs(invalid).is_err());
         }

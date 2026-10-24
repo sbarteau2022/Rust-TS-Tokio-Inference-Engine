@@ -1,7 +1,9 @@
 //! Spec 15 controller. Opaque exact payloads; no pretend model attention or learned predictor.
 use anyhow::{bail, ensure, Context, Result};
 mod drafts;
+pub mod meta_automaton;
 pub use drafts::*;
+pub use meta_automaton::*;
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 use std::{
@@ -38,14 +40,14 @@ pub struct Config {
 impl Config {
     pub fn validate(&self) -> Result<()> {
         ensure!(
-            (1..=4096).contains(&self.capacity_blocks)
-                && (1..=1_048_576).contains(&self.bytes_per_block),
+            (1..=16_384).contains(&self.capacity_blocks)
+                && (1..=16_777_216).contains(&self.bytes_per_block),
             "pool configuration"
         );
         ensure!(
             self.capacity_blocks
                 .checked_mul(self.bytes_per_block)
-                .is_some_and(|v| v <= 64 * 1024 * 1024),
+                .is_some_and(|v| v <= 16 * 1024 * 1024 * 1024),
             "pool byte budget"
         );
         ensure!(
@@ -500,7 +502,7 @@ impl Controller {
         append: Vec<u32>,
     ) -> Result<BranchId> {
         let mut state = self.state()?;
-        ensure!(append.len() <= 65536, "declared token budget");
+        ensure!(append.len() <= 262_144, "declared token budget");
         ensure!(
             [
                 &identity.model,
@@ -533,7 +535,7 @@ impl Controller {
         let declared: usize = state.branches.values().map(|b| b.tokens.len()).sum();
         ensure!(
             !tokens.is_empty()
-                && tokens.len() <= 65536
+                && tokens.len() <= 262_144
                 && declared + tokens.len() <= state.config.max_declared_tokens,
             "declared token budget"
         );

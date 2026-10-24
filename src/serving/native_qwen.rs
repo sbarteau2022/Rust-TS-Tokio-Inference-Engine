@@ -193,14 +193,25 @@ impl Architecture {
             theta: 10000000.,
         })
     }
-    fn state_len(self, _offset: usize) -> usize {
+    pub(super) fn kv_capacity(self, offset: usize) -> usize {
+        let cap = self.context as usize;
+        if cap <= 512 {
+            cap
+        } else {
+            let active = offset.max(1);
+            let paged = active.div_ceil(256) * 256;
+            cap.min(paged)
+        }
+    }
+    fn state_len(self, offset: usize) -> usize {
         let full = (self.layers / self.interval) as usize;
         let linear = self.layers as usize - full;
+        let kv_cap = self.kv_capacity(offset);
         linear
             * ((self.conv - 1) as usize
                 * (2 * self.key_heads * self.key_dim + self.value_heads * self.value_dim) as usize
                 + (self.value_heads * self.value_dim * self.key_dim) as usize)
-            + full * 2 * self.kv_heads as usize * self.context as usize * self.head_dim as usize
+            + full * 2 * self.kv_heads as usize * kv_cap * self.head_dim as usize
     }
 }
 fn next_owner() -> Result<u64> {
@@ -728,6 +739,8 @@ pub use device_scheduler::{ScheduledDevice, StateMode};
 
 #[path = "native_speculative.rs"]
 mod speculative;
+#[cfg(feature = "mtp-phase-timing")]
+pub use speculative::MtpPhaseTiming;
 pub use speculative::{GreedyCursor, GreedyTransaction, MtpCursor, MtpTransaction, SuffixDraft};
 
 /// Ownership held by each native command until its completion.

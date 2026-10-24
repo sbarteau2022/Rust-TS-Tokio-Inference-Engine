@@ -1,10 +1,31 @@
+#[cfg(feature = "mtp-phase-timing")]
+#[derive(Clone, Copy, Debug, Default, serde::Serialize)]
+pub struct MtpPhaseTiming {
+    pub prefill_ns: u64,
+    pub target_prefill_ns: u64,
+    pub draft_prefill_ns: u64,
+    pub prepare_ns: u64,
+    pub draft_ns: u64,
+    pub commit_ns: u64,
+    pub verify_ns: u64,
+    pub replay_ns: u64,
+    pub refresh_ns: u64,
+}
+#[cfg(feature = "mtp-phase-timing")]
+fn phase_ns(start: std::time::Instant) -> u64 {
+    u64::try_from(start.elapsed().as_nanos()).expect("phase duration fits u64 nanoseconds")
+}
 // Transactional MTP decoding with accepted target-window reuse.
 #[derive(Clone)]
 pub struct MtpCursor {
     target: GreedyCursor,
     draft: super::MtpStep,
+    #[cfg(feature = "mtp-phase-timing")]
+    pub prefill_timing: MtpPhaseTiming,
 }
 pub struct MtpTransaction {
+    #[cfg(feature = "mtp-phase-timing")]
+    pub phase_timing: MtpPhaseTiming,
     pub cursor: MtpCursor,
     pub emitted: Vec<u32>,
     /// Excludes the first token already known from target logits.
@@ -17,6 +38,8 @@ pub struct MtpTransaction {
     pub target_forward_tokens: usize,
 }
 pub(super) struct MtpPrepared {
+    #[cfg(feature = "mtp-phase-timing")]
+    phase_timing: MtpPhaseTiming,
     cursor: MtpCursor,
     tokens: Vec<u32>,
     draft_calls: usize,
@@ -34,7 +57,9 @@ impl MtpCursor {
         self.target.state.bytes() + self.draft.state.bytes()
     }
     /// Read-only opaque state for offline state-equivalence qualification.
-    pub fn draft_state(&self) -> &super::MtpState { &self.draft.state }
+    pub fn draft_state(&self) -> &super::MtpState {
+        &self.draft.state
+    }
     pub fn target(&self) -> &GreedyCursor {
         &self.target
     }
@@ -42,17 +67,26 @@ impl MtpCursor {
 impl QwenDeviceExecutor {
     /// Prompt IDs only. Captures and consumes shifted hidden windows on device.
     pub async fn mtp_start(&self, prompt: &[u32]) -> Result<MtpCursor> {
+        let context_cap = self.context_capacity();
         ensure!(
-            !prompt.is_empty() && prompt.len() < 512,
+            !prompt.is_empty() && prompt.len() < context_cap,
             "MTP prompt capacity"
         );
+        #[cfg(feature = "mtp-phase-timing")]
+        let (prefill_start, mut timing) = (std::time::Instant::now(), MtpPhaseTiming::default());
         let mut state = self.empty_state();
         let mut draft = self.empty_mtp_state()?;
         let mut latest = None;
         let mut logits = Vec::new();
         for (index, tokens) in prompt.chunks(8).enumerate() {
             let start = index * 8;
+            #[cfg(feature = "mtp-phase-timing")]
+            let target_start = std::time::Instant::now();
             let step = self.hidden_step(&state, tokens.to_vec()).await?;
+            #[cfg(feature = "mtp-phase-timing")]
+            {
+                timing.target_prefill_ns += phase_ns(target_start);
+            }
             logits = step.logits;
             let next = if start + tokens.len() < prompt.len() {
                 prompt[start + tokens.len()]
@@ -62,12 +96,24 @@ impl QwenDeviceExecutor {
             let mut shifted = Vec::with_capacity(tokens.len());
             shifted.extend_from_slice(&tokens[1..]);
             shifted.push(next);
+            #[cfg(feature = "mtp-phase-timing")]
+            let draft_start = std::time::Instant::now();
             let result = self.mtp_prefill(&draft, &step.state, 0, shifted).await?;
+            #[cfg(feature = "mtp-phase-timing")]
+            {
+                timing.draft_prefill_ns += phase_ns(draft_start);
+            }
             draft = result.state.clone();
             latest = Some(result);
             state = step.state;
         }
+        #[cfg(feature = "mtp-phase-timing")]
+        {
+            timing.prefill_ns = phase_ns(prefill_start);
+        }
         Ok(MtpCursor {
+            #[cfg(feature = "mtp-phase-timing")]
+            prefill_timing: timing,
             target: GreedyCursor {
                 state,
                 logits: Arc::new(logits),
@@ -77,7 +123,6 @@ impl QwenDeviceExecutor {
         })
     }
     /// Reuse fully accepted target windows; rejected unified state is replayed.
-    /// This experimental profile makes no profitability or scheduler claim.
     pub async fn mtp_decode(
         &self,
         cursor: &MtpCursor,
@@ -98,6 +143,87 @@ impl QwenDeviceExecutor {
         self.mtp_decode_mode(cursor, width, output_budget, eos, true)
             .await
     }
+    /// Executes the entire MTP speculative transaction (autoregressive draft + target block verify
+    /// + accept/replay/reuse + draft refresh) inside a single C++20 worker call with on-GPU top-2/margin.
+    pub async fn mtp_decode_fused(
+        &self,
+        cursor: &MtpCursor,
+        width: usize,
+        output_budget: usize,
+        eos: &[u32],
+    ) -> Result<MtpTransaction> {
+        self.mtp_decode_fused_mode(cursor, width, output_budget, eos, true, None)
+            .await
+    }
+    pub(super) async fn mtp_decode_fused_mode(
+        &self,
+        cursor: &MtpCursor,
+        width: usize,
+        output_budget: usize,
+        eos: &[u32],
+        reuse: bool,
+        completion: Option<super::CompletionGuard>,
+    ) -> Result<MtpTransaction> {
+        #[cfg(feature = "mtp-phase-timing")]
+        let tx_start = std::time::Instant::now();
+        let context_cap = self.context_capacity();
+        ensure!(
+            !cursor.target.terminal && (1..=8).contains(&width),
+            "MTP terminal/width"
+        );
+        let remaining = context_cap
+            .saturating_sub(cursor.target.state.position())
+            .min(output_budget);
+        ensure!(remaining > 0, "MTP context exhausted");
+        ensure!(
+            eos.iter()
+                .all(|&t| (t as usize) < cursor.target.logits.len()),
+            "MTP EOS vocabulary"
+        );
+        let seed_token = winner(&cursor.target.logits)?;
+        let (first_draft_token, first_draft_margin) = winner_with_margin(&cursor.draft.logits)?;
+        let receipt = self
+            .execute_mtp_fused(
+                &cursor.target.state,
+                &cursor.draft.state,
+                seed_token,
+                first_draft_token,
+                first_draft_margin,
+                width,
+                output_budget,
+                eos.to_vec(),
+                reuse,
+                completion,
+            )
+            .await?;
+        #[cfg(feature = "mtp-phase-timing")]
+        let timing = MtpPhaseTiming {
+            commit_ns: phase_ns(tx_start),
+            ..MtpPhaseTiming::default()
+        };
+        Ok(MtpTransaction {
+            #[cfg(feature = "mtp-phase-timing")]
+            phase_timing: timing,
+            cursor: MtpCursor {
+                #[cfg(feature = "mtp-phase-timing")]
+                prefill_timing: MtpPhaseTiming::default(),
+                target: GreedyCursor {
+                    state: receipt.target_state,
+                    logits: Arc::new(receipt.target_logits),
+                    terminal: receipt.terminal,
+                },
+                draft: receipt.draft_step,
+            },
+            emitted: receipt.emitted,
+            learned_proposed: receipt.learned_proposed,
+            learned_accepted: receipt.learned_accepted,
+            target_calls: receipt.target_calls,
+            draft_calls: receipt.draft_calls,
+            reused_target_tokens: receipt.reused_target_tokens,
+            replayed_target_tokens: receipt.replayed_target_tokens,
+            target_forward_tokens: receipt.target_forward_tokens,
+        })
+    }
     #[cfg(feature = "debug-validation")]
     pub async fn mtp_decode_replay(
         &self,
@@ -116,6 +242,12 @@ impl QwenDeviceExecutor {
         eos: &[u32],
         reuse: bool,
     ) -> Result<MtpTransaction> {
+        #[cfg(not(feature = "mtp-phase-timing"))]
+        if reuse {
+            return self
+                .mtp_decode_fused_mode(cursor, width, output_budget, eos, true, None)
+                .await;
+        }
         let prepared = self
             .mtp_prepare(cursor, width, output_budget, eos, None)
             .await?;
@@ -129,11 +261,14 @@ impl QwenDeviceExecutor {
         eos: &[u32],
         completion: Option<super::CompletionGuard>,
     ) -> Result<MtpPrepared> {
+        #[cfg(feature = "mtp-phase-timing")]
+        let (prepare_start, mut timing) = (std::time::Instant::now(), MtpPhaseTiming::default());
+        let context_cap = self.context_capacity();
         ensure!(
             !cursor.target.terminal && (1..=8).contains(&width),
             "MTP terminal/width"
         );
-        let remaining = 512usize
+        let remaining = context_cap
             .saturating_sub(cursor.target.state.position())
             .min(output_budget);
         ensure!(remaining > 0, "MTP context exhausted");
@@ -158,9 +293,15 @@ impl QwenDeviceExecutor {
             }
             tokens.push(token);
             if tokens.len() < count && !eos.contains(&token) && margin >= 1.25 {
+                #[cfg(feature = "mtp-phase-timing")]
+                let draft_start = std::time::Instant::now();
                 let step = self
                     .mtp_next_guarded(&branch, token, completion.clone())
                     .await?;
+                #[cfg(feature = "mtp-phase-timing")]
+                {
+                    timing.draft_ns += phase_ns(draft_start);
+                }
                 branch = step.state;
                 step_logits = Some(step.logits);
                 draft_calls += 1;
@@ -169,7 +310,13 @@ impl QwenDeviceExecutor {
             }
         }
         drop(branch);
+        #[cfg(feature = "mtp-phase-timing")]
+        {
+            timing.prepare_ns = phase_ns(prepare_start);
+        }
         Ok(MtpPrepared {
+            #[cfg(feature = "mtp-phase-timing")]
+            phase_timing: timing,
             cursor: cursor.clone(),
             tokens,
             draft_calls,
@@ -184,7 +331,11 @@ impl QwenDeviceExecutor {
         reuse: bool,
         calls: Option<Arc<AtomicU64>>,
     ) -> Result<MtpTransaction> {
+        #[cfg(feature = "mtp-phase-timing")]
+        let commit_start = std::time::Instant::now();
         let MtpPrepared {
+            #[cfg(feature = "mtp-phase-timing")]
+                phase_timing: mut timing,
             cursor,
             tokens,
             mut draft_calls,
@@ -193,6 +344,8 @@ impl QwenDeviceExecutor {
             completion,
         } = prepared;
         let proposed = tokens.len();
+        #[cfg(feature = "mtp-phase-timing")]
+        let verify_start = std::time::Instant::now();
         let block = self
             .hidden_block_guarded(
                 &cursor.target.state,
@@ -201,6 +354,10 @@ impl QwenDeviceExecutor {
                 calls.clone(),
             )
             .await?;
+        #[cfg(feature = "mtp-phase-timing")]
+        {
+            timing.verify_ns = phase_ns(verify_start);
+        }
         let mut decision = plan(
             &cursor.target.logits,
             &tokens,
@@ -213,10 +370,7 @@ impl QwenDeviceExecutor {
         // 40-layer target forward pass and second mtp_prefill call on full acceptance.
         if decision.accepted == proposed && decision.emitted.len() > proposed {
             decision.emitted.truncate(proposed);
-            decision.terminal = decision
-                .emitted
-                .last()
-                .is_some_and(|t| eos.contains(t));
+            decision.terminal = decision.emitted.last().is_some_and(|t| eos.contains(t));
         }
         let reused_target_tokens = if reuse && decision.accepted == proposed {
             proposed
@@ -247,9 +401,15 @@ impl QwenDeviceExecutor {
                 block.state
             } else {
                 target_calls += 1;
+                #[cfg(feature = "mtp-phase-timing")]
+                let replay_start = std::time::Instant::now();
                 let step = self
                     .hidden_step_guarded(&state, chunk.to_vec(), completion.clone(), calls.clone())
                     .await?;
+                #[cfg(feature = "mtp-phase-timing")]
+                {
+                    timing.replay_ns += phase_ns(replay_start);
+                }
                 logits = step.logits;
                 step.state
             };
@@ -261,9 +421,15 @@ impl QwenDeviceExecutor {
             let mut shifted = Vec::with_capacity(chunk.len());
             shifted.extend_from_slice(&chunk[1..]);
             shifted.push(next);
+            #[cfg(feature = "mtp-phase-timing")]
+            let refresh_start = std::time::Instant::now();
             let result = self
                 .mtp_prefill_guarded(&draft, &next_state, 0, shifted, completion.clone())
                 .await?;
+            #[cfg(feature = "mtp-phase-timing")]
+            {
+                timing.refresh_ns += phase_ns(refresh_start);
+            }
             draft_calls += 1;
             draft = result.state.clone();
             latest = Some(result);
@@ -274,8 +440,16 @@ impl QwenDeviceExecutor {
             state.position() == draft.position(),
             "MTP committed alignment"
         );
+        #[cfg(feature = "mtp-phase-timing")]
+        {
+            timing.commit_ns = phase_ns(commit_start);
+        }
         Ok(MtpTransaction {
+            #[cfg(feature = "mtp-phase-timing")]
+            phase_timing: timing,
             cursor: MtpCursor {
+                #[cfg(feature = "mtp-phase-timing")]
+                prefill_timing: MtpPhaseTiming::default(),
                 target: GreedyCursor {
                     state,
                     logits: Arc::new(logits),

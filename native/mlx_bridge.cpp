@@ -109,7 +109,7 @@ extern "C" int rs_mlx_weights_load(void* store, const char* file, char* error, s
   return checked(error,capacity,[&] {
     if (!store || !file) throw std::invalid_argument("invalid weight load descriptor");
     auto& weights=*static_cast<Weights*>(store);
-    auto loaded=mx::load_safetensors(std::string(file));
+    auto loaded=mx::load_safetensors(std::string(file),mx::Device(mx::Device::cpu));
     for (auto& [name,value]:loaded.first) {
       if (weights.arrays.contains(name)) throw std::invalid_argument("duplicate native parameter");
       if (name.find("mtp.")!=std::string::npos || (name.ends_with("conv1d.weight")&&value.shape(-1)!=1)) weights.has_shift=true;

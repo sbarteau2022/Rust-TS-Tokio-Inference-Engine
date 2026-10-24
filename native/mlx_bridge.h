@@ -113,3 +113,24 @@ int rs_qwen_device_mtp_snapshot(void*,const struct StateId*,float*,size_t,char*,
 #ifdef __cplusplus
 }
 #endif
+#ifdef __cplusplus
+extern "C" {
+#endif
+typedef struct rs_qwen_mtp_tx_result {
+ struct StateId target_state;
+ struct StateId draft_state;
+ uint32_t emitted[9];
+ uint32_t emitted_count;
+ uint32_t learned_proposed;
+ uint32_t learned_accepted;
+ uint32_t target_calls;
+ uint32_t draft_calls;
+ uint32_t reused_target_tokens;
+ uint32_t replayed_target_tokens;
+ uint32_t target_forward_tokens;
+ uint32_t terminal;
+} rs_qwen_mtp_tx_result;
+int rs_qwen_device_mtp_transaction(void* handle,const struct StateId* target_previous,const struct StateId* draft_previous,uint32_t seed_token,uint32_t first_draft_token,float first_draft_margin,size_t width,size_t output_budget,const uint32_t* eos,size_t eos_count,int reuse,struct rs_qwen_mtp_tx_result* result,float* target_logits,size_t target_logits_count,float* draft_logits,size_t draft_logits_count,char* error,size_t capacity);
+#ifdef __cplusplus
+}
+#endif

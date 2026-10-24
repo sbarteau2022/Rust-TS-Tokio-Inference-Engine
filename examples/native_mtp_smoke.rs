@@ -47,6 +47,26 @@ async fn main() -> Result<()> {
         matches!(graph.as_str(), "eager" | "compiled-decode") && matches!(group, 1 | 4 | 10 | 40),
         "execution profile"
     );
+    let expert = std::env::args()
+        .nth(4)
+        .unwrap_or_else(|| "reference".into());
+    let expert_kernel = match expert.as_str() {
+        "reference" => 0,
+        "sorted" => 1,
+        "fused" => 2,
+        _ => anyhow::bail!("expert kernel"),
+    };
+    let recurrent = std::env::args().nth(5).unwrap_or_else(|| {
+        if graph == "compiled-decode" {
+            "fused".into()
+        } else {
+            "reference".into()
+        }
+    });
+    ensure!(
+        matches!(recurrent.as_str(), "reference" | "fused"),
+        "recurrent kernel"
+    );
     std::fs::create_dir(&out)?;
     let executor = QwenDeviceExecutor::open_mtp_configured(
         Device::Gpu,
@@ -54,8 +74,9 @@ async fn main() -> Result<()> {
         768 * 1024 * 1024,
         ExecutionTuning {
             layer_group: group,
+            expert_kernel,
             compiled_decode: graph == "compiled-decode",
-            fused_recurrent: graph == "compiled-decode",
+            fused_recurrent: recurrent == "fused",
             ..ExecutionTuning::default()
         },
     )
@@ -208,7 +229,7 @@ async fn main() -> Result<()> {
     drop(target);
     ensure!(executor.stats().await?.residents == 0, "MTP context drain");
     let stats = executor.shutdown().await?;
-    let report = serde_json::json!({"pass":true,"graph_mode":graph,"layer_group":group,"scalar_debug_probes":cfg!(feature="debug-validation"),"cases":cases,"context":512,"transfer_accounting":"session ABI counters; explicit debug scalar snapshots are not counted","branch_bitwise":true,"combined_budget":true,"cancellation_drained":true,"logical_bytes_at_shutdown":stats.logical_bytes,"speculative_serving_qualified":false});
+    let report = serde_json::json!({"pass":true,"graph_mode":graph,"layer_group":group,"expert_kernel":expert,"recurrent_kernel":recurrent,"scalar_debug_probes":cfg!(feature="debug-validation"),"cases":cases,"context":512,"transfer_accounting":"session ABI counters; explicit debug scalar snapshots are not counted","branch_bitwise":true,"combined_budget":true,"cancellation_drained":true,"logical_bytes_at_shutdown":stats.logical_bytes,"speculative_serving_qualified":false});
     std::fs::write(
         Path::new(&out).join("summary.json"),
         serde_json::to_vec_pretty(&report)?,

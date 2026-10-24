@@ -1,0 +1,32 @@
+{
+  "pass": false,
+  "error": "Command '['xcrun', 'xctrace', 'record', '--template', 'Metal System Trace', '--attach', '56291', '--time-limit', '30s', '--output', '/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/artifacts/mtp-verifier-system.trace', '--notify-tracing-started', 'com.rustserver.mtp.capture.56291', '--no-prompt']' timed out after 60 seconds",
+  "commands": [
+    [
+      "./artifacts/mtp-phase-capture",
+      "evidence/mtp-phase-costs/metal-capture/workload",
+      "4",
+      "eager",
+      "40",
+      "reference",
+      "--capture-wait"
+    ],
+    [
+      "xcrun",
+      "xctrace",
+      "record",
+      "--template",
+      "Metal System Trace",
+      "--attach",
+      "56291",
+      "--time-limit",
+      "30s",
+      "--output",
+      "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/artifacts/mtp-verifier-system.trace",
+      "--notify-tracing-started",
+      "com.rustserver.mtp.capture.56291",
+      "--no-prompt"
+    ]
+  ],
+  "gpu_attribution_claim": false
+}

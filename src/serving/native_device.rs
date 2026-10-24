@@ -100,6 +100,7 @@ enum Work {
         _permit: OwnedSemaphorePermit,
     },
     Mtp(mtp::MtpWork),
+    MtpFused(mtp::MtpFusedWork),
     MtpSnapshot(MtpState, oneshot::Sender<Result<Vec<f32>>>),
     Reference(
         ModelState,
@@ -233,6 +234,22 @@ impl QwenDeviceExecutor {
         tuning: ExecutionTuning,
     ) -> Result<Self> {
         ensure!(
+            (1..=64).contains(&slots)
+                && logical_byte_limit > 0
+                && logical_byte_limit <= 8 * 1024 * 1024 * 1024,
+            "device resident budget bounds"
+        );
+        Self::open_configured_with_context(device, slots, logical_byte_limit, 512, tuning).await
+    }
+    /// Opens a device executor with configurable context up to 256K (`262,144` tokens).
+    pub async fn open_configured_with_context(
+        device: Device,
+        slots: usize,
+        logical_byte_limit: u64,
+        context_tokens: usize,
+        tuning: ExecutionTuning,
+    ) -> Result<Self> {
+        ensure!(
             (0..=2).contains(&tuning.expert_kernel) && (0..=2).contains(&tuning.validation_mode),
             "invalid execution tuning"
         );
@@ -268,20 +285,32 @@ impl QwenDeviceExecutor {
             "layer group must be 1|4|10|40"
         );
         ensure!(
+            (512..=262_144).contains(&context_tokens) && context_tokens % 256 == 0,
+            "device context bounds (512..=262144, 256-token page aligned)"
+        );
+        ensure!(
             (1..=64).contains(&slots)
                 && logical_byte_limit > 0
-                && logical_byte_limit <= 8 * 1024 * 1024 * 1024,
+                && logical_byte_limit <= 32 * 1024 * 1024 * 1024,
             "device resident budget bounds"
         );
         tokio::task::spawn_blocking(move || {
-            Self::start(device, slots, logical_byte_limit, false, tuning)
+            Self::start_with_context(
+                device,
+                slots,
+                logical_byte_limit,
+                context_tokens as i32,
+                false,
+                tuning,
+            )
         })
         .await?
     }
-    fn start(
+    fn start_with_context(
         device: Device,
         slots: usize,
         limit: u64,
+        context_tokens: i32,
         mtp_enabled: bool,
         tuning: ExecutionTuning,
     ) -> Result<Self> {
@@ -289,6 +318,7 @@ impl QwenDeviceExecutor {
             include_str!("../../fixtures/native-model.path").trim(),
         ))?;
         let mut architecture = Architecture::workhorse(&manifest)?;
+        architecture.context = context_tokens;
         architecture.layer_group = tuning.layer_group as i32;
         architecture.fused_recurrent = i32::from(tuning.fused_recurrent);
         architecture.execution_timing = i32::from(tuning.execution_timing);
@@ -362,6 +392,16 @@ impl QwenDeviceExecutor {
                                         else if usage.residents>=slots as u64 || work.required()>limit.saturating_sub(usage.logical_bytes){Err(anyhow::anyhow!("MTP resident budget exhausted"))}
                                         else {let result=mtp::forward(&session,&manifest,owner,&worker_mtp_releases,&work);if result.is_err(){faulted=true;worker_closed.store(true,Ordering::Release);}result};
                                         work.finish(result);
+                                    }
+                                    Work::MtpFused(work)=>{
+                                        let usage=session.stats()?;
+                                        let end_pos=work.target_previous.position()+work.width+1;
+                                        let req_bytes=((architecture.state_len(end_pos)+9*architecture.hidden as usize)*4 + mtp::bytes_for(architecture.context as usize,end_pos,9)) as u64;
+                                        let result=if faulted {Err(anyhow::anyhow!("device admission closed"))}
+                                        else if usage.residents+2>slots as u64 || req_bytes>limit.saturating_sub(usage.logical_bytes){Err(anyhow::anyhow!("MTP resident budget exhausted"))}
+                                        else {let result=mtp::forward_fused(&session,&manifest,owner,&worker_releases,&worker_mtp_releases,&work);if result.is_err(){faulted=true;worker_closed.store(true,Ordering::Release);}result};
+                                        let mtp::MtpFusedWork { reply,_permit,_completion,.. }=work;
+                                        drop(_completion);drop(_permit);let _=reply.send(result);
                                     }
                                     Work::Step { state,ir,all_logits,capture_hidden,_completion,reply,_permit } => {
                                         let usage=session.stats()?;
@@ -441,6 +481,9 @@ impl QwenDeviceExecutor {
     pub fn identity(&self) -> &str {
         &self.identity
     }
+    pub fn context_capacity(&self) -> usize {
+        self.architecture.context as usize
+    }
     pub fn empty_state(&self) -> DeviceState {
         DeviceState {
             owner: self.owner,
@@ -458,17 +501,67 @@ impl QwenDeviceExecutor {
     pub async fn step(&self, state: &DeviceState, tokens: Vec<u32>) -> Result<DeviceStep> {
         self.execute(
             state,
-            ModelStepIr::compile(
+            ModelStepIr::compile_with_context(
                 StepKind::Prefill,
                 state.position(),
                 tokens,
                 self.architecture.vocab as u32,
+                self.architecture.context as usize,
             )?,
         )
         .await
     }
     pub async fn execute(&self, state: &DeviceState, ir: ModelStepIr) -> Result<DeviceStep> {
         self.execute_mode(state, ir, false, false, None, None).await
+    }
+    pub(super) async fn execute_mtp_fused(
+        &self,
+        target_previous: &DeviceState,
+        draft_previous: &MtpState,
+        seed_token: u32,
+        first_draft_token: u32,
+        first_draft_margin: f32,
+        width: usize,
+        output_budget: usize,
+        eos: Vec<u32>,
+        reuse: bool,
+        completion: Option<CompletionGuard>,
+    ) -> Result<mtp::FusedMtpReceipt> {
+        ensure!(
+            self.mtp_enabled && !self.closed.load(Ordering::Acquire),
+            "MTP disabled or closed"
+        );
+        self.validate(target_previous)?;
+        ensure!(
+            draft_previous.is_owned_by(self.owner)
+                && target_previous.position() == draft_previous.position(),
+            "MTP cursor ownership/alignment"
+        );
+        let permit = self
+            .permit
+            .clone()
+            .try_acquire_owned()
+            .context("MTP fused in-flight limit reached")?;
+        let (reply, received) = oneshot::channel();
+        self.tx
+            .as_ref()
+            .context("device stopped")?
+            .try_send(Work::MtpFused(mtp::MtpFusedWork {
+                target_previous: target_previous.clone(),
+                draft_previous: draft_previous.clone(),
+                seed_token,
+                first_draft_token,
+                first_draft_margin,
+                width,
+                output_budget,
+                eos,
+                reuse,
+                reply,
+                _permit: permit,
+                _completion: completion,
+            }))
+            .map_err(|_| anyhow::anyhow!("MTP fused queue full/closed"))?;
+        received.await.context("MTP fused worker stopped")?
     }
     /// Explicit prototype: one batch-shaped graph, equal-position target decode only.
     /// Each child conservatively charges the entire packed backing until its release.
@@ -485,7 +578,13 @@ impl QwenDeviceExecutor {
             !self.closed.load(Ordering::Acquire),
             "device admission closed"
         );
-        validate_batch(self.owner, parents, &tokens, self.architecture.vocab as u32)?;
+        validate_batch(
+            self.owner,
+            parents,
+            &tokens,
+            self.architecture.vocab as u32,
+            self.architecture.context as usize,
+        )?;
         let permit = self
             .permit
             .clone()
@@ -522,11 +621,12 @@ impl QwenDeviceExecutor {
         completion: Option<CompletionGuard>,
         calls: Option<Arc<AtomicU64>>,
     ) -> Result<DeviceBlock> {
-        let ir = ModelStepIr::compile(
+        let ir = ModelStepIr::compile_with_context(
             StepKind::Prefill,
             state.position(),
             tokens,
             self.architecture.vocab as u32,
+            self.architecture.context as usize,
         )?;
         let result = self
             .execute_mode(state, ir, true, false, completion, calls)
@@ -557,11 +657,12 @@ impl QwenDeviceExecutor {
         completion: Option<CompletionGuard>,
         calls: Option<Arc<AtomicU64>>,
     ) -> Result<DeviceStep> {
-        let ir = ModelStepIr::compile(
+        let ir = ModelStepIr::compile_with_context(
             StepKind::Prefill,
             state.position(),
             tokens,
             self.architecture.vocab as u32,
+            self.architecture.context as usize,
         )?;
         self.execute_mode(state, ir, false, true, completion, calls)
             .await
@@ -577,11 +678,12 @@ impl QwenDeviceExecutor {
         completion: Option<CompletionGuard>,
         calls: Option<Arc<AtomicU64>>,
     ) -> Result<DeviceBlock> {
-        let ir = ModelStepIr::compile(
+        let ir = ModelStepIr::compile_with_context(
             StepKind::Prefill,
             state.position(),
             tokens,
             self.architecture.vocab as u32,
+            self.architecture.context as usize,
         )?;
         let result = self
             .execute_mode(state, ir, true, true, completion, calls)
@@ -611,11 +713,12 @@ impl QwenDeviceExecutor {
         calls: Option<Arc<AtomicU64>>,
     ) -> Result<DeviceStep> {
         self.validate(state)?;
+        let context_cap = self.architecture.context as usize;
         ensure!(
             ir.position().get() == state.position()
                 && ir.vocabulary() == self.architecture.vocab as u32
                 && ir.len() <= 8
-                && state.position() + ir.len() <= 512,
+                && state.position() + ir.len() <= context_cap,
             "device IR geometry"
         );
         ensure!(
@@ -652,11 +755,12 @@ impl QwenDeviceExecutor {
         state: &DeviceState,
         tokens: Vec<u32>,
     ) -> Result<DeviceSampledStep> {
-        let ir = ModelStepIr::compile(
+        let ir = ModelStepIr::compile_with_context(
             StepKind::Prefill,
             state.position(),
             tokens,
             self.architecture.vocab as u32,
+            self.architecture.context as usize,
         )?;
         self.execute_sampled(state, ir).await
     }
@@ -666,11 +770,12 @@ impl QwenDeviceExecutor {
         ir: ModelStepIr,
     ) -> Result<DeviceSampledStep> {
         self.validate(state)?;
+        let context_cap = self.architecture.context as usize;
         ensure!(
             ir.position().get() == state.position()
                 && ir.vocabulary() == self.architecture.vocab as u32
                 && ir.len() <= 8
-                && state.position() + ir.len() <= 512,
+                && state.position() + ir.len() <= context_cap,
             "device IR geometry"
         );
         ensure!(
@@ -702,11 +807,12 @@ impl QwenDeviceExecutor {
         completion: Option<CompletionGuard>,
         calls: Option<Arc<AtomicU64>>,
     ) -> Result<DeviceStep> {
-        let ir = ModelStepIr::compile(
+        let ir = ModelStepIr::compile_with_context(
             StepKind::Prefill,
             state.position(),
             tokens,
             self.architecture.vocab as u32,
+            self.architecture.context as usize,
         )?;
         self.execute_mode(state, ir, false, false, completion, calls)
             .await
@@ -724,13 +830,14 @@ impl QwenDeviceExecutor {
         state: &ModelState,
         ir: ModelStepIr,
     ) -> Result<ModelStep> {
+        let context_cap = self.architecture.context as usize;
         ensure!(
             !self.closed.load(Ordering::Acquire)
                 && state.owner == self.owner
                 && ir.position().get() == state.offset
                 && ir.vocabulary() == self.architecture.vocab as u32
                 && ir.len() <= 8
-                && state.offset + ir.len() <= 512,
+                && state.offset + ir.len() <= context_cap,
             "reference IR ownership/geometry"
         );
         ensure!(
@@ -961,13 +1068,14 @@ fn validate_batch(
     parents: &[DeviceState],
     tokens: &[u32],
     vocabulary: u32,
+    max_context: usize,
 ) -> Result<()> {
     ensure!(
         !parents.is_empty() && parents.len() <= 3 && parents.len() == tokens.len(),
         "batch row geometry"
     );
     let position = parents[0].position();
-    ensure!((1..512).contains(&position), "batch decode position");
+    ensure!((1..max_context).contains(&position), "batch decode position");
     ensure!(
         parents
             .iter()
@@ -1000,7 +1108,7 @@ mod batch_tests {
     }
     #[test]
     fn batch_descriptor_rejects_foreign_owner_geometry_and_vocabulary_before_submission() {
-        assert!(validate_batch(1, &[parent(1, 8), parent(1, 8)], &[1, 2], 16).is_ok());
+        assert!(validate_batch(1, &[parent(1, 8), parent(1, 8)], &[1, 2], 16, 512).is_ok());
         for (parents, tokens) in [
             (vec![], vec![]),
             (vec![parent(1, 8)], vec![]),
@@ -1011,7 +1119,7 @@ mod batch_tests {
             (vec![parent(1, 8), parent(1, 9)], vec![1, 2]),
             (vec![parent(1, 8); 4], vec![1; 4]),
         ] {
-            assert!(validate_batch(1, &parents, &tokens, 16).is_err());
+            assert!(validate_batch(1, &parents, &tokens, 16, 512).is_err());
         }
     }
 }
@@ -1205,22 +1313,21 @@ unsafe extern "C" {
     ) -> i32;
     fn rs_qwen_device_destroy(session: *mut c_void);
 }
-
 #[cfg(test)]
 mod tests {
     use super::*;
     #[test]
-    fn only_final_clone_retires_and_closed_worker_is_safe() {
+    fn cloned_device_state_retires_exactly_once_on_last_drop() {
         let (tx, mut rx) = mpsc::unbounded_channel();
         let id = StateId {
-            owner: 7,
+            owner: 1,
             slot: 2,
-            generation: 9,
-            position: 8,
-            bytes: 64,
+            generation: 3,
+            position: 4,
+            bytes: 8,
         };
         let state = DeviceState {
-            owner: 3,
+            owner: 1,
             hidden_rows: 0,
             token: Some(Arc::new(Lifetime { id, releases: tx })),
         };

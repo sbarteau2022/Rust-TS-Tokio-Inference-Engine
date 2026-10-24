@@ -129,7 +129,7 @@ fn identity_valid(identity: &Identity) -> Result<()> {
 pub fn prefix_key(identity: &Identity, tokens: &[u32]) -> Result<BlockKey> {
     identity_valid(identity)?;
     ensure!(
-        !tokens.is_empty() && tokens.len() <= 65536,
+        !tokens.is_empty() && tokens.len() <= 262_144,
         "draft prefix bounds"
     );
     Ok(path(identity, tokens).last().expect("nonempty prefix").key)

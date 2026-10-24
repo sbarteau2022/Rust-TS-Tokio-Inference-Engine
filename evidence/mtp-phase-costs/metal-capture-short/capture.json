@@ -1,0 +1,42 @@
+{
+  "pass": true,
+  "scope": "perturbed warmed Metal diagnostic, not throughput",
+  "trace": "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/artifacts/mtp-mixed-short.trace",
+  "commands": [
+    [
+      "./artifacts/mtp-phase-capture",
+      "evidence/mtp-phase-costs/metal-capture-short/workload",
+      "4",
+      "eager",
+      "40",
+      "reference",
+      "--capture-wait"
+    ],
+    [
+      "xcrun",
+      "xctrace",
+      "record",
+      "--template",
+      "Metal System Trace",
+      "--attach",
+      "56885",
+      "--time-limit",
+      "5s",
+      "--output",
+      "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/artifacts/mtp-mixed-short.trace",
+      "--notify-tracing-started",
+      "com.rustserver.mtp.capture.56885",
+      "--no-prompt"
+    ],
+    [
+      "xcrun",
+      "xctrace",
+      "export",
+      "--input",
+      "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/artifacts/mtp-mixed-short.trace",
+      "--toc",
+      "--output",
+      "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/evidence/mtp-phase-costs/metal-capture-short/toc.xml"
+    ]
+  ]
+}

@@ -48,3 +48,7 @@ Compiled-MTP follow-up: the explicit group4/full-state gate expired at the prere
 The final shipping rebuild includes the subsequent parser-only HTTP width guard; measured binaries remain identified by each run’s command artifact, separately from the shipping binary hashes.
 
 Final eager committed-state regression also passed widths1/2/4/8 against independent sequential target execution, immutable-parent checks and zero-byte drain, at NRMSE≤1e-5 and maximum absolute state error≤1e-3. This counting-prompt state gate is not broad acceptance qualification. Operational HTTP MTP windows are restricted to1/2/4/8 before weights load; nonpower widths remain bounded low-level experiments until their HTTP qualification is completed.
+
+## MTP phase follow-up — 2026-10-24
+
+[Phase-cost evidence](MTP_PHASE_COSTS.md): clean reference48.0418 versus packed-expert47.6250 warmed native MTP decode tok/s, both instrumented, exact frozen outputs,166/172 learned acceptance. Peak MLX20,654,647,232 versus33,211,056,360 bytes. No promotion or new HTTP result. Target verification accounts for70.86% of successful Rust transaction envelopes, including queue/completion/native work; this is not GPU timing. Other fractions: draft7.28%, replay3.18%, refresh6.38%, host/unclassified12.30%. Default production build remains uninstrumented. Captures, if valid, remain perturbed diagnostic evidence only.

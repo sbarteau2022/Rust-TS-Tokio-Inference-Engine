@@ -14,6 +14,10 @@ fn percentile(xs: &[f64], q: f64) -> f64 {
 }
 #[tokio::main]
 async fn main() -> Result<()> {
+    ensure!(
+        (2..=7).contains(&std::env::args().count()),
+        "benchmark argument count"
+    );
     let out = std::env::args()
         .nth(1)
         .context("native_mtp_bench NEW_DIRECTORY")?;
@@ -32,6 +36,24 @@ async fn main() -> Result<()> {
         .unwrap_or_else(|| "40".into())
         .parse()?;
     ensure!(matches!(group, 1 | 4 | 10 | 40), "layer group");
+    let expert = std::env::args()
+        .nth(5)
+        .unwrap_or_else(|| "reference".into());
+    let expert_kernel = match expert.as_str() {
+        "reference" => 0,
+        "sorted" => 1,
+        "fused" => 2,
+        _ => anyhow::bail!("expert kernel"),
+    };
+    let capture = std::env::args().nth(6);
+    ensure!(
+        matches!(capture.as_deref(), None | Some("--capture-wait")),
+        "capture control"
+    );
+    ensure!(
+        capture.is_none() || cfg!(feature = "mtp-phase-timing"),
+        "capture wait requires diagnostic feature"
+    );
     std::fs::create_dir(&out)?;
     let manifest = Manifest::read(Path::new(
         include_str!("../fixtures/native-model.path").trim(),
@@ -43,6 +65,7 @@ async fn main() -> Result<()> {
         1536 * 1024 * 1024,
         ExecutionTuning {
             layer_group: group,
+            expert_kernel,
             fused_recurrent: true,
             compiled_decode: graph == "compiled-decode",
             ..ExecutionTuning::default()
@@ -61,6 +84,25 @@ async fn main() -> Result<()> {
     let m = e.mtp_start(&warm).await?;
     drop(e.mtp_decode_bounded(&m, width, 8, &tokenizer.eos()).await?);
     drop(m);
+    if capture.is_some() {
+        std::fs::write(
+            Path::new(&out).join("capture-ready.json"),
+            serde_json::to_string(
+                &serde_json::json!({"pid":std::process::id(),"phase":"after-warmup","not_throughput":true}),
+            )?,
+        )?;
+        let wait = Instant::now();
+        while !Path::new(&out).join("capture-go").exists() {
+            if wait.elapsed().as_secs() >= 30 {
+                ensure!(
+                    e.shutdown().await?.logical_bytes == 0,
+                    "capture timeout drain"
+                );
+                anyhow::bail!("capture handshake timed out after warmup; drained");
+            }
+            tokio::time::sleep(std::time::Duration::from_millis(10)).await;
+        }
+    }
     let mut rows = Vec::new();
     let mut outputs = BTreeMap::new();
     for round in 0..2 {
@@ -86,6 +128,10 @@ async fn main() -> Result<()> {
                     greedy = Some(c);
                 }
                 let prefill = start.elapsed().as_secs_f64();
+                #[cfg(feature = "mtp-phase-timing")]
+                let prefill_timing = draft.as_ref().map(|c| c.prefill_timing);
+                #[cfg(feature = "mtp-phase-timing")]
+                let mut phase_receipts = Vec::new();
                 let decode = Instant::now();
                 let mut ids = Vec::new();
                 let mut intervals = Vec::new();
@@ -104,6 +150,8 @@ async fn main() -> Result<()> {
                         let tx = e
                             .mtp_decode_bounded(c, width, 32 - ids.len(), &tokenizer.eos())
                             .await?;
+                        #[cfg(feature = "mtp-phase-timing")]
+                        phase_receipts.push(serde_json::json!({"emitted":tx.emitted.len(),"learned_proposed":tx.learned_proposed,"learned_accepted":tx.learned_accepted,"target_calls":tx.target_calls,"draft_calls":tx.draft_calls,"target_forward_tokens":tx.target_forward_tokens,"reused_target_tokens":tx.reused_target_tokens,"replayed_target_tokens":tx.replayed_target_tokens,"timing":tx.phase_timing}));
                         proposed += tx.learned_proposed;
                         accepted += tx.learned_accepted;
                         target_calls += tx.target_calls;
@@ -137,7 +185,15 @@ async fn main() -> Result<()> {
                 } else {
                     outputs.insert(name.to_string(), ids.clone());
                 }
-                rows.push(serde_json::json!({"round":round,"prompt":name,"profile":if mtp {format!("mtp-width{width}-reuse")} else {"target-greedy".into()},"tokens":ids.len(),"ids":ids,"prefill_seconds":prefill,"decode_seconds":elapsed,"decode_tokens_per_second":ids.len() as f64/elapsed,"first_receipt_ms":first,"receipt_interval_p50_ms":percentile(&intervals,0.5),"receipt_interval_p95_ms":percentile(&intervals,0.95),"amortized_decode_ms_per_token":elapsed*1000./ids.len() as f64,"learned_proposed":proposed,"learned_accepted":accepted,"target_calls":target_calls,"draft_calls":draft_calls,"target_forward_tokens":forward_tokens}));
+                let row = serde_json::json!({"round":round,"prompt":name,"profile":if mtp {format!("mtp-width{width}-reuse")} else {"target-greedy".into()},"tokens":ids.len(),"ids":ids,"prefill_seconds":prefill,"decode_seconds":elapsed,"decode_tokens_per_second":ids.len() as f64/elapsed,"first_receipt_ms":first,"receipt_interval_p50_ms":percentile(&intervals,0.5),"receipt_interval_p95_ms":percentile(&intervals,0.95),"amortized_decode_ms_per_token":elapsed*1000./ids.len() as f64,"learned_proposed":proposed,"learned_accepted":accepted,"target_calls":target_calls,"draft_calls":draft_calls,"target_forward_tokens":forward_tokens});
+                #[cfg(feature = "mtp-phase-timing")]
+                let row = {
+                    let mut row = row;
+                    row["mtp_prefill_timing"] = serde_json::to_value(prefill_timing)?;
+                    row["mtp_phase_receipts"] = serde_json::to_value(phase_receipts)?;
+                    row
+                };
+                rows.push(row);
                 drop(greedy);
                 drop(draft);
                 std::fs::write(
@@ -147,8 +203,9 @@ async fn main() -> Result<()> {
             }
         }
     }
-    ensure!(e.shutdown().await?.logical_bytes == 0, "benchmark drain");
-    let report = serde_json::json!({"pass":true,"draft_width":width,"graph_mode":graph,"layer_group":group,"identity":manifest.identity,"rows":rows,"output_congruence":true,"lanes":1,"continuous_batching":false,"http_streaming":false,"output_cap":32,"sampling":"greedy","timing_scope":"warmed Rust API; tokenization/model load excluded; MTP receipt groups tokens, so receipt interval is not token streaming ITL","production_qualified":false});
+    let stats = e.shutdown().await?;
+    ensure!(stats.logical_bytes == 0, "benchmark drain");
+    let report = serde_json::json!({"pass":true,"phase_timing":cfg!(feature="mtp-phase-timing"),"capture_wait":capture.is_some(),"expert_kernel":expert,"draft_width":width,"graph_mode":graph,"layer_group":group,"identity":manifest.identity,"rows":rows,"output_congruence":true,"lanes":1,"continuous_batching":false,"http_streaming":false,"output_cap":32,"sampling":"greedy","timing_scope":"warmed Rust API; tokenization/model load excluded; MTP receipt groups tokens, so receipt interval is not token streaming ITL","mlx_peak_bytes":stats.mlx_peak_bytes,"logical_bytes_at_shutdown":stats.logical_bytes,"production_qualified":false});
     std::fs::write(
         Path::new(&out).join("summary.json"),
         serde_json::to_string_pretty(&report)?,

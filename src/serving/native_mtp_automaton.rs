@@ -128,9 +128,10 @@ impl AutomatonMtp {
             (1..=8).contains(&width) && output_budget > 0 && eos.len() <= 16,
             "MTP automaton bounds"
         );
+        let context_cap = self.executor.context_capacity();
         let maximum = width
             .min(output_budget)
-            .min(512usize.saturating_sub(cursor.target().state().position()));
+            .min(context_cap.saturating_sub(cursor.target().state().position()));
         if maximum <= 1 {
             return self.no_draft(cursor, eos).await;
         }

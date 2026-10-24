@@ -1,0 +1,67 @@
+{
+  "pass": true,
+  "scope": "successful awaited Rust-boundary calls; queue/wait included, not GPU timestamps; one ordered control/timed pair",
+  "base": {
+    "target-greedy": {
+      "tokens": 256,
+      "decode_tok_s": 25.37218683368518,
+      "accepted": 0,
+      "proposed": 0,
+      "committed_per_target_call": 1.0
+    },
+    "mtp-width4-reuse": {
+      "tokens": 256,
+      "decode_tok_s": 49.515402264606685,
+      "accepted": 166,
+      "proposed": 172,
+      "committed_per_target_call": 2.8444444444444446
+    }
+  },
+  "timed": {
+    "target-greedy": {
+      "tokens": 256,
+      "decode_tok_s": 24.3697382374192,
+      "accepted": 0,
+      "proposed": 0,
+      "committed_per_target_call": 1.0
+    },
+    "mtp-width4-reuse": {
+      "tokens": 256,
+      "decode_tok_s": 47.45203905543485,
+      "accepted": 166,
+      "proposed": 172,
+      "committed_per_target_call": 2.8444444444444446
+    }
+  },
+  "totals": {
+    "draft_ns": 376465081,
+    "verify_ns": 3798159834,
+    "replay_ns": 171418416,
+    "refresh_ns": 327574665,
+    "host_ns": 719138180,
+    "envelope_ns": 5392756176,
+    "decode_ns": 5394920958.0,
+    "prefill_ns": 3705175667,
+    "target_prefill_ns": 3406199374,
+    "draft_prefill_ns": 290753250,
+    "prefill_host_ns": 8223043,
+    "emitted": 256,
+    "accepted": 166,
+    "proposed": 172,
+    "target_calls": 90,
+    "reused": 246,
+    "replayed": 10
+  },
+  "transaction_fraction": {
+    "draft_ns": 0.06980940148479652,
+    "verify_ns": 0.7043077250374096,
+    "replay_ns": 0.03178679146720614,
+    "refresh_ns": 0.0607434592459127,
+    "host_ns": 0.13335262276467513
+  },
+  "comparison": "timing-feature vs control",
+  "observed_decode_delta_percent": 4.348313055127839,
+  "committed_tokens_per_target_call": 2.8444444444444446,
+  "serving_qualified": false,
+  "throughput_promotion": false
+}

@@ -98,8 +98,6 @@ impl AutomatonProposer {
         namespace: String,
         plugin: Arc<dyn DraftProposer>,
     ) -> Result<Self> {
-        // The artifact digest includes tokenizer and chat-template bytes as well as
-        // weights: deliberately over-specific, never cross-tokenizer sharing.
         let identity = Identity {
             model: executor.identity().into(),
             tokenizer: executor.identity().into(),
@@ -147,8 +145,9 @@ impl AutomatonProposer {
         }
     }
     pub async fn start(&self, prompt: Vec<u32>) -> Result<AutomatonCursor> {
+        let context_cap = self.executor.context_capacity();
         ensure!(
-            !prompt.is_empty() && prompt.len() < 512,
+            !prompt.is_empty() && prompt.len() < context_cap,
             "automaton prompt capacity"
         );
         prefix_key(&self.identity, &prompt)?;
@@ -223,9 +222,10 @@ impl AutomatonProposer {
             output_budget > 0 && eos.len() <= 16,
             "automaton output/EOS bounds"
         );
+        let context_cap = self.executor.context_capacity();
         let maximum = 8
             .min(output_budget.saturating_sub(1))
-            .min(512usize.saturating_sub(cursor.greedy.state().position()));
+            .min(context_cap.saturating_sub(cursor.greedy.state().position()));
         if maximum == 0 {
             return self.no_draft(cursor, eos).await;
         }
@@ -251,8 +251,6 @@ impl AutomatonProposer {
         let id = self.id;
         let (reply, receive) = oneshot::channel();
         let (done, finished) = oneshot::channel();
-        // Caller cancellation detaches this private job. Native commands also own
-        // guard clones, so runtime abort cannot retire the lease before completion.
         tokio::spawn(async move {
             let calls = Arc::new(AtomicU64::new(0));
             let proposal = plugin

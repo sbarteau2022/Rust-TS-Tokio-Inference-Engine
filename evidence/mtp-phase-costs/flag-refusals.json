@@ -1,0 +1,71 @@
+[
+  {
+    "binary": "artifacts/mtp-phase-default-final",
+    "args": [
+      "4",
+      "eager",
+      "40",
+      "reference",
+      "--capture-wait"
+    ],
+    "returncode": 1,
+    "stderr": "Error: capture wait requires diagnostic feature\n",
+    "output_created": false,
+    "pass": true
+  },
+  {
+    "binary": "artifacts/mtp-phase-capture",
+    "args": [
+      "4",
+      "eager",
+      "40",
+      "invalid"
+    ],
+    "returncode": 1,
+    "stderr": "Error: expert kernel\n",
+    "output_created": false,
+    "pass": true
+  },
+  {
+    "binary": "artifacts/mtp-phase-capture",
+    "args": [
+      "4",
+      "eager",
+      "40",
+      "reference",
+      "--unknown"
+    ],
+    "returncode": 1,
+    "stderr": "Error: capture control\n",
+    "output_created": false,
+    "pass": true
+  },
+  {
+    "binary": "artifacts/mtp-phase-capture",
+    "args": [
+      "4",
+      "eager",
+      "40",
+      "reference",
+      "--capture-wait",
+      "extra"
+    ],
+    "returncode": 1,
+    "stderr": "Error: benchmark argument count\n",
+    "output_created": false,
+    "pass": true
+  },
+  {
+    "binary": "artifacts/mtp-fused-component",
+    "args": [
+      "eager",
+      "40",
+      "invalid",
+      "fused"
+    ],
+    "returncode": 1,
+    "stderr": "Error: expert kernel\n",
+    "output_created": false,
+    "pass": true
+  }
+]

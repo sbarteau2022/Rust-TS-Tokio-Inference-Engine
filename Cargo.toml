@@ -12,6 +12,7 @@ default = ["native-mlx"]
 native-mlx = ["dep:tokenizers"]
 legacy-python = ["tokio/process", "tokio/io-util"]
 debug-validation = []
+mtp-phase-timing = []
 
 [dependencies]
 anyhow = "1"
