@@ -304,6 +304,7 @@ pub async fn serve(
                 compiled_decode,
                 operator_profile,
                 fused_attention,
+                validation_mode: 2,
             },
         )
         .await?
@@ -319,6 +320,7 @@ pub async fn serve(
                 compiled_decode,
                 operator_profile: false,
                 fused_attention,
+                validation_mode: 2,
             },
         )
         .await?

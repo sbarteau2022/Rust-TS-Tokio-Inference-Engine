@@ -73,6 +73,7 @@ impl QwenDeviceExecutor {
                 compiled_decode,
                 operator_profile: false,
                 fused_attention: false,
+                validation_mode: 2,
             },
         )
         .await

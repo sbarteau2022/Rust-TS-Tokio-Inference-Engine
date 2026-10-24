@@ -233,6 +233,7 @@ static int qwen_forward_core(void* store,int gpu,const rs_qwen_config* config,co
  if(c.compiled_decode<0||c.compiled_decode>1)throw std::invalid_argument("compiled decode mode");
  if(c.operator_profile<0||c.operator_profile>1||(c.operator_profile&&(c.compiled_decode||c.execution_timing)))throw std::invalid_argument("operator profile mode");
  if(sample_token&&(!device_next||all_logits||trace_count||projection_checks||hidden||!sampled_token))throw std::invalid_argument("sampled step mode");
+ if(c.validation_mode<0||c.validation_mode>2||c.validation_interval<1||c.validation_interval>1000000)throw std::invalid_argument("validation mode");
  // Snapshot/trace controls use the original recurrence even in a tuned session.
  if(!device_next||trace_count||projection_checks){c.fused_recurrent=0;c.compiled_decode=0;c.operator_profile=0;c.fused_attention=0;}
  if(layer_count!=size_t(c.layers))throw std::invalid_argument("IR layer count");
@@ -248,6 +249,7 @@ static int qwen_forward_core(void* store,int gpu,const rs_qwen_config* config,co
  for(size_t i=0;i<projection_output_count;++i){if(projection_outputs[i]>=uint32_t(c.vocab))throw std::invalid_argument("projection output vocabulary");for(size_t j=0;j<i;++j)if(projection_outputs[i]==projection_outputs[j])throw std::invalid_argument("duplicate projection output");}
  ForwardTiming timer(static_cast<Weights*>(store)->timing,c.execution_timing&&device_next&&!trace_count&&!projection_checks);
  Qwen m(*static_cast<Weights*>(store),c,gpu!=0);m.baseline=!device_next||trace_count||projection_checks;m.reference=(projection_checks&1)!=0;m.operators=(projection_checks&2)!=0;m.full_reference=(projection_checks&4)!=0;for(size_t i=0;i<projection_output_count;++i)m.head_channels.push_back(int32_t(projection_outputs[i]));auto s=m.s;
+ const bool run_checks=device_next&&(c.validation_mode>=2||c.operator_profile);
  try{
  auto embedding_timer=m.stage();
  auto ids=mx::array(tokens,{int(count)},mx::uint32);std::string embed="language_model.model.embed_tokens";auto [group,bits]=m.quant(embed);
@@ -292,7 +294,7 @@ static int qwen_forward_core(void* store,int gpu,const rs_qwen_config* config,co
   if(flush_group){timer.graph();mx::eval(pending);mx::synchronize(s);timer.wait();pending.clear();}
   x=evaluated[0];
   if(trace_count)for(size_t stage=0;stage<5;++stage){const auto& a=evaluated[state_end+stage];if(a.size()!=count*size_t(c.hidden))throw std::invalid_argument("trace shape");std::memcpy(trace+(size_t(layer)*5+stage)*count*c.hidden,a.data<float>(),a.size()*4);}
-  for(size_t i=1;i<state_end;++i){const auto& a=evaluated[i];if(write+a.size()>new_count)throw std::invalid_argument("state write overflow");if(device_next){finite_checks.push_back(c.operator_profile?a:mx::all(mx::isfinite(a,s),s));device_next->push_back(a);}
+  for(size_t i=1;i<state_end;++i){const auto& a=evaluated[i];if(write+a.size()>new_count)throw std::invalid_argument("state write overflow");if(device_next){if(run_checks)finite_checks.push_back(c.operator_profile?a:mx::all(mx::isfinite(a,s),s));device_next->push_back(a);}
    else std::memcpy(new_state+write,a.data<float>(),a.size()*4);write+=a.size();}
  }
  if(write!=new_count||read!=old_count)throw std::invalid_argument("state accounting mismatch");
@@ -303,8 +305,8 @@ static int qwen_forward_core(void* store,int gpu,const rs_qwen_config* config,co
  m.cut(projection_timer,OperatorStage::FinalProjection,{output});
  auto validation_timer=m.stage();
  if(c.operator_profile){for(auto& a:finite_checks)a=mx::all(mx::isfinite(a,s),s);}
- if(device_next)finite_checks.push_back(mx::all(mx::isfinite(output,s),s));
- if(hidden)finite_checks.push_back(mx::all(mx::isfinite(normalized,s),s));
+ if(run_checks)finite_checks.push_back(mx::all(mx::isfinite(output,s),s));
+ if(hidden&&run_checks)finite_checks.push_back(mx::all(mx::isfinite(normalized,s),s));
  m.cut(validation_timer,OperatorStage::StateValidation,finite_checks);
  std::optional<mx::array> sampled_arr;if(sample_token)sampled_arr=mx::argmax(output,-1,false,s);
  std::vector<mx::array> final_outputs=std::move(pending);final_outputs.push_back(output);if(sample_token)final_outputs.push_back(*sampled_arr);if(hidden)final_outputs.push_back(normalized);final_outputs.insert(final_outputs.end(),finite_checks.begin(),finite_checks.end());timer.graph();mx::eval(final_outputs);mx::synchronize(s);timer.wait();

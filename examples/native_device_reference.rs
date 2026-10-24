@@ -98,6 +98,7 @@ async fn main() -> Result<()> {
             operator_profile: false,
             fused_attention: false,
             execution_timing: false,
+            validation_mode: 2,
         },
     )
     .await?;

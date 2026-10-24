@@ -17,6 +17,7 @@ extern "C" void* rs_qwen_device_create(void* weights,int gpu,const rs_qwen_confi
  if(c.execution_timing<0||c.execution_timing>1)throw std::invalid_argument("device execution timing");
  if(c.compiled_decode<0||c.compiled_decode>1||(c.compiled_decode&&(!gpu||std::getenv("MLX_DISABLE_COMPILE")||mx::default_device()!=mx::Device(mx::Device::gpu))))throw std::invalid_argument("compiled decode unavailable");
  if(c.operator_profile<0||c.operator_profile>1||(c.operator_profile&&(!gpu||c.compiled_decode||c.execution_timing)))throw std::invalid_argument("operator profile requires GPU/eager/timing off");
+ if(c.validation_mode<0||c.validation_mode>2||c.validation_interval<1||c.validation_interval>1000000)throw std::invalid_argument("device validation mode");
  if(c.fused_attention<0||c.fused_attention>1||(c.fused_attention&&!gpu))throw std::invalid_argument("fused attention requires GPU");
  // This ABI is deliberately restricted to the qualified architecture and FP32 profile, with an experimental larger-context ABI bound; Rust serving remains context 512.
  if(c.hidden!=2048||c.layers!=40||c.vocab!=248320||c.q_heads!=16||c.kv_heads!=2||c.head_dim!=256||c.key_heads!=16||c.value_heads!=32||c.key_dim!=128||c.value_dim!=128||c.conv!=4||c.interval!=4||c.context<512||c.context>262144||c.chunk!=8||c.activation_precision!=1||c.experts!=256||c.top!=8||c.intermediate!=512||c.shared!=512||c.rope_dims!=64||c.epsilon!=1e-6f||c.theta!=10000000.f||!(c.group==32||c.group==64||c.group==128)||!(c.bits==2||c.bits==3||c.bits==4||c.bits==5||c.bits==6||c.bits==8))throw std::invalid_argument("device session architecture/profile");
@@ -35,7 +36,8 @@ static int device_step(void* handle,const StateId* previous,size_t position,cons
  auto id=session.table.reserve(position+count,state_count*4+hidden_bytes);
  try{
   DevicePayload next;
-  char inner[1024]={};auto code=qwen_forward_core(session.weights,session.gpu,&c,session.layers.data(),session.layers.size(),tokens,count,position,nullptr,position?qwen_state_count(c,position):0,nullptr,state_count,logits,logits_count,0,nullptr,0,trace,trace_count,inner,sizeof(inner),old,&next.arrays,all_logits,capture_hidden?&next.hidden:nullptr,sampled,sampled_token);
+  auto cfg=c;if(cfg.validation_mode==1)cfg.validation_mode=(session.steps%uint64_t(cfg.validation_interval)==0)?2:0;
+  char inner[1024]={};auto code=qwen_forward_core(session.weights,session.gpu,&cfg,session.layers.data(),session.layers.size(),tokens,count,position,nullptr,position?qwen_state_count(c,position):0,nullptr,state_count,logits,logits_count,0,nullptr,0,trace,trace_count,inner,sizeof(inner),old,&next.arrays,all_logits,capture_hidden?&next.hidden:nullptr,sampled,sampled_token);
   if(code)throw std::runtime_error(inner);
   if(next.arrays.size()!=80)throw std::runtime_error("device state array inventory");
   session.table.publish(id,std::move(next));++session.steps;*output=id;

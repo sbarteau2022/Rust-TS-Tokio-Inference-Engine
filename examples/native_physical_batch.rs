@@ -61,6 +61,7 @@ async fn main() -> Result<()> {
                 compiled_decode: graph == "compiled-decode",
                 operator_profile: false,
                 fused_attention: false,
+                validation_mode: 2,
             },
         )
         .await?,

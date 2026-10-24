@@ -43,6 +43,7 @@ async fn main() -> Result<()> {
         compiled_decode: graph == "compiled-decode",
         operator_profile: false,
         fused_attention: false,
+        validation_mode: 2,
     };
     let out = Path::new(&args[0]);
     std::fs::create_dir(out)?;

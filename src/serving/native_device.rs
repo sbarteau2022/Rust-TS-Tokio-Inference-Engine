@@ -219,6 +219,7 @@ impl QwenDeviceExecutor {
                 compiled_decode: false,
                 operator_profile: false,
                 fused_attention: false,
+                validation_mode: 2,
             },
         )
         .await
@@ -280,6 +281,7 @@ impl QwenDeviceExecutor {
         architecture.compiled_decode = i32::from(tuning.compiled_decode);
         architecture.operator_profile = i32::from(tuning.operator_profile);
         architecture.fused_attention = i32::from(tuning.fused_attention);
+        architecture.validation_mode = tuning.validation_mode;
         let identity = manifest.identity.clone();
         let program = HybridProgram::compile(40, 4)?;
         let owner = next_owner()?;

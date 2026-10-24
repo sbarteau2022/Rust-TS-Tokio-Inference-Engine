@@ -43,6 +43,8 @@ impl Fixture {
             compiled_decode: 0,
             operator_profile: 0,
             fused_attention: 0,
+            validation_mode: 2,
+            validation_interval: 32,
             epsilon: 1e-6,
             theta: 10000.,
         };
