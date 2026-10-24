@@ -99,6 +99,7 @@ async fn main() -> Result<()> {
             fused_attention: false,
             execution_timing: false,
             validation_mode: 2,
+            activation_precision: 1,
         },
     )
     .await?;

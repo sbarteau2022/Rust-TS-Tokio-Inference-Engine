@@ -305,6 +305,7 @@ pub async fn serve(
                 operator_profile,
                 fused_attention,
                 validation_mode: 2,
+                activation_precision: 1,
             },
         )
         .await?
@@ -321,6 +322,7 @@ pub async fn serve(
                 operator_profile: false,
                 fused_attention,
                 validation_mode: 2,
+                activation_precision: 1,
             },
         )
         .await?

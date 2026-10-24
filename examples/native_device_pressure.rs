@@ -44,6 +44,7 @@ async fn main() -> Result<()> {
         operator_profile: false,
         fused_attention: false,
         validation_mode: 2,
+        activation_precision: 1,
     };
     let out = Path::new(&args[0]);
     std::fs::create_dir(out)?;

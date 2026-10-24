@@ -64,6 +64,7 @@ async fn main() -> Result<()> {
                 operator_profile: false,
                 fused_attention: false,
                 validation_mode: 2,
+                activation_precision: 1,
             },
         )
         .await?,

@@ -67,8 +67,8 @@ fn operator_delta(a: [OperatorMetrics; 19], b: [OperatorMetrics; 19]) -> Result<
 async fn main() -> Result<()> {
     let args: Vec<_> = std::env::args().skip(1).collect();
     ensure!(
-        (2..=9).contains(&args.len()),
-        "native_group_qualification NEW_DIRECTORY GROUP [reference|fused] [off|on] [eager|compiled-decode] [reference|fused ATTENTION] [off|stages OPERATORS] [logits|sampled STEP] [full|sampled|off VALIDATION]"
+        (2..=10).contains(&args.len()),
+        "native_group_qualification NEW_DIRECTORY GROUP [reference|fused] [off|on] [eager|compiled-decode] [reference|fused ATTENTION] [off|stages OPERATORS] [logits|sampled STEP] [full|sampled|off VALIDATION] [fp32|bf16 PROFILE]"
     );
     let group: u32 = args[1].parse()?;
     ensure!(matches!(group, 1 | 4 | 10 | 40), "group bounds");
@@ -93,6 +93,9 @@ async fn main() -> Result<()> {
     let sampled = step_mode == "sampled";
     let validation = args.get(8).map_or("full", String::as_str);
     ensure!(matches!(validation, "full" | "sampled" | "off"), "validation mode");
+    let profile = args.get(9).map_or("fp32", String::as_str);
+    ensure!(matches!(profile, "fp32" | "bf16"), "activation profile");
+    let activation_precision = if profile == "bf16" { 0 } else { 1 };
     let validation_mode = match validation {
         "full" => 2,
         "sampled" => 1,
@@ -116,6 +119,7 @@ async fn main() -> Result<()> {
             operator_profile: operators == "stages",
             fused_attention: attention == "fused",
             validation_mode,
+            activation_precision,
         },
     )
     .await?;
@@ -241,7 +245,7 @@ async fn main() -> Result<()> {
         shutdown.invalidated_at_shutdown == 0 && shutdown.logical_bytes == 0,
         "shutdown residue"
     );
-    let report = serde_json::json!({"pass":passed,"identity":manifest.identity,"layer_group":group,"recurrent_kernel":mode,"execution_timing":timing,"graph_mode":graph,"attention_kernel":attention,"operator_profile":operators,"step_mode":step_mode,"validation_mode":validation,"execution_revision":"user-edit-audit-v1","compiled_entries":live.compiled_entries,"compiled_misses":live.compiled_misses,"compiled_calls":live.compiled_calls,"scope":"four-prompt native parity and 64-token generation; no HTTP/held-out qualification","observations":observations,"timings":timings,"mlx_active_bytes":live.mlx_active_bytes,"mlx_peak_bytes":live.mlx_peak_bytes,"native_residents":live.residents,"native_bytes":live.logical_bytes});
+    let report = serde_json::json!({"pass":passed,"identity":manifest.identity,"layer_group":group,"recurrent_kernel":mode,"execution_timing":timing,"graph_mode":graph,"attention_kernel":attention,"operator_profile":operators,"step_mode":step_mode,"validation_mode":validation,"profile":profile,"execution_revision":"user-edit-audit-v1","compiled_entries":live.compiled_entries,"compiled_misses":live.compiled_misses,"compiled_calls":live.compiled_calls,"scope":"four-prompt native parity and 64-token generation; no HTTP/held-out qualification","observations":observations,"timings":timings,"mlx_active_bytes":live.mlx_active_bytes,"mlx_peak_bytes":live.mlx_peak_bytes,"native_residents":live.residents,"native_bytes":live.logical_bytes});
     std::fs::write(out.join("report.json"), serde_json::to_vec_pretty(&report)?)?;
     ensure!(passed, "completion-group parity gate failed");
     println!(

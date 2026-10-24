@@ -39,6 +39,9 @@ pub struct ExecutionTuning {
     /// 0 = off, 1 = sampled (every Nth step, N = architecture interval), 2 = full.
     /// New-code default is sampled; pre-existing entry points pin full explicitly.
     pub validation_mode: i32,
+    /// Activation profile: ActivationPrecision as i32 (1 = FP32 reference
+    /// profile, the default; 0 = BF16 profile). FP32 behavior is unchanged.
+    pub activation_precision: i32,
 }
 impl Default for ExecutionTuning {
     fn default() -> Self {
@@ -50,6 +53,7 @@ impl Default for ExecutionTuning {
             operator_profile: false,
             fused_attention: false,
             validation_mode: 1,
+            activation_precision: 1,
         }
     }
 }

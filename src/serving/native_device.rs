@@ -220,6 +220,7 @@ impl QwenDeviceExecutor {
                 operator_profile: false,
                 fused_attention: false,
                 validation_mode: 2,
+                activation_precision: 1,
             },
         )
         .await
@@ -239,6 +240,14 @@ impl QwenDeviceExecutor {
             !tuning.operator_profile
                 || (device == Device::Gpu && !tuning.compiled_decode && !tuning.execution_timing),
             "operator profile requires GPU/eager and timing off"
+        );
+        ensure!(
+            matches!(tuning.activation_precision, 0 | 1),
+            "activation precision must be 0 (BF16) or 1 (FP32)"
+        );
+        ensure!(
+            !(tuning.activation_precision == 0 && tuning.compiled_decode),
+            "BF16 profile requires eager decode (compiled blocks are FP32-only)"
         );
         let ExecutionTuning {
             layer_group,
@@ -282,6 +291,7 @@ impl QwenDeviceExecutor {
         architecture.operator_profile = i32::from(tuning.operator_profile);
         architecture.fused_attention = i32::from(tuning.fused_attention);
         architecture.validation_mode = tuning.validation_mode;
+        architecture.activation_precision = tuning.activation_precision;
         let identity = manifest.identity.clone();
         let program = HybridProgram::compile(40, 4)?;
         let owner = next_owner()?;
@@ -372,7 +382,10 @@ impl QwenDeviceExecutor {
                                         drop(_permit);let _=reply.send(result);
                                     }
                                     Work::Reference(state,ir,reply,permit) => {
-                                        let result=forward(&weights,&manifest,architecture,device,&program,&ir,&state);
+                                        // The reference is the FP32 oracle regardless of the
+                                        // serving profile; a BF16 candidate is judged against FP32.
+                                        let mut oracle=architecture;oracle.activation_precision=1;
+                                        let result=forward(&weights,&manifest,oracle,device,&program,&ir,&state);
                                         drop(permit);let _=reply.send(result);
                                     }
                                     Work::Snapshot(state,hidden,reply) => {
