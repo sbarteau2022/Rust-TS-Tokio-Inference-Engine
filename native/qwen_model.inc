@@ -31,7 +31,7 @@ struct Qwen {
 #include "projection_probe.inc"
  mx::array linear(const mx::array& x,const std::string& p){if(dense&&w(p+".weight").dtype()==mx::bfloat16){if(w(p+".weight").ndim()!=2)throw std::invalid_argument("MTP dense projection rank");auto tkey=p+".weight.T_f32";auto tit=weights.arrays.find(tkey);if(tit==weights.arrays.end()){auto m=mx::contiguous(mx::transpose(mx::astype(w(p+".weight"),mx::float32,s),{1,0},s),false,s);mx::eval(m);tit=weights.arrays.emplace(tkey,std::move(m)).first;}const auto& matrix=tit->second;auto flat=mx::reshape(x,{-1,x.shape(-1)},s);if(flat.shape(0)>8)throw std::invalid_argument("MTP dense row cap");auto shape=x.shape();shape.back()=w(p+".weight").shape(0);if(!reference)return mx::reshape(mx::matmul(flat,matrix,s),shape,s);std::vector<mx::array> rows;for(int row=0;row<flat.shape(0);++row)rows.push_back(mx::matmul(mx::take(flat,row,0,s),matrix,s));auto y=mx::reshape(mx::stack(rows,0,s),shape,s);if(reference)check_dense(x,y,w(p+".weight"),p);return y;}auto [g,b]=quant(p);auto y=mx::quantized_matmul(x,w(p+".weight"),w(p+".scales"),w(p+".biases"),true,g,b,"affine",s);if(reference)check_projection(x,y,w(p+".weight"),w(p+".scales"),w(p+".biases"),g,b,p);return y;}
  mx::array expert(const mx::array& x,const mx::array& idx,const std::string& p){
-  auto [g,b]=quant(p);auto y=mx::gather_qmm(x,w(p+".weight"),w(p+".scales"),w(p+".biases"),{},idx,true,g,b,"affine",{},false,s);
+  auto [g,b]=quant(p);auto y=mx::gather_qmm(x,w(p+".weight"),w(p+".scales"),w(p+".biases"),{},idx,true,g,b,"affine",{},true,s);
   if(reference){
    auto chosen=mx::contiguous(mx::astype(idx,mx::int32,s),false,s);mx::eval(chosen);mx::synchronize(s);
    std::vector<int> probe_rows={0};if(full_reference){for(int row=1;row<idx.shape(0);++row)probe_rows.push_back(row);}else if(idx.shape(0)>1)probe_rows.push_back(idx.shape(0)-1);
@@ -50,6 +50,7 @@ struct Qwen {
   auto flat=mx::reshape(x,{-1,c.hidden},s);auto router=linear(flat,p+".gate");auto gates=mx::softmax(router,-1,true,s);
   auto idx=mx::argpartition(gates,-c.top,-1,s);idx=mx::slice(idx,{0,c.experts-c.top},{flat.shape(0),c.experts},s);
   auto scores=mx::take_along_axis(gates,idx,-1,s);scores=mx::divide(scores,mx::sum(scores,-1,true,s),s);
+  auto order=mx::argsort(idx,-1,s);idx=mx::take_along_axis(idx,order,-1,s);scores=mx::take_along_axis(scores,order,-1,s);
   if(operators)check_routing(router,gates,idx,scores,p);
   cut(routing_timer,OperatorStage::MoeRouting,{idx,scores});
   auto up_timer=stage();
