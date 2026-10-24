@@ -11,7 +11,7 @@ export function benchOptions(args:string[]){
  const recurrent=values.get('--recurrent-kernel')??'reference';if(!['reference','fused'].includes(recurrent))throw Error('invalid recurrent kernel');
  const timing=values.get('--execution-timing')??'off';if(!['off','on'].includes(timing))throw Error('invalid execution timing');
  const graph=values.get('--graph-mode')??'eager';if(!['eager','compiled-decode'].includes(graph))throw Error('invalid graph mode');
- if((timing==='on'||graph!=='eager')&&profiles.some(p=>p!=='target'&&p!=='target-physical'))throw Error('execution tuning requires target profiles');
+ if(timing==='on'&&profiles.some(p=>p!=='target'&&p!=='target-physical'))throw Error('execution timing requires target profiles');
  const expert=values.get('--expert-kernel')??'reference';if(!['reference','sorted','fused'].includes(expert))throw Error('invalid expert kernel');
  const sampling=values.get('--sampling')??'host';if(!['host','device'].includes(sampling))throw Error('invalid sampling');
  if(sampling==='device'&&profiles.some(p=>p!=='target'))throw Error('device sampling requires scalar target');

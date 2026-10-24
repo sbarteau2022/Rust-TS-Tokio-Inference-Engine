@@ -1,4 +1,5 @@
 fn main() {
+    println!("cargo:rerun-if-changed=native/compiled_constants.h");
     println!("cargo:rerun-if-changed=native/execution_timing.h");
     println!("cargo:rerun-if-changed=native/operator_timing.h");
     println!("cargo:rerun-if-changed=native/selection.h");

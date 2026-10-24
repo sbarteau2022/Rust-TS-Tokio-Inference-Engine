@@ -1,6 +1,9 @@
 //! Native mixed-precision MTP numerical, state, alignment and pressure gate.
 use anyhow::{ensure, Context, Result};
-use rust_server::serving::{native_mlx::Device, native_qwen::QwenDeviceExecutor};
+use rust_server::serving::{
+    native_mlx::Device,
+    native_qwen::{ExecutionTuning, QwenDeviceExecutor},
+};
 use std::{future::Future, path::Path, task::Poll};
 fn relative(a: &[f32], b: &[f32]) -> Result<f64> {
     ensure!(
@@ -35,8 +38,28 @@ async fn main() -> Result<()> {
     let out = std::env::args()
         .nth(1)
         .context("native_mtp_smoke NEW_DIRECTORY")?;
+    let graph = std::env::args().nth(2).unwrap_or_else(|| "eager".into());
+    let group: u32 = std::env::args()
+        .nth(3)
+        .unwrap_or_else(|| "1".into())
+        .parse()?;
+    ensure!(
+        matches!(graph.as_str(), "eager" | "compiled-decode") && matches!(group, 1 | 4 | 10 | 40),
+        "execution profile"
+    );
     std::fs::create_dir(&out)?;
-    let executor = QwenDeviceExecutor::open_mtp(Device::Gpu, 8, 768 * 1024 * 1024).await?;
+    let executor = QwenDeviceExecutor::open_mtp_configured(
+        Device::Gpu,
+        8,
+        768 * 1024 * 1024,
+        ExecutionTuning {
+            layer_group: group,
+            compiled_decode: graph == "compiled-decode",
+            fused_recurrent: graph == "compiled-decode",
+            ..ExecutionTuning::default()
+        },
+    )
+    .await?;
     let mut cases = Vec::new();
     for count in 1usize..=8 {
         eprintln!("CASE count={count} target/hidden");
@@ -185,7 +208,7 @@ async fn main() -> Result<()> {
     drop(target);
     ensure!(executor.stats().await?.residents == 0, "MTP context drain");
     let stats = executor.shutdown().await?;
-    let report = serde_json::json!({"pass":true,"scalar_debug_probes":cfg!(feature="debug-validation"),"cases":cases,"context":512,"transfer_accounting":"session ABI counters; explicit debug scalar snapshots are not counted","branch_bitwise":true,"combined_budget":true,"cancellation_drained":true,"logical_bytes_at_shutdown":stats.logical_bytes,"speculative_serving_qualified":false});
+    let report = serde_json::json!({"pass":true,"graph_mode":graph,"layer_group":group,"scalar_debug_probes":cfg!(feature="debug-validation"),"cases":cases,"context":512,"transfer_accounting":"session ABI counters; explicit debug scalar snapshots are not counted","branch_bitwise":true,"combined_budget":true,"cancellation_drained":true,"logical_bytes_at_shutdown":stats.logical_bytes,"speculative_serving_qualified":false});
     std::fs::write(
         Path::new(&out).join("summary.json"),
         serde_json::to_vec_pretty(&report)?,

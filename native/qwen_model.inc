@@ -198,6 +198,7 @@ struct Qwen {
  }
  std::vector<mx::array> compiled_recurrent(const mx::array& x,const std::string& prefix,const mx::array& conv,const mx::array& state,bool multi_token=false){
   if(x.ndim()!=3||(multi_token?(x.shape(1)<1||x.shape(1)>8):(x.shape(1)!=1))||x.shape(0)<1||x.shape(0)>3||x.dtype()!=mx::float32||reference||operators)throw std::invalid_argument("compiled recurrent geometry/profile");
+  rs::prepare_compiled_parameters(weights.arrays,weights.compiled_parameter_prefixes,prefix,s);
   if(c.expert_kernel==2)prepare_fused_expert(prefix+".mlp");
   // This weight owner fixes model, quant overrides, stream and architecture for its lifetime.
   if(!multi_token&&x.shape(1)==1){
@@ -237,6 +238,7 @@ struct Qwen {
  }
  mx::array compiled_post_moe(const mx::array& residual,const std::string& prefix){
   if(residual.ndim()!=3||residual.shape(1)<1||residual.shape(1)>8||residual.shape(0)<1||residual.shape(0)>3||residual.dtype()!=mx::float32||reference||operators)throw std::invalid_argument("compiled post-moe geometry/profile");
+  rs::prepare_compiled_parameters(weights.arrays,weights.compiled_parameter_prefixes,prefix,s);
   if(c.expert_kernel==2)prepare_fused_expert(prefix+".mlp");
   auto key=prefix+"/post_moe/B"+std::to_string(residual.shape(0))+"/T"+std::to_string(residual.shape(1))+"/group"+std::to_string(c.group)+"/bits"+std::to_string(c.bits)+"/dense"+std::to_string(int(dense));
   auto found=weights.fast_compiled_blocks.find(key);

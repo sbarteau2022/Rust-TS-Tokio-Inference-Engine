@@ -1,0 +1,13 @@
+{
+  "proposed": 2903,
+  "accepted": 2799,
+  "known_seed": 1286,
+  "committed": 4169,
+  "target_calls": 1370,
+  "failures": 0,
+  "unfinished": 0,
+  "baseline_committed": 95,
+  "baseline_cost_ns": 4234967836,
+  "fraction": 0.964174991388219,
+  "scope": "cumulative warmup, one/three-lane cells and open-loop attempts; known seeds excluded from learned proposed/accepted"
+}

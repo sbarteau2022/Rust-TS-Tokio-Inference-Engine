@@ -69,7 +69,7 @@ def http(directory, frozen):
             require(row['ordinal'] not in seen, 'duplicate request')
             seen.add(row['ordinal'])
             profile = row['metadata']['profile']
-            for text in [f'width={options["draftWidth"]} ', f'layer_group={options["layerGroup"]} ', f'recurrent_kernel={options["recurrentKernel"]} ', 'expert_kernel=reference ', 'sampling=host ', 'physical_tensor_batching=false']:
+            for text in [f'width={options["draftWidth"]} ', f'layer_group={options["layerGroup"]} ', f'recurrent_kernel={options["recurrentKernel"]} ', 'expert_kernel=reference ', 'sampling=host ', f'graph_mode={options["graphMode"]} ', f'execution_timing={options["executionTiming"]} ', 'physical_tensor_batching=false']:
                 require(text in profile, 'metadata tuning mismatch')
             archive(base / f'request-{row["ordinal"]}.amst', row, frozen, log)
     server_log = (base / 'server.log').read_text()

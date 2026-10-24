@@ -41,7 +41,7 @@ Replace PORT with an available nonzero loopback port. Positional body timeout: 1
 | `--recurrent-kernel` | `reference`, `fused`; default `reference` | Selects recurrence implementation; fused requires GPU. Custom integer kernels remain a separate numerical contract. |
 | `--attention-kernel` | `reference`, `fused`; default `reference` | Fused SDPA failed prior strict numerical gates; opt-in experiment only. |
 | `--expert-kernel` | `reference`, `sorted`, `fused`; default `reference` | Globally sorts flattened expert assignments, gathers matching inputs, inverts permutation before reduction. Sorted passed numerical smoke but regressed single-lane speed; keep reference for performance control. Fused concatenates matching packed up/gate weights once (12 GiB cache cap), projects once and splits; numerical gate passed but decode regressed and peak memory rose to 32.40 GB; not promoted. |
-| `--graph-mode` | `eager`, `compiled-decode`; default `eager` | Persistent native MLX compiled blocks; requires GPU/FP32 and absence of `MLX_DISABLE_COMPILE`. Compiled MTP remains separately unqualified after an evaluation stall. |
+| `--graph-mode` | `eager`, `compiled-decode`; default `eager` | Persistent native MLX compiled blocks; requires GPU/FP32 and absence of `MLX_DISABLE_COMPILE`. Shared-parameter compiled MTP passes grouping4/40 state/pressure gates; explicit HTTP benchmarking is enabled, with defaults still eager. See [ownership repair](COMPILED_WEIGHT_SHARING.md). |
 | `--execution-timing` | `off`, `on`; default `off` | Host graph/evaluation/validation-export counters; on/off must retain identical execution boundaries. |
 | `--operator-profile` | `off`, `stages`; default `off` | Nineteen serialized diagnostic cuts; target/scalar/eager, timing off only. Not additive production latency or GPU timestamps. |
 | `--sampling` | `host`, `device`; default `host` | Scalar target HTTP only for device mode. Device argmax exports a typed u32; constrained choices fall back to logits. Finite-logit and signed-zero/tie rules remain checked. Physical/MTP combinations fail before weights load. |
@@ -109,7 +109,7 @@ Native TurboQuant KV, native paging, cache-tier promotion/Monte shuffle, quantiz
 
 `native_mtp_bench NEW_DIRECTORY [WIDTH] [GRAPH] [GROUP]` accepts draft width 1–8 (default 4), `eager|compiled-decode` (default eager), and grouping 1/4/10/40 (default40). Compiled-MTP remains an explicit bounded experiment. Its warmed Rust-boundary 32-token decode result excludes HTTP and model loading.
 
-`native_mtp_decode_smoke NEW_DIRECTORY [GRAPH] [GROUP]` exercises accepted-target-window commit, sequential target state/output parity, immutable parents and drain. Defaults eager/group40; compiled configurations remain bounded experiments.
+`native_mtp_decode_smoke NEW_DIRECTORY [GRAPH] [GROUP]` exercises accepted-target-window commit, sequential target state/output parity, immutable parents and drain. Defaults eager/group40; compiled configurations remain bounded experiments and emit a flushed phase/memory journal.
 
 `native_physical_batch NEW_DIRECTORY [GROUP] [RECURRENT] [GRAPH] [EXPERT]` exercises B1–B3 state/logit/rollback gates; this is not a throughput qualification.
 
@@ -196,3 +196,5 @@ Promotion requires rigorous full-state/logit comparison against the independent 
 ## Parser sources and audit checks
 
 Authoritative parsers: `src/main.rs`, `src/serving/native_http.rs`, `src/serving/native_mtp_cli.rs`, `ts/http-bench-config.ts`; scheduler validation: `src/serving/config.rs`. Native numerical configuration: `ExecutionTuning` and `Architecture`. Negative-test strings such as `--surprise` are intentionally unsupported. Read-only shutdown counters expose proposer and no-draft baseline commits separately; neither is silently substituted for delivered tokens. Every documented default must agree with parser/default construction; fail-closed parser tests cover duplicates, missing values, invalid enums and incompatible profiles.
+
+`native_mtp_smoke NEW_DIRECTORY [GRAPH] [GROUP]` now exposes the same bounded compiled component/pressure gate; defaults remain eager/group1. These positional example controls do not change server defaults.
