@@ -25,9 +25,9 @@ extern "C" void* rs_qwen_device_create(void* weights,int gpu,const rs_qwen_confi
  result=new DeviceSession(weights,gpu,c,layers,count,owner,slots,bytes);
  });return result;
 }
-static int device_step(void* handle,const StateId* previous,size_t position,const uint32_t* tokens,size_t count,StateId* output,float* logits,size_t logits_count,float* trace,size_t trace_count,char* error,size_t capacity,bool all_logits,bool capture_hidden=false){return checked(error,capacity,[&]{
- if(!handle||!output||!tokens||!logits)throw std::invalid_argument("device step descriptor");auto& session=*static_cast<DeviceSession*>(handle);const auto& c=session.config;
- if(!count||count>8||position>size_t(c.context)||count>size_t(c.context)-position||logits_count!=size_t(c.vocab)*(all_logits?count:1))throw std::invalid_argument("device step capacity");
+static int device_step(void* handle,const StateId* previous,size_t position,const uint32_t* tokens,size_t count,StateId* output,float* logits,size_t logits_count,float* trace,size_t trace_count,char* error,size_t capacity,bool all_logits,bool capture_hidden=false,bool sampled=false,uint32_t* sampled_token=nullptr){return checked(error,capacity,[&]{
+ if(!handle||!output||!tokens||(!logits&&!sampled))throw std::invalid_argument("device step descriptor");auto& session=*static_cast<DeviceSession*>(handle);const auto& c=session.config;
+ if(!count||count>8||position>size_t(c.context)||count>size_t(c.context)-position||(sampled?logits_count!=0:logits_count!=size_t(c.vocab)*(all_logits?count:1)))throw std::invalid_argument("device step capacity");
  if((position==0)!=(!previous))throw std::invalid_argument("device previous state presence");
  const std::vector<mx::array>* old=nullptr;if(previous){if(previous->position!=position)throw std::invalid_argument("device position mismatch");old=&session.table.get(*previous).arrays;}
  auto state_count=qwen_state_count(c,position+count);auto hidden_bytes=capture_hidden?count*size_t(c.hidden)*4:0;
@@ -35,13 +35,14 @@ static int device_step(void* handle,const StateId* previous,size_t position,cons
  auto id=session.table.reserve(position+count,state_count*4+hidden_bytes);
  try{
   DevicePayload next;
-  char inner[1024]={};auto code=qwen_forward_core(session.weights,session.gpu,&c,session.layers.data(),session.layers.size(),tokens,count,position,nullptr,position?qwen_state_count(c,position):0,nullptr,state_count,logits,logits_count,0,nullptr,0,trace,trace_count,inner,sizeof(inner),old,&next.arrays,all_logits,capture_hidden?&next.hidden:nullptr);
+  char inner[1024]={};auto code=qwen_forward_core(session.weights,session.gpu,&c,session.layers.data(),session.layers.size(),tokens,count,position,nullptr,position?qwen_state_count(c,position):0,nullptr,state_count,logits,logits_count,0,nullptr,0,trace,trace_count,inner,sizeof(inner),old,&next.arrays,all_logits,capture_hidden?&next.hidden:nullptr,sampled,sampled_token);
   if(code)throw std::runtime_error(inner);
   if(next.arrays.size()!=80)throw std::runtime_error("device state array inventory");
   session.table.publish(id,std::move(next));++session.steps;*output=id;
  }catch(...){session.table.rollback(id);throw;}
 });}
 extern "C" int rs_qwen_device_step(void* h,const StateId* p,size_t position,const uint32_t* t,size_t n,StateId* out,float* logits,size_t lc,float* trace,size_t tc,char* e,size_t ec){return device_step(h,p,position,t,n,out,logits,lc,trace,tc,e,ec,false);}
+extern "C" int rs_qwen_device_step_sampled(void* h,const StateId* p,size_t position,const uint32_t* t,size_t n,StateId* out,uint32_t* token,char* e,size_t ec){return device_step(h,p,position,t,n,out,nullptr,0,nullptr,0,e,ec,false,false,true,token);}
 extern "C" int rs_qwen_device_block(void* h,const StateId* p,size_t position,const uint32_t* t,size_t n,StateId* out,float* logits,size_t lc,char* e,size_t ec){return device_step(h,p,position,t,n,out,logits,lc,nullptr,0,e,ec,true);}
 extern "C" int rs_qwen_device_hidden_step(void* h,const StateId* p,size_t position,const uint32_t* t,size_t n,StateId* out,float* logits,size_t lc,char* e,size_t ec){return device_step(h,p,position,t,n,out,logits,lc,nullptr,0,e,ec,false,true);}
 extern "C" int rs_qwen_device_hidden_block(void* h,const StateId* p,size_t position,const uint32_t* t,size_t n,StateId* out,float* logits,size_t lc,char* e,size_t ec){return device_step(h,p,position,t,n,out,logits,lc,nullptr,0,e,ec,true,true);}

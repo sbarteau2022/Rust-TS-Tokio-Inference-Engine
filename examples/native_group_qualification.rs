@@ -67,8 +67,8 @@ fn operator_delta(a: [OperatorMetrics; 19], b: [OperatorMetrics; 19]) -> Result<
 async fn main() -> Result<()> {
     let args: Vec<_> = std::env::args().skip(1).collect();
     ensure!(
-        (2..=7).contains(&args.len()),
-        "native_group_qualification NEW_DIRECTORY GROUP [reference|fused] [off|on] [eager|compiled-decode] [reference|fused ATTENTION] [off|stages OPERATORS]"
+        (2..=8).contains(&args.len()),
+        "native_group_qualification NEW_DIRECTORY GROUP [reference|fused] [off|on] [eager|compiled-decode] [reference|fused ATTENTION] [off|stages OPERATORS] [logits|sampled STEP]"
     );
     let group: u32 = args[1].parse()?;
     ensure!(matches!(group, 1 | 4 | 10 | 40), "group bounds");
@@ -88,6 +88,9 @@ async fn main() -> Result<()> {
     );
     let operators = args.get(6).map_or("off", String::as_str);
     ensure!(matches!(operators, "off" | "stages"), "operator profile");
+    let step_mode = args.get(7).map_or("logits", String::as_str);
+    ensure!(matches!(step_mode, "logits" | "sampled"), "step mode");
+    let sampled = step_mode == "sampled";
     let out = Path::new(&args[0]);
     std::fs::create_dir(out)?;
     let manifest = Manifest::read(Path::new(
@@ -170,26 +173,45 @@ async fn main() -> Result<()> {
         let start = Instant::now();
         let mut state = executor.empty_state();
         let mut logits = Vec::new();
-        for chunk in ids.chunks(8) {
-            let step = executor.step(&state, chunk.to_vec()).await?;
-            state = step.state;
-            logits = step.logits;
+        let mut next_token = 0u32;
+        if sampled {
+            for chunk in ids.chunks(8) {
+                let step = executor.step_sampled(&state, chunk.to_vec()).await?;
+                state = step.state;
+                next_token = step.token;
+            }
+        } else {
+            for chunk in ids.chunks(8) {
+                let step = executor.step(&state, chunk.to_vec()).await?;
+                state = step.state;
+                logits = step.logits;
+            }
         }
         let ttft = start.elapsed().as_secs_f64();
         let before_decode = executor.stats().await?;
         let decode_start = Instant::now();
         let mut tokens = Vec::new();
         for i in 0..64 {
-            let token = choices::select(&logits, None)?;
+            let token = if sampled {
+                next_token
+            } else {
+                choices::select(&logits, None)?
+            };
             ensure!(
                 frozen["tokens"][prompt][i].as_u64() == Some(token as u64),
                 "frozen token mismatch prompt={prompt} index={i}"
             );
             tokens.push(token);
             if i < 63 {
-                let step = executor.step(&state, vec![token]).await?;
-                state = step.state;
-                logits = step.logits;
+                if sampled {
+                    let step = executor.step_sampled(&state, vec![token]).await?;
+                    state = step.state;
+                    next_token = step.token;
+                } else {
+                    let step = executor.step(&state, vec![token]).await?;
+                    state = step.state;
+                    logits = step.logits;
+                }
             }
         }
         let decode_seconds = decode_start.elapsed().as_secs_f64();
@@ -211,7 +233,7 @@ async fn main() -> Result<()> {
         shutdown.invalidated_at_shutdown == 0 && shutdown.logical_bytes == 0,
         "shutdown residue"
     );
-    let report = serde_json::json!({"pass":passed,"identity":manifest.identity,"layer_group":group,"recurrent_kernel":mode,"execution_timing":timing,"graph_mode":graph,"attention_kernel":attention,"operator_profile":operators,"execution_revision":"user-edit-audit-v1","compiled_entries":live.compiled_entries,"compiled_misses":live.compiled_misses,"compiled_calls":live.compiled_calls,"scope":"four-prompt native parity and 64-token generation; no HTTP/held-out qualification","observations":observations,"timings":timings,"mlx_active_bytes":live.mlx_active_bytes,"mlx_peak_bytes":live.mlx_peak_bytes,"native_residents":live.residents,"native_bytes":live.logical_bytes});
+    let report = serde_json::json!({"pass":passed,"identity":manifest.identity,"layer_group":group,"recurrent_kernel":mode,"execution_timing":timing,"graph_mode":graph,"attention_kernel":attention,"operator_profile":operators,"step_mode":step_mode,"execution_revision":"user-edit-audit-v1","compiled_entries":live.compiled_entries,"compiled_misses":live.compiled_misses,"compiled_calls":live.compiled_calls,"scope":"four-prompt native parity and 64-token generation; no HTTP/held-out qualification","observations":observations,"timings":timings,"mlx_active_bytes":live.mlx_active_bytes,"mlx_peak_bytes":live.mlx_peak_bytes,"native_residents":live.residents,"native_bytes":live.logical_bytes});
     std::fs::write(out.join("report.json"), serde_json::to_vec_pretty(&report)?)?;
     ensure!(passed, "completion-group parity gate failed");
     println!(

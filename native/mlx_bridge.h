@@ -76,6 +76,7 @@ typedef struct StateId {uint64_t owner,slot,generation,position,bytes;} StateId;
 void* rs_qwen_device_create(void*,int,const rs_qwen_config*,const rs_qwen_layer*,size_t,size_t,uint64_t,char*,size_t);
 int rs_qwen_device_decode_batch(void*,const struct StateId*,const uint32_t*,size_t,struct StateId*,float*,size_t,char*,size_t);
 int rs_qwen_device_step(void*,const struct StateId*,size_t,const uint32_t*,size_t,struct StateId*,float*,size_t,float*,size_t,char*,size_t);
+int rs_qwen_device_step_sampled(void*,const struct StateId*,size_t,const uint32_t*,size_t,struct StateId*,uint32_t*,char*,size_t);
 /* Position-major logits: row i predicts the token after input token i. */
 int rs_qwen_device_block(void*,const struct StateId*,size_t,const uint32_t*,size_t,struct StateId*,float*,size_t,char*,size_t);
 int rs_qwen_device_release(void*,const struct StateId*,char*,size_t);

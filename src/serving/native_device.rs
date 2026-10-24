@@ -48,6 +48,11 @@ pub struct DeviceStep {
     pub logits: Vec<f32>,
     pub trace: Vec<f32>,
 }
+/// Production decode receipt: the next state and the single GPU-sampled token id.
+pub struct DeviceSampledStep {
+    pub state: DeviceState,
+    pub token: u32,
+}
 /// Host intervals; eval wait includes dispatch and is not GPU-only time.
 #[derive(Clone, Copy, Debug, Default, serde::Serialize)]
 pub struct ExecutionMetrics {
@@ -109,6 +114,12 @@ enum Work {
         capture_hidden: bool,
         _completion: Option<CompletionGuard>,
         reply: oneshot::Sender<Result<DeviceStep>>,
+        _permit: OwnedSemaphorePermit,
+    },
+    StepSampled {
+        state: DeviceState,
+        ir: ModelStepIr,
+        reply: oneshot::Sender<Result<DeviceSampledStep>>,
         _permit: OwnedSemaphorePermit,
     },
     Snapshot(DeviceState, bool, oneshot::Sender<Result<Vec<f32>>>),
@@ -349,6 +360,14 @@ impl QwenDeviceExecutor {
                                         // Budget rejection preserves admission; computation faults latch closed.
                                         drop(_permit);
                                         let _ = reply.send(result); // Dropped result queues retirement.
+                                    }
+                                    Work::StepSampled { state,ir,reply,_permit } => {
+                                        let usage=session.stats()?;
+                                        let required=(architecture.state_len(state.position()+ir.len())*4) as u64;
+                                        let result=if faulted {Err(anyhow::anyhow!("device admission closed"))}
+                                        else if usage.residents>=slots as u64 || required>limit.saturating_sub(usage.logical_bytes) {Err(anyhow::anyhow!("device resident budget exhausted"))}
+                                        else {let result=device_forward_sampled(&session,&manifest,architecture,owner,&worker_releases,&state,&ir);if result.is_err(){faulted=true;worker_closed.store(true,Ordering::Release);}result};
+                                        drop(_permit);let _=reply.send(result);
                                     }
                                     Work::Reference(state,ir,reply,permit) => {
                                         let result=forward(&weights,&manifest,architecture,device,&program,&ir,&state);
@@ -602,6 +621,48 @@ impl QwenDeviceExecutor {
         }
         received.await.context("device worker stopped")?
     }
+    /// Production decode step: sampling runs on the GPU; only the token id returns to the host.
+    pub async fn step_sampled(
+        &self,
+        state: &DeviceState,
+        tokens: Vec<u32>,
+    ) -> Result<DeviceSampledStep> {
+        let ir = ModelStepIr::compile(
+            StepKind::Prefill,
+            state.position(),
+            tokens,
+            self.architecture.vocab as u32,
+        )?;
+        self.validate(state)?;
+        ensure!(
+            ir.position().get() == state.position()
+                && ir.vocabulary() == self.architecture.vocab as u32
+                && ir.len() <= 8
+                && state.position() + ir.len() <= 512,
+            "device IR geometry"
+        );
+        ensure!(
+            ir.diagnostic_flags() == 0,
+            "device scalar probes require snapshot reference"
+        );
+        let permit = self
+            .permit
+            .clone()
+            .try_acquire_owned()
+            .context("device in-flight limit reached")?;
+        let (reply, received) = oneshot::channel();
+        self.tx
+            .as_ref()
+            .context("device stopped")?
+            .try_send(Work::StepSampled {
+                state: state.clone(),
+                ir,
+                reply,
+                _permit: permit,
+            })
+            .map_err(|_| anyhow::anyhow!("device work queue full/closed"))?;
+        received.await.context("device worker stopped")?
+    }
     pub(super) async fn step_guarded(
         &self,
         state: &DeviceState,
@@ -816,6 +877,53 @@ fn device_forward(
         trace,
     })
 }
+fn device_forward_sampled(
+    session: &Session,
+    manifest: &Manifest,
+    c: Architecture,
+    owner: u64,
+    releases: &mpsc::UnboundedSender<StateId>,
+    state: &DeviceState,
+    ir: &ModelStepIr,
+) -> Result<DeviceSampledStep> {
+    manifest.verify_stamps()?;
+    let mut id = StateId::default();
+    let mut token = 0u32;
+    let mut e = [0; 1024];
+    native_status(
+        unsafe {
+            rs_qwen_device_step_sampled(
+                session.0,
+                state.token.as_ref().map_or(std::ptr::null(), |t| &t.id),
+                state.position(),
+                ir.ffi_ids().as_ptr(),
+                ir.len(),
+                &mut id,
+                &mut token,
+                e.as_mut_ptr(),
+                e.len(),
+            )
+        },
+        &e,
+    )?;
+    // Establish retirement ownership before any subsequent fallible check.
+    let next = DeviceState {
+        owner,
+        hidden_rows: 0,
+        token: Some(Arc::new(Lifetime {
+            id,
+            releases: releases.clone(),
+        })),
+    };
+    manifest.verify_stamps()?;
+    ensure!(
+        id.position == (state.position() + ir.len()) as u64
+            && id.bytes == (c.state_len(id.position as usize) * 4) as u64
+            && token < c.vocab as u32,
+        "invalid device sampled receipt"
+    );
+    Ok(DeviceSampledStep { state: next, token })
+}
 fn validate_batch(
     owner: u64,
     parents: &[DeviceState],
@@ -978,6 +1086,17 @@ unsafe extern "C" {
         logits_count: usize,
         trace: *mut f32,
         trace_count: usize,
+        error: *mut c_char,
+        cap: usize,
+    ) -> i32;
+    fn rs_qwen_device_step_sampled(
+        session: *mut c_void,
+        previous: *const StateId,
+        position: usize,
+        tokens: *const u32,
+        count: usize,
+        output: *mut StateId,
+        token: *mut u32,
         error: *mut c_char,
         cap: usize,
     ) -> i32;
