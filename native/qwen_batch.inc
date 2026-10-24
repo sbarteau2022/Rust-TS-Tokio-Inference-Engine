@@ -2,6 +2,7 @@
 extern "C" int rs_qwen_device_decode_batch(void* handle,const StateId* parents,const uint32_t* tokens,size_t batch,StateId* outputs,float* logits,size_t logits_count,char* error,size_t capacity){return checked(error,capacity,[&]{
  if(!handle||!parents||!tokens||!outputs||!logits||batch<1||batch>3)throw std::invalid_argument("batch descriptor");
  auto& session=*static_cast<DeviceSession*>(handle);const auto& c=session.config;size_t position=parents[0].position;
+ if(c.activation_precision!=1)throw std::invalid_argument("batch requires FP32");
  if(!position||position>=size_t(c.context)||logits_count!=batch*size_t(c.vocab))throw std::invalid_argument("batch geometry");
  std::vector<const DevicePayload*> old;for(size_t row=0;row<batch;++row){
   if(parents[row].position!=position||tokens[row]>=uint32_t(c.vocab))throw std::invalid_argument("batch parent/token geometry");

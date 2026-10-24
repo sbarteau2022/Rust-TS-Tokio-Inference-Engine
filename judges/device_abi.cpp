@@ -4,12 +4,14 @@
 #include <iostream>
 #include <vector>
 int main(){
- rs_qwen_config c={2048,40,248320,16,2,256,16,32,128,128,4,4,256,8,512,512,64,4,512,8,64,1,1,0,0,0,0,0,1e-6f,10000000.f};
+ rs_qwen_config c={2048,40,248320,16,2,256,16,32,128,128,4,4,256,8,512,512,64,4,512,8,64,1,1,0,0,0,0,0,2,32,0,1e-6f,10000000.f};
  rs_qwen_layer layers[40];for(unsigned i=0;i<40;++i)layers[i]={i,uint32_t((i+1)%4==0)};
  char error[1024]={};void* fake=rs_mlx_weights_create(error,sizeof(error));assert(fake);
  assert(!rs_qwen_device_create(nullptr,0,&c,layers,40,2,1<<28,error,sizeof(error)));
  auto bad=c;bad.interval=0;assert(!rs_qwen_device_create(fake,0,&bad,layers,40,2,1<<28,error,sizeof(error)));
  assert(!rs_qwen_device_create(fake,0,&c,layers,40,65,1<<28,error,sizeof(error)));
+ for(int value:{-1,3,2147483647}){bad=c;bad.expert_kernel=value;assert(!rs_qwen_device_create(fake,0,&bad,layers,40,2,1<<28,error,sizeof(error)));bad=c;bad.validation_mode=value;assert(!rs_qwen_device_create(fake,0,&bad,layers,40,2,1<<28,error,sizeof(error)));}
+ bad=c;bad.activation_precision=0;bad.compiled_decode=1;assert(!rs_qwen_device_create(fake,1,&bad,layers,40,2,1<<28,error,sizeof(error)));
  void* session=rs_qwen_device_create(fake,0,&c,layers,40,2,1<<28,error,sizeof(error));assert(session);
  std::vector<float> logits(c.vocab);uint32_t invalid=uint32_t(c.vocab);StateId output={9,9,9,9,9};uint64_t stats[74];size_t checks=3;
  for(size_t i=0;i<14000;++i){

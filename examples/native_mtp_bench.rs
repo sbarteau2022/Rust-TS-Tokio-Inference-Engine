@@ -1,7 +1,9 @@
 //! Alternating Rust-boundary baseline/MTP measurements; single lane, no HTTP.
 use anyhow::{ensure, Context, Result};
 use rust_server::serving::{
-    native_mlx::Device, native_qwen::QwenDeviceExecutor, native_tokenizer::NativeTokenizer,
+    native_mlx::Device,
+    native_qwen::{ExecutionTuning, QwenDeviceExecutor},
+    native_tokenizer::NativeTokenizer,
     weights::Manifest,
 };
 use std::{collections::BTreeMap, path::Path, time::Instant};
@@ -15,12 +17,38 @@ async fn main() -> Result<()> {
     let out = std::env::args()
         .nth(1)
         .context("native_mtp_bench NEW_DIRECTORY")?;
+    let width: usize = std::env::args()
+        .nth(2)
+        .unwrap_or_else(|| "4".into())
+        .parse()?;
+    ensure!((1..=8).contains(&width), "draft width 1..8");
+    let graph = std::env::args().nth(3).unwrap_or_else(|| "eager".into());
+    ensure!(
+        matches!(graph.as_str(), "eager" | "compiled-decode"),
+        "graph mode"
+    );
+    let group: u32 = std::env::args()
+        .nth(4)
+        .unwrap_or_else(|| "40".into())
+        .parse()?;
+    ensure!(matches!(group, 1 | 4 | 10 | 40), "layer group");
     std::fs::create_dir(&out)?;
     let manifest = Manifest::read(Path::new(
         include_str!("../fixtures/native-model.path").trim(),
     ))?;
     let tokenizer = NativeTokenizer::load(&manifest)?;
-    let e = QwenDeviceExecutor::open_mtp(Device::Gpu, 16, 1536 * 1024 * 1024).await?;
+    let e = QwenDeviceExecutor::open_mtp_configured(
+        Device::Gpu,
+        16,
+        1536 * 1024 * 1024,
+        ExecutionTuning {
+            layer_group: group,
+            fused_recurrent: true,
+            compiled_decode: graph == "compiled-decode",
+            ..ExecutionTuning::default()
+        },
+    )
+    .await?;
     // Warm both execution profiles; exclude model loading, warmup and tokenization.
     let warm = tokenizer.chat(None, "Continue: 1, 2, 3,")?;
     let mut chunks = warm.chunks(8);
@@ -31,7 +59,7 @@ async fn main() -> Result<()> {
     drop(e.greedy_verify(&b, vec![], &tokenizer.eos()).await?);
     drop(b);
     let m = e.mtp_start(&warm).await?;
-    drop(e.mtp_decode_bounded(&m, 4, 8, &tokenizer.eos()).await?);
+    drop(e.mtp_decode_bounded(&m, width, 8, &tokenizer.eos()).await?);
     drop(m);
     let mut rows = Vec::new();
     let mut outputs = BTreeMap::new();
@@ -74,7 +102,7 @@ async fn main() -> Result<()> {
                     let terminal;
                     if let Some(c) = draft.as_ref() {
                         let tx = e
-                            .mtp_decode_bounded(c, 4, 32 - ids.len(), &tokenizer.eos())
+                            .mtp_decode_bounded(c, width, 32 - ids.len(), &tokenizer.eos())
                             .await?;
                         proposed += tx.learned_proposed;
                         accepted += tx.learned_accepted;
@@ -109,7 +137,7 @@ async fn main() -> Result<()> {
                 } else {
                     outputs.insert(name.to_string(), ids.clone());
                 }
-                rows.push(serde_json::json!({"round":round,"prompt":name,"profile":if mtp {"mtp-width4-reuse"} else {"target-greedy"},"tokens":ids.len(),"ids":ids,"prefill_seconds":prefill,"decode_seconds":elapsed,"decode_tokens_per_second":ids.len() as f64/elapsed,"first_receipt_ms":first,"receipt_interval_p50_ms":percentile(&intervals,0.5),"receipt_interval_p95_ms":percentile(&intervals,0.95),"amortized_decode_ms_per_token":elapsed*1000./ids.len() as f64,"learned_proposed":proposed,"learned_accepted":accepted,"target_calls":target_calls,"draft_calls":draft_calls,"target_forward_tokens":forward_tokens}));
+                rows.push(serde_json::json!({"round":round,"prompt":name,"profile":if mtp {format!("mtp-width{width}-reuse")} else {"target-greedy".into()},"tokens":ids.len(),"ids":ids,"prefill_seconds":prefill,"decode_seconds":elapsed,"decode_tokens_per_second":ids.len() as f64/elapsed,"first_receipt_ms":first,"receipt_interval_p50_ms":percentile(&intervals,0.5),"receipt_interval_p95_ms":percentile(&intervals,0.95),"amortized_decode_ms_per_token":elapsed*1000./ids.len() as f64,"learned_proposed":proposed,"learned_accepted":accepted,"target_calls":target_calls,"draft_calls":draft_calls,"target_forward_tokens":forward_tokens}));
                 drop(greedy);
                 drop(draft);
                 std::fs::write(
@@ -120,7 +148,7 @@ async fn main() -> Result<()> {
         }
     }
     ensure!(e.shutdown().await?.logical_bytes == 0, "benchmark drain");
-    let report = serde_json::json!({"pass":true,"identity":manifest.identity,"rows":rows,"output_congruence":true,"lanes":1,"continuous_batching":false,"http_streaming":false,"output_cap":32,"sampling":"greedy","timing_scope":"warmed Rust API; tokenization/model load excluded; MTP receipt groups tokens, so receipt interval is not token streaming ITL","production_qualified":false});
+    let report = serde_json::json!({"pass":true,"draft_width":width,"graph_mode":graph,"layer_group":group,"identity":manifest.identity,"rows":rows,"output_congruence":true,"lanes":1,"continuous_batching":false,"http_streaming":false,"output_cap":32,"sampling":"greedy","timing_scope":"warmed Rust API; tokenization/model load excluded; MTP receipt groups tokens, so receipt interval is not token streaming ITL","production_qualified":false});
     std::fs::write(
         Path::new(&out).join("summary.json"),
         serde_json::to_string_pretty(&report)?,

@@ -45,6 +45,7 @@ impl Fixture {
             fused_attention: 0,
             validation_mode: 2,
             validation_interval: 32,
+            expert_kernel: 0,
             epsilon: 1e-6,
             theta: 10000.,
         };

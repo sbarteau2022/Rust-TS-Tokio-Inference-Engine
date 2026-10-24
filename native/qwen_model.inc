@@ -4,6 +4,7 @@
 #include "attention_reference.h"
 #include "projection_reference.h"
 #include "operator_reference.h"
+#include "selection.h"
 namespace {
 struct Qwen {
  Weights& weights;rs_qwen_config c;mx::Stream s;bool dense=false,shift=false,reference=false,operators=false,full_reference=false,baseline=false;std::vector<int32_t> head_channels;
@@ -29,9 +30,16 @@ struct Qwen {
   auto weight=mx::astype(w(key),x.dtype(),s);if(shift&&offset)weight=mx::add(weight,mx::array(1.f),s);auto y=mx::fast::rms_norm(x,weight,c.epsilon,s);if(operators)check_operator(key+"/rms",scalar_reference::rms(cpu_values(x),cpu_values(weight),x.shape(-1),c.epsilon),y);return y;
  }
 #include "projection_probe.inc"
- mx::array linear(const mx::array& x,const std::string& p){if(dense&&w(p+".weight").dtype()==mx::bfloat16){if(w(p+".weight").ndim()!=2)throw std::invalid_argument("MTP dense projection rank");auto tkey=p+".weight.T_f32";auto tit=weights.arrays.find(tkey);if(tit==weights.arrays.end()){auto m=mx::contiguous(mx::transpose(mx::astype(w(p+".weight"),mx::float32,s),{1,0},s),false,s);mx::eval(m);tit=weights.arrays.emplace(tkey,std::move(m)).first;}const auto& matrix=tit->second;auto flat=mx::reshape(x,{-1,x.shape(-1)},s);if(flat.shape(0)>8)throw std::invalid_argument("MTP dense row cap");auto shape=x.shape();shape.back()=w(p+".weight").shape(0);if(!reference)return mx::reshape(mx::matmul(flat,matrix,s),shape,s);std::vector<mx::array> rows;for(int row=0;row<flat.shape(0);++row)rows.push_back(mx::matmul(mx::take(flat,row,0,s),matrix,s));auto y=mx::reshape(mx::stack(rows,0,s),shape,s);if(reference)check_dense(x,y,w(p+".weight"),p);return y;}auto [g,b]=quant(p);auto y=mx::quantized_matmul(x,w(p+".weight"),w(p+".scales"),w(p+".biases"),true,g,b,"affine",s);if(reference)check_projection(x,y,w(p+".weight"),w(p+".scales"),w(p+".biases"),g,b,p);return y;}
- mx::array expert(const mx::array& x,const mx::array& idx,const std::string& p){
-  auto [g,b]=quant(p);auto y=mx::gather_qmm(x,w(p+".weight"),w(p+".scales"),w(p+".biases"),{},idx,true,g,b,"affine",{},true,s);
+ mx::array linear(const mx::array& x,const std::string& p){if(dense&&w(p+".weight").dtype()==mx::bfloat16){if(w(p+".weight").ndim()!=2)throw std::invalid_argument("MTP dense projection rank");auto tkey=p+".weight.T_f32";auto tit=weights.arrays.find(tkey);if(tit==weights.arrays.end()){auto m=mx::contiguous(mx::transpose(mx::astype(w(p+".weight"),mx::float32,s),{1,0},s),false,s);mx::eval(m);tit=weights.arrays.emplace(tkey,std::move(m)).first;}const auto& matrix=tit->second;auto flat=mx::reshape(x,{-1,x.shape(-1)},s);if(flat.shape(0)>8)throw std::invalid_argument("MTP dense row cap");auto shape=x.shape();shape.back()=w(p+".weight").shape(0);if(!reference&&flat.shape(0)==1)return mx::reshape(mx::matmul(flat,matrix,s),shape,s);std::vector<mx::array> rows;for(int row=0;row<flat.shape(0);++row)rows.push_back(mx::matmul(mx::take(flat,row,0,s),matrix,s));auto y=mx::reshape(mx::stack(rows,0,s),shape,s);if(reference)check_dense(x,y,w(p+".weight"),p);return y;}auto [g,b]=quant(p);auto y=mx::quantized_matmul(x,w(p+".weight"),w(p+".scales"),w(p+".biases"),true,g,b,"affine",s);if(reference)check_projection(x,y,w(p+".weight"),w(p+".scales"),w(p+".biases"),g,b,p);return y;}
+ mx::array expert(const mx::array& x,const mx::array& idx,const std::string& p,const std::optional<mx::array>& order={},const std::optional<mx::array>& inverse={}){
+  auto [g,b]=quant(p);auto y=mx::gather_qmm(x,w(p+".weight"),w(p+".scales"),w(p+".biases"),{},idx,true,g,b,"affine",{},false,s);
+  if(order){
+   if(!inverse||idx.ndim()!=2||x.ndim()!=4||(x.shape(1)!=1&&x.shape(1)!=idx.shape(1))||x.shape(0)!=idx.shape(0))throw std::invalid_argument("sorted expert geometry");
+   auto flat_idx=mx::reshape(idx,{-1},s);auto rhs=mx::take(flat_idx,*order,0,s);
+   auto lhs=x.shape(1)==1?mx::floor_divide(*order,mx::array(uint32_t(idx.shape(1))),s):*order;
+   auto sorted=mx::gather_qmm(x,w(p+".weight"),w(p+".scales"),w(p+".biases"),lhs,rhs,true,g,b,"affine",{},true,s);
+   y=mx::reshape(mx::take(sorted,*inverse,0,s),y.shape(),s);
+  }
   if(reference){
    auto chosen=mx::contiguous(mx::astype(idx,mx::int32,s),false,s);mx::eval(chosen);mx::synchronize(s);
    std::vector<int> probe_rows={0};if(full_reference){for(int row=1;row<idx.shape(0);++row)probe_rows.push_back(row);}else if(idx.shape(0)>1)probe_rows.push_back(idx.shape(0)-1);
@@ -45,19 +53,43 @@ struct Qwen {
   }
   return y;
  }
+ void prepare_fused_expert(const std::string& p){
+  const auto up=p+".switch_mlp.up_proj",gate=p+".switch_mlp.gate_proj",packed=p+".fused_up_gate";
+  if(weights.arrays.contains(packed+".weight"))return;
+  if(quant(up)!=quant(gate))throw std::invalid_argument("fused expert quantization mismatch");
+  std::vector<mx::array> arrays;size_t bytes=0;
+  for(const auto& suffix:{".weight",".scales",".biases"}){
+   const auto& a=w(up+suffix);const auto& b=w(gate+suffix);
+   if(a.ndim()!=3||a.shape()!=b.shape()||a.dtype()!=b.dtype())throw std::invalid_argument("fused expert tensor mismatch");
+   if(a.shape(0)!=c.experts||a.shape(1)!=c.intermediate)throw std::invalid_argument("fused expert output geometry");
+   bytes+=a.nbytes()+b.nbytes();
+  }
+  constexpr uint64_t cap=12ULL*1024*1024*1024;
+  if(bytes>cap-weights.fused_expert_bytes)throw std::runtime_error("fused expert cache exceeds 12 GiB");
+  for(const auto& suffix:{".weight",".scales",".biases"})arrays.push_back(mx::contiguous(mx::concatenate({w(up+suffix),w(gate+suffix)},1,s),false,s));
+  mx::eval(arrays);mx::synchronize(s);
+  size_t i=0;for(const auto& suffix:{".weight",".scales",".biases"})weights.arrays.emplace(packed+suffix,std::move(arrays[i++]));
+  weights.fused_expert_bytes+=bytes;
+ }
  mx::array moe(const mx::array& x,const std::string& p){
   auto routing_timer=stage();
   auto flat=mx::reshape(x,{-1,c.hidden},s);auto router=linear(flat,p+".gate");auto gates=mx::softmax(router,-1,true,s);
   auto idx=mx::argpartition(gates,-c.top,-1,s);idx=mx::slice(idx,{0,c.experts-c.top},{flat.shape(0),c.experts},s);
   auto scores=mx::take_along_axis(gates,idx,-1,s);scores=mx::divide(scores,mx::sum(scores,-1,true,s),s);
-  auto order=mx::argsort(idx,-1,s);idx=mx::take_along_axis(idx,order,-1,s);scores=mx::take_along_axis(scores,order,-1,s);
+  std::optional<mx::array> order,inverse;
+  if(c.expert_kernel==1&&!baseline&&!reference&&!operators){order=mx::argsort(mx::reshape(idx,{-1},s),0,s);inverse=mx::argsort(*order,0,s);}
   if(operators)check_routing(router,gates,idx,scores,p);
   cut(routing_timer,OperatorStage::MoeRouting,{idx,scores});
   auto up_timer=stage();
   auto expanded=mx::expand_dims(flat,{-2,-3},s);
-  auto up=expert(expanded,idx,p+".switch_mlp.up_proj");auto gate=expert(expanded,idx,p+".switch_mlp.gate_proj");
+  mx::array up=expanded,gate=expanded;
+  if(c.expert_kernel==2&&!baseline&&!reference&&!operators){
+   prepare_fused_expert(p);auto [g,b]=quant(p+".switch_mlp.up_proj");const auto packed=p+".fused_up_gate";
+   auto both=mx::gather_qmm(expanded,w(packed+".weight"),w(packed+".scales"),w(packed+".biases"),{},idx,true,g,b,"affine",{},false,s);
+   auto pieces=mx::split(both,2,-1,s);up=pieces[0];gate=pieces[1];
+  }else{up=expert(expanded,idx,p+".switch_mlp.up_proj",order,inverse);gate=expert(expanded,idx,p+".switch_mlp.gate_proj",order,inverse);}
   cut(up_timer,OperatorStage::MoeUpGate,{up,gate});auto down_timer=stage();
-  auto selected=expert(mx::multiply(silu(gate),up,s),idx,p+".switch_mlp.down_proj");
+  auto selected=expert(mx::multiply(silu(gate),up,s),idx,p+".switch_mlp.down_proj",order,inverse);
   cut(down_timer,OperatorStage::MoeDown,{selected});auto mixture_timer=stage();
   auto y=mx::sum(mx::multiply(mx::squeeze(selected,-2,s),mx::expand_dims(scores,-1,s),s),1,false,s);
   cut(mixture_timer,OperatorStage::MoeMixture,{y});auto shared_timer=stage();
@@ -73,7 +105,8 @@ struct Qwen {
   auto v=mx::transpose(mx::reshape(linear(x,p+".v_proj"),{batch,t,c.kv_heads,c.head_dim},s),{0,2,1,3},s);
   q=rope_checked(q,offset,p+"/q-rope");k=rope_checked(k,offset,p+"/k-rope");
   // Fixed-shape KV: old_k/old_v are preallocated context-cap buffers. New rows
-  // are written in place (slice_update); only the visible prefix is read back.
+  // use functional slice_update; live parent versions remain immutable. Only
+  // the visible prefix is read back (fixed capacity is not paged attention).
   k=mx::slice_update(old_k,k,{0,0,offset,0},{batch,c.kv_heads,offset+t,c.head_dim},s);
   v=mx::slice_update(old_v,v,{0,0,offset,0},{batch,c.kv_heads,offset+t,c.head_dim},s);
   next.push_back(k);next.push_back(v);
@@ -165,6 +198,7 @@ struct Qwen {
  }
  std::vector<mx::array> compiled_recurrent(const mx::array& x,const std::string& prefix,const mx::array& conv,const mx::array& state,bool multi_token=false){
   if(x.ndim()!=3||(multi_token?(x.shape(1)<1||x.shape(1)>8):(x.shape(1)!=1))||x.shape(0)<1||x.shape(0)>3||x.dtype()!=mx::float32||reference||operators)throw std::invalid_argument("compiled recurrent geometry/profile");
+  if(c.expert_kernel==2)prepare_fused_expert(prefix+".mlp");
   // This weight owner fixes model, quant overrides, stream and architecture for its lifetime.
   if(!multi_token&&x.shape(1)==1){
    auto key=prefix+"/B"+std::to_string(x.shape(0))+"/dtype"+std::to_string(int(x.dtype().val()))+"/group"+std::to_string(c.group)+"/bits"+std::to_string(c.bits)+"/recurrent"+std::to_string(c.fused_recurrent);
@@ -203,6 +237,7 @@ struct Qwen {
  }
  mx::array compiled_post_moe(const mx::array& residual,const std::string& prefix){
   if(residual.ndim()!=3||residual.shape(1)<1||residual.shape(1)>8||residual.shape(0)<1||residual.shape(0)>3||residual.dtype()!=mx::float32||reference||operators)throw std::invalid_argument("compiled post-moe geometry/profile");
+  if(c.expert_kernel==2)prepare_fused_expert(prefix+".mlp");
   auto key=prefix+"/post_moe/B"+std::to_string(residual.shape(0))+"/T"+std::to_string(residual.shape(1))+"/group"+std::to_string(c.group)+"/bits"+std::to_string(c.bits)+"/dense"+std::to_string(int(dense));
   auto found=weights.fast_compiled_blocks.find(key);
   if(found==weights.fast_compiled_blocks.end()){
@@ -235,6 +270,7 @@ static int qwen_forward_core(void* store,int gpu,const rs_qwen_config* config,co
  if(c.layer_group!=1&&c.layer_group!=4&&c.layer_group!=10&&c.layer_group!=40)throw std::invalid_argument("model layer group");
  if(c.fused_recurrent<0||c.fused_recurrent>1)throw std::invalid_argument("recurrent kernel mode");
  if(c.execution_timing<0||c.execution_timing>1)throw std::invalid_argument("execution timing mode");
+ if(c.expert_kernel<0||c.expert_kernel>2)throw std::invalid_argument("expert kernel mode");
  if(c.compiled_decode<0||c.compiled_decode>1)throw std::invalid_argument("compiled decode mode");
  if(c.operator_profile<0||c.operator_profile>1||(c.operator_profile&&(c.compiled_decode||c.execution_timing)))throw std::invalid_argument("operator profile mode");
  if(sample_token&&(!device_next||all_logits||trace_count||projection_checks||hidden||!sampled_token))throw std::invalid_argument("sampled step mode");
@@ -310,10 +346,10 @@ static int qwen_forward_core(void* store,int gpu,const rs_qwen_config* config,co
  m.cut(projection_timer,OperatorStage::FinalProjection,{output});
  auto validation_timer=m.stage();
  if(c.operator_profile){for(auto& a:finite_checks)a=mx::all(mx::isfinite(a,s),s);}
- if(run_checks)finite_checks.push_back(mx::all(mx::isfinite(output,s),s));
+ if(run_checks||sample_token)finite_checks.push_back(mx::all(mx::isfinite(output,s),s));
  if(hidden&&run_checks)finite_checks.push_back(mx::all(mx::isfinite(normalized,s),s));
  m.cut(validation_timer,OperatorStage::StateValidation,finite_checks);
- std::optional<mx::array> sampled_arr;if(sample_token)sampled_arr=mx::argmax(output,-1,false,s);
+ std::optional<mx::array> sampled_arr;if(sample_token)sampled_arr=device_total_argmax(output,s);
  std::vector<mx::array> final_outputs=std::move(pending);final_outputs.push_back(output);if(sample_token)final_outputs.push_back(*sampled_arr);if(hidden)final_outputs.push_back(normalized);final_outputs.insert(final_outputs.end(),finite_checks.begin(),finite_checks.end());timer.graph();mx::eval(final_outputs);mx::synchronize(s);timer.wait();
  for(const auto& finite:finite_checks)if(!finite.item<bool>())throw std::runtime_error("nonfinite device state");
  if(hidden)*hidden=normalized;

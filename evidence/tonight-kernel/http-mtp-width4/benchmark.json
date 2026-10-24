@@ -1,0 +1,35 @@
+{
+  "argv": [
+    "/opt/homebrew/Cellar/node/26.9.0/bin/node",
+    "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/ts/http-bench.ts",
+    "evidence/tonight-kernel/http-mtp-width4",
+    "--profiles",
+    "mtp",
+    "--arrival",
+    "closed+open",
+    "--tokens-per-cell",
+    "2000",
+    "--layer-group",
+    "40",
+    "--recurrent-kernel",
+    "fused",
+    "--draft-width",
+    "4"
+  ],
+  "options": {
+    "draftWidth": 4,
+    "profiles": [
+      "mtp"
+    ],
+    "arrival": "closed+open",
+    "tokens": 2000,
+    "layerGroup": 40,
+    "recurrentKernel": "fused",
+    "executionTiming": "off",
+    "graphMode": "eager",
+    "expertKernel": "reference",
+    "sampling": "host"
+  },
+  "benchmark_source_sha256": "8ae0fc6d054284e5f921e80a90442c9ec5e21b3d269c3aebc51f532dc9db91d5",
+  "native_binary_sha256": "2ee6ba119b7dd39f269d99f1854ec2137fb79f66bc94ca1f625e06e6968f50db"
+}

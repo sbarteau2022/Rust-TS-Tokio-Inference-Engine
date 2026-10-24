@@ -42,8 +42,9 @@ pub(super) struct MtpWork {
     _permit: OwnedSemaphorePermit,
     _completion: Option<CompletionGuard>,
 }
-fn bytes(position: usize, count: usize) -> usize {
-    position * 4096 + count * 8192
+fn bytes(count: usize) -> usize {
+    // Native MTP owns full context-cap KV, independent of logical position.
+    512 * 4096 + count * 8192
 }
 impl MtpWork {
     pub(super) fn finish(self, result: Result<MtpStep>) {
@@ -52,10 +53,7 @@ impl MtpWork {
         let _ = reply.send(result);
     }
     pub(super) fn required(&self) -> u64 {
-        bytes(
-            self.previous.position() + self.tokens.len(),
-            self.tokens.len(),
-        ) as u64
+        bytes(self.tokens.len()) as u64
     }
 }
 impl QwenDeviceExecutor {
@@ -73,6 +71,7 @@ impl QwenDeviceExecutor {
                 compiled_decode,
                 operator_profile: false,
                 fused_attention: false,
+                expert_kernel: 0,
                 validation_mode: 2,
                 activation_precision: 1,
             },
@@ -85,6 +84,14 @@ impl QwenDeviceExecutor {
         logical_byte_limit: u64,
         tuning: ExecutionTuning,
     ) -> Result<Self> {
+        ensure!(
+            tuning.activation_precision == 1,
+            "MTP requires the FP32 profile"
+        );
+        ensure!(
+            (0..=2).contains(&tuning.expert_kernel) && (0..=2).contains(&tuning.validation_mode),
+            "invalid MTP execution tuning"
+        );
         ensure!(
             device == Device::Gpu,
             "native MTP CPU profile is not qualified"
@@ -445,6 +452,12 @@ mod tests {
                 .await
                 .is_err()
         );
+    }
+    #[test]
+    fn fixed_cap_mtp_charge_matches_native_geometry() {
+        for count in 1..=8 {
+            assert_eq!(bytes(count), 512 * 2 * 2 * 256 * 4 + count * 2048 * 4);
+        }
     }
     #[test]
     fn draft_retirement_survives_worker_shutdown() {

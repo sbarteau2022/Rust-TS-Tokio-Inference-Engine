@@ -33,6 +33,10 @@ struct Row<P> {
     complete: bool,
     allowed: Option<Vec<u32>>,
 }
+pub enum Selection {
+    Logits(Vec<f32>),
+    Token(u32),
+}
 pub struct PreparedBatch<'a, P> {
     committed: &'a mut BTreeMap<u64, P>,
     rows: Vec<Row<P>>,
@@ -175,18 +179,45 @@ impl<'a, P: Parent> PreparedBatch<'a, P> {
         F: FnMut(P, ModelStepIr) -> Fut,
         Fut: Future<Output = Result<(P, Vec<f32>)>>,
     {
+        self.execute_receipts(move |parent, ir, _| {
+            let future = executor(parent, ir);
+            async move {
+                let (state, logits) = future.await?;
+                Ok((state, Selection::Logits(logits)))
+            }
+        })
+        .await
+    }
+    /// GPU token receipts retain the same atomic map commit and immutable parents.
+    /// The boolean allows token selection only when no constrained-choice mask exists.
+    pub async fn execute_receipts<F, Fut>(self, mut executor: F) -> Result<CompletedBatch<'a, P>>
+    where
+        F: FnMut(P, ModelStepIr, bool) -> Fut,
+        Fut: Future<Output = Result<(P, Selection)>>,
+    {
         let mut states = Vec::with_capacity(self.rows.len());
         let mut outputs = Vec::with_capacity(self.rows.len());
         for row in self.rows {
             let expected = row.ir.position().get() + row.ir.len();
-            let (state, logits) = executor(row.parent, row.ir).await?;
+            let (state, selection) = executor(row.parent, row.ir, row.allowed.is_none()).await?;
             ensure!(state.position() == expected, "batch result position");
-            ensure!(logits.len() == self.vocabulary, "batch result logits");
-            let next_token = if row.complete {
-                Some(super::choices::select(&logits, row.allowed.as_deref())?)
-            } else {
-                ensure!(logits.iter().all(|v| v.is_finite()), "batch result logits");
-                None
+            let next_token = match selection {
+                Selection::Logits(logits) => {
+                    ensure!(logits.len() == self.vocabulary, "batch result logits");
+                    if row.complete {
+                        Some(super::choices::select(&logits, row.allowed.as_deref())?)
+                    } else {
+                        ensure!(logits.iter().all(|v| v.is_finite()), "batch result logits");
+                        None
+                    }
+                }
+                Selection::Token(token) => {
+                    ensure!(
+                        row.allowed.is_none() && (token as usize) < self.vocabulary,
+                        "invalid device-selected token"
+                    );
+                    row.complete.then_some(token)
+                }
             };
             outputs.push(StepOutput {
                 sequence: row.sequence,
@@ -270,6 +301,44 @@ mod tests {
         assert_eq!(map[&2].tag, 22);
         assert_eq!(Arc::strong_count(&map[&1].lease), 1);
         assert_eq!(Arc::strong_count(&map[&2].lease), 1);
+    }
+    #[tokio::test]
+    async fn token_receipts_commit_atomically_and_refuse_invalid_or_masked_tokens() {
+        for mode in 0..4 {
+            let mut map = parents();
+            let mut second = row(2);
+            if mode == 2 {
+                second.allowed_tokens = Some(vec![1]);
+            }
+            let prepared =
+                PreparedBatch::prepare(vec![row(1), second], &mut map, || state(0, 0), 16).unwrap();
+            let completed = prepared
+                .execute_receipts(|old, ir, unconstrained| async move {
+                    let token = if ir.ffi_ids()[0] == 2 && mode == 1 {
+                        16
+                    } else {
+                        1
+                    };
+                    if ir.ffi_ids()[0] == 2 && mode == 3 {
+                        anyhow::bail!("injected late failure");
+                    }
+                    if mode == 2 && ir.ffi_ids()[0] == 2 {
+                        assert!(!unconstrained);
+                    }
+                    Ok((state(old.position + ir.len(), 42), Selection::Token(token)))
+                })
+                .await;
+            if mode == 0 {
+                let outputs = completed.unwrap().commit();
+                assert!(outputs.iter().all(|o| o.next_token == Some(1)));
+                assert_eq!(map[&1].position, 3);
+                assert_eq!(map[&2].position, 3);
+            } else {
+                assert!(completed.is_err());
+                drop(completed);
+                unchanged(&map);
+            }
+        }
     }
     #[test]
     fn invalid_batches_release_prepared_leases_before_any_execution() {

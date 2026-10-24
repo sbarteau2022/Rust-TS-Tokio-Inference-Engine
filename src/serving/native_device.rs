@@ -219,6 +219,7 @@ impl QwenDeviceExecutor {
                 compiled_decode: false,
                 operator_profile: false,
                 fused_attention: false,
+                expert_kernel: 0,
                 validation_mode: 2,
                 activation_precision: 1,
             },
@@ -231,6 +232,10 @@ impl QwenDeviceExecutor {
         logical_byte_limit: u64,
         tuning: ExecutionTuning,
     ) -> Result<Self> {
+        ensure!(
+            (0..=2).contains(&tuning.expert_kernel) && (0..=2).contains(&tuning.validation_mode),
+            "invalid execution tuning"
+        );
         ensure!(
             !tuning.compiled_decode
                 || (device == Device::Gpu && std::env::var_os("MLX_DISABLE_COMPILE").is_none()),
@@ -291,6 +296,7 @@ impl QwenDeviceExecutor {
         architecture.operator_profile = i32::from(tuning.operator_profile);
         architecture.fused_attention = i32::from(tuning.fused_attention);
         architecture.validation_mode = tuning.validation_mode;
+        architecture.expert_kernel = tuning.expert_kernel;
         architecture.activation_precision = tuning.activation_precision;
         let identity = manifest.identity.clone();
         let program = HybridProgram::compile(40, 4)?;
@@ -472,6 +478,10 @@ impl QwenDeviceExecutor {
         tokens: Vec<u32>,
     ) -> Result<impl Future<Output = Result<Vec<DeviceStep>>> + Send + 'static> {
         ensure!(
+            self.architecture.activation_precision == 1,
+            "physical batching requires FP32"
+        );
+        ensure!(
             !self.closed.load(Ordering::Acquire),
             "device admission closed"
         );
@@ -648,6 +658,13 @@ impl QwenDeviceExecutor {
             tokens,
             self.architecture.vocab as u32,
         )?;
+        self.execute_sampled(state, ir).await
+    }
+    pub(crate) async fn execute_sampled(
+        &self,
+        state: &DeviceState,
+        ir: ModelStepIr,
+    ) -> Result<DeviceSampledStep> {
         self.validate(state)?;
         ensure!(
             ir.position().get() == state.position()
@@ -1308,6 +1325,7 @@ mod tests {
                 compiled_decode: true,
                 operator_profile: false,
                 fused_attention: false,
+                expert_kernel: 0,
                 ..ExecutionTuning::default()
             },
         )

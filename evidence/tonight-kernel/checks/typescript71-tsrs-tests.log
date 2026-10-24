@@ -1,0 +1,48 @@
+
+> apple-native-rust-server@0.1.0 typecheck
+> tsrs -p tsconfig.json
+
+
+> apple-native-rust-server@0.1.0 typecheck:ts71
+> tsc --noEmit -p tsconfig.json
+
+
+> apple-native-rust-server@0.1.0 test
+> tsx --test ts/*.test.ts
+
+✔ benchmark flags preserve order and fail before side effects (0.984417ms)
+✔ closed waves reserve exact final token budget (0.116792ms)
+✔ absolute arrivals proceed while earlier work is unfinished and retain failures (0.18425ms)
+✔ shutdown timer is bounded and canceled on normal process exit (101.815916ms)
+✔ physical target benchmark labels select explicit server modes (0.262667ms)
+✔ layer grouping is explicit and refuses unsupported speculation before launch (0.157625ms)
+✔ recurrent ablation validates mode and compatible execution profile (0.053125ms)
+✔ compiled graph and profiler flags are explicit target-only controls (0.086167ms)
+✔ expert and GPU receipt controls fail closed before spawn (0.074292ms)
+✔ draft window is explicit and bounded for matching width sweeps (0.119417ms)
+✔ HTTP client validates origin and bounds before network (0.454333ms)
+✔ HTTP client accepts fragmented binary finish and rejects error or truncated EOF (15.550291ms)
+✔ HTTP overload remains typed and cancels its non-AMST body (0.374459ms)
+✔ HTTP timing separates TTFT, burst gaps, request envelope and per-lane decode (1.02025ms)
+✔ HTTP macro windows count globally delivered tokens, not request completion (1.204458ms)
+✔ HTTP timing rejects empty, regressed and mismatched observations (0.254375ms)
+✔ offline artifacts preserve exact u64 metadata (0.154708ms)
+✔ nonfinite request envelopes and zero-duration macro bursts are explicit (0.285625ms)
+✔ Rust fixture and all chunk sizes agree, BOM and Unicode preserved (19.239083ms)
+✔ unknown controls, ordering, exact terminal and EOF refusal (4.302042ms)
+✔ malformed structural mutations fail without permitting poisoned reuse (20.602ms)
+✔ typed errors terminate partial and empty streams (0.262416ms)
+✔ timestamp, token and aggregate text caps fail closed (15.709ms)
+✔ MVK records exact dependency order (2.017584ms)
+✔ invalid shapes and unsafe names rejected (0.182583ms)
+✔ undefined and invalid handles rejected (0.115125ms)
+✔ second kernel family records row-bias fusion (0.371084ms)
+✔ CORDIC functions serialize stable version-3 operation codes (0.562458ms)
+ℹ tests 28
+ℹ suites 0
+ℹ pass 28
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 273.170541

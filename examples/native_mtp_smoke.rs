@@ -38,7 +38,8 @@ async fn main() -> Result<()> {
     std::fs::create_dir(&out)?;
     let executor = QwenDeviceExecutor::open_mtp(Device::Gpu, 8, 768 * 1024 * 1024).await?;
     let mut cases = Vec::new();
-    for count in [1usize, 2, 4, 8] {
+    for count in 1usize..=8 {
+        eprintln!("CASE count={count} target/hidden");
         let transfers_before = executor.stats().await?;
         let shifted = (2..=count as u32 + 1).collect::<Vec<_>>();
         let target = executor
@@ -71,6 +72,7 @@ async fn main() -> Result<()> {
         let chunk = executor
             .mtp_prefill(&empty, &target.state, 0, shifted.clone())
             .await?;
+        eprintln!("CASE count={count} chunk complete; serial comparison");
         let mut serial = empty.clone();
         let mut serial_logits = Vec::new();
         for (row, token) in shifted.into_iter().enumerate() {
@@ -85,7 +87,8 @@ async fn main() -> Result<()> {
                 && executor.stats().await?.uploaded_bytes == transfers_before.uploaded_bytes,
             "MTP hot-path host transfer"
         );
-        let logit_drift = relative(&chunk.logits, &serial_logits)?;
+        let logit_drift = relative(&chunk.logits, &serial_logits)
+            .with_context(|| format!("count={count} chunk/serial logits"))?;
         ensure!(
             argmax(&chunk.logits) == argmax(&serial_logits),
             "MTP chunk/serial argmax"
@@ -93,12 +96,18 @@ async fn main() -> Result<()> {
         let chunk_values = executor.mtp_snapshot(&chunk.state).await?;
         let serial_values = executor.mtp_snapshot(&serial).await?;
         let target_parent = executor.snapshot(&target.state).await?;
-        let kv = count * 1024;
-        let kv_drift = relative(&chunk_values[..kv], &serial_values[..kv])?;
+        let kv = 512 * 1024;
+        ensure!(
+            chunk_values.len() == kv + count * 2048 && serial_values.len() == kv + 2048,
+            "fixed-capacity MTP snapshot geometry"
+        );
+        let kv_drift = relative(&chunk_values[..kv], &serial_values[..kv])
+            .with_context(|| format!("count={count} entire fixed KV"))?;
         let hidden_drift = relative(
             &chunk_values[chunk_values.len() - 2048..],
             &serial_values[kv..],
-        )?;
+        )
+        .with_context(|| format!("count={count} final hidden"))?;
         let token = argmax(&chunk.logits);
         let a = executor.mtp_next(&chunk.state, token).await?;
         let b = executor.mtp_next(&chunk.state, token).await?;

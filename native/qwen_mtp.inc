@@ -1,7 +1,7 @@
 // Worker-confined MTP operator. No target/draft weight-map merging.
 extern "C" int rs_qwen_device_mtp_attach(void* handle,void* weights,char* error,size_t capacity){return checked(error,capacity,[&]{
  if(!handle||!weights)throw std::invalid_argument("MTP attach descriptor");auto& session=*static_cast<DeviceSession*>(handle);
- if(!session.gpu)throw std::invalid_argument("MTP profile requires qualified GPU backend");
+ if(!session.gpu||session.config.activation_precision!=1)throw std::invalid_argument("MTP profile requires qualified GPU/FP32 backend");
  if(session.mtp_weights||session.table.residents()||session.drafts.residents())throw std::invalid_argument("MTP attach must precede admission");session.mtp_weights=weights;
 });}
 static size_t mtp_bytes(size_t cap,size_t count){return cap*2*2*256*4+count*2048*4;}

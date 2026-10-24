@@ -15,8 +15,10 @@ extern "C" void* rs_qwen_device_create(void* weights,int gpu,const rs_qwen_confi
  if(c.layer_group!=1&&c.layer_group!=4&&c.layer_group!=10&&c.layer_group!=40)throw std::invalid_argument("device layer group");
  if(c.fused_recurrent<0||c.fused_recurrent>1||(c.fused_recurrent&&!gpu))throw std::invalid_argument("device recurrent kernel");
  if(c.execution_timing<0||c.execution_timing>1)throw std::invalid_argument("device execution timing");
+ if(c.compiled_decode&&c.activation_precision!=1)throw std::invalid_argument("compiled decode requires FP32");
  if(c.compiled_decode<0||c.compiled_decode>1||(c.compiled_decode&&(!gpu||std::getenv("MLX_DISABLE_COMPILE")||mx::default_device()!=mx::Device(mx::Device::gpu))))throw std::invalid_argument("compiled decode unavailable");
  if(c.operator_profile<0||c.operator_profile>1||(c.operator_profile&&(!gpu||c.compiled_decode||c.execution_timing)))throw std::invalid_argument("operator profile requires GPU/eager/timing off");
+ if(c.expert_kernel<0||c.expert_kernel>2)throw std::invalid_argument("device expert kernel");
  if(c.validation_mode<0||c.validation_mode>2||c.validation_interval<1||c.validation_interval>1000000)throw std::invalid_argument("device validation mode");
  if(c.fused_attention<0||c.fused_attention>1||(c.fused_attention&&!gpu))throw std::invalid_argument("fused attention requires GPU");
  // This ABI is deliberately restricted to the qualified architecture and FP32 profile, with an experimental larger-context ABI bound; Rust serving remains context 512.

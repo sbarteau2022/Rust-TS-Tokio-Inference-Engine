@@ -236,6 +236,53 @@ fn attention_flags(flags: &[String]) -> Result<(bool, Vec<String>)> {
     }
     Ok((mode.unwrap_or(false), rest))
 }
+fn expert_flags(flags: &[String]) -> Result<(i32, Vec<String>)> {
+    ensure!(flags.len().is_multiple_of(2), "expert flags require pairs");
+    let mut mode = None;
+    let mut rest = Vec::new();
+    for pair in flags.as_chunks::<2>().0 {
+        if pair[0] == "--expert-kernel" {
+            ensure!(mode.is_none(), "duplicate expert kernel");
+            mode = Some(match pair[1].as_str() {
+                "reference" => 0,
+                "sorted" => 1,
+                "fused" => 2,
+                _ => anyhow::bail!("expert kernel must be reference|sorted|fused"),
+            });
+        } else {
+            rest.extend_from_slice(pair);
+        }
+    }
+    Ok((mode.unwrap_or(0), rest))
+}
+fn sampling_flags(flags: &[String]) -> Result<(bool, Vec<String>)> {
+    ensure!(
+        flags.len().is_multiple_of(2),
+        "sampling flags require pairs"
+    );
+    let mut mode = None;
+    let mut rest = Vec::new();
+    for pair in flags.as_chunks::<2>().0 {
+        if pair[0] == "--sampling" {
+            ensure!(mode.is_none(), "duplicate sampling");
+            mode = Some(match pair[1].as_str() {
+                "host" => false,
+                "device" => true,
+                _ => anyhow::bail!("sampling must be host|device"),
+            });
+        } else {
+            rest.extend_from_slice(pair);
+        }
+    }
+    Ok((mode.unwrap_or(false), rest))
+}
+fn qualified_http_width(execution: Profile, width: usize) -> Result<()> {
+    ensure!(
+        execution == Profile::Target || matches!(width, 1 | 2 | 4 | 8),
+        "HTTP MTP window must be 1|2|4|8; other widths require separate HTTP qualification"
+    );
+    Ok(())
+}
 pub async fn serve(
     address: SocketAddr,
     body_timeout_ms: u64,
@@ -259,7 +306,9 @@ pub async fn serve(
             && (1..=64).contains(&max_connections),
         "explicit loopback address/nonzero port and HTTP limits required"
     );
-    let (fused_attention, flags) = attention_flags(flags)?;
+    let (gpu_sampling, flags) = sampling_flags(flags)?;
+    let (expert_kernel, flags) = expert_flags(&flags)?;
+    let (fused_attention, flags) = attention_flags(&flags)?;
     let (operator_profile, flags) = operator_flags(&flags)?;
     let (compiled_decode, flags) = graph_flags(&flags)?;
     let (execution_timing, flags) = timing_flags(&flags)?;
@@ -285,7 +334,12 @@ pub async fn serve(
             || (execution == Profile::Target && !physical && !compiled_decode && !execution_timing),
         "operator profile requires target/scalar/eager/timing off"
     );
+    ensure!(
+        !gpu_sampling || (execution == Profile::Target && !physical),
+        "device sampling requires target/scalar"
+    );
     let options = Options::parse(&flags)?;
+    qualified_http_width(execution, options.width)?;
     let controller = options.controller()?;
     let manifest = Manifest::read(std::path::Path::new(
         include_str!("../../fixtures/native-model.path").trim(),
@@ -304,6 +358,7 @@ pub async fn serve(
                 compiled_decode,
                 operator_profile,
                 fused_attention,
+                expert_kernel,
                 validation_mode: 2,
                 activation_precision: 1,
             },
@@ -321,6 +376,7 @@ pub async fn serve(
                 compiled_decode,
                 operator_profile: false,
                 fused_attention,
+                expert_kernel,
                 validation_mode: 2,
                 activation_precision: 1,
             },
@@ -340,6 +396,11 @@ pub async fn serve(
     };
     let (engine, proposer, seed_metrics, batch_counters) = if execution == Profile::Target {
         let backend = ScheduledDevice::new(executor.clone(), tokenizer.eos(), StateMode::Device);
+        let backend = if gpu_sampling {
+            backend.with_gpu_sampling()?
+        } else {
+            backend
+        };
         let backend = if physical {
             backend.with_physical_batching()?
         } else {
@@ -375,7 +436,7 @@ pub async fn serve(
             None,
         )
     };
-    let profile=format!("EXPERIMENTAL-NATIVE-HTTP execution={execution:?} seed_mode={} width={} stream_capacity={} policy={:?} context=511 in_flight=3 body_timeout_ms={body_timeout_ms} max_connections={max_connections} physical_tensor_batching={physical} layer_group={layer_group} recurrent_kernel={} execution_timing={} graph_mode={} operator_profile={} attention_kernel={} state_budget_bytes={state_budget} production_qualified=false audit_clock={}",if deferred_seed {"deferred"} else {"eager"},options.width,options.capacity,options.policy,if fused_recurrent {"fused"} else {"reference"},if execution_timing {"on"} else {"off"},if compiled_decode {"compiled-decode"} else {"eager"},if operator_profile {"stages"} else {"off"},if fused_attention {"fused"} else {"reference"},if execution==Profile::Audited {"validated-batches"} else {"disabled"});
+    let profile=format!("EXPERIMENTAL-NATIVE-HTTP execution={execution:?} seed_mode={} width={} stream_capacity={} policy={:?} context=511 in_flight=3 body_timeout_ms={body_timeout_ms} max_connections={max_connections} physical_tensor_batching={physical} layer_group={layer_group} recurrent_kernel={} execution_timing={} graph_mode={} operator_profile={} attention_kernel={} expert_kernel={} sampling={} state_budget_bytes={state_budget} production_qualified=false audit_clock={}",if deferred_seed {"deferred"} else {"eager"},options.width,options.capacity,options.policy,if fused_recurrent {"fused"} else {"reference"},if execution_timing {"on"} else {"off"},if compiled_decode {"compiled-decode"} else {"eager"},if operator_profile {"stages"} else {"off"},if fused_attention {"fused"} else {"reference"},match expert_kernel {1=>"sorted",2=>"fused",_=>"reference"},if gpu_sampling {"device"} else {"host"},if execution==Profile::Audited {"validated-batches"} else {"disabled"});
     let engine = Arc::new(engine);
     let codec = Arc::new(Codec::new(tokenizer, executor.identity().into()));
     let server = http::Server::bind(
@@ -440,6 +501,11 @@ pub async fn serve(
     }
     if let Some(id) = proposer {
         let ledger = controller.draft_ledger(id)?;
+        let baseline = controller.draft_baseline(id)?;
+        println!(
+            "BASELINE_LEDGER committed={} cost_ns={}",
+            baseline.committed, baseline.cost_ns
+        );
         println!("DRAFT_LEDGER proposed={} accepted={} known_seed={} committed={} target_calls={} failures={} unfinished={}",ledger.proposed,ledger.accepted,ledger.known_prefix,ledger.committed,ledger.target_calls,ledger.failures,ledger.unfinished);
     }
     println!(
@@ -455,6 +521,40 @@ mod tests {
     use super::*;
     fn args(s: &str) -> Vec<String> {
         s.split_whitespace().map(str::to_owned).collect()
+    }
+    #[test]
+    fn unqualified_http_widths_fail_closed() {
+        for width in 1..=8 {
+            assert!(qualified_http_width(Profile::Target, width).is_ok());
+            for profile in [Profile::Mtp, Profile::Audited] {
+                assert_eq!(
+                    qualified_http_width(profile, width).is_ok(),
+                    matches!(width, 1 | 2 | 4 | 8)
+                );
+            }
+        }
+    }
+    #[test]
+    fn expert_and_sampling_flags_are_strict() {
+        assert_eq!(expert_flags(&[]).unwrap().0, 0);
+        assert_eq!(expert_flags(&args("--expert-kernel sorted")).unwrap().0, 1);
+        assert_eq!(expert_flags(&args("--expert-kernel fused")).unwrap().0, 2);
+        assert!(!sampling_flags(&[]).unwrap().0);
+        assert!(sampling_flags(&args("--sampling device")).unwrap().0);
+        for value in [
+            "--expert-kernel",
+            "--expert-kernel auto",
+            "--expert-kernel sorted --expert-kernel reference",
+        ] {
+            assert!(expert_flags(&args(value)).is_err());
+        }
+        for value in [
+            "--sampling",
+            "--sampling random",
+            "--sampling device --sampling host",
+        ] {
+            assert!(sampling_flags(&args(value)).is_err());
+        }
     }
     #[test]
     fn diagnostic_flags_are_explicit_and_strict() {

@@ -40,6 +40,12 @@ pub struct DraftOutcome {
     pub cost_ns: u64,
     pub failed: bool,
 }
+/// Identity-scoped no-draft observations, separate from learned proposer commits.
+#[derive(Clone, Default, Debug, Serialize, PartialEq, Eq)]
+pub struct DraftBaseline {
+    pub cost_ns: u64,
+    pub committed: u64,
+}
 #[derive(Clone, Default, Debug, Serialize)]
 pub struct DraftLedger {
     pub known_prefix: u64,
@@ -471,6 +477,17 @@ impl Controller {
             .checked_add(1)
             .context("cancel counter overflow")?;
         Ok(())
+    }
+    pub fn draft_baseline(&self, id: ProposerId) -> Result<DraftBaseline> {
+        let s = self.state()?;
+        let d = s.drafts.as_ref().context("draft policy inactive")?;
+        let p = d.proposers.get(&id).context("foreign proposer")?;
+        let (cost_ns, committed) = d
+            .baselines
+            .get(&key(&p.identity, None, &[]))
+            .copied()
+            .unwrap_or_default();
+        Ok(DraftBaseline { cost_ns, committed })
     }
     pub fn draft_ledger(&self, id: ProposerId) -> Result<DraftLedger> {
         let s = self.state()?;

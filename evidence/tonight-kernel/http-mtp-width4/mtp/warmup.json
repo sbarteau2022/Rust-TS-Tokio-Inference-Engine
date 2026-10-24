@@ -1,0 +1,51 @@
+{
+  "ordinal": -1,
+  "prompt": 0,
+  "start": 14758757.932458,
+  "end": 14760423.055791,
+  "arrivals": [
+    14760246.495041,
+    14760354.427708,
+    14760354.599625,
+    14760354.634166,
+    14760419.317541,
+    14760420.422708,
+    14760420.45575,
+    14760420.484375
+  ],
+  "publication": [
+    1476.205,
+    1584.18,
+    1584.245,
+    1584.318,
+    1649.098,
+    1649.163,
+    1649.187,
+    1649.22
+  ],
+  "tokens": [
+    71093,
+    34602,
+    198,
+    9299,
+    5003,
+    884,
+    62,
+    15
+  ],
+  "metadata": {
+    "version": 1,
+    "kind": 0,
+    "sequence": "0",
+    "index": 0,
+    "tokenId": 0,
+    "elapsedUs": "0",
+    "text": "",
+    "modelIdentity": "509cc92543203798f2db08b6fb6cbb38a80942fc0437ae81a3ef9ff27720915b",
+    "profile": "EXPERIMENTAL-NATIVE-HTTP execution=Mtp seed_mode=eager width=4 stream_capacity=1 policy=DraftPolicy { max_proposers: 1, work_limit: 3, initial_mass: 2147483647, admission_mass: 268435455, reward_mass: 536870911, qualification_trials: 64, probe_every_epochs: 2 } context=511 in_flight=3 body_timeout_ms=1000 max_connections=8 physical_tensor_batching=false layer_group=40 recurrent_kernel=fused execution_timing=off graph_mode=eager operator_profile=off attention_kernel=reference expert_kernel=reference sampling=host state_budget_bytes=1073741824 production_qualified=false audit_clock=disabled",
+    "outputTokens": 0,
+    "stop": 0,
+    "errorCode": 0
+  },
+  "metadataArrival": 14758772.146708
+}

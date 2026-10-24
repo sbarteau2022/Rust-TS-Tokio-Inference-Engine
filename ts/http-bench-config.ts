@@ -2,8 +2,8 @@
 export const profileLabels={target:'Target','target-physical':'Target',mtp:'Mtp','mtp-audited':'Audited'} as const;
 export type Profile=keyof typeof profileLabels;
 export function benchOptions(args:string[]){
- if(args.length<6||args.length>14||args.length%2)throw Error('required --profiles ORDER --arrival closed|closed+open --tokens-per-cell N; optional --layer-group, --recurrent-kernel, --execution-timing, --graph-mode');
- const values=new Map<string,string>();for(let i=0;i<args.length;i+=2){const key=args[i]!,value=args[i+1]!;if(!['--profiles','--arrival','--tokens-per-cell','--layer-group','--recurrent-kernel','--execution-timing','--graph-mode'].includes(key)||values.has(key))throw Error('unknown/duplicate benchmark flag');values.set(key,value);}
+ if(args.length<6||args.length>20||args.length%2)throw Error('required --profiles ORDER --arrival closed|closed+open --tokens-per-cell N; optional --layer-group, --recurrent-kernel, --execution-timing, --graph-mode');
+ const values=new Map<string,string>();for(let i=0;i<args.length;i+=2){const key=args[i]!,value=args[i+1]!;if(!['--profiles','--arrival','--tokens-per-cell','--layer-group','--recurrent-kernel','--execution-timing','--graph-mode','--expert-kernel','--sampling','--draft-width'].includes(key)||values.has(key))throw Error('unknown/duplicate benchmark flag');values.set(key,value);}
  const profiles=values.get('--profiles')?.split(',')??[];if(!profiles.length||profiles.length>3||new Set(profiles).size!==profiles.length||profiles.some(p=>!Object.hasOwn(profileLabels,p)))throw Error('invalid profile order');
  const arrival=values.get('--arrival');if(arrival!=='closed'&&arrival!=='closed+open')throw Error('invalid arrival policy');
  const raw=values.get('--tokens-per-cell')??'';if(!/^\d+$/.test(raw))throw Error('decimal token budget required');const tokens=Number(raw);if(!Number.isSafeInteger(tokens)||tokens<1000||tokens>2000)throw Error('token budget 1000..2000');
@@ -11,8 +11,12 @@ export function benchOptions(args:string[]){
  const recurrent=values.get('--recurrent-kernel')??'reference';if(!['reference','fused'].includes(recurrent))throw Error('invalid recurrent kernel');
  const timing=values.get('--execution-timing')??'off';if(!['off','on'].includes(timing))throw Error('invalid execution timing');
  const graph=values.get('--graph-mode')??'eager';if(!['eager','compiled-decode'].includes(graph))throw Error('invalid graph mode');
- if((group!=='1'||recurrent==='fused'||timing==='on'||graph!=='eager')&&profiles.some(p=>p!=='target'&&p!=='target-physical'))throw Error('execution tuning requires target profiles');
- return {profiles:profiles as Profile[],arrival,tokens,layerGroup:Number(group),recurrentKernel:recurrent,executionTiming:timing,graphMode:graph};
+ if((timing==='on'||graph!=='eager')&&profiles.some(p=>p!=='target'&&p!=='target-physical'))throw Error('execution tuning requires target profiles');
+ const expert=values.get('--expert-kernel')??'reference';if(!['reference','sorted','fused'].includes(expert))throw Error('invalid expert kernel');
+ const sampling=values.get('--sampling')??'host';if(!['host','device'].includes(sampling))throw Error('invalid sampling');
+ if(sampling==='device'&&profiles.some(p=>p!=='target'))throw Error('device sampling requires scalar target');
+ const width=values.get('--draft-width')??'4';if(!/^[1-8]$/.test(width))throw Error('draft width 1..8');if(profiles.some(p=>p==='mtp'||p==='mtp-audited')&&!['1','2','4','8'].includes(width))throw Error('HTTP MTP width must be 1|2|4|8');
+ return {draftWidth:Number(width),profiles:profiles as Profile[],arrival,tokens,layerGroup:Number(group),recurrentKernel:recurrent,executionTiming:timing,graphMode:graph,expertKernel:expert,sampling};
 }
 export function wavePlan(left:number,lanes:number):number[]{if(!Number.isInteger(left)||left<1||left>2000||![1,3].includes(lanes))throw Error('wave bounds');const plan:number[]=[];for(let i=0;i<lanes&&left>0;i++){const n=Math.min(64,left);plan.push(n);left-=n;}return plan;}
 export interface Clock {now():number;sleep(ms:number):Promise<unknown>}

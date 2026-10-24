@@ -1,0 +1,203 @@
+{
+  "pass": true,
+  "scope": "short-context explicit controls; not production qualification",
+  "kernels": {
+    "current": {
+      "strict_comparisons": 63,
+      "frozen_tokens": 256
+    },
+    "sorted": {
+      "strict_comparisons": 63,
+      "frozen_tokens": 256
+    },
+    "fused": {
+      "strict_comparisons": 63,
+      "frozen_tokens": 256
+    }
+  },
+  "mtp": {
+    "mtp-postnorm-fixed-accounting": {
+      "target-greedy": {
+        "tokens": 256,
+        "decode_tok_s": 25.111034382776115,
+        "accepted": 0,
+        "proposed": 0,
+        "committed_per_target_call": 1.0
+      },
+      "mtp-width4-reuse": {
+        "tokens": 256,
+        "decode_tok_s": 48.616095830300964,
+        "accepted": 166,
+        "proposed": 172,
+        "committed_per_target_call": 2.8444444444444446
+      }
+    },
+    "mtp-prenorm": {
+      "target-greedy": {
+        "tokens": 256,
+        "decode_tok_s": 24.927119922225348,
+        "accepted": 0,
+        "proposed": 0,
+        "committed_per_target_call": 1.0
+      },
+      "mtp-width4-reuse": {
+        "tokens": 256,
+        "decode_tok_s": 45.960171944787746,
+        "accepted": 158,
+        "proposed": 174,
+        "committed_per_target_call": 2.6122448979591835
+      }
+    },
+    "mtp-width8": {
+      "target-greedy": {
+        "tokens": 256,
+        "decode_tok_s": 25.780655369593017,
+        "accepted": 0,
+        "proposed": 0,
+        "committed_per_target_call": 1.0
+      },
+      "mtp-width8-reuse": {
+        "tokens": 256,
+        "decode_tok_s": 50.908812628793875,
+        "accepted": 178,
+        "proposed": 200,
+        "committed_per_target_call": 3.282051282051282
+      }
+    }
+  },
+  "http": {
+    "http-mtp-width8": {
+      "baseline_coverage_checked": false,
+      "closed_tokens": 4000,
+      "archive_requests": 73,
+      "learned_acceptance": 0.8833922261484098,
+      "committed_per_target_call": 3.527379949452401,
+      "drain": {
+        "http": {
+          "active_connections": 0,
+          "active_producers": 0,
+          "accepted_connections": 81,
+          "rejected_requests": 8,
+          "queued_finishes": 73,
+          "deadlines": 0,
+          "disconnected": 0,
+          "stopped": 0,
+          "producer_errors": 0,
+          "connection_errors": 0
+        },
+        "scheduler": {
+          "admitted": 73,
+          "completed": 73,
+          "failed": 0,
+          "cancelled": 0,
+          "iterations": 3168,
+          "memory_used": 0,
+          "memory_peak": 939524096,
+          "admission_closed": false
+        },
+        "native_bytes": 0,
+        "audit_epochs": 0
+      }
+    },
+    "http-mtp-width4": {
+      "baseline_coverage_checked": false,
+      "closed_tokens": 4000,
+      "archive_requests": 73,
+      "learned_acceptance": 0.964174991388219,
+      "committed_per_target_call": 3.043065693430657,
+      "drain": {
+        "http": {
+          "active_connections": 0,
+          "active_producers": 0,
+          "accepted_connections": 81,
+          "rejected_requests": 8,
+          "queued_finishes": 73,
+          "deadlines": 0,
+          "disconnected": 0,
+          "stopped": 0,
+          "producer_errors": 0,
+          "connection_errors": 0
+        },
+        "scheduler": {
+          "admitted": 73,
+          "completed": 73,
+          "failed": 0,
+          "cancelled": 0,
+          "iterations": 3170,
+          "memory_used": 0,
+          "memory_peak": 939524096,
+          "admission_closed": false
+        },
+        "native_bytes": 0,
+        "audit_epochs": 0
+      }
+    },
+    "http-rowwise-width4": {
+      "baseline_coverage_checked": true,
+      "closed_tokens": 4000,
+      "archive_requests": 73,
+      "learned_acceptance": 0.964174991388219,
+      "committed_per_target_call": 3.043065693430657,
+      "drain": {
+        "http": {
+          "active_connections": 0,
+          "active_producers": 0,
+          "accepted_connections": 81,
+          "rejected_requests": 8,
+          "queued_finishes": 73,
+          "deadlines": 0,
+          "disconnected": 0,
+          "stopped": 0,
+          "producer_errors": 0,
+          "connection_errors": 0
+        },
+        "scheduler": {
+          "admitted": 73,
+          "completed": 73,
+          "failed": 0,
+          "cancelled": 0,
+          "iterations": 3169,
+          "memory_used": 0,
+          "memory_peak": 939524096,
+          "admission_closed": false
+        },
+        "native_bytes": 0,
+        "audit_epochs": 0
+      }
+    }
+  },
+  "component": {
+    "counts": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8
+    ],
+    "context": 512,
+    "full_kv_hidden_logits": true,
+    "drained": true
+  },
+  "unqualified_experiments": [
+    {
+      "pass": false,
+      "status": "warmup request timed out after first token; owned server failed 60-second drain and benchmark killed it",
+      "width": 6,
+      "completed_tokens": 1,
+      "production_qualified": false,
+      "root_cause": "unresolved; no process remained when sample was attempted"
+    },
+    {
+      "pass": false,
+      "status": "bounded 180-second compiled group4 committed-state gate expired without completed report",
+      "graph_mode": "compiled-decode",
+      "layer_group": 4,
+      "default_promoted": false,
+      "stack": "evaluation.sample.txt",
+      "root_cause": "unresolved; target eval observed in MLX allocator/scheduler checks; reducing completion group did not resolve"
+    }
+  ]
+}

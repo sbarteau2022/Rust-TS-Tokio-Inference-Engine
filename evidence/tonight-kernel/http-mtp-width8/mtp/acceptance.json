@@ -1,0 +1,11 @@
+{
+  "proposed": 3396,
+  "accepted": 3000,
+  "known_seed": 971,
+  "committed": 4187,
+  "target_calls": 1187,
+  "failures": 0,
+  "unfinished": 0,
+  "fraction": 0.8833922261484098,
+  "scope": "cumulative warmup, one/three-lane cells and open-loop attempts; known seeds excluded from learned proposed/accepted"
+}

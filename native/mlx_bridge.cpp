@@ -93,7 +93,7 @@ extern "C" int rs_mlx_finish(void* graph, uint32_t output, void* data, size_t el
 }
 extern "C" void rs_mlx_cleanup() { try { mx::clear_streams(); } catch (...) {} }
 namespace {
-struct Weights { ExecutionMetrics timing; OperatorCounters operators; std::unordered_map<std::string,mx::array> arrays; std::unordered_map<std::string,std::pair<int,int>> quant; uint64_t compiled_calls=0,compiled_misses=0; bool has_shift=false;
+struct Weights { ExecutionMetrics timing; OperatorCounters operators; std::unordered_map<std::string,mx::array> arrays; std::unordered_map<std::string,std::pair<int,int>> quant; uint64_t compiled_calls=0,compiled_misses=0,fused_expert_bytes=0; bool has_shift=false;
  std::unordered_map<std::string,std::function<std::vector<mx::array>(const std::vector<mx::array>&)>> compiled_blocks;
  std::unordered_map<std::string,std::function<std::vector<mx::array>(const std::vector<mx::array>&)>> fast_compiled_blocks;
 };

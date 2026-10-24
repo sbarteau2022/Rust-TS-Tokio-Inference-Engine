@@ -36,8 +36,9 @@ pub struct ExecutionTuning {
     pub compiled_decode: bool,
     pub operator_profile: bool,
     pub fused_attention: bool,
+    pub expert_kernel: i32,
     /// 0 = off, 1 = sampled (every Nth step, N = architecture interval), 2 = full.
-    /// New-code default is sampled; pre-existing entry points pin full explicitly.
+    /// Deterministic bench cadence only; full validation remains default.
     pub validation_mode: i32,
     /// Activation profile: ActivationPrecision as i32 (1 = FP32 reference
     /// profile, the default; 0 = BF16 profile). FP32 behavior is unchanged.
@@ -52,7 +53,8 @@ impl Default for ExecutionTuning {
             compiled_decode: false,
             operator_profile: false,
             fused_attention: false,
-            validation_mode: 1,
+            expert_kernel: 0,
+            validation_mode: 2,
             activation_precision: 1,
         }
     }
@@ -90,6 +92,7 @@ struct Architecture {
     fused_attention: i32,
     validation_mode: i32,
     validation_interval: i32,
+    expert_kernel: i32,
     epsilon: f32,
     theta: f32,
 }
@@ -185,6 +188,7 @@ impl Architecture {
             fused_attention: 0,
             validation_mode: 2,
             validation_interval: 32,
+            expert_kernel: 0,
             epsilon: 1e-6,
             theta: 10000000.,
         })
