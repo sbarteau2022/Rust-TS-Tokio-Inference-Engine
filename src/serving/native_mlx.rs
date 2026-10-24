@@ -671,6 +671,9 @@ impl NativeWeights {
         }
         let store = Self(pointer);
         for shard in &manifest.shards {
+            if shard.file_name().and_then(|n| n.to_str()) == Some("model-mtp.safetensors") {
+                continue;
+            }
             let name = CString::new(shard.to_str().context("non-UTF8 shard path")?)?;
             let code = unsafe {
                 rs_mlx_weights_load(store.0, name.as_ptr(), error.as_mut_ptr(), error.len())

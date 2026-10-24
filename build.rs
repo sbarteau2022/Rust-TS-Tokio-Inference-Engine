@@ -1,5 +1,6 @@
 fn main() {
     println!("cargo:rerun-if-changed=native/execution_timing.h");
+    println!("cargo:rerun-if-changed=native/operator_timing.h");
     println!("cargo:rerun-if-changed=native/operator_reference.h");
     println!("cargo:rerun-if-changed=native/operator_probe.inc");
     println!("cargo:rerun-if-changed=native/projection_reference.h");

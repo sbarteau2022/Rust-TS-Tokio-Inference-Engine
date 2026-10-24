@@ -48,7 +48,7 @@ int rs_mlx_kernel(void* graph, int op, const uint32_t* inputs, size_t count,
 extern "C" {
 #endif
 typedef struct {
- int32_t hidden,layers,vocab,q_heads,kv_heads,head_dim,key_heads,value_heads,key_dim,value_dim,conv,interval,experts,top,intermediate,shared,group,bits,context,chunk,rope_dims,activation_precision,layer_group,fused_recurrent,execution_timing,compiled_decode;
+ int32_t hidden,layers,vocab,q_heads,kv_heads,head_dim,key_heads,value_heads,key_dim,value_dim,conv,interval,experts,top,intermediate,shared,group,bits,context,chunk,rope_dims,activation_precision,layer_group,fused_recurrent,execution_timing,compiled_decode,operator_profile,fused_attention;
  float epsilon,theta;
 } rs_qwen_config;
 typedef struct {uint32_t index,mixer;} rs_qwen_layer;
@@ -90,6 +90,7 @@ void rs_qwen_device_destroy(void*);
 #ifdef __cplusplus
 extern "C" {
 #endif
+int rs_qwen_device_hidden_step(void*,const struct StateId*,size_t,const uint32_t*,size_t,struct StateId*,float*,size_t,char*,size_t);
 int rs_qwen_device_hidden_block(void*,const struct StateId*,size_t,const uint32_t*,size_t,struct StateId*,float*,size_t,char*,size_t);
 int rs_qwen_device_hidden_snapshot(void*,const struct StateId*,float*,size_t,char*,size_t);
 #ifdef __cplusplus

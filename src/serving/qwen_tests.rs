@@ -41,6 +41,8 @@ impl Fixture {
             fused_recurrent: 0,
             execution_timing: 0,
             compiled_decode: 0,
+            operator_profile: 0,
+            fused_attention: 0,
             epsilon: 1e-6,
             theta: 10000.,
         };

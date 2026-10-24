@@ -60,9 +60,44 @@ impl MtpWork {
 }
 impl QwenDeviceExecutor {
     pub async fn open_mtp(device: Device, slots: usize, logical_byte_limit: u64) -> Result<Self> {
+        // Compilation remains an explicit configured experiment until MTP qualification.
+        let compiled_decode = false;
+        Self::open_mtp_configured(
+            device,
+            slots,
+            logical_byte_limit,
+            ExecutionTuning {
+                layer_group: 40,
+                fused_recurrent: device == Device::Gpu,
+                execution_timing: false,
+                compiled_decode,
+                operator_profile: false,
+                fused_attention: false,
+            },
+        )
+        .await
+    }
+    pub async fn open_mtp_configured(
+        device: Device,
+        slots: usize,
+        logical_byte_limit: u64,
+        tuning: ExecutionTuning,
+    ) -> Result<Self> {
         ensure!(
             device == Device::Gpu,
             "native MTP CPU profile is not qualified"
+        );
+        ensure!(
+            !tuning.operator_profile,
+            "operator profiling requires target scalar eager execution"
+        );
+        ensure!(
+            !tuning.compiled_decode || std::env::var_os("MLX_DISABLE_COMPILE").is_none(),
+            "compiled decode requires no MLX_DISABLE_COMPILE"
+        );
+        ensure!(
+            matches!(tuning.layer_group, 1 | 4 | 10 | 40),
+            "layer group must be 1|4|10|40"
         );
         ensure!(
             (1..=64).contains(&slots)
@@ -71,13 +106,7 @@ impl QwenDeviceExecutor {
             "MTP resident budget bounds"
         );
         tokio::task::spawn_blocking(move || {
-            Self::start(
-                device,
-                slots,
-                logical_byte_limit,
-                true,
-                ExecutionTuning::default(),
-            )
+            Self::start(device, slots, logical_byte_limit, true, tuning)
         })
         .await?
     }

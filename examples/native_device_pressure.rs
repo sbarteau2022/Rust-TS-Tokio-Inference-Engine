@@ -41,6 +41,8 @@ async fn main() -> Result<()> {
         fused_recurrent: mode == "fused",
         execution_timing: false,
         compiled_decode: graph == "compiled-decode",
+        operator_profile: false,
+        fused_attention: false,
     };
     let out = Path::new(&args[0]);
     std::fs::create_dir(out)?;

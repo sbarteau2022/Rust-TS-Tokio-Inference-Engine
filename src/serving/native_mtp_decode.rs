@@ -52,8 +52,8 @@ impl QwenDeviceExecutor {
         let mut logits = Vec::new();
         for (index, tokens) in prompt.chunks(8).enumerate() {
             let start = index * 8;
-            let mut block = self.hidden_block(&state, tokens.to_vec()).await?;
-            logits = block.logits.pop().expect("nonempty hidden block");
+            let step = self.hidden_step(&state, tokens.to_vec()).await?;
+            logits = step.logits;
             let next = if start + tokens.len() < prompt.len() {
                 prompt[start + tokens.len()]
             } else {
@@ -62,10 +62,10 @@ impl QwenDeviceExecutor {
             let mut shifted = Vec::with_capacity(tokens.len());
             shifted.extend_from_slice(&tokens[1..]);
             shifted.push(next);
-            let result = self.mtp_prefill(&draft, &block.state, 0, shifted).await?;
+            let result = self.mtp_prefill(&draft, &step.state, 0, shifted).await?;
             draft = result.state.clone();
             latest = Some(result);
-            state = block.state;
+            state = step.state;
         }
         Ok(MtpCursor {
             target: GreedyCursor {
@@ -146,18 +146,26 @@ impl QwenDeviceExecutor {
         let mut tokens = Vec::with_capacity(count);
         tokens.push(winner(&cursor.target.logits)?);
         let mut branch = cursor.draft.state.clone();
-        let mut draft_logits = cursor.draft.logits.clone();
+        let mut step_logits: Option<Vec<f32>> = None;
         let mut draft_calls = 0;
         while tokens.len() < count && !eos.contains(tokens.last().expect("seed")) {
-            let token = winner(&draft_logits)?;
+            let active_logits = step_logits.as_deref().unwrap_or(&cursor.draft.logits);
+            let (token, margin) = winner_with_margin(active_logits)?;
+            // Always propose the first learned MTP token (conditioned on authoritative target hidden state);
+            // gate deeper autoregressive draft steps on top-1 vs top-2 logit margin >= 1.25.
+            if tokens.len() >= 2 && margin < 1.25 {
+                break;
+            }
             tokens.push(token);
-            if tokens.len() < count && !eos.contains(&token) {
+            if tokens.len() < count && !eos.contains(&token) && margin >= 1.25 {
                 let step = self
                     .mtp_next_guarded(&branch, token, completion.clone())
                     .await?;
                 branch = step.state;
-                draft_logits = step.logits;
+                step_logits = Some(step.logits);
                 draft_calls += 1;
+            } else {
+                break;
             }
         }
         drop(branch);
@@ -193,13 +201,23 @@ impl QwenDeviceExecutor {
                 calls.clone(),
             )
             .await?;
-        let decision = plan(
+        let mut decision = plan(
             &cursor.target.logits,
             &tokens,
             &block.logits,
             &eos,
             remaining,
         )?;
+        // When all proposed tokens match the target, emit the verified `proposed` window directly
+        // and retain `block.logits.last()` as the next cursor's seed logits, avoiding a second
+        // 40-layer target forward pass and second mtp_prefill call on full acceptance.
+        if decision.accepted == proposed && decision.emitted.len() > proposed {
+            decision.emitted.truncate(proposed);
+            decision.terminal = decision
+                .emitted
+                .last()
+                .is_some_and(|t| eos.contains(t));
+        }
         let reused_target_tokens = if reuse && decision.accepted == proposed {
             proposed
         } else {
@@ -224,14 +242,17 @@ impl QwenDeviceExecutor {
                 (decision.emitted.len() - start).min(8)
             };
             let chunk = &decision.emitted[start..start + count];
-            let mut block = if let Some(block) = verified.take() {
-                block
+            let next_state = if let Some(mut block) = verified.take() {
+                logits = block.logits.pop().expect("nonempty verified block");
+                block.state
             } else {
                 target_calls += 1;
-                self.hidden_block_guarded(&state, chunk.to_vec(), completion.clone(), calls.clone())
-                    .await?
+                let step = self
+                    .hidden_step_guarded(&state, chunk.to_vec(), completion.clone(), calls.clone())
+                    .await?;
+                logits = step.logits;
+                step.state
             };
-            logits = block.logits.pop().expect("nonempty replay");
             let next = if start + chunk.len() < decision.emitted.len() {
                 decision.emitted[start + chunk.len()]
             } else {
@@ -241,12 +262,12 @@ impl QwenDeviceExecutor {
             shifted.extend_from_slice(&chunk[1..]);
             shifted.push(next);
             let result = self
-                .mtp_prefill_guarded(&draft, &block.state, 0, shifted, completion.clone())
+                .mtp_prefill_guarded(&draft, &next_state, 0, shifted, completion.clone())
                 .await?;
             draft_calls += 1;
             draft = result.state.clone();
             latest = Some(result);
-            state = block.state;
+            state = next_state;
             start += count;
         }
         ensure!(

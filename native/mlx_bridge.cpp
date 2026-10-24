@@ -3,7 +3,7 @@
 #include <algorithm>
 #include <cstring>
 #include <cstdlib>
-#include "execution_timing.h"
+#include "operator_timing.h"
 #include <stdexcept>
 #include <vector>
 namespace mx = mlx::core;
@@ -93,8 +93,9 @@ extern "C" int rs_mlx_finish(void* graph, uint32_t output, void* data, size_t el
 }
 extern "C" void rs_mlx_cleanup() { try { mx::clear_streams(); } catch (...) {} }
 namespace {
-struct Weights { ExecutionMetrics timing; std::unordered_map<std::string,mx::array> arrays; std::unordered_map<std::string,std::pair<int,int>> quant; uint64_t compiled_calls=0,compiled_misses=0;
+struct Weights { ExecutionMetrics timing; OperatorCounters operators; std::unordered_map<std::string,mx::array> arrays; std::unordered_map<std::string,std::pair<int,int>> quant; uint64_t compiled_calls=0,compiled_misses=0; bool has_shift=false;
  std::unordered_map<std::string,std::function<std::vector<mx::array>(const std::vector<mx::array>&)>> compiled_blocks;
+ std::unordered_map<std::string,std::function<std::vector<mx::array>(const std::vector<mx::array>&)>> fast_compiled_blocks;
 };
 }
 extern "C" void* rs_mlx_weights_create(char* error, size_t capacity) {
@@ -108,6 +109,7 @@ extern "C" int rs_mlx_weights_load(void* store, const char* file, char* error, s
     auto loaded=mx::load_safetensors(std::string(file));
     for (auto& [name,value]:loaded.first) {
       if (weights.arrays.contains(name)) throw std::invalid_argument("duplicate native parameter");
+      if (name.find("mtp.")!=std::string::npos || (name.ends_with("conv1d.weight")&&value.shape(-1)!=1)) weights.has_shift=true;
       weights.arrays.emplace(name,std::move(value));
     }
   });

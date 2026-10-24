@@ -1,0 +1,16 @@
+......Traceback (most recent call last):
+  File "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/judges/layer_groups_report.py", line 14, in <module>
+    assert len(d['timings'])==4 and len(d['observations'])==63
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError
+...Traceback (most recent call last):
+  File "/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/judges/layer_groups_report.py", line 27, in <module>
+    assert t['tokens']==refs['tokens'][prompt][:64]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError
+................................
+----------------------------------------------------------------------
+Ran 41 tests in 0.683s
+
+OK
+PASS physical coverage corruption controls

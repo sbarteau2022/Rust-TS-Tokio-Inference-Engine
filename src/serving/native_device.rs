@@ -59,6 +59,13 @@ pub struct ExecutionMetrics {
     pub wall_ns: u64,
     pub completion_groups: u64,
 }
+/// Deliberately serialized successful diagnostic stage cuts; not GPU timestamps.
+#[derive(Clone, Copy, Debug, Default, serde::Serialize)]
+pub struct OperatorMetrics {
+    pub calls: u64,
+    pub host_ns: u64,
+    pub wait_ns: u64,
+}
 #[derive(Clone, Copy, Debug, Default)]
 pub struct DeviceStats {
     pub residents: u64,
@@ -75,6 +82,7 @@ pub struct DeviceStats {
     pub compiled_entries: u64,
     pub compiled_misses: u64,
     pub compiled_calls: u64,
+    pub operators: [OperatorMetrics; 19],
 }
 #[path = "native_mtp_device.rs"]
 mod mtp;
@@ -121,7 +129,7 @@ impl Session {
         )
     }
     fn stats(&self) -> Result<DeviceStats> {
-        let mut v = [0; 17];
+        let mut v = [0; 74];
         let mut e = [0; 1024];
         native_status(
             unsafe {
@@ -138,6 +146,11 @@ impl Session {
             mlx_active_bytes: v[5],
             mlx_peak_bytes: v[6],
             invalidated_at_shutdown: 0,
+            operators: std::array::from_fn(|i| OperatorMetrics {
+                calls: v[17 + i * 3],
+                host_ns: v[18 + i * 3],
+                wait_ns: v[19 + i * 3],
+            }),
             compiled_entries: v[14],
             compiled_misses: v[15],
             compiled_calls: v[16],
@@ -193,6 +206,8 @@ impl QwenDeviceExecutor {
                 fused_recurrent,
                 execution_timing: false,
                 compiled_decode: false,
+                operator_profile: false,
+                fused_attention: false,
             },
         )
         .await
@@ -208,13 +223,18 @@ impl QwenDeviceExecutor {
                 || (device == Device::Gpu && std::env::var_os("MLX_DISABLE_COMPILE").is_none()),
             "compiled decode requires GPU and no MLX_DISABLE_COMPILE"
         );
+        ensure!(
+            !tuning.operator_profile
+                || (device == Device::Gpu && !tuning.compiled_decode && !tuning.execution_timing),
+            "operator profile requires GPU/eager and timing off"
+        );
         let ExecutionTuning {
             layer_group,
             fused_recurrent,
             ..
         } = tuning;
         ensure!(
-            !fused_recurrent || device == Device::Gpu,
+            !(fused_recurrent || tuning.fused_attention) || device == Device::Gpu,
             "fused recurrent requires GPU"
         );
         ensure!(
@@ -247,6 +267,8 @@ impl QwenDeviceExecutor {
         architecture.fused_recurrent = i32::from(tuning.fused_recurrent);
         architecture.execution_timing = i32::from(tuning.execution_timing);
         architecture.compiled_decode = i32::from(tuning.compiled_decode);
+        architecture.operator_profile = i32::from(tuning.operator_profile);
+        architecture.fused_attention = i32::from(tuning.fused_attention);
         let identity = manifest.identity.clone();
         let program = HybridProgram::compile(40, 4)?;
         let owner = next_owner()?;
@@ -465,14 +487,40 @@ impl QwenDeviceExecutor {
         let result = self
             .execute_mode(state, ir, true, false, completion, calls)
             .await?;
+        let vocab = self.architecture.vocab as usize;
+        let logits = if result.logits.len() == vocab {
+            vec![result.logits]
+        } else {
+            result
+                .logits
+                .chunks_exact(vocab)
+                .map(<[f32]>::to_vec)
+                .collect()
+        };
         Ok(DeviceBlock {
             state: result.state,
-            logits: result
-                .logits
-                .chunks_exact(self.architecture.vocab as usize)
-                .map(<[f32]>::to_vec)
-                .collect(),
+            logits,
         })
+    }
+    /// Opt-in MTP prefill/replay boundary: captures every post-norm hidden row while computing only final-token logits.
+    pub async fn hidden_step(&self, state: &DeviceState, tokens: Vec<u32>) -> Result<DeviceStep> {
+        self.hidden_step_guarded(state, tokens, None, None).await
+    }
+    pub(super) async fn hidden_step_guarded(
+        &self,
+        state: &DeviceState,
+        tokens: Vec<u32>,
+        completion: Option<CompletionGuard>,
+        calls: Option<Arc<AtomicU64>>,
+    ) -> Result<DeviceStep> {
+        let ir = ModelStepIr::compile(
+            StepKind::Prefill,
+            state.position(),
+            tokens,
+            self.architecture.vocab as u32,
+        )?;
+        self.execute_mode(state, ir, false, true, completion, calls)
+            .await
     }
     /// Opt-in MTP input boundary: captures every post-norm row with unified state.
     pub async fn hidden_block(&self, state: &DeviceState, tokens: Vec<u32>) -> Result<DeviceBlock> {
@@ -494,13 +542,19 @@ impl QwenDeviceExecutor {
         let result = self
             .execute_mode(state, ir, true, true, completion, calls)
             .await?;
+        let vocab = self.architecture.vocab as usize;
+        let logits = if result.logits.len() == vocab {
+            vec![result.logits]
+        } else {
+            result
+                .logits
+                .chunks_exact(vocab)
+                .map(<[f32]>::to_vec)
+                .collect()
+        };
         Ok(DeviceBlock {
             state: result.state,
-            logits: result
-                .logits
-                .chunks_exact(self.architecture.vocab as usize)
-                .map(<[f32]>::to_vec)
-                .collect(),
+            logits,
         })
     }
     async fn execute_mode(
@@ -675,8 +729,21 @@ fn device_forward(
     let mut e = [0; 1024];
     native_status(
         unsafe {
-            if capture_hidden {
+            if capture_hidden && all_logits {
                 rs_qwen_device_hidden_block(
+                    session.0,
+                    state.token.as_ref().map_or(std::ptr::null(), |t| &t.id),
+                    state.position(),
+                    ir.ffi_ids().as_ptr(),
+                    ir.len(),
+                    &mut id,
+                    logits.as_mut_ptr(),
+                    logits.len(),
+                    e.as_mut_ptr(),
+                    e.len(),
+                )
+            } else if capture_hidden {
+                rs_qwen_device_hidden_step(
                     session.0,
                     state.token.as_ref().map_or(std::ptr::null(), |t| &t.id),
                     state.position(),
@@ -926,6 +993,18 @@ unsafe extern "C" {
         error: *mut c_char,
         cap: usize,
     ) -> i32;
+    fn rs_qwen_device_hidden_step(
+        session: *mut c_void,
+        previous: *const StateId,
+        position: usize,
+        tokens: *const u32,
+        count: usize,
+        output: *mut StateId,
+        logits: *mut f32,
+        logits_count: usize,
+        error: *mut c_char,
+        cap: usize,
+    ) -> i32;
     fn rs_qwen_device_hidden_block(
         session: *mut c_void,
         previous: *const StateId,
@@ -1093,6 +1172,8 @@ mod tests {
             1,
             ExecutionTuning {
                 compiled_decode: true,
+                operator_profile: false,
+                fused_attention: false,
                 ..ExecutionTuning::default()
             },
         )

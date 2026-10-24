@@ -194,6 +194,48 @@ fn graph_flags(flags: &[String]) -> Result<(bool, Vec<String>)> {
     }
     Ok((mode.unwrap_or(false), rest))
 }
+fn operator_flags(flags: &[String]) -> Result<(bool, Vec<String>)> {
+    ensure!(
+        flags.len().is_multiple_of(2),
+        "operator flags require pairs"
+    );
+    let mut mode = None;
+    let mut rest = Vec::new();
+    for pair in flags.as_chunks::<2>().0 {
+        if pair[0] == "--operator-profile" {
+            ensure!(mode.is_none(), "duplicate operator profile");
+            mode = Some(match pair[1].as_str() {
+                "off" => false,
+                "stages" => true,
+                _ => anyhow::bail!("operator profile must be off|stages"),
+            });
+        } else {
+            rest.extend_from_slice(pair);
+        }
+    }
+    Ok((mode.unwrap_or(false), rest))
+}
+fn attention_flags(flags: &[String]) -> Result<(bool, Vec<String>)> {
+    ensure!(
+        flags.len().is_multiple_of(2),
+        "attention flags require pairs"
+    );
+    let mut mode = None;
+    let mut rest = Vec::new();
+    for pair in flags.as_chunks::<2>().0 {
+        if pair[0] == "--attention-kernel" {
+            ensure!(mode.is_none(), "duplicate attention kernel");
+            mode = Some(match pair[1].as_str() {
+                "reference" => false,
+                "fused" => true,
+                _ => anyhow::bail!("attention kernel must be reference|fused"),
+            });
+        } else {
+            rest.extend_from_slice(pair);
+        }
+    }
+    Ok((mode.unwrap_or(false), rest))
+}
 pub async fn serve(
     address: SocketAddr,
     body_timeout_ms: u64,
@@ -217,7 +259,9 @@ pub async fn serve(
             && (1..=64).contains(&max_connections),
         "explicit loopback address/nonzero port and HTTP limits required"
     );
-    let (compiled_decode, flags) = graph_flags(flags)?;
+    let (fused_attention, flags) = attention_flags(flags)?;
+    let (operator_profile, flags) = operator_flags(&flags)?;
+    let (compiled_decode, flags) = graph_flags(&flags)?;
     let (execution_timing, flags) = timing_flags(&flags)?;
     let (fused_recurrent, flags) = recurrent_flags(&flags)?;
     let (layer_group, flags) = layer_group_flags(&flags)?;
@@ -233,24 +277,13 @@ pub async fn serve(
         "physical batching requires target profile"
     );
     ensure!(
-        layer_group == 1 || execution == Profile::Target,
-        "grouped layers require target profile"
-    );
-    ensure!(
-        !fused_recurrent || execution == Profile::Target,
-        "fused recurrent requires target profile"
-    );
-    ensure!(
-        !execution_timing || execution == Profile::Target,
-        "execution timing requires target profile"
-    );
-    ensure!(
-        !compiled_decode || execution == Profile::Target,
-        "compiled decode requires target profile"
-    );
-    ensure!(
         !compiled_decode || std::env::var_os("MLX_DISABLE_COMPILE").is_none(),
         "compiled decode refuses MLX_DISABLE_COMPILE"
+    );
+    ensure!(
+        !operator_profile
+            || (execution == Profile::Target && !physical && !compiled_decode && !execution_timing),
+        "operator profile requires target/scalar/eager/timing off"
     );
     let options = Options::parse(&flags)?;
     let controller = options.controller()?;
@@ -269,11 +302,26 @@ pub async fn serve(
                 fused_recurrent,
                 execution_timing,
                 compiled_decode,
+                operator_profile,
+                fused_attention,
             },
         )
         .await?
     } else {
-        QwenDeviceExecutor::open_mtp(Device::Gpu, 64, state_budget).await?
+        QwenDeviceExecutor::open_mtp_configured(
+            Device::Gpu,
+            64,
+            state_budget,
+            ExecutionTuning {
+                layer_group,
+                fused_recurrent,
+                execution_timing,
+                compiled_decode,
+                operator_profile: false,
+                fused_attention,
+            },
+        )
+        .await?
     });
     let config = Config {
         version: 1,
@@ -323,7 +371,7 @@ pub async fn serve(
             None,
         )
     };
-    let profile=format!("EXPERIMENTAL-NATIVE-HTTP execution={execution:?} seed_mode={} width={} stream_capacity={} policy={:?} context=511 in_flight=3 body_timeout_ms={body_timeout_ms} max_connections={max_connections} physical_tensor_batching={physical} layer_group={layer_group} recurrent_kernel={} execution_timing={} graph_mode={} state_budget_bytes={state_budget} production_qualified=false audit_clock={}",if deferred_seed {"deferred"} else {"eager"},options.width,options.capacity,options.policy,if fused_recurrent {"fused"} else {"reference"},if execution_timing {"on"} else {"off"},if compiled_decode {"compiled-decode"} else {"eager"},if execution==Profile::Audited {"validated-batches"} else {"disabled"});
+    let profile=format!("EXPERIMENTAL-NATIVE-HTTP execution={execution:?} seed_mode={} width={} stream_capacity={} policy={:?} context=511 in_flight=3 body_timeout_ms={body_timeout_ms} max_connections={max_connections} physical_tensor_batching={physical} layer_group={layer_group} recurrent_kernel={} execution_timing={} graph_mode={} operator_profile={} attention_kernel={} state_budget_bytes={state_budget} production_qualified=false audit_clock={}",if deferred_seed {"deferred"} else {"eager"},options.width,options.capacity,options.policy,if fused_recurrent {"fused"} else {"reference"},if execution_timing {"on"} else {"off"},if compiled_decode {"compiled-decode"} else {"eager"},if operator_profile {"stages"} else {"off"},if fused_attention {"fused"} else {"reference"},if execution==Profile::Audited {"validated-batches"} else {"disabled"});
     let engine = Arc::new(engine);
     let codec = Arc::new(Codec::new(tokenizer, executor.identity().into()));
     let server = http::Server::bind(
@@ -359,6 +407,7 @@ pub async fn serve(
     let scheduler = scheduler?;
     let native = native?;
     println!("EXECUTION_METRICS {:?}", native.execution);
+    println!("OPERATOR_METRICS {:?}", native.operators);
     println!(
         "COMPILED_CACHE entries={} misses={} calls={}",
         native.compiled_entries, native.compiled_misses, native.compiled_calls
@@ -402,6 +451,41 @@ mod tests {
     use super::*;
     fn args(s: &str) -> Vec<String> {
         s.split_whitespace().map(str::to_owned).collect()
+    }
+    #[test]
+    fn diagnostic_flags_are_explicit_and_strict() {
+        assert!(!operator_flags(&[]).unwrap().0);
+        assert!(!attention_flags(&[]).unwrap().0);
+        assert!(
+            operator_flags(&args("--operator-profile stages"))
+                .unwrap()
+                .0
+        );
+        assert!(
+            attention_flags(&args("--attention-kernel fused"))
+                .unwrap()
+                .0
+        );
+        for s in [
+            "--operator-profile",
+            "--operator-profile auto",
+            "--operator-profile off --operator-profile stages",
+        ] {
+            assert!(operator_flags(&args(s)).is_err());
+        }
+        for s in [
+            "--attention-kernel",
+            "--attention-kernel auto",
+            "--attention-kernel reference --attention-kernel fused",
+        ] {
+            assert!(attention_flags(&args(s)).is_err());
+        }
+        assert_eq!(
+            operator_flags(&args("--operator-profile off --layer-group 4"))
+                .unwrap()
+                .1,
+            args("--layer-group 4")
+        );
     }
     #[test]
     fn compiled_mode_is_explicit() {

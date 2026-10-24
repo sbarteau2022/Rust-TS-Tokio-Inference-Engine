@@ -34,6 +34,8 @@ pub struct ExecutionTuning {
     pub fused_recurrent: bool,
     pub execution_timing: bool,
     pub compiled_decode: bool,
+    pub operator_profile: bool,
+    pub fused_attention: bool,
 }
 impl Default for ExecutionTuning {
     fn default() -> Self {
@@ -42,6 +44,8 @@ impl Default for ExecutionTuning {
             fused_recurrent: false,
             execution_timing: false,
             compiled_decode: false,
+            operator_profile: false,
+            fused_attention: false,
         }
     }
 }
@@ -74,6 +78,8 @@ struct Architecture {
     fused_recurrent: i32,
     execution_timing: i32,
     compiled_decode: i32,
+    operator_profile: i32,
+    fused_attention: i32,
     epsilon: f32,
     theta: f32,
 }
@@ -165,6 +171,8 @@ impl Architecture {
             fused_recurrent: 0,
             execution_timing: 0,
             compiled_decode: 0,
+            operator_profile: 0,
+            fused_attention: 0,
             epsilon: 1e-6,
             theta: 10000000.,
         })
@@ -695,7 +703,7 @@ mod tests;
 mod device;
 pub use device::{
     DeviceBlock, DeviceState, DeviceStats, DeviceStep, ExecutionMetrics, MtpState, MtpStep,
-    QwenDeviceExecutor,
+    OperatorMetrics, QwenDeviceExecutor,
 };
 
 #[path = "native_device_scheduler.rs"]

@@ -43,20 +43,33 @@ struct Plan {
 /// Fixed tie-break: the lowest vocabulary index wins, matching native greedy select.
 /// Single-pass fused finite verification + argmax scan over the 248,320-token vocabulary.
 fn winner(logits: &[f32]) -> Result<u32> {
+    Ok(winner_with_margin(logits)?.0)
+}
+/// Single-pass fused finite verification + argmax + top-1/top-2 logit margin scan.
+fn winner_with_margin(logits: &[f32]) -> Result<(u32, f32)> {
     ensure!(
         !logits.is_empty() && logits.len() <= 300_000 && logits[0].is_finite(),
         "greedy logits finite/shape"
     );
     let mut best = 0;
     let mut best_val = logits[0];
+    let mut second_val = f32::NEG_INFINITY;
     for (i, &val) in logits.iter().enumerate().skip(1) {
         ensure!(val.is_finite(), "greedy logits finite/shape");
         if val.total_cmp(&best_val).is_gt() {
+            second_val = best_val;
             best = i;
             best_val = val;
+        } else if val.total_cmp(&second_val).is_gt() {
+            second_val = val;
         }
     }
-    Ok(best as u32)
+    let margin = if second_val.is_finite() {
+        best_val - second_val
+    } else {
+        f32::INFINITY
+    };
+    Ok((best as u32, margin))
 }
 fn plan(
     initial: &[f32],
@@ -66,7 +79,7 @@ fn plan(
     remaining: usize,
 ) -> Result<Plan> {
     let vocab = initial.len();
-    winner(initial)?;
+    let initial_winner = winner(initial)?;
     ensure!(
         draft.len() <= 8
             && draft.len() <= remaining
@@ -75,16 +88,21 @@ fn plan(
             && rows.len() == draft.len(),
         "greedy draft/rows/context geometry"
     );
-    // Validate even the rejected suffix: a malformed native receipt never commits.
+    // Validate even the rejected suffix once and cache each row's greedy winner.
+    let mut row_winners = Vec::with_capacity(rows.len());
     for row in rows {
         ensure!(row.len() == vocab, "verifier row vocabulary");
-        winner(row)?;
+        row_winners.push(winner(row)?);
     }
     let mut emitted = Vec::with_capacity(draft.len() + 1);
     let mut accepted = 0;
     let mut terminal = false;
     for i in 0..draft.len() {
-        let target = winner(if i == 0 { initial } else { &rows[i - 1] })?;
+        let target = if i == 0 {
+            initial_winner
+        } else {
+            row_winners[i - 1]
+        };
         emitted.push(target);
         terminal = eos.contains(&target);
         if draft[i] != target || terminal {
@@ -98,7 +116,7 @@ fn plan(
         accepted += 1;
     }
     if emitted.len() < remaining {
-        let bonus = winner(rows.last().map_or(initial, Vec::as_slice))?;
+        let bonus = row_winners.last().copied().unwrap_or(initial_winner);
         emitted.push(bonus);
         terminal = eos.contains(&bonus);
     }
@@ -385,6 +403,15 @@ mod tests {
             d.observe(&vec![1; len]);
             assert!(d.propose(8).unwrap().len() <= 8);
         }
+    }
+    #[test]
+    fn winner_with_margin_computes_exact_top1_top2_gap() {
+        let (tok, margin) = winner_with_margin(&[0.5, 3.25, 1.75, -2.0]).unwrap();
+        assert_eq!(tok, 1);
+        assert!((margin - 1.5).abs() < 1e-6);
+        let (tied, tied_margin) = winner_with_margin(&[2.0, 4.0, 4.0]).unwrap();
+        assert_eq!(tied, 1);
+        assert_eq!(tied_margin, 0.0);
     }
 }
 

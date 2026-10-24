@@ -1,0 +1,4 @@
+
+> apple-native-rust-server@0.1.0 typecheck:ts71
+> tsc --noEmit -p tsconfig.json
+

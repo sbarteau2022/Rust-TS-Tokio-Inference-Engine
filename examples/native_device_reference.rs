@@ -95,6 +95,8 @@ async fn main() -> Result<()> {
             layer_group: group,
             fused_recurrent: kernel == "fused",
             compiled_decode: graph == "compiled-decode",
+            operator_profile: false,
+            fused_attention: false,
             execution_timing: false,
         },
     )

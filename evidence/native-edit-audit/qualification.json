@@ -1,0 +1,78 @@
+{
+  "model_identity": "509cc92543203798f2db08b6fb6cbb38a80942fc0437ae81a3ef9ff27720915b",
+  "scope": "native executor single lane, four frozen prompts; not HTTP or continuous batching qualification",
+  "target_pass": true,
+  "numerical_comparisons": 63,
+  "numerical_failures": 0,
+  "frozen_generated_tokens": 256,
+  "decode_steps": 252,
+  "decode_tok_s": 25.182086304884386,
+  "mean_itl_ms": 39.71076851587302,
+  "mean_ttft_ms": 423.79765625,
+  "fused_sdpa_numerical_failures": 63,
+  "fused_sdpa_promoted": false,
+  "flags": "40 fused off compiled-decode reference off",
+  "binary_sha256": {
+    "target/release/rust-server": "67f3caf21cdce9fdd37daddc9018627163be42f8f1a187a4fb3585c415a73f64",
+    "target/release/examples/native_group_qualification": "e9dd21080a1e55d430364474061fe1ea4f4d343e7c5d5e83709cafd72cc37446",
+    "target/release/examples/native_mtp_decode_smoke": "9b139f7c60e47f123b1d505606514e1c613da2850bef3d2c829acb3c02732a6e",
+    "target/release/examples/native_physical_batch": "bd58f38b0d870cc28a560e686e7707e6fbccdf11c9a3bc28a7dd2b4f3535200a"
+  },
+  "note": "Initial exploratory binary was replaced before hashing; hashes describe rebuilt audit binaries. Attention-reference runner differed only by later help/parser refusal and duplicate-assignment cleanup, which do not affect target execution. Final rebuild also restores open_mtp default to eager; explicit target qualification settings are unchanged.",
+  "mtp_compiled_smoke": {
+    "status": "terminated",
+    "exit_code": 143,
+    "elapsed_approx_seconds": 240,
+    "pass": false,
+    "note": "No completed smoke report; stack sampled in hidden-step final MLX eval_impl. Root cause not established. Default open_mtp restored to eager; configured compilation remains opt-in."
+  },
+  "mtp_eager_smoke": {
+    "pass": true,
+    "widths": [
+      1,
+      2,
+      4,
+      8
+    ],
+    "learned_proposed": 32,
+    "learned_accepted": 32,
+    "scope": "four transactions per width on one counting prompt; no throughput or held-out acceptance claim",
+    "same_parent_replay_reference": false
+  },
+  "regression": {
+    "rust_default": 193,
+    "rust_debug_validation": 193,
+    "typescript_tests": 26,
+    "offline_tests": 41,
+    "clippy_all_targets": true,
+    "ts71": true,
+    "tsrs": true,
+    "abi_asan_ubsan": true,
+    "operator_clock_asan_ubsan": true
+  },
+  "operator_stages": {
+    "pass": true,
+    "strict_comparisons": 63,
+    "exact_frozen_tokens": 256,
+    "stages": 19,
+    "reader": "judges/edit_audit_report.py",
+    "production_throughput_claim": false,
+    "top_isolated_stages": [
+      "moe_up_gate",
+      "moe_down"
+    ]
+  },
+  "physical_batch": {
+    "pass": true,
+    "rows": 96,
+    "batches": [
+      1,
+      2,
+      3
+    ],
+    "graph_mode": "compiled-decode",
+    "native_residents": 0,
+    "native_bytes": 0,
+    "throughput_claim": false
+  }
+}
