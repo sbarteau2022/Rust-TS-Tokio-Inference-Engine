@@ -1,0 +1,8 @@
+In file included from /Users/stewartbarteau/.codex/worktrees/decode-arch-kernel-proof/Rust-TS-Tokio-Inference-Engine/judges/native_dspark_gate.cpp:1:
+/Users/stewartbarteau/.codex/worktrees/decode-arch-kernel-proof/Rust-TS-Tokio-Inference-Engine/native/dspark.h:75:8: error: redefinition of 'ids'
+   75 |   auto ids=mx::stack(choices,0,stream_);auto confidences=mx::reshape(mx::concatenate(confidence,0,stream_),{1,rows},stream_);std::vector<mx::array> all={hidden,base,confidences,ids};all.insert(all.end(),score_rows.begin(),score_rows.end());all.insert(all.end(),next.keys.begin(),next.keys.end());all.insert(all.end(),next.values.begin(),next.values.end());finite(all);mx::eval(all);std::vector<uint32_t> tokens(ids.data<uint32_t>(),ids.data<uint32_t>()+rows);return {hidden,base,confidences,std::move(tokens),next};
+      |        ^
+/Users/stewartbarteau/.codex/worktrees/decode-arch-kernel-proof/Rust-TS-Tokio-Inference-Engine/native/dspark.h:62:8: note: previous definition is here
+   62 |   auto ids=mx::array(inputs.data(),{1,rows},mx::uint32);auto x=mx::take(w("embed_tokens.weight"),ids,0,stream_);
+      |        ^
+1 error generated.

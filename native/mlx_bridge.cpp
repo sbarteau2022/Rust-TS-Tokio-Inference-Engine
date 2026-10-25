@@ -185,3 +185,5 @@ extern "C" int rs_mlx_weight_bytes(void* store,const char* name,const int32_t* s
   std::memcpy(output,cpu.data<uint8_t>()+offset,count);
  });
 }
+
+#include "qwen_dspark.inc"

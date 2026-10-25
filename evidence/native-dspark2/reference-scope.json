@@ -1,0 +1,17 @@
+{
+  "reference": "installed DSparkDraftModel FP32, checkpoint own-head lane",
+  "widths": [
+    2,
+    4,
+    8,
+    2
+  ],
+  "contexts": [
+    3,
+    5,
+    6,
+    512
+  ],
+  "target_integration": false,
+  "acceptance_qualification": false
+}

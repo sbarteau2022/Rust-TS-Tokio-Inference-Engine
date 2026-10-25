@@ -1,0 +1,13 @@
+{
+  "commit": "328a6bb28d7b17a60ad0d32fde7abf049fcd7233",
+  "native_source_diff": "",
+  "sha256": {
+    "/tmp/decode-arch-v1-cpp-control": "92199dd75227d52780486c4815ba6ce64f15189f4599cf6471b97deb77fa2d9a",
+    "judges/native_cpp_bench.cpp": "12d079cdc94d9cd33ace3e091468a90fd9ba8ca7a159794635d099a22493f44c",
+    "native/mlx_bridge.cpp": "94339f2ea8dc5385fb277d01532d46736517e46e4c2ce2d469e29536f80665b2",
+    "native/qwen_model.inc": "0a918fbf569decdf98ba76e672c03b3e707158c1dc720b7cb2e43530b0b965d6",
+    "native/qwen_mtp.inc": "532494aca4fbe18bb2c94c139cb02a72edb852164d67dfd08926e0aa90e68370",
+    "native/qwen_device.inc": "06b9dc59d1e845bf55ce6067b204670f73c3a6d76ff08ed3e2d7f9a137439e92",
+    "evidence/decode-arch-kernel-proof/cpp-plan.txt": "20dde3c98b7a942bc717aae5cdc673f6d08fb97ac383de71f157c9ae79cf42c0"
+  }
+}

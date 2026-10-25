@@ -1,4 +1,5 @@
-// Complete text-only Qwen3.5/3.6 hybrid reference, invoked only by its Rust executor.
+#include "metal_reference_attention.h"
+// Shared text-only Qwen3.5/3.6 hybrid reference for native executors.
 #include <cmath>
 #include <cstdio>
 #include "attention_reference.h"
@@ -113,7 +114,14 @@ struct Qwen {
   if(offset+t<c.context){k=mx::slice(k,{0,0,0,0},{batch,c.kv_heads,offset+t,c.head_dim},s);v=mx::slice(v,{0,0,0,0},{batch,c.kv_heads,offset+t,c.head_dim},s);}
   cut(projection_timer,OperatorStage::AttentionProjection,{qg[1],q,k,v});auto reduction_timer=stage();
   mx::array y=q;
-  if(!diagnose&&!reference&&!operators&&c.fused_attention){
+  #ifdef RS_CPP_MULTI_ROW_ONLY
+  constexpr bool single_row_metal=false;
+#else
+  constexpr bool single_row_metal=true;
+#endif
+  if(!diagnose&&!reference&&!baseline&&!operators&&c.fused_attention==2&&(t>1||single_row_metal)){
+   y=metal_reference_attention(mx::astype(q,mx::float32,s),mx::astype(k,mx::float32,s),mx::astype(v,mx::float32,s),offset,s);
+  }else if(!diagnose&&!reference&&!operators&&c.fused_attention==1){
    y=mx::fast::scaled_dot_product_attention(q,k,v,1.f/std::sqrt(float(c.head_dim)),t>1?"causal":"",{},{},false,s);
   }else{
    std::vector<mx::array> rows;
@@ -266,7 +274,7 @@ extern "C" int rs_qwen_quant(void* store,const char* module,int group,int bits,c
  if(!store||!module||!(group==32||group==64||group==128)||!(bits==2||bits==3||bits==4||bits==5||bits==6||bits==8))throw std::invalid_argument("invalid model quantization");
  static_cast<Weights*>(store)->quant[std::string(module)]={group,bits};
 });}
-static int qwen_forward_core(void* store,int gpu,const rs_qwen_config* config,const rs_qwen_layer* layers,size_t layer_count,const uint32_t* tokens,size_t count,size_t offset,const float* old_state,size_t old_count,float* new_state,size_t new_count,float* logits,size_t logits_count,int projection_checks,const uint32_t* projection_outputs,size_t projection_output_count,float* trace,size_t trace_count,char* error,size_t capacity,const std::vector<mx::array>* device_old=nullptr,std::vector<mx::array>* device_next=nullptr,bool all_logits=false,std::optional<mx::array>* hidden=nullptr,bool sample_token=false,uint32_t* sampled_token=nullptr){return checked(error,capacity,[&]{
+static int qwen_forward_core(void* store,int gpu,const rs_qwen_config* config,const rs_qwen_layer* layers,size_t layer_count,const uint32_t* tokens,size_t count,size_t offset,const float* old_state,size_t old_count,float* new_state,size_t new_count,float* logits,size_t logits_count,int projection_checks,const uint32_t* projection_outputs,size_t projection_output_count,float* trace,size_t trace_count,char* error,size_t capacity,const std::vector<mx::array>* device_old=nullptr,std::vector<mx::array>* device_next=nullptr,bool all_logits=false,std::optional<mx::array>* hidden=nullptr,bool sample_token=false,uint32_t* sampled_token=nullptr,std::optional<mx::array>* dspark_features=nullptr){return checked(error,capacity,[&]{
  if(!store||!config||!layers||!tokens||(!new_state&&!device_next)||(!logits&&!sample_token))throw std::invalid_argument("invalid model descriptor");auto c=*config;
  if(c.hidden<=0||c.hidden>8192||c.layers<=0||c.layers>64||c.vocab<=0||c.vocab>300000||c.interval<=0||c.layers%c.interval||c.context<=0||c.context>262144||c.chunk<=0||c.chunk>8||count==0||count>size_t(c.chunk)||offset>size_t(c.context)||offset+count>size_t(c.context)||(sample_token?logits_count!=0:logits_count!=size_t(c.vocab)*(all_logits?count:1)))throw std::invalid_argument("model geometry/capacity");
  if(c.layer_group!=1&&c.layer_group!=4&&c.layer_group!=10&&c.layer_group!=40)throw std::invalid_argument("model layer group");
@@ -301,6 +309,7 @@ static int qwen_forward_core(void* store,int gpu,const rs_qwen_config* config,co
  auto x=mx::reshape(mx::dequantize(mx::take(m.w(embed+".weight"),ids,0,s),embed_scales,embed_biases,group,bits,"affine",{},c.activation_precision?std::optional<mx::Dtype>{mx::float32}:std::nullopt,s),{1,int(count),c.hidden},s);
  if(m.operators)m.check_embedding(ids,x,embed,group,bits);
  m.cut(embedding_timer,OperatorStage::Embedding,{x});
+ std::vector<mx::array> dspark_taps;
  size_t read=0,write=0,array_read=0;std::vector<mx::array> finite_checks,pending;
  // Diagnostics/snapshot controls keep the original completion boundaries.
  const int layer_group=(device_next&&!trace_count&&!projection_checks)?c.layer_group:1;
@@ -325,6 +334,7 @@ static int qwen_forward_core(void* store,int gpu,const rs_qwen_config* config,co
    auto residual_timer=m.stage();residual=mx::add(x,r,s);if(m.operators)m.check_add(x,r,residual,prefix+"/attention-residual");auto post=m.norm(residual,prefix+".post_attention_layernorm.weight");m.cut(residual_timer,OperatorStage::ResidualNorm,{residual,post});mlp=m.moe(post,prefix+".mlp");auto output_timer=m.stage();x=mx::add(residual,mlp,s);if(m.operators)m.check_add(residual,mlp,x,prefix+"/mlp-residual");m.cut(output_timer,OperatorStage::LayerOutput,{x});
   }
   }
+  if(dspark_features){constexpr int taps[]={1,6,11,16,22,27,32,37};if(std::find(std::begin(taps),std::end(taps),layer)!=std::end(taps))dspark_taps.push_back(x);}
   std::vector<mx::array> evaluated={x};
   for(auto& a:next){
    if(device_next&&!trace_count)evaluated.push_back(a.dtype()==mx::float32?a:mx::astype(a,mx::float32,s));
@@ -350,10 +360,13 @@ static int qwen_forward_core(void* store,int gpu,const rs_qwen_config* config,co
  if(c.operator_profile){for(auto& a:finite_checks)a=mx::all(mx::isfinite(a,s),s);}
  if(run_checks||sample_token)finite_checks.push_back(mx::all(mx::isfinite(output,s),s));
  if(hidden&&run_checks)finite_checks.push_back(mx::all(mx::isfinite(normalized,s),s));
+ std::optional<mx::array> captured;
+ if(dspark_features){if(dspark_taps.size()!=8)throw std::runtime_error("DSpark tap inventory");captured=mx::concatenate(dspark_taps,-1,s);finite_checks.push_back(mx::all(mx::isfinite(*captured,s),s));}
  m.cut(validation_timer,OperatorStage::StateValidation,finite_checks);
  std::optional<mx::array> sampled_arr;if(sample_token)sampled_arr=device_total_argmax(output,s);
- std::vector<mx::array> final_outputs=std::move(pending);final_outputs.push_back(output);if(sample_token)final_outputs.push_back(*sampled_arr);if(hidden)final_outputs.push_back(normalized);final_outputs.insert(final_outputs.end(),finite_checks.begin(),finite_checks.end());timer.graph();mx::eval(final_outputs);mx::synchronize(s);timer.wait();
+ std::vector<mx::array> final_outputs=std::move(pending);final_outputs.push_back(output);if(captured)final_outputs.push_back(*captured);if(sample_token)final_outputs.push_back(*sampled_arr);if(hidden)final_outputs.push_back(normalized);final_outputs.insert(final_outputs.end(),finite_checks.begin(),finite_checks.end());timer.graph();mx::eval(final_outputs);mx::synchronize(s);timer.wait();
  for(const auto& finite:finite_checks)if(!finite.item<bool>())throw std::runtime_error("nonfinite device state");
+ if(dspark_features)*dspark_features=*captured;
  if(hidden)*hidden=normalized;
  if(sample_token){*sampled_token=sampled_arr->item<uint32_t>();}else{if(output.size()!=logits_count)throw std::invalid_argument("logits shape mismatch");std::memcpy(logits,output.data<float>(),logits_count*4);}timer.complete();
  }catch(...){try{mx::synchronize(s);}catch(...){}throw;}

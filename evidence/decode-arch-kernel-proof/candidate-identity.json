@@ -1,0 +1,11 @@
+{
+  "/tmp/decode-arch-v1-metal-candidate": "1f4da7989c90d488478fb2827d5ba576d7801e9a4e7a7750bb7a0ffc27603091",
+  "/tmp/decode-arch-attention-gate": "45245245e793aaccd021f87cea96b79e9939acb0ceab3aaf3d353ced2481ef0a",
+  "/tmp/metal-reference-attention-oracle": "9f5fbf7ee47c81b8dc00346f4c0882af43df8e550ab546ef9ae0e2875b028f8a",
+  "native/metal_reference_attention.h": "fa58803b203a9ed65d1e80197282e340a6723ad75daf112109f0465c05ff420e",
+  "native/qwen_model.inc": "c018ae2d38a5a65d7cf31020e1daa71d5d523ef68b8cc1498f409e9951276994",
+  "native/qwen_device.inc": "562892982b45f31a0b0f6f96e349554226994ddd0569a8666582beabc339f8b9",
+  "judges/native_cpp_bench.cpp": "746b6446eb9d0a812f1ec6443f9e260a7b8aa681d179e3207dcee3a64e1e7a0c",
+  "judges/native_cpp_attention_gate.cpp": "0765c0cca69a0137c39a6f38ee082b5578476eaee58061b267ff939d601ab98f",
+  "judges/metal_reference_attention.cpp": "897f1e0f701249a89aa3989c7845ed1718dedb01327858c73a061de995f62a32"
+}

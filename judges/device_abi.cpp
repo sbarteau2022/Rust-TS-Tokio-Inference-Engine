@@ -12,8 +12,24 @@ int main(){
  assert(!rs_qwen_device_create(fake,0,&c,layers,40,65,1<<28,error,sizeof(error)));
  for(int value:{-1,3,2147483647}){bad=c;bad.expert_kernel=value;assert(!rs_qwen_device_create(fake,0,&bad,layers,40,2,1<<28,error,sizeof(error)));bad=c;bad.validation_mode=value;assert(!rs_qwen_device_create(fake,0,&bad,layers,40,2,1<<28,error,sizeof(error)));}
  bad=c;bad.activation_precision=0;bad.compiled_decode=1;assert(!rs_qwen_device_create(fake,1,&bad,layers,40,2,1<<28,error,sizeof(error)));
+ // The opt-in FP32 Metal candidate is qualified only at context512.
+ bad=c;bad.fused_attention=2;bad.context=1024;assert(!rs_qwen_device_create(fake,1,&bad,layers,40,2,1<<28,error,sizeof(error)));
+ bad=c;bad.fused_attention=2;bad.activation_precision=0;assert(!rs_qwen_device_create(fake,1,&bad,layers,40,2,1<<28,error,sizeof(error)));
  void* session=rs_qwen_device_create(fake,0,&c,layers,40,2,1<<28,error,sizeof(error));assert(session);
- std::vector<float> logits(c.vocab);uint32_t invalid=uint32_t(c.vocab);StateId output={9,9,9,9,9};uint64_t stats[74];size_t checks=3;
+ // DSpark descriptors fail before model load/reservation and preserve outputs.
+ assert(!rs_qwen_dspark_create(nullptr,"missing",0,4,1024,error,sizeof(error)));
+ assert(!rs_qwen_dspark_create(session,"missing",0,4,1024,error,sizeof(error))); // CPU target
+ for(int head:{-1,4})assert(!rs_qwen_dspark_create(session,"missing",head,4,1024,error,sizeof(error)));
+ bad=c;bad.validation_mode=0;void* unchecked=rs_qwen_device_create(fake,1,&bad,layers,40,2,1<<28,error,sizeof(error));assert(unchecked);
+ assert(!rs_qwen_dspark_create(unchecked,"missing",0,4,1024,error,sizeof(error)));rs_qwen_device_destroy(unchecked);
+ StateId ds_sentinel{9,9,9,9,9};uint32_t ds_id=999;float ds_confidence=999;uint64_t ds_stats[2]{9,9};
+ assert(rs_qwen_dspark_ingest(nullptr,nullptr,nullptr,&ds_sentinel,error,sizeof(error))!=0&&ds_sentinel.owner==9);
+ assert(rs_qwen_dspark_propose(nullptr,nullptr,1,4,&ds_id,&ds_confidence,1,error,sizeof(error))!=0&&ds_id==999&&ds_confidence==999);
+ assert(rs_qwen_dspark_release(nullptr,nullptr,error,sizeof(error))!=0);
+ assert(rs_qwen_dspark_stats(nullptr,ds_stats,2,error,sizeof(error))!=0&&ds_stats[0]==9);
+ assert(rs_qwen_device_dspark_snapshot(session,nullptr,&ds_confidence,1,error,sizeof(error))!=0&&ds_confidence==999);
+ assert(rs_qwen_device_dspark_step(session,nullptr,0,&ds_id,1,&ds_sentinel,&ds_confidence,1,2,error,sizeof(error))!=0&&ds_sentinel.owner==9);
+ std::vector<float> logits(c.vocab);uint32_t invalid=uint32_t(c.vocab);StateId output={9,9,9,9,9};uint64_t stats[74];size_t checks=17;
  for(size_t i=0;i<14000;++i){
   StateId foreign={i+1,i%64,i+1,1,4};
   assert(rs_qwen_device_release(session,&foreign,error,sizeof(error))!=0);

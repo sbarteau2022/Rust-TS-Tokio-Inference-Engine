@@ -1,4 +1,5 @@
 fn main() {
+    println!("cargo:rerun-if-changed=native/metal_reference_attention.h");
     println!("cargo:rerun-if-changed=native/compiled_constants.h");
     println!("cargo:rerun-if-changed=native/execution_timing.h");
     println!("cargo:rerun-if-changed=native/operator_timing.h");
@@ -34,6 +35,8 @@ fn main() {
         println!("cargo:rerun-if-changed=native/mlx_bridge.h");
         println!("cargo:rerun-if-changed=native/qwen_model.inc");
         println!("cargo:rerun-if-changed=native/qwen_device.inc");
+        println!("cargo:rerun-if-changed=native/dspark.h");
+        println!("cargo:rerun-if-changed=native/qwen_dspark.inc");
         println!("cargo:rerun-if-changed=native/qwen_batch.inc");
         println!("cargo:rerun-if-changed=native/state_table.h");
         println!("cargo:rerun-if-changed=native/qwen_mtp.inc");

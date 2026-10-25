@@ -1,0 +1,10 @@
+ATTENTION-ORACLE layer=language_model.model.layers.3.self_attn offset=0 tokens=8 nrmse=1.62432291e-07 max_abs=1.21469203e-06
+ATTENTION-ORACLE layer=language_model.model.layers.7.self_attn offset=0 tokens=8 nrmse=1.8241983e-07 max_abs=3.51421003e-06
+ATTENTION-ORACLE layer=language_model.model.layers.11.self_attn offset=0 tokens=8 nrmse=2.27529813e-07 max_abs=3.50581764e-06
+ATTENTION-ORACLE layer=language_model.model.layers.15.self_attn offset=0 tokens=8 nrmse=1.70910826e-07 max_abs=4.28866656e-06
+ATTENTION-ORACLE layer=language_model.model.layers.19.self_attn offset=0 tokens=8 nrmse=1.88994544e-07 max_abs=3.40758734e-06
+ATTENTION-ORACLE layer=language_model.model.layers.23.self_attn offset=0 tokens=8 nrmse=2.07014439e-07 max_abs=5.02417558e-06
+ATTENTION-ORACLE layer=language_model.model.layers.27.self_attn offset=0 tokens=8 nrmse=1.47577579e-07 max_abs=2.92004429e-06
+ATTENTION-ORACLE layer=language_model.model.layers.31.self_attn offset=0 tokens=8 nrmse=1.44397087e-07 max_abs=4.80599732e-06
+ATTENTION-ORACLE layer=language_model.model.layers.35.self_attn offset=0 tokens=8 nrmse=1.34834525e-07 max_abs=1.48223676e-06
+ATTENTION-ORACLE layer=language_model.model.layers.39.self_attn offset=0 tokens=8 nrmse=8.20521032e-08 max_abs=4.15244887e-06

@@ -1,0 +1,16 @@
+......Traceback (most recent call last):
+  File "/Users/stewartbarteau/.codex/worktrees/decode-arch-kernel-proof/Rust-TS-Tokio-Inference-Engine/judges/layer_groups_report.py", line 14, in <module>
+    assert len(d['timings'])==4 and len(d['observations'])==63
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError
+...Traceback (most recent call last):
+  File "/Users/stewartbarteau/.codex/worktrees/decode-arch-kernel-proof/Rust-TS-Tokio-Inference-Engine/judges/layer_groups_report.py", line 27, in <module>
+    assert t['tokens']==refs['tokens'][prompt][:64]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError
+.............................................
+----------------------------------------------------------------------
+Ran 54 tests in 0.779s
+
+OK
+PASS physical coverage corruption controls

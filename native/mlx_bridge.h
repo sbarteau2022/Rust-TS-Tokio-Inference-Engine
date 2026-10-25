@@ -113,3 +113,24 @@ int rs_qwen_device_mtp_snapshot(void*,const struct StateId*,float*,size_t,char*,
 #ifdef __cplusplus
 }
 #endif
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+int rs_qwen_device_dspark_step(void*,const StateId*,size_t,const uint32_t*,size_t,StateId*,float*,size_t,int,char*,size_t);
+void* rs_qwen_dspark_create(void*,const char*,int,size_t,uint64_t,char*,size_t);
+void rs_qwen_dspark_destroy(void*);
+int rs_qwen_dspark_ingest(void*,const StateId*,const StateId*,StateId*,char*,size_t);
+int rs_qwen_dspark_propose(void*,const StateId*,uint32_t,size_t,uint32_t*,float*,size_t,char*,size_t);
+int rs_qwen_dspark_release(void*,const StateId*,char*,size_t);
+int rs_qwen_dspark_stats(void*,uint64_t*,size_t,char*,size_t);
+#ifdef __cplusplus
+}
+#endif
+#ifdef __cplusplus
+extern "C" {
+#endif
+int rs_qwen_device_dspark_snapshot(void*,const StateId*,float*,size_t,char*,size_t);
+#ifdef __cplusplus
+}
+#endif

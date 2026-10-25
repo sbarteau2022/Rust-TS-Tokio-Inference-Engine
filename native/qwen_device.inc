@@ -1,13 +1,14 @@
 #include "state_table.h"
 #include <atomic>
 namespace {
-struct DevicePayload {std::vector<mx::array> arrays;std::optional<mx::array> hidden;};
+struct DevicePayload {std::vector<mx::array> arrays;std::optional<mx::array> hidden,dspark_features;std::optional<StateId> parent;};
 struct DeviceSession {
  void* weights;void* mtp_weights=nullptr;int gpu;size_t slots;uint64_t limit;rs_qwen_config config;std::vector<rs_qwen_layer> layers;
  StateTable<DevicePayload> table;StateTable<DevicePayload> drafts;
  uint64_t exports=0,uploads=0,steps=0;
  DeviceSession(void* w,int g,rs_qwen_config c,const rs_qwen_layer* l,size_t n,uint64_t owner,size_t slots,uint64_t bytes):weights(w),gpu(g),slots(slots),limit(bytes),config(c),layers(l,l+n),table(owner,slots,bytes),drafts(owner+1,slots,bytes){}
 };
+uint64_t allocate_native_owner(){static std::atomic<uint64_t> next{1};auto owner=next.load();for(;;){if(!owner||owner>=UINT64_MAX-1)throw std::overflow_error("session owner exhausted");if(next.compare_exchange_weak(owner,owner+2))return owner;}}
 }
 extern "C" void* rs_qwen_device_create(void* weights,int gpu,const rs_qwen_config* config,const rs_qwen_layer* layers,size_t count,size_t slots,uint64_t bytes,char* error,size_t capacity){
  void* result=nullptr;checked(error,capacity,[&]{
@@ -20,26 +21,27 @@ extern "C" void* rs_qwen_device_create(void* weights,int gpu,const rs_qwen_confi
  if(c.operator_profile<0||c.operator_profile>1||(c.operator_profile&&(!gpu||c.compiled_decode||c.execution_timing)))throw std::invalid_argument("operator profile requires GPU/eager/timing off");
  if(c.expert_kernel<0||c.expert_kernel>2)throw std::invalid_argument("device expert kernel");
  if(c.validation_mode<0||c.validation_mode>2||c.validation_interval<1||c.validation_interval>1000000)throw std::invalid_argument("device validation mode");
- if(c.fused_attention<0||c.fused_attention>1||(c.fused_attention&&!gpu))throw std::invalid_argument("fused attention requires GPU");
+ if(c.fused_attention<0||c.fused_attention>2||(c.fused_attention&&!gpu))throw std::invalid_argument("fused attention requires GPU");
+ if(c.fused_attention==2&&(c.context!=512||c.activation_precision!=1))throw std::invalid_argument("Metal reference attention requires FP32/context512");
  // This ABI is deliberately restricted to the qualified architecture and FP32 profile, with an experimental larger-context ABI bound; Rust serving remains context 512.
  if(c.hidden!=2048||c.layers!=40||c.vocab!=248320||c.q_heads!=16||c.kv_heads!=2||c.head_dim!=256||c.key_heads!=16||c.value_heads!=32||c.key_dim!=128||c.value_dim!=128||c.conv!=4||c.interval!=4||c.context<512||c.context>262144||c.chunk!=8||(c.activation_precision<0||c.activation_precision>1)||c.experts!=256||c.top!=8||c.intermediate!=512||c.shared!=512||c.rope_dims!=64||c.epsilon!=1e-6f||c.theta!=10000000.f||!(c.group==32||c.group==64||c.group==128)||!(c.bits==2||c.bits==3||c.bits==4||c.bits==5||c.bits==6||c.bits==8))throw std::invalid_argument("device session architecture/profile");
  for(size_t i=0;i<count;++i)if(layers[i].index!=i||layers[i].mixer!=uint32_t((i+1)%4==0))throw std::invalid_argument("device session program");
- static std::atomic<uint64_t> next{1};auto owner=next.load();for(;;){if(!owner||owner>=UINT64_MAX-1)throw std::overflow_error("session owner exhausted");if(next.compare_exchange_weak(owner,owner+2))break;}
+ auto owner=allocate_native_owner();
  result=new DeviceSession(weights,gpu,c,layers,count,owner,slots,bytes);
  });return result;
 }
-static int device_step(void* handle,const StateId* previous,size_t position,const uint32_t* tokens,size_t count,StateId* output,float* logits,size_t logits_count,float* trace,size_t trace_count,char* error,size_t capacity,bool all_logits,bool capture_hidden=false,bool sampled=false,uint32_t* sampled_token=nullptr){return checked(error,capacity,[&]{
+static int device_step(void* handle,const StateId* previous,size_t position,const uint32_t* tokens,size_t count,StateId* output,float* logits,size_t logits_count,float* trace,size_t trace_count,char* error,size_t capacity,bool all_logits,bool capture_hidden=false,bool sampled=false,uint32_t* sampled_token=nullptr,bool capture_dspark=false){return checked(error,capacity,[&]{
  if(!handle||!output||!tokens||(!logits&&!sampled))throw std::invalid_argument("device step descriptor");auto& session=*static_cast<DeviceSession*>(handle);const auto& c=session.config;
  if(!count||count>8||position>size_t(c.context)||count>size_t(c.context)-position||(sampled?logits_count!=0:logits_count!=size_t(c.vocab)*(all_logits?count:1)))throw std::invalid_argument("device step capacity");
  if((position==0)!=(!previous))throw std::invalid_argument("device previous state presence");
  const std::vector<mx::array>* old=nullptr;if(previous){if(previous->position!=position)throw std::invalid_argument("device position mismatch");old=&session.table.get(*previous).arrays;}
- auto state_count=qwen_state_count(c,position+count);auto hidden_bytes=capture_hidden?count*size_t(c.hidden)*4:0;
+ auto state_count=qwen_state_count(c,position+count);auto hidden_bytes=(capture_hidden?count*size_t(c.hidden)*4:0)+(capture_dspark?count*size_t(c.hidden)*8*4:0);
  if(session.table.residents()+session.drafts.residents()>=session.slots || state_count*4+hidden_bytes>session.limit-session.table.bytes()-session.drafts.bytes())throw std::runtime_error("combined resident budget exhausted");
  auto id=session.table.reserve(position+count,state_count*4+hidden_bytes);
  try{
-  DevicePayload next;
+  DevicePayload next;if(previous)next.parent=*previous;
   auto cfg=c;if(cfg.validation_mode==1)cfg.validation_mode=(session.steps%uint64_t(cfg.validation_interval)==0)?2:0;
-  char inner[1024]={};auto code=qwen_forward_core(session.weights,session.gpu,&cfg,session.layers.data(),session.layers.size(),tokens,count,position,nullptr,position?qwen_state_count(c,position):0,nullptr,state_count,logits,logits_count,0,nullptr,0,trace,trace_count,inner,sizeof(inner),old,&next.arrays,all_logits,capture_hidden?&next.hidden:nullptr,sampled,sampled_token);
+  char inner[1024]={};auto code=qwen_forward_core(session.weights,session.gpu,&cfg,session.layers.data(),session.layers.size(),tokens,count,position,nullptr,position?qwen_state_count(c,position):0,nullptr,state_count,logits,logits_count,0,nullptr,0,trace,trace_count,inner,sizeof(inner),old,&next.arrays,all_logits,capture_hidden?&next.hidden:nullptr,sampled,sampled_token,capture_dspark?&next.dspark_features:nullptr);
   if(code)throw std::runtime_error(inner);
   if(next.arrays.size()!=80)throw std::runtime_error("device state array inventory");
   session.table.publish(id,std::move(next));++session.steps;*output=id;

@@ -1,0 +1,1 @@
+{"pass":true,"cases":16,"max_relative_l2":9.5640316892275231e-07,"max_absolute":1.7642974853515625e-05,"target_logits_state":true,"draft_logits_kv_hidden":true,"zero_drain":true,"not_throughput":true}

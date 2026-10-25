@@ -1,0 +1,6 @@
+{
+  "header_sha256": "1b3a88d529d38924d1d1d61acc93daa125df872203dc671e5f4835eeb0ee68bc",
+  "change_after_timing": "reject offsets above512 before offset+rows; valid arithmetic unchanged",
+  "measured_header": "metal_reference_attention-measured.h",
+  "prototype_promoted": false
+}
