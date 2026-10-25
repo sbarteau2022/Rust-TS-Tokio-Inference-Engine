@@ -209,3 +209,14 @@ Authoritative parsers: `src/main.rs`, `src/serving/native_http.rs`, `src/serving
 Phases: target/draft prefill, autoregressive drafting, target verification, rejected-window target replay and committed draft-state refresh. Prepare/commit envelopes retain host/unclassified residue. Await times include scheduler/queue/completion latency. The independent phase reader checks frozen outputs, counters, no omitted receipts, positive/finite/integer durations, envelope bounds, reuse/replay accounting and the90% learned-acceptance gate.
 
 `--capture-wait` is accepted only by the offline benchmark with `mtp-phase-timing` enabled. After warmup it writes `capture-ready.json` with the owned PID and waits for `capture-go` for at most30 seconds; timeout drains and fails. The external recorder releases it only after Xcode’s tracing-started notification. Captured runs are labeled and refused by the throughput-control reader. This is not a server command flag.
+
+
+### Batched FP32 reference attention experiment
+
+`native-mtp-serve ... --attention-kernel reference|fused|batched-reference` keeps `reference` as default. `batched-reference` batches independent causal rows using FP32 products/reductions and is bounded to context 512; it is distinct from fused SDPA. The TS HTTP benchmark accepts the same flag and verifies actual metadata. Native example: `native_group_qualification NEW_DIRECTORY 40 fused off eager batched-reference`. The MTP benchmark appends `--no-capture batched-reference` after its expert argument. Numerical parity alone does not qualify higher throughput or DSpark/TurboQuant integration. See [design and gates](THROUGHPUT_COMPLETION.md).
+
+### Standalone C++ kernel control
+
+`cargo run --locked --release --example native_cpp_plan -- NEW_PLAN.txt` performs offline checked inventory/tokenization export. `scripts/build_native_cpp_bench.sh OUTPUT_BINARY` builds the existing native kernels without a Rust/Tokio/TS execution runtime. `OUTPUT_BINARY PLAN NEW_REPORT.json` uses eager GPU FP32, full validation, reference attention/expert arithmetic, fused recurrent, group40, width4 and context512. The two positional arguments are required; the report must not exist. This measures native decode, excludes model loading/tokenization, checks frozen outputs and zero drain, and does not implement DSpark/TurboQuant. `MLX_ROOT` optionally selects the SDK directory at build time.
+
+`cargo run --locked --release --example native_dspark_inventory -- SNAPSHOT NEW_REPORT.json` validates the user-selected drafter's config, 75 BF16 tensor contracts, complete payload ranges and full content hashes. Its report explicitly refuses execution/target-compatibility qualification.

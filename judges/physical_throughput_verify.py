@@ -32,6 +32,7 @@ def self_test():
 
 def control_contract(summary,allow_single=False):
     options=summary['options']
+    if 'attentionKernel' in options: require(options['attentionKernel'] in ('reference','fused','batched-reference'),'invalid attention kernel')
     if 'graphMode' in options: require(options['graphMode'] in ('eager','compiled-decode'),'invalid graph mode')
     if 'executionTiming' in options: require(options['executionTiming'] in ('off','on'),'invalid timing mode')
     allowed=[['target'],['target-physical']] if allow_single else [['target','target-physical'],['target-physical','target']]
@@ -83,6 +84,7 @@ def verify(directory,allow_single=False):
                 require('execution=Target' in row['metadata']['profile'],'speculation unexpectedly active')
                 require(f"layer_group={options.get('layerGroup',1)} " in row['metadata']['profile'] if 'layerGroup' in options else True,'wrong completion group')
                 require(f"recurrent_kernel={options.get('recurrentKernel','reference')} " in row['metadata']['profile'] if 'recurrentKernel' in options else True,'wrong recurrent kernel')
+                if 'attentionKernel' in options: require(f"attention_kernel={options['attentionKernel']} " in row['metadata']['profile'],'wrong attention kernel')
                 if 'graphMode' in options: require(f"graph_mode={options['graphMode']} " in row['metadata']['profile'],'wrong graph mode')
                 if 'executionTiming' in options: require(f"execution_timing={options['executionTiming']} " in row['metadata']['profile'],'wrong timing mode')
             report['open_success_tokens']+=load['tokens'];report['profiles'].append({'profile':profile,'successful_requests':len(allrows),'open_accepted':len(successful),'open_rejected':rejected,'drain':state})

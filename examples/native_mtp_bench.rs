@@ -15,12 +15,12 @@ fn percentile(xs: &[f64], q: f64) -> f64 {
 #[tokio::main]
 async fn main() -> Result<()> {
     ensure!(
-        (2..=7).contains(&std::env::args().count()),
+        (2..=8).contains(&std::env::args().count()),
         "benchmark argument count"
     );
     let out = std::env::args()
         .nth(1)
-        .context("native_mtp_bench NEW_DIRECTORY")?;
+        .context("native_mtp_bench NEW_DIRECTORY [WIDTH GRAPH GROUP EXPERT CAPTURE ATTENTION]")?;
     let width: usize = std::env::args()
         .nth(2)
         .unwrap_or_else(|| "4".into())
@@ -45,7 +45,14 @@ async fn main() -> Result<()> {
         "fused" => 2,
         _ => anyhow::bail!("expert kernel"),
     };
-    let capture = std::env::args().nth(6);
+    let attention = std::env::args()
+        .nth(7)
+        .unwrap_or_else(|| "reference".into());
+    ensure!(
+        matches!(attention.as_str(), "reference" | "batched-reference"),
+        "attention kernel"
+    );
+    let capture = std::env::args().nth(6).filter(|s| s != "--no-capture");
     ensure!(
         matches!(capture.as_deref(), None | Some("--capture-wait")),
         "capture control"
@@ -65,6 +72,7 @@ async fn main() -> Result<()> {
         1536 * 1024 * 1024,
         ExecutionTuning {
             layer_group: group,
+            batched_reference_attention: attention == "batched-reference",
             expert_kernel,
             fused_recurrent: true,
             compiled_decode: graph == "compiled-decode",
@@ -205,7 +213,7 @@ async fn main() -> Result<()> {
     }
     let stats = e.shutdown().await?;
     ensure!(stats.logical_bytes == 0, "benchmark drain");
-    let report = serde_json::json!({"pass":true,"phase_timing":cfg!(feature="mtp-phase-timing"),"capture_wait":capture.is_some(),"expert_kernel":expert,"draft_width":width,"graph_mode":graph,"layer_group":group,"identity":manifest.identity,"rows":rows,"output_congruence":true,"lanes":1,"continuous_batching":false,"http_streaming":false,"output_cap":32,"sampling":"greedy","timing_scope":"warmed Rust API; tokenization/model load excluded; MTP receipt groups tokens, so receipt interval is not token streaming ITL","mlx_peak_bytes":stats.mlx_peak_bytes,"logical_bytes_at_shutdown":stats.logical_bytes,"production_qualified":false});
+    let report = serde_json::json!({"pass":true,"phase_timing":cfg!(feature="mtp-phase-timing"),"transaction_path":if cfg!(feature="mtp-phase-timing"){"rust-prepared-diagnostic"}else{"native-fused"},"capture_wait":capture.is_some(),"expert_kernel":expert,"draft_width":width,"attention_kernel":attention,"graph_mode":graph,"layer_group":group,"identity":manifest.identity,"rows":rows,"output_congruence":true,"lanes":1,"continuous_batching":false,"http_streaming":false,"output_cap":32,"sampling":"greedy","timing_scope":"warmed Rust API; tokenization/model load excluded; MTP receipt groups tokens, so receipt interval is not token streaming ITL","mlx_peak_bytes":stats.mlx_peak_bytes,"logical_bytes_at_shutdown":stats.logical_bytes,"production_qualified":false});
     std::fs::write(
         Path::new(&out).join("summary.json"),
         serde_json::to_string_pretty(&report)?,

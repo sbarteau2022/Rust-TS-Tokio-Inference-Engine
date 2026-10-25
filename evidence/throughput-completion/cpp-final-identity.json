@@ -1,0 +1,9 @@
+{
+  "/tmp/native-cpp-throughput-control": "7575b31ad98f69aed21cd0e7250c8bd1dd26abe611c8fe7db334e6e4a6771be6",
+  "judges/native_cpp_bench.cpp": "5ebda4c018d6a8cdc09aadce02fb25ab6fa428bc0fa6014cda23e84a40a13eb7",
+  "native/mlx_bridge.cpp": "8763d140ad693a615cd724fb4d940d5865b0bdde174a0e6073e305fc377d27cd",
+  "native/qwen_model.inc": "966d5787267cb68cef3949301a21c5bb5ad988ccee5abf22c69970ef2e1080f3",
+  "native/qwen_mtp.inc": "c33a5dc3923f26506e6fff375bf7f643737926eb80eddd891fa218cc2d7a479a",
+  "native/qwen_device.inc": "66e8c37512c065fef5d45c5c8e3a2f1042af7bb8094e80a75006a2e7ea4d577b",
+  "evidence/throughput-completion/cpp-plan.txt": "20dde3c98b7a942bc717aae5cdc673f6d08fb97ac383de71f157c9ae79cf42c0"
+}

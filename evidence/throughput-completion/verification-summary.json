@@ -1,0 +1,20 @@
+{
+  "shipping-rust-default": {
+    "passed": 215,
+    "failed": 0
+  },
+  "shipping-rust-debug": {
+    "passed": 215,
+    "failed": 0
+  },
+  "rust-minimal": {
+    "passed": 126,
+    "failed": 0
+  },
+  "typescript_tests": 29,
+  "offline_tests": 57,
+  "cpp_sanitizer_cli_tests": 3,
+  "upstream_mlx_sanitized": false,
+  "completion_gate_pass": false,
+  "required_combined_tok_s": 125
+}

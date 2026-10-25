@@ -83,7 +83,7 @@ async fn main() -> Result<()> {
     ensure!(matches!(graph, "eager" | "compiled-decode"), "graph mode");
     let attention = args.get(5).map_or("reference", String::as_str);
     ensure!(
-        matches!(attention, "reference" | "fused"),
+        matches!(attention, "reference" | "fused" | "batched-reference"),
         "attention kernel"
     );
     let operators = args.get(6).map_or("off", String::as_str);
@@ -126,6 +126,7 @@ async fn main() -> Result<()> {
             compiled_decode: graph == "compiled-decode",
             operator_profile: operators == "stages",
             fused_attention: attention == "fused",
+            batched_reference_attention: attention == "batched-reference",
             expert_kernel: match expert {
                 "sorted" => 1,
                 "fused" => 2,

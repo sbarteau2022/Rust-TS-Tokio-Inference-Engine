@@ -6,7 +6,7 @@ use rust_server::serving::{
     native_tokenizer::NativeTokenizer,
     weights::Manifest,
 };
-use std::{io::Write, path::Path, time::Instant};
+use std::{future::Future, io::Write, path::Path, task::Poll, time::Instant};
 
 struct Progress {
     file: std::fs::File,
@@ -37,6 +37,13 @@ async fn main() -> Result<()> {
         matches!(graph.as_str(), "eager" | "compiled-decode") && matches!(group, 1 | 4 | 10 | 40),
         "execution profile"
     );
+    let attention = std::env::args()
+        .nth(4)
+        .unwrap_or_else(|| "reference".into());
+    ensure!(
+        matches!(attention.as_str(), "reference" | "batched-reference"),
+        "attention kernel"
+    );
     std::fs::create_dir(&out)?;
     let mut progress = Progress {
         file: std::fs::File::create(Path::new(&out).join("progress.jsonl"))?,
@@ -53,6 +60,7 @@ async fn main() -> Result<()> {
         1536 * 1024 * 1024,
         ExecutionTuning {
             layer_group: group,
+            batched_reference_attention: attention == "batched-reference",
             fused_recurrent: true,
             compiled_decode: graph == "compiled-decode",
             ..ExecutionTuning::default()
@@ -215,11 +223,60 @@ async fn main() -> Result<()> {
         drop(cursor);
         drop(parent);
     }
+    // Fused worker rejection must leave the parent usable and admit recovery.
+    let prompt = tokenizer.chat(None, "Continue: 1, 2, 3,")?;
+    let parent = e.mtp_start(&prompt).await?;
+    let original = e.snapshot(parent.target().state()).await?;
+    let mut branches = Vec::new();
+    while e.stats().await?.residents + 2 <= 16 {
+        branches.push(e.mtp_decode_fused(&parent, 1, 1, &tokenizer.eos()).await?);
+    }
+    let before = e.stats().await?;
+    ensure!(
+        e.mtp_decode_fused(&parent, 4, 8, &tokenizer.eos())
+            .await
+            .is_err(),
+        "fused over-budget admission"
+    );
+    let after = e.stats().await?;
+    ensure!(
+        after.steps == before.steps
+            && after.residents == before.residents
+            && after.logical_bytes == before.logical_bytes,
+        "rejected fused work changed residency or executed"
+    );
+    drop(branches);
+    let _ = e.stats().await?;
+    drop(e.mtp_decode_fused(&parent, 4, 8, &tokenizer.eos()).await?);
+    let baseline = e.stats().await?;
+    let eos = tokenizer.eos();
+    let mut abandoned = Box::pin(e.mtp_decode_fused(&parent, 4, 8, &eos));
+    std::future::poll_fn(|cx| {
+        let _ = abandoned.as_mut().poll(cx);
+        Poll::Ready(())
+    })
+    .await;
+    drop(abandoned);
+    let _ = e.stats().await?;
+    let drained = e.stats().await?;
+    ensure!(
+        drained.residents == baseline.residents && drained.logical_bytes == baseline.logical_bytes,
+        "abandoned fused receiver leaked state"
+    );
+    let after = e.snapshot(parent.target().state()).await?;
+    ensure!(
+        original
+            .iter()
+            .zip(&after)
+            .all(|(a, b)| a.to_bits() == b.to_bits()),
+        "fused pressure mutated parent"
+    );
+    drop(parent);
     progress.mark("drain.begin", 0, 0)?;
     let stats = e.shutdown().await?;
     progress.mark("drain.end", 0, 0)?;
     ensure!(stats.logical_bytes == 0, "MTP decode drain");
-    let report = serde_json::json!({"pass":true,"graph_mode":graph,"layer_group":group,"cases":cases,"profile":"accepted-target-window-reuse","same_parent_replay_reference":cfg!(feature="debug-validation"),"serving_qualified":false,"throughput_claim":false});
+    let report = serde_json::json!({"pass":true,"graph_mode":graph,"layer_group":group,"cases":cases,"profile":"accepted-target-window-reuse","same_parent_replay_reference":cfg!(feature="debug-validation"),"serving_qualified":false,"fused_pressure_recovery":true,"fused_cancel_reclaimed":true,"attention_kernel":attention,"throughput_claim":false});
     std::fs::write(
         Path::new(&out).join("summary.json"),
         serde_json::to_string_pretty(&report)?,

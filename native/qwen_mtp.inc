@@ -96,18 +96,36 @@ extern "C" int rs_qwen_device_mtp_snapshot(void* handle,const StateId* id,float*
  if(!value.hidden||value.hidden->size()!=count-offset)throw std::invalid_argument("MTP hidden snapshot shape");std::memcpy(output+offset,value.hidden->data<float>(),value.hidden->size()*4);session.exports+=count*4;
 });}
 
+// Complete every draft payload before publication; full-validation mode must
+// cover hidden and KV state just as the ordinary MTP step does.
+static void mtp_transaction_eval(DeviceSession& session,DevicePayload& payload,const mx::array& scores,std::vector<mx::array> outputs){
+ auto s=mx::default_stream(mx::Device(session.gpu?mx::Device::gpu:mx::Device::cpu));
+ if(!payload.hidden||payload.arrays.size()!=2)throw std::runtime_error("MTP transaction payload inventory");
+ outputs.push_back(scores);outputs.push_back(*payload.hidden);
+ for(auto& a:payload.arrays){if(a.dtype()!=mx::float32)a=mx::astype(a,mx::float32,s);outputs.push_back(a);}
+ std::vector<mx::array> finite={mx::all(mx::isfinite(scores,s),s)};
+ const auto& c=session.config;
+ if(c.validation_mode>=2||(c.validation_mode==1&&session.steps%uint64_t(c.validation_interval)==0)){
+  finite.push_back(mx::all(mx::isfinite(*payload.hidden,s),s));
+  for(const auto& a:payload.arrays)finite.push_back(mx::all(mx::isfinite(a,s),s));
+ }
+ outputs.insert(outputs.end(),finite.begin(),finite.end());mx::eval(outputs);mx::synchronize(s);
+ for(const auto& a:finite)if(!a.item<bool>())throw std::runtime_error("nonfinite MTP transaction payload");
+}
+
 // Fused C++20 speculative MTP transaction: runs autoregressive draft preparation,
 // target hidden-block verification, greedy accept/bonus/replay, and draft refresh
 // inside a single worker call with on-GPU top-2/margin selection and immediate
 // intermediate state retirement to preserve refcount==1 for in-place buffer reuse.
-extern "C" int rs_qwen_device_mtp_transaction(
+static int mtp_transaction(
  void* handle,const StateId* target_previous,const StateId* draft_previous,
  uint32_t seed_token,uint32_t first_draft_token,float first_draft_margin,
  size_t width,size_t output_budget,const uint32_t* eos,size_t eos_count,int reuse,
  rs_qwen_mtp_tx_result* result,float* target_logits,size_t target_logits_count,
- float* draft_logits,size_t draft_logits_count,char* error,size_t capacity
+ float* draft_logits,size_t draft_logits_count,char* error,size_t capacity,
+ const uint32_t* prepared_tokens,size_t prepared_count
 ){return checked(error,capacity,[&]{
- if(!handle||!target_previous||!draft_previous||!result||!target_logits||!draft_logits||width<1||width>8||!output_budget||(eos_count&&!eos))
+ if(!handle||!target_previous||!draft_previous||!result||!target_logits||!draft_logits||width<1||width>8||!output_budget||(eos_count&&!eos)||(reuse!=0&&reuse!=1))
   throw std::invalid_argument("MTP transaction descriptor");
  auto& session=*static_cast<DeviceSession*>(handle);const auto& c=session.config;
  if(!session.mtp_weights||target_logits_count!=size_t(c.vocab)||draft_logits_count!=size_t(c.vocab))
@@ -121,6 +139,16 @@ extern "C" int rs_qwen_device_mtp_transaction(
  auto is_eos=[&](uint32_t tok){for(size_t i=0;i<eos_count;++i)if(eos[i]==tok)return true;return false;};
  size_t remaining=std::min(size_t(c.context)-position,output_budget);
  size_t count=std::min(width,remaining);
+ if((prepared_count&&!prepared_tokens)||(!prepared_count&&prepared_tokens)||prepared_count>count)throw std::invalid_argument("MTP prepared proposal capacity");
+ if(prepared_count){
+  if(prepared_tokens[0]!=seed_token)throw std::invalid_argument("MTP prepared seed mismatch");
+  for(size_t i=0;i<prepared_count;++i)if(prepared_tokens[i]>=uint32_t(c.vocab)||(i+1<prepared_count&&is_eos(prepared_tokens[i])))throw std::invalid_argument("MTP prepared vocabulary/EOS");
+  count=prepared_count;
+ }
+ // Refuse over-budget work before building a graph, not after GPU completion.
+ const size_t worst_bytes=qwen_state_count(c,position+count)*4+count*size_t(c.hidden)*4+mtp_bytes(c,position+count,count);
+ (void)session.table.get(*target_previous);(void)session.drafts.get(*draft_previous);
+ if(session.table.residents()+session.drafts.residents()+2>session.slots||worst_bytes>session.limit-session.table.bytes()-session.drafts.bytes())throw std::runtime_error("combined resident budget exhausted");
  auto stream=mx::default_stream(mx::Device(session.gpu?mx::Device::gpu:mx::Device::cpu));
 
  // Phase 1: Autoregressive draft preparation on GPU using device_top2_margin.
@@ -133,7 +161,8 @@ extern "C" int rs_qwen_device_mtp_transaction(
  float next_margin=first_draft_margin;
  uint32_t draft_calls=0;
 
- while(proposed_tokens.size()<count && !is_eos(proposed_tokens.back())){
+ if(prepared_count)proposed_tokens.assign(prepared_tokens,prepared_tokens+prepared_count);
+ while(!prepared_count&&proposed_tokens.size()<count && !is_eos(proposed_tokens.back())){
   if(proposed_tokens.size()>=2 && next_margin<1.25f)break;
   proposed_tokens.push_back(next_tok);
   if(proposed_tokens.size()<count && !is_eos(next_tok) && next_margin>=1.25f){
@@ -143,11 +172,7 @@ extern "C" int rs_qwen_device_mtp_transaction(
    DevicePayload step_payload;mx::array scores=mx::array(0.f);
    mtp_forward_internal(session,cur_draft,draft_pos,*cur_draft->hidden,row,&next_tok,1,0,step_payload,scores);
    auto [win_arr,margin_arr]=device_top2_margin(scores,stream);
-   auto finite_arr=mx::all(mx::isfinite(scores,stream),stream);
-   std::vector<mx::array> evals={win_arr,margin_arr,finite_arr,*step_payload.hidden};
-   for(auto& a:step_payload.arrays){if(a.dtype()!=mx::float32)a=mx::astype(a,mx::float32,stream);evals.push_back(a);}
-   mx::eval(evals);mx::synchronize(stream);
-   if(!finite_arr.item<bool>())throw std::runtime_error("nonfinite MTP draft step");
+   mtp_transaction_eval(session,step_payload,scores,{win_arr,margin_arr});
    next_tok=win_arr.item<uint32_t>();
    next_margin=margin_arr.item<float>();
    temp_draft.emplace(std::move(step_payload));
@@ -160,11 +185,12 @@ extern "C" int rs_qwen_device_mtp_transaction(
 
  // Phase 2: Target block verification across `proposed_tokens`.
  size_t proposed=proposed_tokens.size();
+ result->target_calls=1;
  const auto& target_old=session.table.get(*target_previous).arrays;
  size_t verify_state_count=qwen_state_count(c,position+proposed);
- size_t verify_hidden_bytes=proposed*size_t(c.hidden)*4;
  DevicePayload verify_payload;
- std::vector<float> block_logits(size_t(c.vocab)*proposed);
+ std::vector<float> block_logits(size_t(c.vocab));
+ std::vector<uint32_t> row_winners(proposed);
  {
   auto cfg=c;if(cfg.validation_mode==1)cfg.validation_mode=(session.steps%uint64_t(cfg.validation_interval)==0)?2:0;
   char inner[1024]={};
@@ -173,24 +199,14 @@ extern "C" int rs_qwen_device_mtp_transaction(
    proposed_tokens.data(),proposed,position,nullptr,qwen_state_count(c,position),
    nullptr,verify_state_count,block_logits.data(),block_logits.size(),
    0,nullptr,0,nullptr,0,inner,sizeof(inner),
-   &target_old,&verify_payload.arrays,true,&verify_payload.hidden,false,nullptr
+   &target_old,&verify_payload.arrays,true,&verify_payload.hidden,false,nullptr,row_winners.data()
   );
   if(code)throw std::runtime_error(inner);
   ++session.steps;
  }
 
- // Compute row winners on CPU/GPU (with finiteness verification).
- std::vector<uint32_t> row_winners(proposed);
- for(size_t r=0;r<proposed;++r){
-  const float* row_ptr=block_logits.data()+r*size_t(c.vocab);
-  if(!std::isfinite(row_ptr[0]))throw std::runtime_error("nonfinite verifier row");
-  uint32_t best=0;float best_val=row_ptr[0];
-  for(size_t i=1;i<size_t(c.vocab);++i){
-   float v=row_ptr[i];if(!std::isfinite(v))throw std::runtime_error("nonfinite verifier row");
-   if(v>best_val||(v==best_val&&std::signbit(v)<std::signbit(best_val))){best_val=v;best=uint32_t(i);}
-  }
-  row_winners[r]=best;
- }
+ // Every row is checked finite and selected on device with the same IEEE
+ // total-order/lowest-index rule as Rust, including rejected suffix rows.
 
  std::vector<uint32_t> emitted;emitted.reserve(proposed+1);
  size_t accepted=0;bool terminal=false;
@@ -219,11 +235,11 @@ extern "C" int rs_qwen_device_mtp_transaction(
  DevicePayload committed_target;
  uint32_t target_calls=1;
  if(reused_target_tokens>0){
-  std::memcpy(target_logits,block_logits.data()+(proposed-1)*size_t(c.vocab),size_t(c.vocab)*4);
+  std::memcpy(target_logits,block_logits.data(),size_t(c.vocab)*4);
   committed_target=std::move(verify_payload);
  }else{
   verify_payload=DevicePayload{}; // Free rejected provisional state before replay!
-  ++target_calls;
+  ++target_calls;result->target_calls=target_calls;
   size_t replay_len=emitted.size();
   size_t replay_state_count=qwen_state_count(c,position+replay_len);
   auto cfg=c;if(cfg.validation_mode==1)cfg.validation_mode=(session.steps%uint64_t(cfg.validation_interval)==0)?2:0;
@@ -256,16 +272,8 @@ extern "C" int rs_qwen_device_mtp_transaction(
  const DevicePayload* old_draft_for_refresh=&session.drafts.get(*draft_previous);
  mtp_forward_internal(session,old_draft_for_refresh,position,*committed_target.hidden,0,shifted.data(),shifted.size(),0,committed_draft,refresh_scores);
  ++draft_calls;
- {
-  auto s=stream;
-  std::vector<mx::array> evals={refresh_scores,*committed_draft.hidden};
-  for(auto& a:committed_draft.arrays){if(a.dtype()!=mx::float32)a=mx::astype(a,mx::float32,s);evals.push_back(a);}
-  auto finite_arr=mx::all(mx::isfinite(refresh_scores,s),s);
-  evals.push_back(finite_arr);
-  mx::eval(evals);mx::synchronize(s);
-  if(!finite_arr.item<bool>())throw std::runtime_error("nonfinite MTP refresh result");
-  std::memcpy(draft_logits,refresh_scores.data<float>(),size_t(c.vocab)*4);
- }
+ mtp_transaction_eval(session,committed_draft,refresh_scores,{});
+ std::memcpy(draft_logits,refresh_scores.data<float>(),size_t(c.vocab)*4);
 
  // Reserve and publish both committed target and committed draft states atomically.
  size_t final_pos=position+emitted.size();
@@ -275,12 +283,13 @@ extern "C" int rs_qwen_device_mtp_transaction(
     target_bytes+draft_bytes_needed>session.limit-session.table.bytes()-session.drafts.bytes())
   throw std::runtime_error("combined resident budget exhausted");
  auto new_target_id=session.table.reserve(final_pos,target_bytes);
+ std::optional<StateId> new_draft_id;
  try{
-  auto new_draft_id=session.drafts.reserve(final_pos,draft_bytes_needed);
+  new_draft_id=session.drafts.reserve(final_pos,draft_bytes_needed);
   session.table.publish(new_target_id,std::move(committed_target));
-  session.drafts.publish(new_draft_id,std::move(committed_draft));
+  session.drafts.publish(*new_draft_id,std::move(committed_draft));
   result->target_state=new_target_id;
-  result->draft_state=new_draft_id;
+  result->draft_state=*new_draft_id;
   result->emitted_count=uint32_t(emitted.size());
   for(size_t i=0;i<emitted.size();++i)result->emitted[i]=emitted[i];
   result->learned_proposed=uint32_t(proposed>0?proposed-1:0);
@@ -292,7 +301,13 @@ extern "C" int rs_qwen_device_mtp_transaction(
   result->target_forward_tokens=uint32_t(proposed+emitted.size()-reused_target_tokens);
   result->terminal=uint32_t(terminal?1:0);
  }catch(...){
+  if(new_draft_id)session.drafts.rollback(*new_draft_id);
   session.table.rollback(new_target_id);
   throw;
  }
 });}
+
+extern "C" int rs_qwen_device_mtp_transaction(void* handle,const StateId* target_previous,const StateId* draft_previous,uint32_t seed_token,uint32_t first_draft_token,float first_draft_margin,size_t width,size_t output_budget,const uint32_t* eos,size_t eos_count,int reuse,rs_qwen_mtp_tx_result* result,float* target_logits,size_t target_logits_count,float* draft_logits,size_t draft_logits_count,char* error,size_t capacity){return mtp_transaction(handle,target_previous,draft_previous,seed_token,first_draft_token,first_draft_margin,width,output_budget,eos,eos_count,reuse,result,target_logits,target_logits_count,draft_logits,draft_logits_count,error,capacity,nullptr,0);}
+
+// Controller-bound proposal tokens are immutable inputs; no second draft pass.
+extern "C" int rs_qwen_device_mtp_transaction_prepared(void* handle,const StateId* target_previous,const StateId* draft_previous,uint32_t seed_token,uint32_t first_draft_token,float first_draft_margin,size_t width,size_t output_budget,const uint32_t* eos,size_t eos_count,int reuse,rs_qwen_mtp_tx_result* result,float* target_logits,size_t target_logits_count,float* draft_logits,size_t draft_logits_count,char* error,size_t capacity,const uint32_t* prepared_tokens,size_t prepared_count){return mtp_transaction(handle,target_previous,draft_previous,seed_token,first_draft_token,first_draft_margin,width,output_budget,eos,eos_count,reuse,result,target_logits,target_logits_count,draft_logits,draft_logits_count,error,capacity,prepared_tokens,prepared_count);}

@@ -36,6 +36,8 @@ pub struct ExecutionTuning {
     pub compiled_decode: bool,
     pub operator_profile: bool,
     pub fused_attention: bool,
+    /// Experimental FP32 causal row batching; keeps the scalar snapshot oracle.
+    pub batched_reference_attention: bool,
     pub expert_kernel: i32,
     /// 0 = off, 1 = sampled (every Nth step, N = architecture interval), 2 = full.
     /// Deterministic bench cadence only; full validation remains default.
@@ -53,6 +55,7 @@ impl Default for ExecutionTuning {
             compiled_decode: false,
             operator_profile: false,
             fused_attention: false,
+            batched_reference_attention: false,
             expert_kernel: 0,
             validation_mode: 2,
             activation_precision: 1,

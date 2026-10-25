@@ -71,6 +71,8 @@ pub(super) struct MtpFusedWork {
     pub output_budget: usize,
     pub eos: Vec<u32>,
     pub reuse: bool,
+    pub prepared: Option<Vec<u32>>,
+    pub calls: Option<Arc<std::sync::atomic::AtomicU64>>,
     pub reply: oneshot::Sender<Result<FusedMtpReceipt>>,
     pub _permit: OwnedSemaphorePermit,
     pub _completion: Option<CompletionGuard>,
@@ -132,6 +134,7 @@ impl QwenDeviceExecutor {
                 compiled_decode,
                 operator_profile: false,
                 fused_attention: false,
+                batched_reference_attention: false,
                 expert_kernel: 0,
                 validation_mode: 2,
                 activation_precision: 1,
@@ -186,7 +189,7 @@ impl QwenDeviceExecutor {
             "layer group must be 1|4|10|40"
         );
         ensure!(
-            (512..=262_144).contains(&context_tokens) && context_tokens % 256 == 0,
+            (512..=262_144).contains(&context_tokens) && context_tokens.is_multiple_of(256),
             "MTP context bounds (512..=262144, 256-token page aligned)"
         );
         ensure!(
@@ -444,35 +447,40 @@ pub(super) fn forward_fused(
     let mut target_logits = vec![0f32; 248_320];
     let mut draft_logits = vec![0f32; 248_320];
     let mut e = [0; 1024];
-    native_status(
-        unsafe {
-            rs_qwen_device_mtp_transaction(
-                session.0,
-                target_prev,
-                draft_prev,
-                work.seed_token,
-                work.first_draft_token,
-                work.first_draft_margin,
-                work.width,
-                work.output_budget,
-                if work.eos.is_empty() {
-                    std::ptr::null()
-                } else {
-                    work.eos.as_ptr()
-                },
-                work.eos.len(),
-                i32::from(work.reuse),
-                &mut raw,
-                target_logits.as_mut_ptr(),
-                target_logits.len(),
-                draft_logits.as_mut_ptr(),
-                draft_logits.len(),
-                e.as_mut_ptr(),
-                e.len(),
-            )
-        },
-        &e,
-    )?;
+    let status = unsafe {
+        rs_qwen_device_mtp_transaction_prepared(
+            session.0,
+            target_prev,
+            draft_prev,
+            work.seed_token,
+            work.first_draft_token,
+            work.first_draft_margin,
+            work.width,
+            work.output_budget,
+            if work.eos.is_empty() {
+                std::ptr::null()
+            } else {
+                work.eos.as_ptr()
+            },
+            work.eos.len(),
+            i32::from(work.reuse),
+            &mut raw,
+            target_logits.as_mut_ptr(),
+            target_logits.len(),
+            draft_logits.as_mut_ptr(),
+            draft_logits.len(),
+            e.as_mut_ptr(),
+            e.len(),
+            work.prepared
+                .as_ref()
+                .map_or(std::ptr::null(), |p| p.as_ptr()),
+            work.prepared.as_ref().map_or(0, Vec::len),
+        )
+    };
+    if let Some(calls) = &work.calls {
+        calls.fetch_add(u64::from(raw.target_calls), Ordering::Relaxed);
+    }
+    native_status(status, &e)?;
     let emitted_count = raw.emitted_count as usize;
     let target_state = DeviceState {
         owner,
@@ -495,7 +503,10 @@ pub(super) fn forward_fused(
         emitted_count > 0
             && emitted_count <= 9
             && raw.target_state.position == raw.draft_state.position
-            && target_logits.iter().chain(&draft_logits).all(|x| x.is_finite()),
+            && target_logits
+                .iter()
+                .chain(&draft_logits)
+                .all(|x| x.is_finite()),
         "MTP fused receipt geometry/finite"
     );
     Ok(FusedMtpReceipt {
@@ -544,7 +555,7 @@ unsafe extern "C" {
         error: *mut c_char,
         capacity: usize,
     ) -> i32;
-    fn rs_qwen_device_mtp_transaction(
+    fn rs_qwen_device_mtp_transaction_prepared(
         session: *mut c_void,
         target_previous: *const StateId,
         draft_previous: *const StateId,
@@ -563,6 +574,8 @@ unsafe extern "C" {
         draft_logits_count: usize,
         error: *mut c_char,
         capacity: usize,
+        prepared_tokens: *const u32,
+        prepared_count: usize,
     ) -> i32;
 }
 

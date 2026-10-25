@@ -1,0 +1,5 @@
+{
+  "path": "target/release/rust-server",
+  "sha256": "629b37d15440d3d750af3e6343dc63c351a3ad93e39be6731ee2d123bcdcd77d",
+  "note": "Final rebuild also contains offline ingestion/export commands. Measured HTTP binary identity is preserved in that run\u2019s benchmark.json."
+}

@@ -1,0 +1,16 @@
+{
+  "target-greedy": {
+    "tokens": 256,
+    "decode_tok_s": 23.91170983878833,
+    "accepted": 0,
+    "proposed": 0,
+    "committed_per_target_call": 1.0
+  },
+  "mtp-width4-reuse": {
+    "tokens": 256,
+    "decode_tok_s": 52.736179869925486,
+    "accepted": 166,
+    "proposed": 172,
+    "committed_per_target_call": 2.8444444444444446
+  }
+}

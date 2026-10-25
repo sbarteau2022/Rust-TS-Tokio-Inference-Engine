@@ -25,8 +25,7 @@ pub const RECENT_PROTECTED_TOKENS: usize = 1024;
 
 /// Constant O(1) state footprint for the 30 linear-attention (GDN + conv1d) layers in FP32:
 /// 30 * (3 * 8192 + 32 * 128 * 128) * 4 = 65,863,680 bytes (62.81 MiB).
-pub const LINEAR_STATE_BYTES_FP32: usize =
-    LINEAR_ATTN_LAYERS * (3 * 8192 + 32 * 128 * 128) * 4;
+pub const LINEAR_STATE_BYTES_FP32: usize = LINEAR_ATTN_LAYERS * (3 * 8192 + 32 * 128 * 128) * 4;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 pub enum KvMode {
@@ -45,10 +44,10 @@ impl KvMode {
     pub const fn page_bytes(self) -> usize {
         let elements_per_page = FULL_ATTN_LAYERS * 2 * KV_HEADS * PAGE_TOKENS * HEAD_DIM; // 2,621,440
         match self {
-            Self::RegularBf16 => elements_per_page * 2,         // 5,242,880 B (5.00 MiB)
-            Self::RegularFp32 => elements_per_page * 4,         // 10,485,760 B (10.00 MiB)
+            Self::RegularBf16 => elements_per_page * 2, // 5,242,880 B (5.00 MiB)
+            Self::RegularFp32 => elements_per_page * 4, // 10,485,760 B (10.00 MiB)
             Self::TurboQuantK8V4 => (elements_per_page * 3) / 4, // 1,966,080 B (1.875 MiB)
-            Self::TurboQuantV4 => elements_per_page / 2,        // 1,310,720 B (1.25 MiB)
+            Self::TurboQuantV4 => elements_per_page / 2, // 1,310,720 B (1.25 MiB)
         }
     }
 
@@ -154,7 +153,7 @@ impl MetaAutomaton {
     ) -> Result<Self> {
         ensure!(
             (512..=MAX_CONTEXT_256K).contains(&config.max_context_tokens)
-                && config.max_context_tokens % PAGE_TOKENS == 0,
+                && config.max_context_tokens.is_multiple_of(PAGE_TOKENS),
             "MetaAutomaton max_context_tokens must be a multiple of 256 in 512..=262144"
         );
         ensure!(
@@ -198,7 +197,7 @@ impl MetaAutomaton {
     /// Sidecar (MTP / DSpark) KV bytes are bounded by a 1,024-token sliding window (<= 4 MiB),
     /// decoupled from the 256K target prefix.
     pub fn sidecar_kv_bytes(&self) -> usize {
-        let window_tokens = self.position.max(1).min(MTP_SLIDING_WINDOW_TOKENS);
+        let window_tokens = self.position.clamp(1, MTP_SLIDING_WINDOW_TOKENS);
         let active_pages = window_tokens.div_ceil(PAGE_TOKENS);
         let bytes_per_tok = match self.config.sidecar {
             SidecarKind::MtpSingleLayer => 2 * KV_HEADS * HEAD_DIM * 2, // BF16: 2,048 B/tok

@@ -1,0 +1,1 @@
+PASS scalar operator oracle checks=43 RMS SiLU RoPE causal-convolution GDN shared-head state analytic/malformed sanitizer=address,undefined

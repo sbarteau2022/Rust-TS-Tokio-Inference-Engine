@@ -1,0 +1,112 @@
+RS_CPP_BENCH_V1
+509cc92543203798f2db08b6fb6cbb38a80942fc0437ae81a3ef9ff27720915b
+64 4
+4
+"/Users/stewartbarteau/models/fused/Qwen3.6-MoE-Combined/model-00001-of-00004.safetensors"
+"/Users/stewartbarteau/models/fused/Qwen3.6-MoE-Combined/model-00002-of-00004.safetensors"
+"/Users/stewartbarteau/models/fused/Qwen3.6-MoE-Combined/model-00003-of-00004.safetensors"
+"/Users/stewartbarteau/models/fused/Qwen3.6-MoE-Combined/model-00004-of-00004.safetensors"
+"/Users/stewartbarteau/models/fused/Qwen3.6-MoE-Combined/model-mtp.safetensors"
+87
+"language_model.model.layers.0.mlp.gate" 64 8
+"language_model.model.layers.0.mlp.shared_expert_gate" 64 8
+"language_model.model.layers.1.mlp.gate" 64 8
+"language_model.model.layers.1.mlp.shared_expert_gate" 64 8
+"language_model.model.layers.10.mlp.gate" 64 8
+"language_model.model.layers.10.mlp.shared_expert_gate" 64 8
+"language_model.model.layers.11.mlp.gate" 64 8
+"language_model.model.layers.11.mlp.shared_expert_gate" 64 8
+"language_model.model.layers.12.mlp.gate" 64 8
+"language_model.model.layers.12.mlp.shared_expert_gate" 64 8
+"language_model.model.layers.13.mlp.gate" 64 8
+"language_model.model.layers.13.mlp.shared_expert_gate" 64 8
+"language_model.model.layers.14.mlp.gate" 64 8
+"language_model.model.layers.14.mlp.shared_expert_gate" 64 8
+"language_model.model.layers.15.mlp.gate" 64 8
+"language_model.model.layers.15.mlp.shared_expert_gate" 64 8
+"language_model.model.layers.16.mlp.gate" 64 8
+"language_model.model.layers.16.mlp.shared_expert_gate" 64 8
+"language_model.model.layers.17.mlp.gate" 64 8
+"language_model.model.layers.17.mlp.shared_expert_gate" 64 8
+"language_model.model.layers.18.mlp.gate" 64 8
+"language_model.model.layers.18.mlp.shared_expert_gate" 64 8
+"language_model.model.layers.19.mlp.gate" 64 8
+"language_model.model.layers.19.mlp.shared_expert_gate" 64 8
+"language_model.model.layers.2.mlp.gate" 64 8
+"language_model.model.layers.2.mlp.shared_expert_gate" 64 8
+"language_model.model.layers.20.mlp.gate" 64 8
+"language_model.model.layers.20.mlp.shared_expert_gate" 64 8
+"language_model.model.layers.21.mlp.gate" 64 8
+"language_model.model.layers.21.mlp.shared_expert_gate" 64 8
+"language_model.model.layers.22.mlp.gate" 64 8
+"language_model.model.layers.22.mlp.shared_expert_gate" 64 8
+"language_model.model.layers.23.mlp.gate" 64 8
+"language_model.model.layers.23.mlp.shared_expert_gate" 64 8
+"language_model.model.layers.24.mlp.gate" 64 8
+"language_model.model.layers.24.mlp.shared_expert_gate" 64 8
+"language_model.model.layers.25.mlp.gate" 64 8
+"language_model.model.layers.25.mlp.shared_expert_gate" 64 8
+"language_model.model.layers.26.mlp.gate" 64 8
+"language_model.model.layers.26.mlp.shared_expert_gate" 64 8
+"language_model.model.layers.27.mlp.gate" 64 8
+"language_model.model.layers.27.mlp.shared_expert_gate" 64 8
+"language_model.model.layers.28.mlp.gate" 64 8
+"language_model.model.layers.28.mlp.shared_expert_gate" 64 8
+"language_model.model.layers.29.mlp.gate" 64 8
+"language_model.model.layers.29.mlp.shared_expert_gate" 64 8
+"language_model.model.layers.3.mlp.gate" 64 8
+"language_model.model.layers.3.mlp.shared_expert_gate" 64 8
+"language_model.model.layers.30.mlp.gate" 64 8
+"language_model.model.layers.30.mlp.shared_expert_gate" 64 8
+"language_model.model.layers.31.mlp.gate" 64 8
+"language_model.model.layers.31.mlp.shared_expert_gate" 64 8
+"language_model.model.layers.32.mlp.gate" 64 8
+"language_model.model.layers.32.mlp.shared_expert_gate" 64 8
+"language_model.model.layers.33.mlp.gate" 64 8
+"language_model.model.layers.33.mlp.shared_expert_gate" 64 8
+"language_model.model.layers.34.mlp.gate" 64 8
+"language_model.model.layers.34.mlp.shared_expert_gate" 64 8
+"language_model.model.layers.35.mlp.gate" 64 8
+"language_model.model.layers.35.mlp.shared_expert_gate" 64 8
+"language_model.model.layers.36.mlp.gate" 64 8
+"language_model.model.layers.36.mlp.shared_expert_gate" 64 8
+"language_model.model.layers.37.mlp.gate" 64 8
+"language_model.model.layers.37.mlp.shared_expert_gate" 64 8
+"language_model.model.layers.38.mlp.gate" 64 8
+"language_model.model.layers.38.mlp.shared_expert_gate" 64 8
+"language_model.model.layers.39.mlp.gate" 64 8
+"language_model.model.layers.39.mlp.shared_expert_gate" 64 8
+"language_model.model.layers.4.mlp.gate" 64 8
+"language_model.model.layers.4.mlp.shared_expert_gate" 64 8
+"language_model.model.layers.5.mlp.gate" 64 8
+"language_model.model.layers.5.mlp.shared_expert_gate" 64 8
+"language_model.model.layers.6.mlp.gate" 64 8
+"language_model.model.layers.6.mlp.shared_expert_gate" 64 8
+"language_model.model.layers.7.mlp.gate" 64 8
+"language_model.model.layers.7.mlp.shared_expert_gate" 64 8
+"language_model.model.layers.8.mlp.gate" 64 8
+"language_model.model.layers.8.mlp.shared_expert_gate" 64 8
+"language_model.model.layers.9.mlp.gate" 64 8
+"language_model.model.layers.9.mlp.shared_expert_gate" 64 8
+"language_model.mtp.layers.0.mlp.shared_expert.down_proj" 128 8
+"language_model.mtp.layers.0.mlp.shared_expert.gate_proj" 128 8
+"language_model.mtp.layers.0.mlp.shared_expert.up_proj" 128 8
+"language_model.mtp.layers.0.mlp.shared_expert_gate" 64 8
+"language_model.mtp.layers.0.self_attn.k_proj" 128 5
+"language_model.mtp.layers.0.self_attn.q_proj" 128 5
+"language_model.mtp.layers.0.self_attn.v_proj" 128 6
+1
+248046 
+4
+"code-repeat" 58 32
+248045 846 198 7734 264 32671 4536 440 5600 2526 5568 6725 884 62 15 1472 884 62 24 13 8618 4829 1330 585 18 17 5789 6725 264 321 292 321 4523 264 478 292 13 8984 1132 279 32671 1970 11 440 799 709 791 1500 13 248046 198 248045 74455 198 248068 271 248069 271 
+71093 34602 198 9299 5003 884 62 15 2784 25 585 18 17 11 292 25 585 18 17 8 1411 585 18 17 313 264 478 292 333 198 9299 5003 
+"code-tests" 57 32
+248045 846 198 7734 4590 32671 4821 6813 364 264 709 5003 9284 2007 25 585 18 17 8 1411 585 18 17 13 3855 1070 9284 62 15 1472 9284 62 20 321 1992 421 1754 1879 369 5743 33702 13 8984 1132 279 1228 1970 13 248046 198 248045 74455 198 248068 271 248069 271 
+71093 34602 198 12966 1877 60 198 8556 9284 62 15 363 313 198 262 1992 10398 9991 16417 7 15 681 220 15 1174 198 92 271 12966 1877 60 198 
+"code-loop" 56 32
+248045 846 198 7734 32671 1970 35325 449 1287 314 24959 494 220 15 310 220 16 20 11 1179 1133 1754 1324 1608 264 364 6136 13 4844 3165 449 13185 1345 6136 321 449 13185 6136 7258 13 28763 2716 5853 24228 1754 2243 13 248046 198 248045 74455 198 248068 271 248069 271 
+71093 34602 198 320 59240 449 1287 314 24959 494 220 15 310 220 16 20 198 1112 4947 25 498 72 18 17 26 220 16 21 60 283 498 15 
+"security-review" 64 32
+248045 846 198 18842 411 32671 3421 2790 25 264 5904 24983 81726 4011 369 66420 1238 264 2849 28024 82 1345 264 21966 3108 369 1990 4162 13 79091 279 18458 9584 321 2873 264 2716 32671 24716 421 50098 449 49835 19087 27760 1528 2980 9463 13 63074 34647 321 23022 24358 13 248046 198 248045 74455 198 248068 271 248069 271 
+760 6007 18458 9584 369 421 279 3421 5041 942 279 81726 4011 1345 264 21966 3108 1990 9687 264 5604 310 424 13 3095 279 2849 28024 82 11 279 3421 

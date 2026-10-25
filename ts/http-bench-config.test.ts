@@ -51,3 +51,12 @@ test('expert and GPU receipt controls fail closed before spawn',()=>{
 });
 
 test('draft window is explicit and bounded for matching width sweeps',()=>{const base='--profiles mtp --arrival closed --tokens-per-cell 1000';assert.equal(benchOptions(args(base)).draftWidth,4);for(const n of [1,2,4,8])assert.equal(benchOptions(args(base+' --draft-width '+n)).draftWidth,n);for(const n of ['0','3','5','6','7','9','04','-1','auto'])assert.throws(()=>benchOptions(args(base+' --draft-width '+n)));});
+
+
+test('attention experiments are explicit and refuse unknown or duplicate kernels',()=>{
+ const base='--profiles mtp --arrival closed+open --tokens-per-cell 2000';
+ assert.equal(benchOptions(args(base)).attentionKernel,'reference');
+ for(const mode of ['reference','fused','batched-reference'])assert.equal(benchOptions(args(base+` --attention-kernel ${mode}`)).attentionKernel,mode);
+ assert.throws(()=>benchOptions(args(base+' --attention-kernel auto')));
+ assert.throws(()=>benchOptions(args(base+' --attention-kernel reference --attention-kernel batched-reference')));
+});

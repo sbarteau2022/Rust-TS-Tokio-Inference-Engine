@@ -1,0 +1,4 @@
+
+> apple-native-rust-server@0.1.0 typecheck
+> tsrs -p tsconfig.json
+

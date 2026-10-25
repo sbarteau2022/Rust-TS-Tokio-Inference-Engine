@@ -104,6 +104,8 @@ pub mod native_device_smoke;
 pub mod native_layer_reference;
 
 #[cfg(feature = "native-mlx")]
+pub mod native_dspark;
+#[cfg(feature = "native-mlx")]
 pub mod native_mtp;
 
 #[cfg(feature = "native-mlx")]

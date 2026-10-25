@@ -1,0 +1,6 @@
+{
+  "/Users/stewartbarteau/.local/share/uv/tools/mlx-dspark/lib/python3.12/site-packages/mlx_vlm/speculative/drafters/dspark/config.py": "3d7a25c97a2ba97f325b5e0f9d6935f610133e6d02c91a8a9d28c22de1cae1fb",
+  "/Users/stewartbarteau/.local/share/uv/tools/mlx-dspark/lib/python3.12/site-packages/mlx_vlm/speculative/drafters/dspark/dspark.py": "02f16305bceda7217fb3b86eba61909b5f1299563a2039bfb58e3d0561fcfda5",
+  "/Users/stewartbarteau/.local/share/uv/tools/mlx-dspark/lib/python3.12/site-packages/mlx_vlm/speculative/drafters/qwen3_dflash/dflash.py": "4e92910a4f364cccab07c2de1c242177bf62dd849896ba80de32279fc7002cb3",
+  "/Users/stewartbarteau/.local/share/uv/tools/mlx-dspark/lib/python3.12/site-packages/mlx_vlm/turboquant.py": "7ea10cdb828b44f52dc53dff61a93ae86e6e88e4df145b39a2e3b10b39ccf85c"
+}

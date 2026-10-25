@@ -105,3 +105,11 @@ required-features = ["native-mlx"]
 [[example]]
 name = "native_group_qualification"
 required-features = ["native-mlx"]
+
+[[example]]
+name = "native_dspark_inventory"
+required-features = ["native-mlx"]
+
+[[example]]
+name = "native_cpp_plan"
+required-features = ["native-mlx"]

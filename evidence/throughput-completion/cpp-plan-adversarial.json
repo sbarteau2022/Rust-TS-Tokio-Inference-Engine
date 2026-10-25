@@ -1,0 +1,50 @@
+{
+  "pass": true,
+  "cases": [
+    {
+      "case": "version",
+      "refused": true,
+      "error": "FAIL plan version"
+    },
+    {
+      "case": "identity",
+      "refused": true,
+      "error": "FAIL plan identity"
+    },
+    {
+      "case": "quantization",
+      "refused": true,
+      "error": "FAIL qualified target quantization"
+    },
+    {
+      "case": "shard-count",
+      "refused": true,
+      "error": "FAIL plan count bounds"
+    },
+    {
+      "case": "relative-path",
+      "refused": true,
+      "error": "FAIL absolute shard path"
+    },
+    {
+      "case": "override-count",
+      "refused": true,
+      "error": "FAIL plan count bounds"
+    },
+    {
+      "case": "vocabulary",
+      "refused": true,
+      "error": "FAIL plan count bounds"
+    },
+    {
+      "case": "trailing",
+      "refused": true,
+      "error": "FAIL trailing plan data"
+    },
+    {
+      "case": "oversize",
+      "refused": true,
+      "error": "FAIL plan file size bound"
+    }
+  ]
+}

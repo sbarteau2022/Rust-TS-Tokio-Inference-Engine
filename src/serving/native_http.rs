@@ -215,7 +215,7 @@ fn operator_flags(flags: &[String]) -> Result<(bool, Vec<String>)> {
     }
     Ok((mode.unwrap_or(false), rest))
 }
-fn attention_flags(flags: &[String]) -> Result<(bool, Vec<String>)> {
+fn attention_flags(flags: &[String]) -> Result<(i32, Vec<String>)> {
     ensure!(
         flags.len().is_multiple_of(2),
         "attention flags require pairs"
@@ -226,15 +226,16 @@ fn attention_flags(flags: &[String]) -> Result<(bool, Vec<String>)> {
         if pair[0] == "--attention-kernel" {
             ensure!(mode.is_none(), "duplicate attention kernel");
             mode = Some(match pair[1].as_str() {
-                "reference" => false,
-                "fused" => true,
-                _ => anyhow::bail!("attention kernel must be reference|fused"),
+                "reference" => 0,
+                "fused" => 1,
+                "batched-reference" => 2,
+                _ => anyhow::bail!("attention kernel must be reference|fused|batched-reference"),
             });
         } else {
             rest.extend_from_slice(pair);
         }
     }
-    Ok((mode.unwrap_or(false), rest))
+    Ok((mode.unwrap_or(0), rest))
 }
 fn expert_flags(flags: &[String]) -> Result<(i32, Vec<String>)> {
     ensure!(flags.len().is_multiple_of(2), "expert flags require pairs");
@@ -308,7 +309,9 @@ pub async fn serve(
     );
     let (gpu_sampling, flags) = sampling_flags(flags)?;
     let (expert_kernel, flags) = expert_flags(&flags)?;
-    let (fused_attention, flags) = attention_flags(&flags)?;
+    let (attention_kernel, flags) = attention_flags(&flags)?;
+    let fused_attention = attention_kernel == 1;
+    let batched_reference_attention = attention_kernel == 2;
     let (operator_profile, flags) = operator_flags(&flags)?;
     let (compiled_decode, flags) = graph_flags(&flags)?;
     let (execution_timing, flags) = timing_flags(&flags)?;
@@ -358,6 +361,7 @@ pub async fn serve(
                 compiled_decode,
                 operator_profile,
                 fused_attention,
+                batched_reference_attention,
                 expert_kernel,
                 validation_mode: 2,
                 activation_precision: 1,
@@ -376,6 +380,7 @@ pub async fn serve(
                 compiled_decode,
                 operator_profile: false,
                 fused_attention,
+                batched_reference_attention,
                 expert_kernel,
                 validation_mode: 2,
                 activation_precision: 1,
@@ -436,7 +441,7 @@ pub async fn serve(
             None,
         )
     };
-    let profile=format!("EXPERIMENTAL-NATIVE-HTTP execution={execution:?} seed_mode={} width={} stream_capacity={} policy={:?} context=511 in_flight=3 body_timeout_ms={body_timeout_ms} max_connections={max_connections} physical_tensor_batching={physical} layer_group={layer_group} recurrent_kernel={} execution_timing={} graph_mode={} operator_profile={} attention_kernel={} expert_kernel={} sampling={} state_budget_bytes={state_budget} production_qualified=false audit_clock={}",if deferred_seed {"deferred"} else {"eager"},options.width,options.capacity,options.policy,if fused_recurrent {"fused"} else {"reference"},if execution_timing {"on"} else {"off"},if compiled_decode {"compiled-decode"} else {"eager"},if operator_profile {"stages"} else {"off"},if fused_attention {"fused"} else {"reference"},match expert_kernel {1=>"sorted",2=>"fused",_=>"reference"},if gpu_sampling {"device"} else {"host"},if execution==Profile::Audited {"validated-batches"} else {"disabled"});
+    let profile=format!("EXPERIMENTAL-NATIVE-HTTP execution={execution:?} seed_mode={} width={} stream_capacity={} policy={:?} context=511 in_flight=3 body_timeout_ms={body_timeout_ms} max_connections={max_connections} physical_tensor_batching={physical} layer_group={layer_group} recurrent_kernel={} execution_timing={} graph_mode={} operator_profile={} attention_kernel={} expert_kernel={} sampling={} state_budget_bytes={state_budget} production_qualified=false audit_clock={}",if deferred_seed {"deferred"} else {"eager"},options.width,options.capacity,options.policy,if fused_recurrent {"fused"} else {"reference"},if execution_timing {"on"} else {"off"},if compiled_decode {"compiled-decode"} else {"eager"},if operator_profile {"stages"} else {"off"},match attention_kernel {1=>"fused",2=>"batched-reference",_=>"reference"},match expert_kernel {1=>"sorted",2=>"fused",_=>"reference"},if gpu_sampling {"device"} else {"host"},if execution==Profile::Audited {"validated-batches"} else {"disabled"});
     let engine = Arc::new(engine);
     let codec = Arc::new(Codec::new(tokenizer, executor.identity().into()));
     let server = http::Server::bind(
@@ -559,16 +564,23 @@ mod tests {
     #[test]
     fn diagnostic_flags_are_explicit_and_strict() {
         assert!(!operator_flags(&[]).unwrap().0);
-        assert!(!attention_flags(&[]).unwrap().0);
+        assert_eq!(attention_flags(&[]).unwrap().0, 0);
         assert!(
             operator_flags(&args("--operator-profile stages"))
                 .unwrap()
                 .0
         );
-        assert!(
+        assert_eq!(
             attention_flags(&args("--attention-kernel fused"))
                 .unwrap()
-                .0
+                .0,
+            1
+        );
+        assert_eq!(
+            attention_flags(&args("--attention-kernel batched-reference"))
+                .unwrap()
+                .0,
+            2
         );
         for s in [
             "--operator-profile",

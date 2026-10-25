@@ -2,6 +2,7 @@
 #include <cmath>
 #include <cstdio>
 #include "attention_reference.h"
+#include "batched_reference_attention.h"
 #include "projection_reference.h"
 #include "operator_reference.h"
 #include "selection.h"
@@ -124,8 +125,10 @@ struct Qwen {
   if(offset+t<k.shape(2)){k=mx::slice(k,{0,0,0,0},{batch,c.kv_heads,offset+t,c.head_dim},s);v=mx::slice(v,{0,0,0,0},{batch,c.kv_heads,offset+t,c.head_dim},s);}
   cut(projection_timer,OperatorStage::AttentionProjection,{qg[1],q,k,v});auto reduction_timer=stage();
   mx::array y=q;
-  if(!diagnose&&!reference&&!operators&&(c.fused_attention||c.context>512)){
+  if(!diagnose&&!reference&&!operators&&(c.fused_attention==1||c.context>512)){
    y=mx::fast::scaled_dot_product_attention(q,k,v,1.f/std::sqrt(float(c.head_dim)),t>1?"causal":"",{},{},false,s);
+  }else if(!diagnose&&!reference&&!operators&&!baseline&&c.fused_attention==2&&t>1){
+   y=batched_reference_attention(q,k,v,offset,s);
   }else{
    std::vector<mx::array> rows;
    for(int row=0;row<t;++row){
@@ -277,10 +280,12 @@ extern "C" int rs_qwen_quant(void* store,const char* module,int group,int bits,c
  if(!store||!module||!(group==32||group==64||group==128)||!(bits==2||bits==3||bits==4||bits==5||bits==6||bits==8))throw std::invalid_argument("invalid model quantization");
  static_cast<Weights*>(store)->quant[std::string(module)]={group,bits};
 });}
-static int qwen_forward_core(void* store,int gpu,const rs_qwen_config* config,const rs_qwen_layer* layers,size_t layer_count,const uint32_t* tokens,size_t count,size_t offset,const float* old_state,size_t old_count,float* new_state,size_t new_count,float* logits,size_t logits_count,int projection_checks,const uint32_t* projection_outputs,size_t projection_output_count,float* trace,size_t trace_count,char* error,size_t capacity,const std::vector<mx::array>* device_old=nullptr,std::vector<mx::array>* device_next=nullptr,bool all_logits=false,std::optional<mx::array>* hidden=nullptr,bool sample_token=false,uint32_t* sampled_token=nullptr){return checked(error,capacity,[&]{
+static int qwen_forward_core(void* store,int gpu,const rs_qwen_config* config,const rs_qwen_layer* layers,size_t layer_count,const uint32_t* tokens,size_t count,size_t offset,const float* old_state,size_t old_count,float* new_state,size_t new_count,float* logits,size_t logits_count,int projection_checks,const uint32_t* projection_outputs,size_t projection_output_count,float* trace,size_t trace_count,char* error,size_t capacity,const std::vector<mx::array>* device_old=nullptr,std::vector<mx::array>* device_next=nullptr,bool all_logits=false,std::optional<mx::array>* hidden=nullptr,bool sample_token=false,uint32_t* sampled_token=nullptr,uint32_t* row_tokens=nullptr){return checked(error,capacity,[&]{
  if(!store||!config||!layers||!tokens||(!new_state&&!device_next)||(!logits&&!sample_token))throw std::invalid_argument("invalid model descriptor");auto c=*config;
- if(c.hidden<=0||c.hidden>8192||c.layers<=0||c.layers>64||c.vocab<=0||c.vocab>300000||c.interval<=0||c.layers%c.interval||c.context<=0||c.context>262144||c.chunk<=0||c.chunk>8||count==0||count>size_t(c.chunk)||offset>size_t(c.context)||offset+count>size_t(c.context)||(sample_token?logits_count!=0:logits_count!=size_t(c.vocab)*(all_logits?count:1)))throw std::invalid_argument("model geometry/capacity");
+ if(c.hidden<=0||c.hidden>8192||c.layers<=0||c.layers>64||c.vocab<=0||c.vocab>300000||c.interval<=0||c.layers%c.interval||c.context<=0||c.context>262144||c.chunk<=0||c.chunk>8||count==0||count>size_t(c.chunk)||offset>size_t(c.context)||offset+count>size_t(c.context)||(sample_token?logits_count!=0:logits_count!=size_t(c.vocab)*(all_logits&&!row_tokens?count:1)))throw std::invalid_argument("model geometry/capacity");
+ if(row_tokens&&(!all_logits||sample_token||!device_next||trace_count||projection_checks))throw std::invalid_argument("device verifier rows profile");
  if(c.layer_group!=1&&c.layer_group!=4&&c.layer_group!=10&&c.layer_group!=40)throw std::invalid_argument("model layer group");
+ if(c.fused_attention<0||c.fused_attention>2||(c.fused_attention==2&&c.context>512))throw std::invalid_argument("attention kernel mode/context");
  if(c.fused_recurrent<0||c.fused_recurrent>1)throw std::invalid_argument("recurrent kernel mode");
  if(c.execution_timing<0||c.execution_timing>1)throw std::invalid_argument("execution timing mode");
  if(c.expert_kernel<0||c.expert_kernel>2)throw std::invalid_argument("expert kernel mode");
@@ -362,14 +367,20 @@ static int qwen_forward_core(void* store,int gpu,const rs_qwen_config* config,co
  m.cut(projection_timer,OperatorStage::FinalProjection,{output});
  auto validation_timer=m.stage();
  if(c.operator_profile){for(auto& a:finite_checks)a=mx::all(mx::isfinite(a,s),s);}
- if(run_checks||sample_token)finite_checks.push_back(mx::all(mx::isfinite(output,s),s));
+ if(run_checks||sample_token||row_tokens)finite_checks.push_back(mx::all(mx::isfinite(output,s),s));
  if(hidden&&run_checks)finite_checks.push_back(mx::all(mx::isfinite(normalized,s),s));
  m.cut(validation_timer,OperatorStage::StateValidation,finite_checks);
- std::optional<mx::array> sampled_arr;if(sample_token)sampled_arr=device_total_argmax(output,s);
- std::vector<mx::array> final_outputs=std::move(pending);final_outputs.push_back(output);if(sample_token)final_outputs.push_back(*sampled_arr);if(hidden)final_outputs.push_back(normalized);final_outputs.insert(final_outputs.end(),finite_checks.begin(),finite_checks.end());timer.graph();mx::eval(final_outputs);mx::synchronize(s);timer.wait();
+ std::optional<mx::array> sampled_arr,row_winners_arr,last_logits;
+ if(sample_token)sampled_arr=device_total_argmax(output,s);
+ if(row_tokens){row_winners_arr=device_total_argmax(output,s);last_logits=mx::contiguous(mx::take(output,int(count)-1,1,s),false,s);}
+ std::vector<mx::array> final_outputs=std::move(pending);final_outputs.push_back(output);if(sample_token)final_outputs.push_back(*sampled_arr);if(row_tokens){final_outputs.push_back(*row_winners_arr);final_outputs.push_back(*last_logits);}if(hidden)final_outputs.push_back(normalized);final_outputs.insert(final_outputs.end(),finite_checks.begin(),finite_checks.end());timer.graph();mx::eval(final_outputs);mx::synchronize(s);timer.wait();
  for(const auto& finite:finite_checks)if(!finite.item<bool>())throw std::runtime_error("nonfinite device state");
  if(hidden)*hidden=normalized;
- if(sample_token){*sampled_token=sampled_arr->item<uint32_t>();}else{if(output.size()!=logits_count)throw std::invalid_argument("logits shape mismatch");std::memcpy(logits,output.data<float>(),logits_count*4);}timer.complete();
+ if(row_tokens){
+  if(row_winners_arr->size()!=count||last_logits->size()!=logits_count)throw std::invalid_argument("device verifier output shape");
+  std::memcpy(row_tokens,row_winners_arr->data<uint32_t>(),count*sizeof(uint32_t));
+  std::memcpy(logits,last_logits->data<float>(),logits_count*sizeof(float));
+ }else if(sample_token){*sampled_token=sampled_arr->item<uint32_t>();}else{if(output.size()!=logits_count)throw std::invalid_argument("logits shape mismatch");std::memcpy(logits,output.data<float>(),logits_count*4);}timer.complete();
  }catch(...){try{mx::synchronize(s);}catch(...){}throw;}
 });}
 

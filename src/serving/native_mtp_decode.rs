@@ -183,18 +183,20 @@ impl QwenDeviceExecutor {
         let seed_token = winner(&cursor.target.logits)?;
         let (first_draft_token, first_draft_margin) = winner_with_margin(&cursor.draft.logits)?;
         let receipt = self
-            .execute_mtp_fused(
-                &cursor.target.state,
-                &cursor.draft.state,
+            .execute_mtp_fused(super::device::FusedMtpInput {
+                target_previous: &cursor.target.state,
+                draft_previous: &cursor.draft.state,
                 seed_token,
                 first_draft_token,
                 first_draft_margin,
                 width,
                 output_budget,
-                eos.to_vec(),
+                eos: eos.to_vec(),
                 reuse,
+                prepared: None,
+                calls: None,
                 completion,
-            )
+            })
             .await?;
         #[cfg(feature = "mtp-phase-timing")]
         let timing = MtpPhaseTiming {
@@ -343,6 +345,45 @@ impl QwenDeviceExecutor {
             eos,
             completion,
         } = prepared;
+        #[cfg(not(feature = "mtp-phase-timing"))]
+        if reuse {
+            let seed = winner(&cursor.target.logits)?;
+            let (first, margin) = winner_with_margin(&cursor.draft.logits)?;
+            let receipt = self
+                .execute_mtp_fused(super::device::FusedMtpInput {
+                    target_previous: &cursor.target.state,
+                    draft_previous: &cursor.draft.state,
+                    seed_token: seed,
+                    first_draft_token: first,
+                    first_draft_margin: margin,
+                    width: tokens.len(),
+                    output_budget: remaining,
+                    eos: eos.clone(),
+                    reuse: true,
+                    prepared: Some(tokens),
+                    calls,
+                    completion,
+                })
+                .await?;
+            return Ok(MtpTransaction {
+                cursor: MtpCursor {
+                    target: GreedyCursor {
+                        state: receipt.target_state,
+                        logits: Arc::new(receipt.target_logits),
+                        terminal: receipt.terminal,
+                    },
+                    draft: receipt.draft_step,
+                },
+                emitted: receipt.emitted,
+                learned_proposed: receipt.learned_proposed,
+                learned_accepted: receipt.learned_accepted,
+                target_calls: receipt.target_calls,
+                draft_calls: draft_calls + receipt.draft_calls,
+                reused_target_tokens: receipt.reused_target_tokens,
+                replayed_target_tokens: receipt.replayed_target_tokens,
+                target_forward_tokens: receipt.target_forward_tokens,
+            });
+        }
         let proposed = tokens.len();
         #[cfg(feature = "mtp-phase-timing")]
         let verify_start = std::time::Instant::now();

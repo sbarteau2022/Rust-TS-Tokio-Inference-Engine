@@ -1,0 +1,27 @@
+{
+  "artifact_identity": "3ac18a935c5c3ef6f1b6b627a1277ddd5dd0645919ba8c7d38f86cd41dc5ca4b",
+  "backbone_layers": 6,
+  "config_path": "/Users/stewartbarteau/.cache/huggingface/hub/models--Koopah--Qwen3.6-35B-A3B-NVFP4-DSPARK/blobs/6e01f56a6b219c95639fc1a0a0e18629ce8af6ed",
+  "config_sha256": "f6ff0ddc60b2c39f042b03bfa44ead38d7b56e95940f74bed82c3ed30bafeddb",
+  "markov_rank": 256,
+  "native_execution_qualified": false,
+  "pass": true,
+  "payload_bytes": 3060334082,
+  "sample_from_anchor": true,
+  "scope": "strict config/tensor inventory and complete file hashes; no native draft execution or model-quality qualification",
+  "target_compatibility_qualified": false,
+  "target_tap_indexing_qualified": false,
+  "target_taps": [
+    1,
+    6,
+    11,
+    16,
+    22,
+    27,
+    32,
+    37
+  ],
+  "tensor_count": 75,
+  "weights_path": "/Users/stewartbarteau/.cache/huggingface/hub/models--Koopah--Qwen3.6-35B-A3B-NVFP4-DSPARK/blobs/ab0beb963036e558c7378b55e7188c800455ef3a493f3d9edd3f6b9a0ab4e0e2",
+  "weights_sha256": "ab0beb963036e558c7378b55e7188c800455ef3a493f3d9edd3f6b9a0ab4e0e2"
+}

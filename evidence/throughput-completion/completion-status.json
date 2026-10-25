@@ -1,0 +1,113 @@
+{
+  "observed_at": "2026-10-25T01:49:18.949724+00:00",
+  "completion_gate_pass": false,
+  "required_combined_tok_s": 125,
+  "doubling_requirement_retained": true,
+  "native_runs": [
+    {
+      "variant": "reference4",
+      "source": "evidence/throughput-clean-reference4/summary.json",
+      "pooled_decode_tok_s": 48.073641686136575,
+      "accepted": 166,
+      "proposed": 172,
+      "learned_acceptance": 0.9651162790697675,
+      "frozen_output_congruence": true,
+      "zero_drain": true
+    },
+    {
+      "variant": "batched4",
+      "source": "evidence/throughput-clean-batched4/summary.json",
+      "pooled_decode_tok_s": 42.731610995201656,
+      "accepted": 166,
+      "proposed": 172,
+      "learned_acceptance": 0.9651162790697675,
+      "frozen_output_congruence": true,
+      "zero_drain": true
+    },
+    {
+      "variant": "old4",
+      "source": "evidence/throughput-clean-old4/summary.json",
+      "pooled_decode_tok_s": 48.63102439164027,
+      "accepted": 166,
+      "proposed": 172,
+      "learned_acceptance": 0.9651162790697675,
+      "frozen_output_congruence": true,
+      "zero_drain": true
+    },
+    {
+      "variant": "reference8",
+      "source": "evidence/throughput-clean-reference8/summary.json",
+      "pooled_decode_tok_s": 52.714520693850694,
+      "accepted": 178,
+      "proposed": 200,
+      "learned_acceptance": 0.89,
+      "frozen_output_congruence": true,
+      "zero_drain": true
+    }
+  ],
+  "http": {
+    "source": "evidence/throughput-final-http-reference/summary.json",
+    "rates": [
+      {
+        "lanes": 1,
+        "e2e_tok_s": 35.17770639165661
+      },
+      {
+        "lanes": 3,
+        "e2e_tok_s": 34.373929820106774
+      }
+    ],
+    "learned_acceptance": 0.964935064935065,
+    "closed_frozen_tokens": 2000,
+    "open_successes": 8,
+    "open_503": 8
+  },
+  "selected_attention_kernel": "reference",
+  "selected_width": 4,
+  "width8_promoted": false,
+  "batched_attention_promoted": false,
+  "dspark_native_execution": false,
+  "turboquant_native_execution": false,
+  "kernel_fork_location": null,
+  "scope": "Current native kernels and strict drafter ingestion; neither the combined configuration nor 125 tok/s is qualified.",
+  "standalone_cpp": {
+    "initial": {
+      "target-greedy": {
+        "tokens": 256,
+        "decode_tok_s": 23.885788887484278,
+        "accepted": 0,
+        "proposed": 0,
+        "committed_per_target_call": 1.0
+      },
+      "mtp-width4-reuse": {
+        "tokens": 256,
+        "decode_tok_s": 52.558906134699896,
+        "accepted": 166,
+        "proposed": 172,
+        "committed_per_target_call": 2.8444444444444446
+      }
+    },
+    "final": {
+      "target-greedy": {
+        "tokens": 256,
+        "decode_tok_s": 23.91170983878833,
+        "accepted": 0,
+        "proposed": 0,
+        "committed_per_target_call": 1.0
+      },
+      "mtp-width4-reuse": {
+        "tokens": 256,
+        "decode_tok_s": 52.736179869925486,
+        "accepted": 166,
+        "proposed": 172,
+        "committed_per_target_call": 2.8444444444444446
+      }
+    },
+    "source": "evidence/throughput-completion/cpp-final-result.json",
+    "mlx_peak_bytes": 20654729032,
+    "rust_runtime": false,
+    "http_streaming": false,
+    "dspark_execution": false,
+    "turboquant_execution": false
+  }
+}

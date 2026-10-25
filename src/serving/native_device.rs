@@ -92,6 +92,20 @@ pub struct DeviceStats {
 #[path = "native_mtp_device.rs"]
 mod mtp;
 pub use mtp::{MtpState, MtpStep};
+pub(super) struct FusedMtpInput<'a> {
+    pub target_previous: &'a DeviceState,
+    pub draft_previous: &'a MtpState,
+    pub seed_token: u32,
+    pub first_draft_token: u32,
+    pub first_draft_margin: f32,
+    pub width: usize,
+    pub output_budget: usize,
+    pub eos: Vec<u32>,
+    pub reuse: bool,
+    pub prepared: Option<Vec<u32>>,
+    pub calls: Option<Arc<std::sync::atomic::AtomicU64>>,
+    pub completion: Option<CompletionGuard>,
+}
 enum Work {
     DecodeBatch {
         parents: Vec<DeviceState>,
@@ -220,6 +234,7 @@ impl QwenDeviceExecutor {
                 compiled_decode: false,
                 operator_profile: false,
                 fused_attention: false,
+                batched_reference_attention: false,
                 expert_kernel: 0,
                 validation_mode: 2,
                 activation_precision: 1,
@@ -277,7 +292,8 @@ impl QwenDeviceExecutor {
             ..
         } = tuning;
         ensure!(
-            !(fused_recurrent || tuning.fused_attention) || device == Device::Gpu,
+            !(fused_recurrent || tuning.fused_attention || tuning.batched_reference_attention)
+                || device == Device::Gpu,
             "fused recurrent requires GPU"
         );
         ensure!(
@@ -285,7 +301,7 @@ impl QwenDeviceExecutor {
             "layer group must be 1|4|10|40"
         );
         ensure!(
-            (512..=262_144).contains(&context_tokens) && context_tokens % 256 == 0,
+            (512..=262_144).contains(&context_tokens) && context_tokens.is_multiple_of(256),
             "device context bounds (512..=262144, 256-token page aligned)"
         );
         ensure!(
@@ -324,7 +340,15 @@ impl QwenDeviceExecutor {
         architecture.execution_timing = i32::from(tuning.execution_timing);
         architecture.compiled_decode = i32::from(tuning.compiled_decode);
         architecture.operator_profile = i32::from(tuning.operator_profile);
-        architecture.fused_attention = i32::from(tuning.fused_attention);
+        ensure!(
+            !(tuning.fused_attention && tuning.batched_reference_attention),
+            "conflicting attention kernels"
+        );
+        architecture.fused_attention = if tuning.batched_reference_attention {
+            2
+        } else {
+            i32::from(tuning.fused_attention)
+        };
         architecture.validation_mode = tuning.validation_mode;
         architecture.expert_kernel = tuning.expert_kernel;
         architecture.activation_precision = tuning.activation_precision;
@@ -395,8 +419,9 @@ impl QwenDeviceExecutor {
                                     }
                                     Work::MtpFused(work)=>{
                                         let usage=session.stats()?;
-                                        let end_pos=work.target_previous.position()+work.width+1;
-                                        let req_bytes=((architecture.state_len(end_pos)+9*architecture.hidden as usize)*4 + mtp::bytes_for(architecture.context as usize,end_pos,9)) as u64;
+                                        let count=work.width.min(work.output_budget).min((architecture.context as usize).saturating_sub(work.target_previous.position()));
+                                        let end_pos=work.target_previous.position()+count;
+                                        let req_bytes=((architecture.state_len(end_pos)+count*architecture.hidden as usize)*4 + mtp::bytes_for(architecture.context as usize,end_pos,count)) as u64;
                                         let result=if faulted {Err(anyhow::anyhow!("device admission closed"))}
                                         else if usage.residents+2>slots as u64 || req_bytes>limit.saturating_sub(usage.logical_bytes){Err(anyhow::anyhow!("MTP resident budget exhausted"))}
                                         else {let result=mtp::forward_fused(&session,&manifest,owner,&worker_releases,&worker_mtp_releases,&work);if result.is_err(){faulted=true;worker_closed.store(true,Ordering::Release);}result};
@@ -516,17 +541,22 @@ impl QwenDeviceExecutor {
     }
     pub(super) async fn execute_mtp_fused(
         &self,
-        target_previous: &DeviceState,
-        draft_previous: &MtpState,
-        seed_token: u32,
-        first_draft_token: u32,
-        first_draft_margin: f32,
-        width: usize,
-        output_budget: usize,
-        eos: Vec<u32>,
-        reuse: bool,
-        completion: Option<CompletionGuard>,
+        input: FusedMtpInput<'_>,
     ) -> Result<mtp::FusedMtpReceipt> {
+        let FusedMtpInput {
+            target_previous,
+            draft_previous,
+            seed_token,
+            first_draft_token,
+            first_draft_margin,
+            width,
+            output_budget,
+            eos,
+            reuse,
+            prepared,
+            calls,
+            completion,
+        } = input;
         ensure!(
             self.mtp_enabled && !self.closed.load(Ordering::Acquire),
             "MTP disabled or closed"
@@ -556,6 +586,8 @@ impl QwenDeviceExecutor {
                 output_budget,
                 eos,
                 reuse,
+                prepared,
+                calls,
                 reply,
                 _permit: permit,
                 _completion: completion,
@@ -1075,7 +1107,10 @@ fn validate_batch(
         "batch row geometry"
     );
     let position = parents[0].position();
-    ensure!((1..max_context).contains(&position), "batch decode position");
+    ensure!(
+        (1..max_context).contains(&position),
+        "batch decode position"
+    );
     ensure!(
         parents
             .iter()
@@ -1432,6 +1467,7 @@ mod tests {
                 compiled_decode: true,
                 operator_profile: false,
                 fused_attention: false,
+                batched_reference_attention: false,
                 expert_kernel: 0,
                 ..ExecutionTuning::default()
             },

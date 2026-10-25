@@ -131,6 +131,7 @@ typedef struct rs_qwen_mtp_tx_result {
  uint32_t terminal;
 } rs_qwen_mtp_tx_result;
 int rs_qwen_device_mtp_transaction(void* handle,const struct StateId* target_previous,const struct StateId* draft_previous,uint32_t seed_token,uint32_t first_draft_token,float first_draft_margin,size_t width,size_t output_budget,const uint32_t* eos,size_t eos_count,int reuse,struct rs_qwen_mtp_tx_result* result,float* target_logits,size_t target_logits_count,float* draft_logits,size_t draft_logits_count,char* error,size_t capacity);
+int rs_qwen_device_mtp_transaction_prepared(void* handle,const struct StateId* target_previous,const struct StateId* draft_previous,uint32_t seed_token,uint32_t first_draft_token,float first_draft_margin,size_t width,size_t output_budget,const uint32_t* eos,size_t eos_count,int reuse,struct rs_qwen_mtp_tx_result* result,float* target_logits,size_t target_logits_count,float* draft_logits,size_t draft_logits_count,char* error,size_t capacity,const uint32_t* prepared_tokens,size_t prepared_count);
 #ifdef __cplusplus
 }
 #endif
