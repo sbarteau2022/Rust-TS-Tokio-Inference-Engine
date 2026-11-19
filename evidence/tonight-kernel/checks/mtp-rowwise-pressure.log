@@ -1,0 +1,17 @@
+CASE count=1 target/hidden
+CASE count=1 chunk complete; serial comparison
+CASE count=2 target/hidden
+CASE count=2 chunk complete; serial comparison
+CASE count=3 target/hidden
+CASE count=3 chunk complete; serial comparison
+CASE count=4 target/hidden
+CASE count=4 chunk complete; serial comparison
+CASE count=5 target/hidden
+CASE count=5 chunk complete; serial comparison
+CASE count=6 target/hidden
+CASE count=6 chunk complete; serial comparison
+CASE count=7 target/hidden
+CASE count=7 chunk complete; serial comparison
+CASE count=8 target/hidden
+CASE count=8 chunk complete; serial comparison
+{"branch_bitwise":true,"cancellation_drained":true,"cases":[{"count":1,"draft_token":16,"hidden_relative_l2":0.0,"kv_relative_l2":0.0,"logit_relative_l2":0.0},{"count":2,"draft_token":37726,"hidden_relative_l2":6.021612907366675e-7,"kv_relative_l2":1.5510563642116695e-7,"logit_relative_l2":5.483967130026e-7},{"count":3,"draft_token":3,"hidden_relative_l2":4.534228980682556e-7,"kv_relative_l2":1.7337562957212783e-7,"logit_relative_l2":5.675002906876114e-7},{"count":4,"draft_token":61,"hidden_relative_l2":4.5900228647827207e-7,"kv_relative_l2":1.9910361276904483e-7,"logit_relative_l2":5.02754598751105e-7},{"count":5,"draft_token":24218,"hidden_relative_l2":5.892457648180886e-7,"kv_relative_l2":2.1754571392392956e-7,"logit_relative_l2":6.269742827585612e-7},{"count":6,"draft_token":24218,"hidden_relative_l2":6.15619632984279e-7,"kv_relative_l2":2.3217298261916905e-7,"logit_relative_l2":6.064281146435119e-7},{"count":7,"draft_token":24218,"hidden_relative_l2":6.024012740369765e-7,"kv_relative_l2":2.433349511647753e-7,"logit_relative_l2":4.883635667918492e-7},{"count":8,"draft_token":10,"hidden_relative_l2":4.6255531197887386e-7,"kv_relative_l2":2.563356892271373e-7,"logit_relative_l2":3.972514418690515e-7}],"combined_budget":true,"context":512,"logical_bytes_at_shutdown":0,"pass":true,"scalar_debug_probes":false,"speculative_serving_qualified":false,"transfer_accounting":"session ABI counters; explicit debug scalar snapshots are not counted"}

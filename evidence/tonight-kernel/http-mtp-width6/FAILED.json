@@ -1,0 +1,8 @@
+{
+  "pass": false,
+  "status": "warmup request timed out after first token; owned server failed 60-second drain and benchmark killed it",
+  "width": 6,
+  "completed_tokens": 1,
+  "production_qualified": false,
+  "root_cause": "unresolved; no process remained when sample was attempted"
+}

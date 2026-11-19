@@ -1,0 +1,9 @@
+{
+  "pass": false,
+  "status": "bounded 180-second compiled group4 committed-state gate expired without completed report",
+  "graph_mode": "compiled-decode",
+  "layer_group": 4,
+  "default_promoted": false,
+  "stack": "evaluation.sample.txt",
+  "root_cause": "unresolved; target eval observed in MLX allocator/scheduler checks; reducing completion group did not resolve"
+}

@@ -1,0 +1,114 @@
+{
+  "controls": {
+    "noalloc-multi": {
+      "target-greedy": {
+        "tokens": 256,
+        "decode_tok_s": 27.672173401645548,
+        "accepted": 0,
+        "proposed": 0,
+        "committed_per_target_call": 1.0
+      },
+      "mtp-width4-reuse": {
+        "tokens": 256,
+        "decode_tok_s": 59.02972934412077,
+        "accepted": 166,
+        "proposed": 172,
+        "committed_per_target_call": 2.8444444444444446
+      }
+    },
+    "noalloc-single": {
+      "target-greedy": {
+        "tokens": 256,
+        "decode_tok_s": 27.68342815486738,
+        "accepted": 0,
+        "proposed": 0,
+        "committed_per_target_call": 1.0
+      },
+      "mtp-width4-reuse": {
+        "tokens": 256,
+        "decode_tok_s": 59.292065504202675,
+        "accepted": 166,
+        "proposed": 172,
+        "committed_per_target_call": 2.8444444444444446
+      }
+    },
+    "phase": {
+      "target-greedy": {
+        "tokens": 256,
+        "decode_tok_s": 26.710628602381682,
+        "accepted": 0,
+        "proposed": 0,
+        "committed_per_target_call": 1.0
+      },
+      "mtp-width4-reuse": {
+        "tokens": 256,
+        "decode_tok_s": 57.099376744935064,
+        "accepted": 166,
+        "proposed": 172,
+        "committed_per_target_call": 2.8444444444444446
+      }
+    },
+    "w8-m250": {
+      "target-greedy": {
+        "tokens": 256,
+        "decode_tok_s": 26.50730769554492,
+        "accepted": 0,
+        "proposed": 0,
+        "committed_per_target_call": 1.0
+      },
+      "mtp-width8-reuse": {
+        "tokens": 256,
+        "decode_tok_s": 59.66276671273543,
+        "accepted": 172,
+        "proposed": 178,
+        "committed_per_target_call": 3.0476190476190474
+      }
+    },
+    "w8-m250-repeat": {
+      "target-greedy": {
+        "tokens": 256,
+        "decode_tok_s": 27.148647061490358,
+        "accepted": 0,
+        "proposed": 0,
+        "committed_per_target_call": 1.0
+      },
+      "mtp-width8-reuse": {
+        "tokens": 256,
+        "decode_tok_s": 59.57731525291613,
+        "accepted": 172,
+        "proposed": 178,
+        "committed_per_target_call": 3.0476190476190474
+      }
+    },
+    "width4-repeat": {
+      "target-greedy": {
+        "tokens": 256,
+        "decode_tok_s": 26.779759776426673,
+        "accepted": 0,
+        "proposed": 0,
+        "committed_per_target_call": 1.0
+      },
+      "mtp-width4-reuse": {
+        "tokens": 256,
+        "decode_tok_s": 57.284875889141105,
+        "accepted": 166,
+        "proposed": 172,
+        "committed_per_target_call": 2.8444444444444446
+      }
+    }
+  },
+  "transaction_envelope_percent": {
+    "commit": 3.7496895630820317,
+    "decision": 0.6159955968264799,
+    "proposal": 7.845143391110662,
+    "refresh": 6.386548325456302,
+    "verify": 81.40262312352453
+  },
+  "width8_acceptance_floor": {
+    "w8-m250": true,
+    "w8-m250-repeat": true
+  },
+  "production_promoted": false,
+  "combined_125_gate_pass": false,
+  "scope": "fixture controls; host envelopes, not GPU timestamps or HTTP"
+}

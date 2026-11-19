@@ -1,0 +1,6 @@
+{
+  "source_revision": "a2aceb8",
+  "binary_sha256": "ac61e2928634f9007aaf3a928119703e071bd5bab4f9d6e14e3604a240990c8a",
+  "command": "./target/release/examples/native_group_qualification evidence/tonight-kernel/current 40 fused off compiled-decode reference off sampled full fp32",
+  "note": "Unmodified user checkpoint; snapshot and candidate both inherited row-local expert ordering."
+}

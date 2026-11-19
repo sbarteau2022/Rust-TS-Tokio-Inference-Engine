@@ -1,25 +1,78 @@
 //! Real-text transactional MTP correctness gate, not a serving benchmark.
 use anyhow::{ensure, Context, Result};
 use rust_server::serving::{
-    native_mlx::Device, native_qwen::QwenDeviceExecutor, native_tokenizer::NativeTokenizer,
+    native_mlx::Device,
+    native_qwen::{ExecutionTuning, QwenDeviceExecutor},
+    native_tokenizer::NativeTokenizer,
     weights::Manifest,
 };
-use std::path::Path;
+use std::{io::Write, path::Path, time::Instant};
+
+struct Progress {
+    file: std::fs::File,
+    start: Instant,
+}
+impl Progress {
+    fn mark(&mut self, phase: &str, width: usize, iteration: usize) -> Result<()> {
+        writeln!(
+            self.file,
+            "{}",
+            serde_json::json!({"phase": phase, "width": width, "iteration": iteration, "elapsed_ms": self.start.elapsed().as_secs_f64() * 1000.0})
+        )?;
+        self.file.flush()?;
+        Ok(())
+    }
+}
 #[tokio::main]
 async fn main() -> Result<()> {
     let out = std::env::args()
         .nth(1)
         .context("native_mtp_decode_smoke NEW_DIRECTORY")?;
+    let graph = std::env::args().nth(2).unwrap_or_else(|| "eager".into());
+    let group: u32 = std::env::args()
+        .nth(3)
+        .unwrap_or_else(|| "40".into())
+        .parse()?;
+    ensure!(
+        matches!(graph.as_str(), "eager" | "compiled-decode") && matches!(group, 1 | 4 | 10 | 40),
+        "execution profile"
+    );
     std::fs::create_dir(&out)?;
+    let mut progress = Progress {
+        file: std::fs::File::create(Path::new(&out).join("progress.jsonl"))?,
+        start: Instant::now(),
+    };
+    progress.mark("open.begin", 0, 0)?;
     let manifest = Manifest::read(Path::new(
         include_str!("../fixtures/native-model.path").trim(),
     ))?;
     let tokenizer = NativeTokenizer::load(&manifest)?;
-    let e = QwenDeviceExecutor::open_mtp(Device::Gpu, 16, 1536 * 1024 * 1024).await?;
+    let e = QwenDeviceExecutor::open_mtp_configured(
+        Device::Gpu,
+        16,
+        1536 * 1024 * 1024,
+        ExecutionTuning {
+            layer_group: group,
+            fused_recurrent: true,
+            compiled_decode: graph == "compiled-decode",
+            ..ExecutionTuning::default()
+        },
+    )
+    .await?;
+    progress.mark("open.end", 0, 0)?;
     let mut cases = Vec::new();
     for width in [1, 2, 4, 8] {
         let prompt = tokenizer.chat(None, "Complete: 1, 2, 3,")?;
+        progress.mark("start.begin", width, 0)?;
         let mut cursor = e.mtp_start(&prompt).await?;
+        progress.mark("start.end", width, 0)?;
+        let memory = e.stats().await?;
+        writeln!(
+            progress.file,
+            "{}",
+            serde_json::json!({"phase":"start.memory", "width":width,"active_bytes":memory.mlx_active_bytes,"peak_bytes":memory.mlx_peak_bytes,"compiled_entries":memory.compiled_entries})
+        )?;
+        progress.file.flush()?;
         ensure!(
             e.mtp_decode(&cursor, 0, &tokenizer.eos()).await.is_err(),
             "zero width"
@@ -38,6 +91,7 @@ async fn main() -> Result<()> {
             e.mtp_decode(&cursor, width, &[u32::MAX]).await.is_err(),
             "invalid EOS"
         );
+        progress.mark("limited.begin", width, 0)?;
         let limited = e
             .mtp_decode_bounded(&cursor, width, 1, &tokenizer.eos())
             .await?;
@@ -48,13 +102,16 @@ async fn main() -> Result<()> {
             "one-token budget/accepted terminal window"
         );
         drop(limited);
+        progress.mark("limited.end", width, 0)?;
         let parent = cursor.clone();
         let original = e.snapshot(parent.target().state()).await?;
         let mut emitted = Vec::new();
         let (mut proposed, mut accepted, mut target_calls, mut draft_calls) = (0, 0, 0, 0);
         let (mut reused, mut replayed, mut forwarded) = (0, 0, 0);
-        for _ in 0..4 {
+        for iteration in 0..4 {
+            progress.mark("decode.begin", width, iteration)?;
             let tx = e.mtp_decode(&cursor, width, &tokenizer.eos()).await?;
+            progress.mark("decode.end", width, iteration)?;
             ensure!(
                 tx.reused_target_tokens
                     == if tx.learned_accepted == tx.learned_proposed {
@@ -101,6 +158,7 @@ async fn main() -> Result<()> {
                 .sqrt();
                 ensure!(err <= 1e-5, "reuse/reference unified state {err}");
             }
+            progress.mark("reference.begin", width, iteration)?;
             // Independent sequential target decode from the identical committed parent.
             let mut baseline = cursor.target().clone();
             for &token in &tx.emitted {
@@ -122,7 +180,16 @@ async fn main() -> Result<()> {
                     .sum::<f64>()
                     .max(1e-30))
             .sqrt();
-            ensure!(relative <= 1e-5, "MTP committed state drift {relative}");
+            let maximum = a
+                .iter()
+                .zip(&b)
+                .map(|(x, y)| (f64::from(*x) - f64::from(*y)).abs())
+                .fold(0f64, f64::max);
+            ensure!(
+                relative <= 1e-5 && maximum <= 1e-3,
+                "MTP committed state drift relative={relative} max={maximum}"
+            );
+            progress.mark("reference.end", width, iteration)?;
             proposed += tx.learned_proposed;
             accepted += tx.learned_accepted;
             target_calls += tx.target_calls;
@@ -148,9 +215,11 @@ async fn main() -> Result<()> {
         drop(cursor);
         drop(parent);
     }
+    progress.mark("drain.begin", 0, 0)?;
     let stats = e.shutdown().await?;
+    progress.mark("drain.end", 0, 0)?;
     ensure!(stats.logical_bytes == 0, "MTP decode drain");
-    let report = serde_json::json!({"pass":true,"cases":cases,"profile":"accepted-target-window-reuse","same_parent_replay_reference":cfg!(feature="debug-validation"),"serving_qualified":false,"throughput_claim":false});
+    let report = serde_json::json!({"pass":true,"graph_mode":graph,"layer_group":group,"cases":cases,"profile":"accepted-target-window-reuse","same_parent_replay_reference":cfg!(feature="debug-validation"),"serving_qualified":false,"throughput_claim":false});
     std::fs::write(
         Path::new(&out).join("summary.json"),
         serde_json::to_string_pretty(&report)?,

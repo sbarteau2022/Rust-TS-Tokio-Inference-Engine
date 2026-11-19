@@ -1,0 +1,10 @@
+{
+  "decode_tok_s": 47.94811562577653,
+  "accepted": 90,
+  "admitted": 157,
+  "generated": 157,
+  "coverage": 1.0,
+  "acceptance_floor_pass": false,
+  "combined_125_gate_pass": false,
+  "production_promoted": false
+}

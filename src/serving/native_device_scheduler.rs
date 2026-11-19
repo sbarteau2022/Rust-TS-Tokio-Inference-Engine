@@ -32,6 +32,7 @@ pub struct ScheduledDevice {
     identity: String,
     eos: Vec<u32>,
     physical: bool,
+    gpu_sampling: bool,
     counters: Arc<Mutex<BatchCounters>>,
     pub drain: Arc<Mutex<Option<DeviceStats>>>,
 }
@@ -44,6 +45,7 @@ impl ScheduledDevice {
             identity: executor.identity().to_owned(),
             eos,
             physical: false,
+            gpu_sampling: false,
             counters: Arc::new(Mutex::new(BatchCounters::default())),
             drain: Arc::new(Mutex::new(None)),
         }
@@ -51,10 +53,18 @@ impl ScheduledDevice {
     /// Opt-in target-only graph packing; caller must provision the documented 2 GiB budget.
     pub fn with_physical_batching(mut self) -> Result<Self> {
         ensure!(
-            self.mode == StateMode::Device,
+            self.mode == StateMode::Device && !self.gpu_sampling,
             "physical batching requires device state"
         );
         self.physical = true;
+        Ok(self)
+    }
+    pub fn with_gpu_sampling(mut self) -> Result<Self> {
+        ensure!(
+            self.mode == StateMode::Device && !self.physical,
+            "GPU sampling requires scalar device state"
+        );
+        self.gpu_sampling = true;
         Ok(self)
     }
     pub fn batch_counters(&self) -> Arc<Mutex<BatchCounters>> {
@@ -63,8 +73,8 @@ impl ScheduledDevice {
     pub fn storage(&self) -> Storage {
         Storage::BackendManaged {
             fingerprint: Sha256::digest(format!(
-                "native-qwen-experimental-{:?}-physical-{}-state-v1",
-                self.mode, self.physical
+                "native-qwen-experimental-{:?}-physical-{}-sampling-{}-state-v1",
+                self.mode, self.physical, self.gpu_sampling
             ))
             .into(),
             sequence_bytes: 86_835_200 * if self.physical { 3 } else { 1 },
@@ -102,6 +112,35 @@ impl ModelBackend for ScheduledDevice {
                 },
                 248320,
             )?;
+            if self.gpu_sampling {
+                use super::super::batch_transaction::Selection;
+                let executor = self.executor.clone();
+                let counters = self.counters.clone();
+                let completed = prepared
+                    .execute_receipts(move |parent, ir, unconstrained| {
+                        let executor = executor.clone();
+                        let counters = counters.clone();
+                        async move {
+                            let State::Device(old) = parent else {
+                                anyhow::bail!("GPU sampling requires device state")
+                            };
+                            let result = if unconstrained {
+                                let r = executor.execute_sampled(&old, ir).await?;
+                                (State::Device(r.state), Selection::Token(r.token))
+                            } else {
+                                let r = executor.execute(&old, ir).await?;
+                                (State::Device(r.state), Selection::Logits(r.logits))
+                            };
+                            counters
+                                .lock()
+                                .map_err(|_| anyhow::anyhow!("batch counters poisoned"))?
+                                .scalar_calls += 1;
+                            Ok(result)
+                        }
+                    })
+                    .await?;
+                return Ok(completed.commit());
+            }
             let executor = self.executor.clone();
             let physical = self.physical;
             let counters = self.counters.clone();

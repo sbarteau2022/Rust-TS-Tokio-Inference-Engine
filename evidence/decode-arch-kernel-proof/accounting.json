@@ -1,0 +1,87 @@
+{
+  "base_commit": "328a6bb",
+  "required_combined_tok_s": 125,
+  "completion_gate_pass": false,
+  "native_cpp": {
+    "result": {
+      "target-greedy": {
+        "tokens": 256,
+        "decode_tok_s": 27.02839112755576,
+        "accepted": 0,
+        "proposed": 0,
+        "committed_per_target_call": 1.0
+      },
+      "mtp-width4-reuse": {
+        "tokens": 256,
+        "decode_tok_s": 56.293704421427016,
+        "accepted": 166,
+        "proposed": 172,
+        "committed_per_target_call": 2.8444444444444446
+      }
+    },
+    "ops1024": {
+      "target-greedy": {
+        "tokens": 256,
+        "decode_tok_s": 26.64531976596061,
+        "accepted": 0,
+        "proposed": 0,
+        "committed_per_target_call": 1.0
+      },
+      "mtp-width4-reuse": {
+        "tokens": 256,
+        "decode_tok_s": 56.229637005295196,
+        "accepted": 166,
+        "proposed": 172,
+        "committed_per_target_call": 2.8444444444444446
+      }
+    },
+    "ops1024-mb1024": {
+      "target-greedy": {
+        "tokens": 256,
+        "decode_tok_s": 26.258883864816077,
+        "accepted": 0,
+        "proposed": 0,
+        "committed_per_target_call": 1.0
+      },
+      "mtp-width4-reuse": {
+        "tokens": 256,
+        "decode_tok_s": 55.67470804537049,
+        "accepted": 166,
+        "proposed": 172,
+        "committed_per_target_call": 2.8444444444444446
+      }
+    },
+    "metal-candidate": {
+      "target-greedy": {
+        "tokens": 256,
+        "decode_tok_s": 26.931179233087608,
+        "accepted": 0,
+        "proposed": 0,
+        "committed_per_target_call": 1.0
+      },
+      "mtp-width4-reuse": {
+        "tokens": 256,
+        "decode_tok_s": 57.535408404518805,
+        "accepted": 166,
+        "proposed": 172,
+        "committed_per_target_call": 2.8444444444444446
+      }
+    }
+  },
+  "state_gate": {
+    "pass": true,
+    "cases": 76,
+    "max_relative_l2": 9.722920771085208e-06,
+    "max_absolute": 0.000980377197265625,
+    "target_logits_state_hidden": true,
+    "context_boundary": 512,
+    "immutable_parents": true,
+    "draft_logits_kv_hidden": true,
+    "zero_drain": true,
+    "not_throughput": true
+  },
+  "candidate_promoted": false,
+  "native_dspark_execution": false,
+  "native_turboquant_execution": false,
+  "scope": "Exact user-selected branch native kernels, plus explicit FP32 attention prototype. No HTTP or combined integration qualification."
+}

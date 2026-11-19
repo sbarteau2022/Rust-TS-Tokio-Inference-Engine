@@ -1,0 +1,2493 @@
+{
+  "attention_kernel": "reference",
+  "compiled_calls": 12040,
+  "compiled_entries": 60,
+  "compiled_misses": 60,
+  "execution_revision": "user-edit-audit-v1",
+  "execution_timing": "off",
+  "graph_mode": "compiled-decode",
+  "identity": "509cc92543203798f2db08b6fb6cbb38a80942fc0437ae81a3ef9ff27720915b",
+  "layer_group": 40,
+  "mlx_active_bytes": 19513423328,
+  "mlx_peak_bytes": 20116705908,
+  "native_bytes": 0,
+  "native_residents": 0,
+  "observations": [
+    {
+      "candidate_seconds": 0.341259625,
+      "compiled_misses_delta": 10,
+      "decode": false,
+      "logits": {
+        "max_abs": 6.198883056640625e-6,
+        "nrmse": 4.688067268765543e-7,
+        "pass": true,
+        "unequal_bits": 231442
+      },
+      "pass": true,
+      "position": 8,
+      "prompt": 0,
+      "state": {
+        "max_abs": 5.7220458984375e-6,
+        "nrmse": 2.1260010895892497e-7,
+        "pass": true,
+        "unequal_bits": 15317348
+      },
+      "token": 264
+    },
+    {
+      "candidate_seconds": 0.055273416,
+      "compiled_misses_delta": 0,
+      "decode": false,
+      "logits": {
+        "max_abs": 5.245208740234375e-6,
+        "nrmse": 3.207183103781217e-7,
+        "pass": true,
+        "unequal_bits": 221387
+      },
+      "pass": true,
+      "position": 16,
+      "prompt": 0,
+      "state": {
+        "max_abs": 6.67572021484375e-6,
+        "nrmse": 2.7033458257438343e-7,
+        "pass": true,
+        "unequal_bits": 15473798
+      },
+      "token": 884
+    },
+    {
+      "candidate_seconds": 0.055270667,
+      "compiled_misses_delta": 0,
+      "decode": false,
+      "logits": {
+        "max_abs": 4.887580871582031e-6,
+        "nrmse": 4.7556780443744963e-7,
+        "pass": true,
+        "unequal_bits": 230749
+      },
+      "pass": true,
+      "position": 24,
+      "prompt": 0,
+      "state": {
+        "max_abs": 7.62939453125e-6,
+        "nrmse": 2.317444410910347e-7,
+        "pass": true,
+        "unequal_bits": 15569664
+      },
+      "token": 18
+    },
+    {
+      "candidate_seconds": 0.054615709,
+      "compiled_misses_delta": 0,
+      "decode": false,
+      "logits": {
+        "max_abs": 5.841255187988281e-6,
+        "nrmse": 4.19315645741334e-7,
+        "pass": true,
+        "unequal_bits": 228901
+      },
+      "pass": true,
+      "position": 32,
+      "prompt": 0,
+      "state": {
+        "max_abs": 7.62939453125e-6,
+        "nrmse": 2.586323268566427e-7,
+        "pass": true,
+        "unequal_bits": 15672042
+      },
+      "token": 4523
+    },
+    {
+      "candidate_seconds": 0.055073709,
+      "compiled_misses_delta": 0,
+      "decode": false,
+      "logits": {
+        "max_abs": 6.198883056640625e-6,
+        "nrmse": 5.248158785983441e-7,
+        "pass": true,
+        "unequal_bits": 233109
+      },
+      "pass": true,
+      "position": 40,
+      "prompt": 0,
+      "state": {
+        "max_abs": 0.000011444091796875,
+        "nrmse": 2.7138494592574743e-7,
+        "pass": true,
+        "unequal_bits": 15784776
+      },
+      "token": 4536
+    },
+    {
+      "candidate_seconds": 0.054428792,
+      "compiled_misses_delta": 0,
+      "decode": false,
+      "logits": {
+        "max_abs": 4.76837158203125e-6,
+        "nrmse": 5.181014516178883e-7,
+        "pass": true,
+        "unequal_bits": 232615
+      },
+      "pass": true,
+      "position": 48,
+      "prompt": 0,
+      "state": {
+        "max_abs": 5.7220458984375e-6,
+        "nrmse": 2.650932141525895e-7,
+        "pass": true,
+        "unequal_bits": 15847388
+      },
+      "token": 248046
+    },
+    {
+      "candidate_seconds": 0.05500625,
+      "compiled_misses_delta": 0,
+      "decode": false,
+      "logits": {
+        "max_abs": 0.000015497207641601562,
+        "nrmse": 1.2981252737962425e-6,
+        "pass": true,
+        "unequal_bits": 242096
+      },
+      "pass": true,
+      "position": 56,
+      "prompt": 0,
+      "state": {
+        "max_abs": 0.00002288818359375,
+        "nrmse": 3.849140257280879e-7,
+        "pass": true,
+        "unequal_bits": 16053323
+      },
+      "token": 248069
+    },
+    {
+      "candidate_seconds": 0.043258125,
+      "compiled_misses_delta": 10,
+      "decode": false,
+      "logits": {
+        "max_abs": 9.059906005859375e-6,
+        "nrmse": 9.987442206509884e-7,
+        "pass": true,
+        "unequal_bits": 241235
+      },
+      "pass": true,
+      "position": 58,
+      "prompt": 0,
+      "state": {
+        "max_abs": 0.000011444091796875,
+        "nrmse": 3.583678800833625e-7,
+        "pass": true,
+        "unequal_bits": 16085449
+      },
+      "token": 71093
+    },
+    {
+      "candidate_seconds": 0.047640709,
+      "compiled_misses_delta": 40,
+      "decode": true,
+      "logits": {
+        "max_abs": 0.00001239776611328125,
+        "nrmse": 8.272423355799296e-7,
+        "pass": true,
+        "unequal_bits": 238724
+      },
+      "pass": true,
+      "position": 59,
+      "prompt": 0,
+      "state": {
+        "max_abs": 0.00001621246337890625,
+        "nrmse": 3.704899116079659e-7,
+        "pass": true,
+        "unequal_bits": 16121589
+      },
+      "token": 34602
+    },
+    {
+      "candidate_seconds": 0.041104666,
+      "compiled_misses_delta": 0,
+      "decode": true,
+      "logits": {
+        "max_abs": 7.62939453125e-6,
+        "nrmse": 7.306103486093797e-7,
+        "pass": true,
+        "unequal_bits": 236945
+      },
+      "pass": true,
+      "position": 60,
+      "prompt": 0,
+      "state": {
+        "max_abs": 0.00001621246337890625,
+        "nrmse": 3.778792889949114e-7,
+        "pass": true,
+        "unequal_bits": 16161537
+      },
+      "token": 198
+    },
+    {
+      "candidate_seconds": 0.0394085,
+      "compiled_misses_delta": 0,
+      "decode": true,
+      "logits": {
+        "max_abs": 7.62939453125e-6,
+        "nrmse": 7.334950594785193e-7,
+        "pass": true,
+        "unequal_bits": 237541
+      },
+      "pass": true,
+      "position": 61,
+      "prompt": 0,
+      "state": {
+        "max_abs": 0.00001621246337890625,
+        "nrmse": 3.98946106576026e-7,
+        "pass": true,
+        "unequal_bits": 16190299
+      },
+      "token": 9299
+    },
+    {
+      "candidate_seconds": 0.038806917,
+      "compiled_misses_delta": 0,
+      "decode": true,
+      "logits": {
+        "max_abs": 8.225440979003906e-6,
+        "nrmse": 5.480230988984257e-7,
+        "pass": true,
+        "unequal_bits": 233271
+      },
+      "pass": true,
+      "position": 62,
+      "prompt": 0,
+      "state": {
+        "max_abs": 0.0000133514404296875,
+        "nrmse": 3.9269352405510243e-7,
+        "pass": true,
+        "unequal_bits": 16212480
+      },
+      "token": 5003
+    },
+    {
+      "candidate_seconds": 0.038226375,
+      "compiled_misses_delta": 0,
+      "decode": true,
+      "logits": {
+        "max_abs": 7.867813110351562e-6,
+        "nrmse": 5.296642530650173e-7,
+        "pass": true,
+        "unequal_bits": 232469
+      },
+      "pass": true,
+      "position": 63,
+      "prompt": 0,
+      "state": {
+        "max_abs": 0.0000133514404296875,
+        "nrmse": 3.9113955463311654e-7,
+        "pass": true,
+        "unequal_bits": 16221575
+      },
+      "token": 884
+    },
+    {
+      "candidate_seconds": 0.038372292,
+      "compiled_misses_delta": 0,
+      "decode": true,
+      "logits": {
+        "max_abs": 8.225440979003906e-6,
+        "nrmse": 8.901915342193076e-7,
+        "pass": true,
+        "unequal_bits": 238786
+      },
+      "pass": true,
+      "position": 64,
+      "prompt": 0,
+      "state": {
+        "max_abs": 0.0000133514404296875,
+        "nrmse": 3.822668237989015e-7,
+        "pass": true,
+        "unequal_bits": 16220492
+      },
+      "token": 62
+    },
+    {
+      "candidate_seconds": 0.040152542,
+      "compiled_misses_delta": 0,
+      "decode": true,
+      "logits": {
+        "max_abs": 9.179115295410156e-6,
+        "nrmse": 7.002605551049172e-7,
+        "pass": true,
+        "unequal_bits": 236281
+      },
+      "pass": true,
+      "position": 65,
+      "prompt": 0,
+      "state": {
+        "max_abs": 0.000011444091796875,
+        "nrmse": 3.8339082689330183e-7,
+        "pass": true,
+        "unequal_bits": 16230373
+      },
+      "token": 15
+    },
+    {
+      "candidate_seconds": 0.039285792,
+      "compiled_misses_delta": 0,
+      "decode": true,
+      "logits": {
+        "max_abs": 9.179115295410156e-6,
+        "nrmse": 9.640778674969632e-7,
+        "pass": true,
+        "unequal_bits": 240326
+      },
+      "pass": true,
+      "position": 66,
+      "prompt": 0,
+      "state": {
+        "max_abs": 0.000011444091796875,
+        "nrmse": 3.811452387536344e-7,
+        "pass": true,
+        "unequal_bits": 16242379
+      },
+      "token": 2784
+    },
+    {
+      "candidate_seconds": 0.056099541,
+      "compiled_misses_delta": 0,
+      "decode": false,
+      "logits": {
+        "max_abs": 5.245208740234375e-6,
+        "nrmse": 4.804168519712996e-7,
+        "pass": true,
+        "unequal_bits": 232212
+      },
+      "pass": true,
+      "position": 8,
+      "prompt": 1,
+      "state": {
+        "max_abs": 7.62939453125e-6,
+        "nrmse": 2.2531334144426917e-7,
+        "pass": true,
+        "unequal_bits": 15325354
+      },
+      "token": 248046
+    },
+    {
+      "candidate_seconds": 0.053836333,
+      "compiled_misses_delta": 0,
+      "decode": false,
+      "logits": {
+        "max_abs": 5.7220458984375e-6,
+        "nrmse": 4.878039255520144e-7,
+        "pass": true,
+        "unequal_bits": 232047
+      },
+      "pass": true,
+      "position": 16,
+      "prompt": 1,
+      "state": {
+        "max_abs": 9.5367431640625e-6,
+        "nrmse": 2.3154503097756332e-7,
+        "pass": true,
+        "unequal_bits": 15493966
+      },
+      "token": 18
+    },
+    {
+      "candidate_seconds": 0.054276209,
+      "compiled_misses_delta": 0,
+      "decode": false,
+      "logits": {
+        "max_abs": 7.271766662597656e-6,
+        "nrmse": 5.681883215603025e-7,
+        "pass": true,
+        "unequal_bits": 234515
+      },
+      "pass": true,
+      "position": 24,
+      "prompt": 1,
+      "state": {
+        "max_abs": 9.059906005859375e-6,
+        "nrmse": 3.013575424495795e-7,
+        "pass": true,
+        "unequal_bits": 15621664
+      },
+      "token": 248046
+    },
+    {
+      "candidate_seconds": 0.055514042,
+      "compiled_misses_delta": 0,
+      "decode": false,
+      "logits": {
+        "max_abs": 8.821487426757812e-6,
+        "nrmse": 6.314866478634303e-7,
+        "pass": true,
+        "unequal_bits": 236974
+      },
+      "pass": true,
+      "position": 32,
+      "prompt": 1,
+      "state": {
+        "max_abs": 0.000011444091796875,
+        "nrmse": 3.2545299566734e-7,
+        "pass": true,
+        "unequal_bits": 15730912
+      },
+      "token": 20
+    },
+    {
+      "candidate_seconds": 0.05582375,
+      "compiled_misses_delta": 0,
+      "decode": false,
+      "logits": {
+        "max_abs": 6.0498714447021484e-6,
+        "nrmse": 4.5555031712365263e-7,
+        "pass": true,
+        "unequal_bits": 230629
+      },
+      "pass": true,
+      "position": 40,
+      "prompt": 1,
+      "state": {
+        "max_abs": 0.000011444091796875,
+        "nrmse": 2.8463636406117577e-7,
+        "pass": true,
+        "unequal_bits": 15792173
+      },
+      "token": 248046
+    },
+    {
+      "candidate_seconds": 0.055886583,
+      "compiled_misses_delta": 0,
+      "decode": false,
+      "logits": {
+        "max_abs": 6.67572021484375e-6,
+        "nrmse": 4.279347191508475e-7,
+        "pass": true,
+        "unequal_bits": 227468
+      },
+      "pass": true,
+      "position": 48,
+      "prompt": 1,
+      "state": {
+        "max_abs": 9.5367431640625e-6,
+        "nrmse": 2.730188813910057e-7,
+        "pass": true,
+        "unequal_bits": 15873685
+      },
+      "token": 248046
+    },
+    {
+      "candidate_seconds": 0.055495375,
+      "compiled_misses_delta": 0,
+      "decode": false,
+      "logits": {
+        "max_abs": 0.000010251998901367188,
+        "nrmse": 7.214257894917201e-7,
+        "pass": true,
+        "unequal_bits": 236135
+      },
+      "pass": true,
+      "position": 56,
+      "prompt": 1,
+      "state": {
+        "max_abs": 0.00002288818359375,
+        "nrmse": 4.132178311710284e-7,
+        "pass": true,
+        "unequal_bits": 16095316
+      },
+      "token": 271
+    },
+    {
+      "candidate_seconds": 0.03853675,
+      "compiled_misses_delta": 0,
+      "decode": false,
+      "logits": {
+        "max_abs": 7.152557373046875e-6,
+        "nrmse": 7.371206254666813e-7,
+        "pass": true,
+        "unequal_bits": 237610
+      },
+      "pass": true,
+      "position": 57,
+      "prompt": 1,
+      "state": {
+        "max_abs": 0.000019073486328125,
+        "nrmse": 3.973480761673648e-7,
+        "pass": true,
+        "unequal_bits": 16125195
+      },
+      "token": 71093
+    },
+    {
+      "candidate_seconds": 0.0384195,
+      "compiled_misses_delta": 0,
+      "decode": true,
+      "logits": {
+        "max_abs": 8.821487426757812e-6,
+        "nrmse": 8.010615631702238e-7,
+        "pass": true,
+        "unequal_bits": 238346
+      },
+      "pass": true,
+      "position": 58,
+      "prompt": 1,
+      "state": {
+        "max_abs": 0.0000171661376953125,
+        "nrmse": 4.0102612172172517e-7,
+        "pass": true,
+        "unequal_bits": 16162457
+      },
+      "token": 34602
+    },
+    {
+      "candidate_seconds": 0.038180209,
+      "compiled_misses_delta": 0,
+      "decode": true,
+      "logits": {
+        "max_abs": 7.867813110351562e-6,
+        "nrmse": 7.263084197104814e-7,
+        "pass": true,
+        "unequal_bits": 236901
+      },
+      "pass": true,
+      "position": 59,
+      "prompt": 1,
+      "state": {
+        "max_abs": 0.0000171661376953125,
+        "nrmse": 4.0499643598972197e-7,
+        "pass": true,
+        "unequal_bits": 16184461
+      },
+      "token": 198
+    },
+    {
+      "candidate_seconds": 0.038085042,
+      "compiled_misses_delta": 0,
+      "decode": true,
+      "logits": {
+        "max_abs": 6.67572021484375e-6,
+        "nrmse": 7.315627411930958e-7,
+        "pass": true,
+        "unequal_bits": 237621
+      },
+      "pass": true,
+      "position": 60,
+      "prompt": 1,
+      "state": {
+        "max_abs": 0.0000171661376953125,
+        "nrmse": 4.1239477382866345e-7,
+        "pass": true,
+        "unequal_bits": 16204157
+      },
+      "token": 12966
+    },
+    {
+      "candidate_seconds": 0.038293791,
+      "compiled_misses_delta": 0,
+      "decode": true,
+      "logits": {
+        "max_abs": 0.000010132789611816406,
+        "nrmse": 8.297779114306816e-7,
+        "pass": true,
+        "unequal_bits": 238878
+      },
+      "pass": true,
+      "position": 61,
+      "prompt": 1,
+      "state": {
+        "max_abs": 0.0000171661376953125,
+        "nrmse": 3.974866765488955e-7,
+        "pass": true,
+        "unequal_bits": 16214958
+      },
+      "token": 1877
+    },
+    {
+      "candidate_seconds": 0.038383084,
+      "compiled_misses_delta": 0,
+      "decode": true,
+      "logits": {
+        "max_abs": 0.00001049041748046875,
+        "nrmse": 8.656070084002054e-7,
+        "pass": true,
+        "unequal_bits": 239033
+      },
+      "pass": true,
+      "position": 62,
+      "prompt": 1,
+      "state": {
+        "max_abs": 0.0000171661376953125,
+        "nrmse": 3.9731998035296053e-7,
+        "pass": true,
+        "unequal_bits": 16214271
+      },
+      "token": 60
+    },
+    {
+      "candidate_seconds": 0.038263208,
+      "compiled_misses_delta": 0,
+      "decode": true,
+      "logits": {
+        "max_abs": 7.152557373046875e-6,
+        "nrmse": 5.609081789677457e-7,
+        "pass": true,
+        "unequal_bits": 233180
+      },
+      "pass": true,
+      "position": 63,
+      "prompt": 1,
+      "state": {
+        "max_abs": 0.0000171661376953125,
+        "nrmse": 4.2399590712774635e-7,
+        "pass": true,
+        "unequal_bits": 16229261
+      },
+      "token": 198
+    },
+    {
+      "candidate_seconds": 0.038435959,
+      "compiled_misses_delta": 0,
+      "decode": true,
+      "logits": {
+        "max_abs": 7.927417755126953e-6,
+        "nrmse": 6.645831652260849e-7,
+        "pass": true,
+        "unequal_bits": 236171
+      },
+      "pass": true,
+      "position": 64,
+      "prompt": 1,
+      "state": {
+        "max_abs": 0.0000171661376953125,
+        "nrmse": 4.2826021590710557e-7,
+        "pass": true,
+        "unequal_bits": 16246032
+      },
+      "token": 8556
+    },
+    {
+      "candidate_seconds": 0.038198792,
+      "compiled_misses_delta": 0,
+      "decode": true,
+      "logits": {
+        "max_abs": 8.106231689453125e-6,
+        "nrmse": 4.944398933725148e-7,
+        "pass": true,
+        "unequal_bits": 231316
+      },
+      "pass": true,
+      "position": 65,
+      "prompt": 1,
+      "state": {
+        "max_abs": 0.0000171661376953125,
+        "nrmse": 4.3526741947323065e-7,
+        "pass": true,
+        "unequal_bits": 16258350
+      },
+      "token": 9284
+    },
+    {
+      "candidate_seconds": 0.055238875,
+      "compiled_misses_delta": 0,
+      "decode": false,
+      "logits": {
+        "max_abs": 5.0067901611328125e-6,
+        "nrmse": 4.214094096181352e-7,
+        "pass": true,
+        "unequal_bits": 229782
+      },
+      "pass": true,
+      "position": 8,
+      "prompt": 2,
+      "state": {
+        "max_abs": 0.000011444091796875,
+        "nrmse": 2.1941067607692776e-7,
+        "pass": true,
+        "unequal_bits": 15335269
+      },
+      "token": 7376
+    },
+    {
+      "candidate_seconds": 0.053723958,
+      "compiled_misses_delta": 0,
+      "decode": false,
+      "logits": {
+        "max_abs": 6.198883056640625e-6,
+        "nrmse": 3.9369901315893796e-7,
+        "pass": true,
+        "unequal_bits": 226229
+      },
+      "pass": true,
+      "position": 16,
+      "prompt": 2,
+      "state": {
+        "max_abs": 9.179115295410156e-6,
+        "nrmse": 2.870080670392863e-7,
+        "pass": true,
+        "unequal_bits": 15476931
+      },
+      "token": 24
+    },
+    {
+      "candidate_seconds": 0.054079625,
+      "compiled_misses_delta": 0,
+      "decode": false,
+      "logits": {
+        "max_abs": 5.662441253662109e-6,
+        "nrmse": 4.507478700421325e-7,
+        "pass": true,
+        "unequal_bits": 230544
+      },
+      "pass": true,
+      "position": 24,
+      "prompt": 2,
+      "state": {
+        "max_abs": 9.5367431640625e-6,
+        "nrmse": 2.3008828369276197e-7,
+        "pass": true,
+        "unequal_bits": 15528599
+      },
+      "token": 264
+    },
+    {
+      "candidate_seconds": 0.055125,
+      "compiled_misses_delta": 0,
+      "decode": false,
+      "logits": {
+        "max_abs": 6.67572021484375e-6,
+        "nrmse": 3.952091829732754e-7,
+        "pass": true,
+        "unequal_bits": 226966
+      },
+      "pass": true,
+      "position": 32,
+      "prompt": 2,
+      "state": {
+        "max_abs": 8.821487426757812e-6,
+        "nrmse": 2.434076594834742e-7,
+        "pass": true,
+        "unequal_bits": 15634817
+      },
+      "token": 1957
+    },
+    {
+      "candidate_seconds": 0.054118458,
+      "compiled_misses_delta": 0,
+      "decode": false,
+      "logits": {
+        "max_abs": 6.198883056640625e-6,
+        "nrmse": 4.372208175924994e-7,
+        "pass": true,
+        "unequal_bits": 229219
+      },
+      "pass": true,
+      "position": 40,
+      "prompt": 2,
+      "state": {
+        "max_abs": 9.5367431640625e-6,
+        "nrmse": 2.732617880149288e-7,
+        "pass": true,
+        "unequal_bits": 15742550
+      },
+      "token": 248046
+    },
+    {
+      "candidate_seconds": 0.054677834,
+      "compiled_misses_delta": 0,
+      "decode": false,
+      "logits": {
+        "max_abs": 5.751848220825195e-6,
+        "nrmse": 3.3177244857991385e-7,
+        "pass": true,
+        "unequal_bits": 223022
+      },
+      "pass": true,
+      "position": 48,
+      "prompt": 2,
+      "state": {
+        "max_abs": 8.821487426757812e-6,
+        "nrmse": 2.5209318253907996e-7,
+        "pass": true,
+        "unequal_bits": 15825174
+      },
+      "token": 198
+    },
+    {
+      "candidate_seconds": 0.054926041,
+      "compiled_misses_delta": 0,
+      "decode": false,
+      "logits": {
+        "max_abs": 9.5367431640625e-6,
+        "nrmse": 1.209430598106746e-6,
+        "pass": true,
+        "unequal_bits": 244465
+      },
+      "pass": true,
+      "position": 56,
+      "prompt": 2,
+      "state": {
+        "max_abs": 0.00001239776611328125,
+        "nrmse": 3.4898003812746726e-7,
+        "pass": true,
+        "unequal_bits": 16055941
+      },
+      "token": 71093
+    },
+    {
+      "candidate_seconds": 0.038317333,
+      "compiled_misses_delta": 0,
+      "decode": true,
+      "logits": {
+        "max_abs": 9.059906005859375e-6,
+        "nrmse": 8.8253721738113e-7,
+        "pass": true,
+        "unequal_bits": 239522
+      },
+      "pass": true,
+      "position": 57,
+      "prompt": 2,
+      "state": {
+        "max_abs": 0.00001239776611328125,
+        "nrmse": 3.58062988771519e-7,
+        "pass": true,
+        "unequal_bits": 16093091
+      },
+      "token": 34602
+    },
+    {
+      "candidate_seconds": 0.039292917,
+      "compiled_misses_delta": 0,
+      "decode": true,
+      "logits": {
+        "max_abs": 9.5367431640625e-6,
+        "nrmse": 1.0231248737828108e-6,
+        "pass": true,
+        "unequal_bits": 242310
+      },
+      "pass": true,
+      "position": 58,
+      "prompt": 2,
+      "state": {
+        "max_abs": 0.000019073486328125,
+        "nrmse": 3.604093067489443e-7,
+        "pass": true,
+        "unequal_bits": 16133811
+      },
+      "token": 198
+    },
+    {
+      "candidate_seconds": 0.039547583,
+      "compiled_misses_delta": 0,
+      "decode": true,
+      "logits": {
+        "max_abs": 0.0000133514404296875,
+        "nrmse": 1.3678195003805307e-6,
+        "pass": true,
+        "unequal_bits": 242572
+      },
+      "pass": true,
+      "position": 59,
+      "prompt": 2,
+      "state": {
+        "max_abs": 0.0000247955322265625,
+        "nrmse": 5.278567534939608e-7,
+        "pass": true,
+        "unequal_bits": 16185189
+      },
+      "token": 320
+    },
+    {
+      "candidate_seconds": 0.038335667,
+      "compiled_misses_delta": 0,
+      "decode": true,
+      "logits": {
+        "max_abs": 0.0000152587890625,
+        "nrmse": 7.461442763099274e-7,
+        "pass": true,
+        "unequal_bits": 236925
+      },
+      "pass": true,
+      "position": 60,
+      "prompt": 2,
+      "state": {
+        "max_abs": 0.0000247955322265625,
+        "nrmse": 5.312114307364913e-7,
+        "pass": true,
+        "unequal_bits": 16227901
+      },
+      "token": 59240
+    },
+    {
+      "candidate_seconds": 0.038618292,
+      "compiled_misses_delta": 0,
+      "decode": true,
+      "logits": {
+        "max_abs": 0.00001049041748046875,
+        "nrmse": 7.920514761355337e-7,
+        "pass": true,
+        "unequal_bits": 238086
+      },
+      "pass": true,
+      "position": 61,
+      "prompt": 2,
+      "state": {
+        "max_abs": 0.0000247955322265625,
+        "nrmse": 5.328897012992882e-7,
+        "pass": true,
+        "unequal_bits": 16211981
+      },
+      "token": 449
+    },
+    {
+      "candidate_seconds": 0.039039041,
+      "compiled_misses_delta": 0,
+      "decode": true,
+      "logits": {
+        "max_abs": 9.059906005859375e-6,
+        "nrmse": 6.329787108955537e-7,
+        "pass": true,
+        "unequal_bits": 235577
+      },
+      "pass": true,
+      "position": 62,
+      "prompt": 2,
+      "state": {
+        "max_abs": 0.000019073486328125,
+        "nrmse": 3.992181318938503e-7,
+        "pass": true,
+        "unequal_bits": 16206359
+      },
+      "token": 1287
+    },
+    {
+      "candidate_seconds": 0.039296875,
+      "compiled_misses_delta": 0,
+      "decode": true,
+      "logits": {
+        "max_abs": 8.106231689453125e-6,
+        "nrmse": 5.156367911629629e-7,
+        "pass": true,
+        "unequal_bits": 231921
+      },
+      "pass": true,
+      "position": 63,
+      "prompt": 2,
+      "state": {
+        "max_abs": 0.00001621246337890625,
+        "nrmse": 3.835083630371839e-7,
+        "pass": true,
+        "unequal_bits": 16211732
+      },
+      "token": 314
+    },
+    {
+      "candidate_seconds": 0.038192666,
+      "compiled_misses_delta": 0,
+      "decode": true,
+      "logits": {
+        "max_abs": 8.821487426757812e-6,
+        "nrmse": 6.330002722907489e-7,
+        "pass": true,
+        "unequal_bits": 235647
+      },
+      "pass": true,
+      "position": 64,
+      "prompt": 2,
+      "state": {
+        "max_abs": 0.00001621246337890625,
+        "nrmse": 3.821292257849904e-7,
+        "pass": true,
+        "unequal_bits": 16229097
+      },
+      "token": 24959
+    },
+    {
+      "candidate_seconds": 0.055846,
+      "compiled_misses_delta": 0,
+      "decode": false,
+      "logits": {
+        "max_abs": 5.900859832763672e-6,
+        "nrmse": 4.865342315773979e-7,
+        "pass": true,
+        "unequal_bits": 232441
+      },
+      "pass": true,
+      "position": 8,
+      "prompt": 3,
+      "state": {
+        "max_abs": 5.7220458984375e-6,
+        "nrmse": 2.149089461736659e-7,
+        "pass": true,
+        "unequal_bits": 15317227
+      },
+      "token": 248046
+    },
+    {
+      "candidate_seconds": 0.054069958,
+      "compiled_misses_delta": 0,
+      "decode": false,
+      "logits": {
+        "max_abs": 5.245208740234375e-6,
+        "nrmse": 4.553823136366832e-7,
+        "pass": true,
+        "unequal_bits": 230304
+      },
+      "pass": true,
+      "position": 16,
+      "prompt": 3,
+      "state": {
+        "max_abs": 7.62939453125e-6,
+        "nrmse": 2.399824901824758e-7,
+        "pass": true,
+        "unequal_bits": 15460972
+      },
+      "token": 3808
+    },
+    {
+      "candidate_seconds": 0.054336333,
+      "compiled_misses_delta": 0,
+      "decode": false,
+      "logits": {
+        "max_abs": 7.152557373046875e-6,
+        "nrmse": 4.7130838945355473e-7,
+        "pass": true,
+        "unequal_bits": 231122
+      },
+      "pass": true,
+      "position": 24,
+      "prompt": 3,
+      "state": {
+        "max_abs": 0.000011444091796875,
+        "nrmse": 2.8609152092886003e-7,
+        "pass": true,
+        "unequal_bits": 15617631
+      },
+      "token": 36354
+    },
+    {
+      "candidate_seconds": 0.055368292,
+      "compiled_misses_delta": 0,
+      "decode": false,
+      "logits": {
+        "max_abs": 7.271766662597656e-6,
+        "nrmse": 5.353420843778061e-7,
+        "pass": true,
+        "unequal_bits": 233682
+      },
+      "pass": true,
+      "position": 32,
+      "prompt": 3,
+      "state": {
+        "max_abs": 7.62939453125e-6,
+        "nrmse": 2.6471571362049776e-7,
+        "pass": true,
+        "unequal_bits": 15696424
+      },
+      "token": 321
+    },
+    {
+      "candidate_seconds": 0.054856958,
+      "compiled_misses_delta": 0,
+      "decode": false,
+      "logits": {
+        "max_abs": 7.152557373046875e-6,
+        "nrmse": 5.923840123945592e-7,
+        "pass": true,
+        "unequal_bits": 235745
+      },
+      "pass": true,
+      "position": 40,
+      "prompt": 3,
+      "state": {
+        "max_abs": 9.5367431640625e-6,
+        "nrmse": 2.536102474517536e-7,
+        "pass": true,
+        "unequal_bits": 15748691
+      },
+      "token": 25689
+    },
+    {
+      "candidate_seconds": 0.054452917,
+      "compiled_misses_delta": 0,
+      "decode": false,
+      "logits": {
+        "max_abs": 5.125999450683594e-6,
+        "nrmse": 5.18767470361696e-7,
+        "pass": true,
+        "unequal_bits": 232659
+      },
+      "pass": true,
+      "position": 48,
+      "prompt": 3,
+      "state": {
+        "max_abs": 9.5367431640625e-6,
+        "nrmse": 2.8074675613155434e-7,
+        "pass": true,
+        "unequal_bits": 15871217
+      },
+      "token": 248046
+    },
+    {
+      "candidate_seconds": 0.055790125,
+      "compiled_misses_delta": 0,
+      "decode": false,
+      "logits": {
+        "max_abs": 7.62939453125e-6,
+        "nrmse": 4.0156313826428805e-7,
+        "pass": true,
+        "unequal_bits": 227343
+      },
+      "pass": true,
+      "position": 56,
+      "prompt": 3,
+      "state": {
+        "max_abs": 7.62939453125e-6,
+        "nrmse": 2.5406697654034597e-7,
+        "pass": true,
+        "unequal_bits": 15936423
+      },
+      "token": 198
+    },
+    {
+      "candidate_seconds": 0.055302458,
+      "compiled_misses_delta": 0,
+      "decode": false,
+      "logits": {
+        "max_abs": 0.000011444091796875,
+        "nrmse": 7.747162421182902e-7,
+        "pass": true,
+        "unequal_bits": 238849
+      },
+      "pass": true,
+      "position": 64,
+      "prompt": 3,
+      "state": {
+        "max_abs": 0.000019073486328125,
+        "nrmse": 3.5641146301563614e-7,
+        "pass": true,
+        "unequal_bits": 16153506
+      },
+      "token": 760
+    },
+    {
+      "candidate_seconds": 0.038503292,
+      "compiled_misses_delta": 0,
+      "decode": true,
+      "logits": {
+        "max_abs": 8.106231689453125e-6,
+        "nrmse": 7.009688452072243e-7,
+        "pass": true,
+        "unequal_bits": 237914
+      },
+      "pass": true,
+      "position": 65,
+      "prompt": 3,
+      "state": {
+        "max_abs": 0.0000171661376953125,
+        "nrmse": 3.5119293689705196e-7,
+        "pass": true,
+        "unequal_bits": 16176268
+      },
+      "token": 6007
+    },
+    {
+      "candidate_seconds": 0.038320416,
+      "compiled_misses_delta": 0,
+      "decode": true,
+      "logits": {
+        "max_abs": 7.867813110351562e-6,
+        "nrmse": 6.629966610887367e-7,
+        "pass": true,
+        "unequal_bits": 237005
+      },
+      "pass": true,
+      "position": 66,
+      "prompt": 3,
+      "state": {
+        "max_abs": 0.000011444091796875,
+        "nrmse": 3.3228972482600437e-7,
+        "pass": true,
+        "unequal_bits": 16205044
+      },
+      "token": 18458
+    },
+    {
+      "candidate_seconds": 0.038467166,
+      "compiled_misses_delta": 0,
+      "decode": true,
+      "logits": {
+        "max_abs": 8.106231689453125e-6,
+        "nrmse": 6.151617853236394e-7,
+        "pass": true,
+        "unequal_bits": 235500
+      },
+      "pass": true,
+      "position": 67,
+      "prompt": 3,
+      "state": {
+        "max_abs": 0.000011444091796875,
+        "nrmse": 3.5351045104413385e-7,
+        "pass": true,
+        "unequal_bits": 16217658
+      },
+      "token": 9584
+    },
+    {
+      "candidate_seconds": 0.03831725,
+      "compiled_misses_delta": 0,
+      "decode": true,
+      "logits": {
+        "max_abs": 8.58306884765625e-6,
+        "nrmse": 6.394962152100573e-7,
+        "pass": true,
+        "unequal_bits": 235608
+      },
+      "pass": true,
+      "position": 68,
+      "prompt": 3,
+      "state": {
+        "max_abs": 0.00001430511474609375,
+        "nrmse": 3.4543579054677806e-7,
+        "pass": true,
+        "unequal_bits": 16229651
+      },
+      "token": 369
+    },
+    {
+      "candidate_seconds": 0.038431,
+      "compiled_misses_delta": 0,
+      "decode": true,
+      "logits": {
+        "max_abs": 0.000012040138244628906,
+        "nrmse": 7.254866754171934e-7,
+        "pass": true,
+        "unequal_bits": 237295
+      },
+      "pass": true,
+      "position": 69,
+      "prompt": 3,
+      "state": {
+        "max_abs": 0.00001430511474609375,
+        "nrmse": 3.540039845852821e-7,
+        "pass": true,
+        "unequal_bits": 16240227
+      },
+      "token": 421
+    },
+    {
+      "candidate_seconds": 0.038655958,
+      "compiled_misses_delta": 0,
+      "decode": true,
+      "logits": {
+        "max_abs": 9.5367431640625e-6,
+        "nrmse": 7.775074304341197e-7,
+        "pass": true,
+        "unequal_bits": 238173
+      },
+      "pass": true,
+      "position": 70,
+      "prompt": 3,
+      "state": {
+        "max_abs": 0.00001430511474609375,
+        "nrmse": 3.590735801503146e-7,
+        "pass": true,
+        "unequal_bits": 16266402
+      },
+      "token": 279
+    },
+    {
+      "candidate_seconds": 0.038643208,
+      "compiled_misses_delta": 0,
+      "decode": true,
+      "logits": {
+        "max_abs": 0.000011444091796875,
+        "nrmse": 8.110696676837433e-7,
+        "pass": true,
+        "unequal_bits": 238674
+      },
+      "pass": true,
+      "position": 71,
+      "prompt": 3,
+      "state": {
+        "max_abs": 0.00001049041748046875,
+        "nrmse": 3.7780946832444855e-7,
+        "pass": true,
+        "unequal_bits": 16294937
+      },
+      "token": 3421
+    },
+    {
+      "candidate_seconds": 0.038572041,
+      "compiled_misses_delta": 0,
+      "decode": true,
+      "logits": {
+        "max_abs": 9.5367431640625e-6,
+        "nrmse": 7.92774147620042e-7,
+        "pass": true,
+        "unequal_bits": 238356
+      },
+      "pass": true,
+      "position": 72,
+      "prompt": 3,
+      "state": {
+        "max_abs": 0.00001049041748046875,
+        "nrmse": 3.804604199973356e-7,
+        "pass": true,
+        "unequal_bits": 16299631
+      },
+      "token": 5041
+    }
+  ],
+  "operator_profile": "off",
+  "pass": true,
+  "profile": "fp32",
+  "recurrent_kernel": "fused",
+  "scope": "four-prompt native parity and 64-token generation; no HTTP/held-out qualification",
+  "step_mode": "sampled",
+  "timings": [
+    {
+      "decode_execution": {
+        "calls": 0,
+        "completed": 0,
+        "completion_groups": 0,
+        "graph_ns": 0,
+        "validation_export_ns": 0,
+        "wait_ns": 0,
+        "wall_ns": 0
+      },
+      "decode_operators": {
+        "attention_output": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "attention_projection": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "attention_reduction": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "embedding": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "final_projection": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "input_norm": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "layer_output": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "moe_down": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "moe_merge": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "moe_mixture": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "moe_routing": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "moe_shared": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "moe_up_gate": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "recurrent_output": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "recurrent_prepare": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "recurrent_projection": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "recurrent_update": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "residual_norm": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "state_validation": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        }
+      },
+      "decode_seconds": 2.408254666,
+      "decode_steps": 63,
+      "decode_tok_s": 26.160024057854354,
+      "prefill_execution": {
+        "calls": 0,
+        "completed": 0,
+        "completion_groups": 0,
+        "graph_ns": 0,
+        "validation_export_ns": 0,
+        "wait_ns": 0,
+        "wall_ns": 0
+      },
+      "prefill_operators": {
+        "attention_output": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "attention_projection": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "attention_reduction": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "embedding": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "final_projection": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "input_norm": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "layer_output": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "moe_down": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "moe_merge": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "moe_mixture": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "moe_routing": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "moe_shared": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "moe_up_gate": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "recurrent_output": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "recurrent_prepare": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "recurrent_projection": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "recurrent_update": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "residual_norm": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "state_validation": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        }
+      },
+      "prompt": 0,
+      "tokens": [
+        71093,
+        34602,
+        198,
+        9299,
+        5003,
+        884,
+        62,
+        15,
+        2784,
+        25,
+        585,
+        18,
+        17,
+        11,
+        292,
+        25,
+        585,
+        18,
+        17,
+        8,
+        1411,
+        585,
+        18,
+        17,
+        313,
+        264,
+        478,
+        292,
+        333,
+        198,
+        9299,
+        5003,
+        884,
+        62,
+        16,
+        2784,
+        25,
+        585,
+        18,
+        17,
+        11,
+        292,
+        25,
+        585,
+        18,
+        17,
+        8,
+        1411,
+        585,
+        18,
+        17,
+        313,
+        264,
+        478,
+        292,
+        333,
+        198,
+        9299,
+        5003,
+        884,
+        62,
+        17,
+        2784,
+        25
+      ],
+      "total_seconds": 2.838576667,
+      "ttft_seconds": 0.430238209
+    },
+    {
+      "decode_execution": {
+        "calls": 0,
+        "completed": 0,
+        "completion_groups": 0,
+        "graph_ns": 0,
+        "validation_export_ns": 0,
+        "wait_ns": 0,
+        "wall_ns": 0
+      },
+      "decode_operators": {
+        "attention_output": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "attention_projection": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "attention_reduction": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "embedding": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "final_projection": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "input_norm": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "layer_output": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "moe_down": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "moe_merge": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "moe_mixture": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "moe_routing": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "moe_shared": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "moe_up_gate": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "recurrent_output": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "recurrent_prepare": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "recurrent_projection": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "recurrent_update": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "residual_norm": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "state_validation": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        }
+      },
+      "decode_seconds": 2.419809083,
+      "decode_steps": 63,
+      "decode_tok_s": 26.03511179563582,
+      "prefill_execution": {
+        "calls": 0,
+        "completed": 0,
+        "completion_groups": 0,
+        "graph_ns": 0,
+        "validation_export_ns": 0,
+        "wait_ns": 0,
+        "wall_ns": 0
+      },
+      "prefill_operators": {
+        "attention_output": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "attention_projection": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "attention_reduction": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "embedding": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "final_projection": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "input_norm": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "layer_output": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "moe_down": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "moe_merge": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "moe_mixture": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "moe_routing": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "moe_shared": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "moe_up_gate": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "recurrent_output": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "recurrent_prepare": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "recurrent_projection": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "recurrent_update": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "residual_norm": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "state_validation": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        }
+      },
+      "prompt": 1,
+      "tokens": [
+        71093,
+        34602,
+        198,
+        12966,
+        1877,
+        60,
+        198,
+        8556,
+        9284,
+        62,
+        15,
+        363,
+        313,
+        198,
+        262,
+        1992,
+        10398,
+        9991,
+        16417,
+        7,
+        15,
+        681,
+        220,
+        15,
+        1174,
+        198,
+        92,
+        271,
+        12966,
+        1877,
+        60,
+        198,
+        8556,
+        9284,
+        62,
+        16,
+        363,
+        313,
+        198,
+        262,
+        1992,
+        10398,
+        9991,
+        16417,
+        7,
+        16,
+        681,
+        220,
+        16,
+        1174,
+        198,
+        92,
+        271,
+        12966,
+        1877,
+        60,
+        198,
+        8556,
+        9284,
+        62,
+        17,
+        363,
+        313,
+        198
+      ],
+      "total_seconds": 2.84017825,
+      "ttft_seconds": 0.420299459
+    },
+    {
+      "decode_execution": {
+        "calls": 0,
+        "completed": 0,
+        "completion_groups": 0,
+        "graph_ns": 0,
+        "validation_export_ns": 0,
+        "wait_ns": 0,
+        "wall_ns": 0
+      },
+      "decode_operators": {
+        "attention_output": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "attention_projection": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "attention_reduction": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "embedding": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "final_projection": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "input_norm": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "layer_output": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "moe_down": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "moe_merge": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "moe_mixture": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "moe_routing": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "moe_shared": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "moe_up_gate": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "recurrent_output": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "recurrent_prepare": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "recurrent_projection": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "recurrent_update": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "residual_norm": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "state_validation": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        }
+      },
+      "decode_seconds": 2.42633375,
+      "decode_steps": 63,
+      "decode_tok_s": 25.965100637948098,
+      "prefill_execution": {
+        "calls": 0,
+        "completed": 0,
+        "completion_groups": 0,
+        "graph_ns": 0,
+        "validation_export_ns": 0,
+        "wait_ns": 0,
+        "wall_ns": 0
+      },
+      "prefill_operators": {
+        "attention_output": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "attention_projection": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "attention_reduction": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "embedding": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "final_projection": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "input_norm": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "layer_output": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "moe_down": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "moe_merge": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "moe_mixture": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "moe_routing": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "moe_shared": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "moe_up_gate": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "recurrent_output": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "recurrent_prepare": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "recurrent_projection": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "recurrent_update": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "residual_norm": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "state_validation": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        }
+      },
+      "prompt": 2,
+      "tokens": [
+        71093,
+        34602,
+        198,
+        320,
+        59240,
+        449,
+        1287,
+        314,
+        24959,
+        494,
+        220,
+        15,
+        310,
+        220,
+        16,
+        20,
+        198,
+        1112,
+        4947,
+        25,
+        498,
+        72,
+        18,
+        17,
+        26,
+        220,
+        16,
+        21,
+        60,
+        283,
+        498,
+        15,
+        11,
+        220,
+        16,
+        11,
+        220,
+        17,
+        11,
+        220,
+        18,
+        11,
+        220,
+        19,
+        11,
+        220,
+        20,
+        11,
+        220,
+        21,
+        11,
+        220,
+        22,
+        11,
+        220,
+        23,
+        11,
+        220,
+        24,
+        11,
+        220,
+        16,
+        15,
+        11
+      ],
+      "total_seconds": 2.80876825,
+      "ttft_seconds": 0.382367458
+    },
+    {
+      "decode_execution": {
+        "calls": 0,
+        "completed": 0,
+        "completion_groups": 0,
+        "graph_ns": 0,
+        "validation_export_ns": 0,
+        "wait_ns": 0,
+        "wall_ns": 0
+      },
+      "decode_operators": {
+        "attention_output": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "attention_projection": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "attention_reduction": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "embedding": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "final_projection": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "input_norm": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "layer_output": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "moe_down": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "moe_merge": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "moe_mixture": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "moe_routing": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "moe_shared": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "moe_up_gate": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "recurrent_output": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "recurrent_prepare": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "recurrent_projection": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "recurrent_update": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "residual_norm": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "state_validation": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        }
+      },
+      "decode_seconds": 2.489064625,
+      "decode_steps": 63,
+      "decode_tok_s": 25.310712854633092,
+      "prefill_execution": {
+        "calls": 0,
+        "completed": 0,
+        "completion_groups": 0,
+        "graph_ns": 0,
+        "validation_export_ns": 0,
+        "wait_ns": 0,
+        "wall_ns": 0
+      },
+      "prefill_operators": {
+        "attention_output": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "attention_projection": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "attention_reduction": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "embedding": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "final_projection": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "input_norm": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "layer_output": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "moe_down": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "moe_merge": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "moe_mixture": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "moe_routing": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "moe_shared": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "moe_up_gate": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "recurrent_output": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "recurrent_prepare": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "recurrent_projection": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "recurrent_update": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "residual_norm": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        },
+        "state_validation": {
+          "calls": 0,
+          "host_ns": 0,
+          "wait_ns": 0
+        }
+      },
+      "prompt": 3,
+      "tokens": [
+        760,
+        6007,
+        18458,
+        9584,
+        369,
+        421,
+        279,
+        3421,
+        5041,
+        942,
+        279,
+        81726,
+        4011,
+        1345,
+        264,
+        21966,
+        3108,
+        1990,
+        9687,
+        264,
+        5604,
+        310,
+        424,
+        13,
+        3095,
+        279,
+        2849,
+        28024,
+        82,
+        11,
+        279,
+        3421,
+        1189,
+        2708,
+        466,
+        31153,
+        279,
+        4011,
+        11,
+        694,
+        279,
+        21966,
+        3108,
+        579,
+        1510,
+        35590,
+        63,
+        1990,
+        3387,
+        310,
+        279,
+        2235,
+        795,
+        13,
+        1061,
+        11121,
+        264,
+        958,
+        43095,
+        12217,
+        466,
+        795,
+        3667,
+        563
+      ],
+      "total_seconds": 2.928372,
+      "ttft_seconds": 0.439231917
+    }
+  ],
+  "validation_mode": "full"
+}

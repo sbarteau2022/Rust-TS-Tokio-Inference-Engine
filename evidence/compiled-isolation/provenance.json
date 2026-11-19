@@ -1,0 +1,24 @@
+{
+  "base_commit": "ad52c7877be202f432852673218be773244f6f75",
+  "sha256": {
+    "native/compiled_constants.h": "33f30f089d2b771fbcc921dfd0bed47f15353b62cface54d66d3ceae7c5c9d81",
+    "native/mlx_bridge.cpp": "94339f2ea8dc5385fb277d01532d46736517e46e4c2ce2d469e29536f80665b2",
+    "native/qwen_model.inc": "0a918fbf569decdf98ba76e672c03b3e707158c1dc720b7cb2e43530b0b965d6",
+    "examples/native_mtp_decode_smoke.rs": "7a68130c33005a0f27006206294e9172bfad0843c3d61e1a3aef1d311fbb4146",
+    "examples/native_mtp_smoke.rs": "380cb55d7415ef68d6646d0bcb3a25565f7d0599fdb322003c54543ea13bfdb5",
+    "target/release/rust-server": "e2116b6e1851563bdbf88e71ab2a90a2e8b75c19a4b7d28623a4471ac581710b",
+    "target/release/examples/native_mtp_decode_smoke": "949face10b95f62c02ccf7b64a8c360a1caa272ba0f82fbb70a2860704c1fb7e",
+    "target/release/examples/native_mtp_smoke": "14d99b50952c0c45cc65f8cd026f9910434aeb4c06007076998c1bac7b7f1eb7"
+  },
+  "commands": [
+    "perl -e 'alarm 180; exec @ARGV' ./target/release/examples/native_mtp_decode_smoke evidence/compiled-isolation/shared-constants-group4 compiled-decode 4",
+    "perl -e 'alarm 180; exec @ARGV' ./target/release/examples/native_mtp_decode_smoke evidence/compiled-isolation/shared-constants-group40 compiled-decode 40",
+    "perl -e 'alarm 180; exec @ARGV' ./target/release/examples/native_mtp_smoke evidence/compiled-isolation/component-compiled-group40 compiled-decode 40"
+  ],
+  "limits": "short context, fixed prompts; no production or 150 tok/s claim",
+  "sdk_sha256": {
+    "vendor/mlx/include/mlx/version.h": "aa9bc89918174150c2346bdbc85572fcff6585902e9d04e719d6f334f973abf0",
+    "vendor/mlx/lib/libmlx.dylib": "d8c9393d584e781393c3effccfccd8ba85ad0c70264edaf9f897dca9875375c6"
+  },
+  "upstream_compile_reference_sha256": "0abab4d47fd2fb4fdbc685f54a9de7a5a9083a16582fe16d73fce56b3e661f29"
+}

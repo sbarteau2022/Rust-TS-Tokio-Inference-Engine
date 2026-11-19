@@ -1,0 +1,15 @@
+{
+  "source_sha256": {
+    "native/dspark_tuning.h": "91243478dea46368ad8eadcd1722120ccfde00537cdffa2ec4f52cd7c7a86ff3",
+    "judges/native_dspark_bench.cpp": "36871e5c6b21630843382a507573865ad361eebeb33a1193ed30a1a6c6868b62",
+    "judges/native_dspark_report.py": "3e444ffd6cf9f735499972b3e87db541649a5eb13bfc3f89fe39b50ef36fb151",
+    "judges/dspark_tuning.cpp": "52d183b90e53eed82c98cc8f26c87cde98f3103330be16165ddebaef7e618e7d"
+  },
+  "binary_sha256": "dd48da1f66444348073bd7601b419f31dbc786ef413692e224e7db4335df6e8c",
+  "protocol": "BF16 draft, FP32 Combined target, four discovery prompts32 tokens each; pressure gates enabled; sequential process per config; cold-shape single-pass diagnostics, no training/no held-out promotion",
+  "additional_source_sha256": {
+    "scripts/run_dspark_tuning.py": "8a405d1dc951835005ee08abb2f1f3c21e03974fd56d7682b97140d91e6f33a9",
+    "judges/test_dspark_tuning_cli.py": "484e864d2bf307d40138f217e0a5e6edcf18bd47ac302834cd3e3e48dca58639",
+    "judges/test_dspark_tuned_report.py": "0116d5b4fb7455619a5eddec048a0aff8ec0e9abc5d0631b5708fb9f611c7449"
+  }
+}

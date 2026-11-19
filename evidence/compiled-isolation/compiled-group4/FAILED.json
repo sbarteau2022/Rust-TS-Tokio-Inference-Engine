@@ -1,0 +1,1 @@
+{"pass":false,"bound_seconds":180,"exit_code":142,"last_phase":"start.begin","width":2,"width1_decode_reference_completed":true,"physical_footprint_sample_gb":55.0,"root_cause":"shared lazy compiled constants hypothesis; not yet resolved by this control"}

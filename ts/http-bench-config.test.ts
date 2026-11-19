@@ -18,7 +18,7 @@ test('layer grouping is explicit and refuses unsupported speculation before laun
  assert.equal(benchOptions(args(base)).layerGroup,1);
  for(const g of [1,4,10,40])assert.equal(benchOptions(args(base+` --layer-group ${g}`)).layerGroup,g);
  for(const g of ['0','3','04','41','-1','1e1'])assert.throws(()=>benchOptions(args(base+` --layer-group ${g}`)));
- assert.throws(()=>benchOptions(args('--profiles mtp --arrival closed --tokens-per-cell 2000 --layer-group 4')));
+ assert.equal(benchOptions(args('--profiles mtp --arrival closed --tokens-per-cell 2000 --layer-group 4')).layerGroup,4);
  assert.throws(()=>benchOptions(args(base+' --layer-group 4 --layer-group 10')));
 });
 
@@ -27,14 +27,27 @@ test('recurrent ablation validates mode and compatible execution profile',()=>{
  assert.equal(benchOptions(args(base)).recurrentKernel,'reference');
  assert.equal(benchOptions(args(base+' --recurrent-kernel fused --layer-group 40')).recurrentKernel,'fused');
  assert.throws(()=>benchOptions(args(base+' --recurrent-kernel auto')));
- assert.throws(()=>benchOptions(args('--profiles mtp --arrival closed --tokens-per-cell 2000 --recurrent-kernel fused')));
+ assert.equal(benchOptions(args('--profiles mtp --arrival closed --tokens-per-cell 2000 --recurrent-kernel fused')).recurrentKernel,'fused');
 });
 
-test('compiled graph and profiler flags are explicit target-only controls',()=>{
+test('compiled graphs are explicit; profiler remains target-only',()=>{
  const base='--profiles target-physical --arrival closed --tokens-per-cell 2000';
  const defaults=benchOptions(args(base));assert.equal(defaults.graphMode,'eager');assert.equal(defaults.executionTiming,'off');
  const tuned=benchOptions(args(base+' --graph-mode compiled-decode --execution-timing on --layer-group 10 --recurrent-kernel fused'));
  assert.equal(tuned.graphMode,'compiled-decode');assert.equal(tuned.executionTiming,'on');
  for(const tail of ['--graph-mode auto','--execution-timing yes','--graph-mode eager --graph-mode compiled-decode','--execution-timing on --execution-timing off','--graph-mode'])assert.throws(()=>benchOptions(args(base+' '+tail)));
- for(const tail of ['--graph-mode compiled-decode','--execution-timing on'])assert.throws(()=>benchOptions(args('--profiles mtp --arrival closed --tokens-per-cell 2000 '+tail)));
+ for(const profile of ['mtp','mtp-audited']){
+  assert.equal(benchOptions(args(`--profiles ${profile} --arrival closed --tokens-per-cell 2000 --graph-mode compiled-decode`)).graphMode,'compiled-decode');
+  assert.throws(()=>benchOptions(args(`--profiles ${profile} --arrival closed --tokens-per-cell 2000 --execution-timing on`)));
+ }
 });
+
+test('expert and GPU receipt controls fail closed before spawn',()=>{
+ const base='--profiles target --arrival closed --tokens-per-cell 1000';
+ assert.equal(benchOptions(args(base+' --sampling device')).sampling,'device');
+ assert.equal(benchOptions(args(base+' --expert-kernel sorted')).expertKernel,'sorted');
+ for(const tail of ['--sampling random','--expert-kernel auto','--sampling host --sampling device'])assert.throws(()=>benchOptions(args(base+' '+tail)));
+ assert.throws(()=>benchOptions(args('--profiles target-physical --arrival closed --tokens-per-cell 1000 --sampling device')));
+});
+
+test('draft window is explicit and bounded for matching width sweeps',()=>{const base='--profiles mtp --arrival closed --tokens-per-cell 1000';assert.equal(benchOptions(args(base)).draftWidth,4);for(const n of [1,2,4,8])assert.equal(benchOptions(args(base+' --draft-width '+n)).draftWidth,n);for(const n of ['0','3','5','6','7','9','04','-1','auto'])assert.throws(()=>benchOptions(args(base+' --draft-width '+n)));});

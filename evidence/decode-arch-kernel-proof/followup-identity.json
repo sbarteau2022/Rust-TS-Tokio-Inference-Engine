@@ -1,0 +1,23 @@
+{
+  "base_commit": "328a6bb",
+  "combined_125_gate_pass": false,
+  "production_promoted": false,
+  "source_hash_scope": "final source; not retroactively asserted as exact source of earlier timed binaries",
+  "pre_hardening_device_source": "qwen_device-before-profile-hardening.inc",
+  "binary_sha256": {
+    "/tmp/cpp-noalloc-multi": "70ca405b1b9dd97a1744eb15420f636bdaade96df65848e85d35bce06b5351cc",
+    "/tmp/cpp-noalloc-single": "d8c6c245a93c1b7309158e25e60bc8d5d2f6bf05e7b48dfda19dd94fb726a805",
+    "/tmp/cpp-phase-control": "2b955c513a0d0bcad5ea80233cbcbd5ea9f22ed3601da1dec27591c32e014509",
+    "/tmp/cpp-w8-m250": "cc0952ff5928341d40865c4bca237bb6dedf1f73c783e8d402d5e7b06811acec",
+    "/tmp/cpp-followup-control": "83b282d480914f148bf3b31f2b1d25494ff7585356f6c58160471d3ca82b86b3"
+  },
+  "source_sha256": {
+    "native/qwen_model.inc": "7a18a3b753e4360ba8b49e671ff1af108f466c7ba7c28881141bb223229cd8e9",
+    "native/qwen_device.inc": "8d7ada31ac51065311d82ce5873e6562d5e537c51121d6c71e903c6a30239f46",
+    "native/metal_reference_attention.h": "1b3a88d529d38924d1d1d61acc93daa125df872203dc671e5f4835eeb0ee68bc",
+    "judges/native_cpp_bench.cpp": "8d6f89e3dd64b22b0923511a881e7d4419fe18f36eab102303fb2e57d0161ec4",
+    "judges/native_cpp_attention_gate.cpp": "81bf218407f83857d3eeccca659a682c1f699fadb48bbbdc0c306b1926697f14",
+    "judges/native_cpp_selection_gate.cpp": "ec26e3ce517f9e77c900aca5244751ff07d9b11f5e2c25b9f2d0b02261e33990",
+    "scripts/build_cpp_kernel_proof.sh": "69f003f094a1aff5f3064ac72f9cb5ed5b4698b3d57d154ac5a4037640f648ef"
+  }
+}

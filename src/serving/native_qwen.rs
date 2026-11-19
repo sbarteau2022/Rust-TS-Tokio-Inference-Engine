@@ -36,6 +36,13 @@ pub struct ExecutionTuning {
     pub compiled_decode: bool,
     pub operator_profile: bool,
     pub fused_attention: bool,
+    pub expert_kernel: i32,
+    /// 0 = off, 1 = sampled (every Nth step, N = architecture interval), 2 = full.
+    /// Deterministic bench cadence only; full validation remains default.
+    pub validation_mode: i32,
+    /// Activation profile: ActivationPrecision as i32 (1 = FP32 reference
+    /// profile, the default; 0 = BF16 profile). FP32 behavior is unchanged.
+    pub activation_precision: i32,
 }
 impl Default for ExecutionTuning {
     fn default() -> Self {
@@ -46,6 +53,9 @@ impl Default for ExecutionTuning {
             compiled_decode: false,
             operator_profile: false,
             fused_attention: false,
+            expert_kernel: 0,
+            validation_mode: 2,
+            activation_precision: 1,
         }
     }
 }
@@ -80,6 +90,9 @@ struct Architecture {
     compiled_decode: i32,
     operator_profile: i32,
     fused_attention: i32,
+    validation_mode: i32,
+    validation_interval: i32,
+    expert_kernel: i32,
     epsilon: f32,
     theta: f32,
 }
@@ -173,18 +186,21 @@ impl Architecture {
             compiled_decode: 0,
             operator_profile: 0,
             fused_attention: 0,
+            validation_mode: 2,
+            validation_interval: 32,
+            expert_kernel: 0,
             epsilon: 1e-6,
             theta: 10000000.,
         })
     }
-    fn state_len(self, offset: usize) -> usize {
+    fn state_len(self, _offset: usize) -> usize {
         let full = (self.layers / self.interval) as usize;
         let linear = self.layers as usize - full;
         linear
             * ((self.conv - 1) as usize
                 * (2 * self.key_heads * self.key_dim + self.value_heads * self.value_dim) as usize
                 + (self.value_heads * self.value_dim * self.key_dim) as usize)
-            + full * 2 * self.kv_heads as usize * offset * self.head_dim as usize
+            + full * 2 * self.kv_heads as usize * self.context as usize * self.head_dim as usize
     }
 }
 fn next_owner() -> Result<u64> {

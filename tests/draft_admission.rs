@@ -473,3 +473,33 @@ fn mtp_seed_geometry_cannot_forge_progress_or_binding() {
         assert_eq!(l.unfinished, 1);
     }
 }
+
+#[test]
+fn baseline_snapshot_is_separate_exact_identity_scoped_and_read_only() {
+    let c = cache(1);
+    let a = c.register_proposer("a".into(), identity()).unwrap();
+    let shared = c.register_proposer("shared".into(), identity()).unwrap();
+    let mut other = identity();
+    other.quantization = "different-quant".into();
+    let b = c.register_proposer("b".into(), other).unwrap();
+    assert_eq!(c.draft_baseline(a).unwrap(), DraftBaseline::default());
+    c.record_no_draft(a, 20, 2).unwrap();
+    c.record_no_draft(a, 30, 3).unwrap();
+    assert_eq!(
+        c.draft_baseline(a).unwrap(),
+        DraftBaseline {
+            cost_ns: 50,
+            committed: 5
+        }
+    );
+    assert_eq!(
+        c.draft_baseline(a).unwrap(),
+        c.draft_baseline(shared).unwrap()
+    );
+    assert_eq!(c.draft_baseline(b).unwrap(), DraftBaseline::default());
+    assert_eq!(c.draft_ledger(a).unwrap().committed, 0);
+    let foreign = cache(1)
+        .register_proposer("foreign".into(), identity())
+        .unwrap();
+    assert!(c.draft_baseline(foreign).is_err());
+}

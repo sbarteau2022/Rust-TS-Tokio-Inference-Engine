@@ -1,0 +1,35 @@
+328a6bb28d7b17a60ad0d32fde7abf049fcd7233
+ M README.md
+ M build.rs
+ M judges/device_abi.cpp
+ M native/mlx_bridge.cpp
+ M native/mlx_bridge.h
+ M native/qwen_device.inc
+ M native/qwen_model.inc
+?? docs/CPP_BRANCH_PROOF.md
+?? docs/DSPARK_TUNING.md
+?? docs/NATIVE_DSPARK2.md
+?? evidence/decode-arch-kernel-proof/
+?? evidence/dspark-tuning/
+?? evidence/native-dspark2/
+?? handoff.md
+?? judges/cpp_followup_report.py
+?? judges/dspark_reference.py
+?? judges/dspark_tuning.cpp
+?? judges/metal_reference_attention.cpp
+?? judges/native_cpp_attention_gate.cpp
+?? judges/native_cpp_bench.cpp
+?? judges/native_cpp_selection_gate.cpp
+?? judges/native_dspark_bench.cpp
+?? judges/native_dspark_gate.cpp
+?? judges/native_dspark_report.py
+?? judges/test_cpp_followup_report.py
+?? judges/test_dspark_tuned_report.py
+?? judges/test_dspark_tuning_cli.py
+?? judges/test_native_cpp_plan.py
+?? judges/test_native_dspark_report.py
+?? native/dspark.h
+?? native/dspark_tuning.h
+?? native/metal_reference_attention.h
+?? native/qwen_dspark.inc
+?? scripts/

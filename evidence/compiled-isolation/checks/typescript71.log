@@ -1,0 +1,48 @@
+
+> apple-native-rust-server@0.1.0 typecheck
+> tsrs -p tsconfig.json
+
+
+> apple-native-rust-server@0.1.0 typecheck:ts71
+> tsc --noEmit -p tsconfig.json
+
+
+> apple-native-rust-server@0.1.0 test
+> tsx --test ts/*.test.ts
+
+✔ benchmark flags preserve order and fail before side effects (0.774083ms)
+✔ closed waves reserve exact final token budget (0.089875ms)
+✔ absolute arrivals proceed while earlier work is unfinished and retain failures (0.159667ms)
+✔ shutdown timer is bounded and canceled on normal process exit (92.488ms)
+✔ physical target benchmark labels select explicit server modes (0.173667ms)
+✔ layer grouping is explicit and refuses unsupported speculation before launch (0.118333ms)
+✔ recurrent ablation validates mode and compatible execution profile (0.049542ms)
+✔ compiled graphs are explicit; profiler remains target-only (0.089334ms)
+✔ expert and GPU receipt controls fail closed before spawn (0.071792ms)
+✔ draft window is explicit and bounded for matching width sweeps (0.097958ms)
+✔ HTTP client validates origin and bounds before network (0.509834ms)
+✔ HTTP client accepts fragmented binary finish and rejects error or truncated EOF (18.456ms)
+✔ HTTP overload remains typed and cancels its non-AMST body (0.294458ms)
+✔ HTTP timing separates TTFT, burst gaps, request envelope and per-lane decode (0.733333ms)
+✔ HTTP macro windows count globally delivered tokens, not request completion (1.058125ms)
+✔ HTTP timing rejects empty, regressed and mismatched observations (0.142ms)
+✔ offline artifacts preserve exact u64 metadata (0.063875ms)
+✔ nonfinite request envelopes and zero-duration macro bursts are explicit (0.187459ms)
+✔ Rust fixture and all chunk sizes agree, BOM and Unicode preserved (17.989042ms)
+✔ unknown controls, ordering, exact terminal and EOF refusal (4.762458ms)
+✔ malformed structural mutations fail without permitting poisoned reuse (18.607542ms)
+✔ typed errors terminate partial and empty streams (0.201166ms)
+✔ timestamp, token and aggregate text caps fail closed (14.550916ms)
+✔ MVK records exact dependency order (1.540083ms)
+✔ invalid shapes and unsafe names rejected (0.202ms)
+✔ undefined and invalid handles rejected (0.179708ms)
+✔ second kernel family records row-bias fusion (0.324ms)
+✔ CORDIC functions serialize stable version-3 operation codes (0.482833ms)
+ℹ tests 28
+ℹ suites 0
+ℹ pass 28
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 253.237709

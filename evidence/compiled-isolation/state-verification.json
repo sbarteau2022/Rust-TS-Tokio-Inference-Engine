@@ -1,0 +1,28 @@
+{
+  "shared-constants-group4": {
+    "pass": true,
+    "full_state_gate": true,
+    "widths": [
+      1,
+      2,
+      4,
+      8
+    ],
+    "total_ms": 76761.150667,
+    "max_recorded_peak_bytes": 20903648556,
+    "serving_qualified": false
+  },
+  "shared-constants-group40": {
+    "pass": true,
+    "full_state_gate": true,
+    "widths": [
+      1,
+      2,
+      4,
+      8
+    ],
+    "total_ms": 75206.000625,
+    "max_recorded_peak_bytes": 20905325200,
+    "serving_qualified": false
+  }
+}

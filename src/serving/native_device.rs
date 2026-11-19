@@ -48,6 +48,11 @@ pub struct DeviceStep {
     pub logits: Vec<f32>,
     pub trace: Vec<f32>,
 }
+/// Production decode receipt: the next state and the single GPU-sampled token id.
+pub struct DeviceSampledStep {
+    pub state: DeviceState,
+    pub token: u32,
+}
 /// Host intervals; eval wait includes dispatch and is not GPU-only time.
 #[derive(Clone, Copy, Debug, Default, serde::Serialize)]
 pub struct ExecutionMetrics {
@@ -109,6 +114,12 @@ enum Work {
         capture_hidden: bool,
         _completion: Option<CompletionGuard>,
         reply: oneshot::Sender<Result<DeviceStep>>,
+        _permit: OwnedSemaphorePermit,
+    },
+    StepSampled {
+        state: DeviceState,
+        ir: ModelStepIr,
+        reply: oneshot::Sender<Result<DeviceSampledStep>>,
         _permit: OwnedSemaphorePermit,
     },
     Snapshot(DeviceState, bool, oneshot::Sender<Result<Vec<f32>>>),
@@ -208,6 +219,9 @@ impl QwenDeviceExecutor {
                 compiled_decode: false,
                 operator_profile: false,
                 fused_attention: false,
+                expert_kernel: 0,
+                validation_mode: 2,
+                activation_precision: 1,
             },
         )
         .await
@@ -219,6 +233,10 @@ impl QwenDeviceExecutor {
         tuning: ExecutionTuning,
     ) -> Result<Self> {
         ensure!(
+            (0..=2).contains(&tuning.expert_kernel) && (0..=2).contains(&tuning.validation_mode),
+            "invalid execution tuning"
+        );
+        ensure!(
             !tuning.compiled_decode
                 || (device == Device::Gpu && std::env::var_os("MLX_DISABLE_COMPILE").is_none()),
             "compiled decode requires GPU and no MLX_DISABLE_COMPILE"
@@ -227,6 +245,14 @@ impl QwenDeviceExecutor {
             !tuning.operator_profile
                 || (device == Device::Gpu && !tuning.compiled_decode && !tuning.execution_timing),
             "operator profile requires GPU/eager and timing off"
+        );
+        ensure!(
+            matches!(tuning.activation_precision, 0 | 1),
+            "activation precision must be 0 (BF16) or 1 (FP32)"
+        );
+        ensure!(
+            !(tuning.activation_precision == 0 && tuning.compiled_decode),
+            "BF16 profile requires eager decode (compiled blocks are FP32-only)"
         );
         let ExecutionTuning {
             layer_group,
@@ -269,6 +295,9 @@ impl QwenDeviceExecutor {
         architecture.compiled_decode = i32::from(tuning.compiled_decode);
         architecture.operator_profile = i32::from(tuning.operator_profile);
         architecture.fused_attention = i32::from(tuning.fused_attention);
+        architecture.validation_mode = tuning.validation_mode;
+        architecture.expert_kernel = tuning.expert_kernel;
+        architecture.activation_precision = tuning.activation_precision;
         let identity = manifest.identity.clone();
         let program = HybridProgram::compile(40, 4)?;
         let owner = next_owner()?;
@@ -350,8 +379,19 @@ impl QwenDeviceExecutor {
                                         drop(_permit);
                                         let _ = reply.send(result); // Dropped result queues retirement.
                                     }
+                                    Work::StepSampled { state,ir,reply,_permit } => {
+                                        let usage=session.stats()?;
+                                        let required=(architecture.state_len(state.position()+ir.len())*4) as u64;
+                                        let result=if faulted {Err(anyhow::anyhow!("device admission closed"))}
+                                        else if usage.residents>=slots as u64 || required>limit.saturating_sub(usage.logical_bytes) {Err(anyhow::anyhow!("device resident budget exhausted"))}
+                                        else {let result=device_forward_sampled(&session,&manifest,architecture,owner,&worker_releases,&state,&ir);if result.is_err(){faulted=true;worker_closed.store(true,Ordering::Release);}result};
+                                        drop(_permit);let _=reply.send(result);
+                                    }
                                     Work::Reference(state,ir,reply,permit) => {
-                                        let result=forward(&weights,&manifest,architecture,device,&program,&ir,&state);
+                                        // The reference is the FP32 oracle regardless of the
+                                        // serving profile; a BF16 candidate is judged against FP32.
+                                        let mut oracle=architecture;oracle.activation_precision=1;
+                                        let result=forward(&weights,&manifest,oracle,device,&program,&ir,&state);
                                         drop(permit);let _=reply.send(result);
                                     }
                                     Work::Snapshot(state,hidden,reply) => {
@@ -437,6 +477,10 @@ impl QwenDeviceExecutor {
         parents: &[DeviceState],
         tokens: Vec<u32>,
     ) -> Result<impl Future<Output = Result<Vec<DeviceStep>>> + Send + 'static> {
+        ensure!(
+            self.architecture.activation_precision == 1,
+            "physical batching requires FP32"
+        );
         ensure!(
             !self.closed.load(Ordering::Acquire),
             "device admission closed"
@@ -600,6 +644,55 @@ impl QwenDeviceExecutor {
         if let Some(calls) = calls {
             calls.fetch_add(1, Ordering::Relaxed);
         }
+        received.await.context("device worker stopped")?
+    }
+    /// Production decode step: sampling runs on the GPU; only the token id returns to the host.
+    pub async fn step_sampled(
+        &self,
+        state: &DeviceState,
+        tokens: Vec<u32>,
+    ) -> Result<DeviceSampledStep> {
+        let ir = ModelStepIr::compile(
+            StepKind::Prefill,
+            state.position(),
+            tokens,
+            self.architecture.vocab as u32,
+        )?;
+        self.execute_sampled(state, ir).await
+    }
+    pub(crate) async fn execute_sampled(
+        &self,
+        state: &DeviceState,
+        ir: ModelStepIr,
+    ) -> Result<DeviceSampledStep> {
+        self.validate(state)?;
+        ensure!(
+            ir.position().get() == state.position()
+                && ir.vocabulary() == self.architecture.vocab as u32
+                && ir.len() <= 8
+                && state.position() + ir.len() <= 512,
+            "device IR geometry"
+        );
+        ensure!(
+            ir.diagnostic_flags() == 0,
+            "device scalar probes require snapshot reference"
+        );
+        let permit = self
+            .permit
+            .clone()
+            .try_acquire_owned()
+            .context("device in-flight limit reached")?;
+        let (reply, received) = oneshot::channel();
+        self.tx
+            .as_ref()
+            .context("device stopped")?
+            .try_send(Work::StepSampled {
+                state: state.clone(),
+                ir,
+                reply,
+                _permit: permit,
+            })
+            .map_err(|_| anyhow::anyhow!("device work queue full/closed"))?;
         received.await.context("device worker stopped")?
     }
     pub(super) async fn step_guarded(
@@ -816,6 +909,53 @@ fn device_forward(
         trace,
     })
 }
+fn device_forward_sampled(
+    session: &Session,
+    manifest: &Manifest,
+    c: Architecture,
+    owner: u64,
+    releases: &mpsc::UnboundedSender<StateId>,
+    state: &DeviceState,
+    ir: &ModelStepIr,
+) -> Result<DeviceSampledStep> {
+    manifest.verify_stamps()?;
+    let mut id = StateId::default();
+    let mut token = 0u32;
+    let mut e = [0; 1024];
+    native_status(
+        unsafe {
+            rs_qwen_device_step_sampled(
+                session.0,
+                state.token.as_ref().map_or(std::ptr::null(), |t| &t.id),
+                state.position(),
+                ir.ffi_ids().as_ptr(),
+                ir.len(),
+                &mut id,
+                &mut token,
+                e.as_mut_ptr(),
+                e.len(),
+            )
+        },
+        &e,
+    )?;
+    // Establish retirement ownership before any subsequent fallible check.
+    let next = DeviceState {
+        owner,
+        hidden_rows: 0,
+        token: Some(Arc::new(Lifetime {
+            id,
+            releases: releases.clone(),
+        })),
+    };
+    manifest.verify_stamps()?;
+    ensure!(
+        id.position == (state.position() + ir.len()) as u64
+            && id.bytes == (c.state_len(id.position as usize) * 4) as u64
+            && token < c.vocab as u32,
+        "invalid device sampled receipt"
+    );
+    Ok(DeviceSampledStep { state: next, token })
+}
 fn validate_batch(
     owner: u64,
     parents: &[DeviceState],
@@ -978,6 +1118,17 @@ unsafe extern "C" {
         logits_count: usize,
         trace: *mut f32,
         trace_count: usize,
+        error: *mut c_char,
+        cap: usize,
+    ) -> i32;
+    fn rs_qwen_device_step_sampled(
+        session: *mut c_void,
+        previous: *const StateId,
+        position: usize,
+        tokens: *const u32,
+        count: usize,
+        output: *mut StateId,
+        token: *mut u32,
         error: *mut c_char,
         cap: usize,
     ) -> i32;
@@ -1174,6 +1325,7 @@ mod tests {
                 compiled_decode: true,
                 operator_profile: false,
                 fused_attention: false,
+                expert_kernel: 0,
                 ..ExecutionTuning::default()
             },
         )

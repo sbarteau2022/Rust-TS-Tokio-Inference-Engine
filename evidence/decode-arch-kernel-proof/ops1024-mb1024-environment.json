@@ -1,0 +1,4 @@
+{
+  "MLX_MAX_OPS_PER_BUFFER": "1024",
+  "MLX_MAX_MB_PER_BUFFER": "1024"
+}

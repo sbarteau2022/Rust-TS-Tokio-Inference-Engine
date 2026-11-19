@@ -97,7 +97,10 @@ async fn main() -> Result<()> {
             compiled_decode: graph == "compiled-decode",
             operator_profile: false,
             fused_attention: false,
+            expert_kernel: 0,
             execution_timing: false,
+            validation_mode: 2,
+            activation_precision: 1,
         },
     )
     .await?;

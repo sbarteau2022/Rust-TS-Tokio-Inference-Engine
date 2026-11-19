@@ -49,11 +49,22 @@ async fn main() -> Result<()> {
         matches!(graph.as_str(), "eager" | "compiled-decode"),
         "graph mode"
     );
+    let expert = std::env::args()
+        .nth(5)
+        .unwrap_or_else(|| "reference".into());
+    let expert_kernel = match expert.as_str() {
+        "reference" => 0,
+        "sorted" => 1,
+        "fused" => 2,
+        _ => anyhow::bail!("expert kernel"),
+    };
     let executor = Arc::new(
         QwenDeviceExecutor::open_configured(
             Device::Gpu,
             32,
-            2 * 1024 * 1024 * 1024,
+            // Fixed-shape (context-cap) states are larger than the old
+            // position-sized accounting; the resident budget is sized for them.
+            4 * 1024 * 1024 * 1024,
             ExecutionTuning {
                 layer_group: group,
                 fused_recurrent: mode == "fused",
@@ -61,6 +72,9 @@ async fn main() -> Result<()> {
                 compiled_decode: graph == "compiled-decode",
                 operator_profile: false,
                 fused_attention: false,
+                expert_kernel,
+                validation_mode: 2,
+                activation_precision: 1,
             },
         )
         .await?,
@@ -232,7 +246,7 @@ async fn main() -> Result<()> {
         .map_err(|_| anyhow::anyhow!("executor owner"))?
         .shutdown()
         .await?;
-    let report = serde_json::json!({"pass":passed,"layer_group":group,"recurrent_kernel":mode,"graph_mode":graph,"scope":"native equal-position batch graph, controlled branches then greedy; no HTTP/throughput claim","identity":manifest.identity,"observations":observations,"native_residents":native.residents,"native_bytes":native.logical_bytes,"mlx_active_bytes":live.mlx_active_bytes,"mlx_peak_bytes":live.mlx_peak_bytes});
+    let report = serde_json::json!({"expert_kernel":expert,"pass":passed,"layer_group":group,"recurrent_kernel":mode,"graph_mode":graph,"scope":"native equal-position batch graph, controlled branches then greedy; no HTTP/throughput claim","identity":manifest.identity,"observations":observations,"native_residents":native.residents,"native_bytes":native.logical_bytes,"mlx_active_bytes":live.mlx_active_bytes,"mlx_peak_bytes":live.mlx_peak_bytes});
     std::fs::write(
         format!("{out}/summary.json"),
         serde_json::to_vec_pretty(&report)?,

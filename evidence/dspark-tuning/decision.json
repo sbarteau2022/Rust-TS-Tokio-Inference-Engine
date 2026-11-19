@@ -1,0 +1,33 @@
+{
+  "configurations": 9,
+  "frozen_tokens_checked": 1152,
+  "acceptance_floor": "166/172 learned accepted/admitted",
+  "floor_passing": [
+    "w4-c90",
+    "w4-c95",
+    "w8-c90",
+    "w8-c95"
+  ],
+  "fastest_floor_passing": {
+    "decode_tok_s": 37.477682658505024,
+    "accepted": 59,
+    "admitted": 59,
+    "generated": 194,
+    "coverage": 0.30412371134020616,
+    "acceptance_floor_pass": true,
+    "combined_125_gate_pass": false,
+    "production_promoted": false,
+    "name": "w4-c90",
+    "tuning": {
+      "width": 4,
+      "confidence": 0.8999999761581421,
+      "adaptive": false
+    },
+    "proposal_seconds": 0.43100237399999997
+  },
+  "matched_warmed_mtp_comparison_complete": false,
+  "held_out_qualification": false,
+  "training_performed": false,
+  "combined_125_gate_pass": false,
+  "production_promoted": false
+}

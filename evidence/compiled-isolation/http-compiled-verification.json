@@ -1,0 +1,33 @@
+{
+  "baseline_coverage_checked": true,
+  "closed_tokens": 4000,
+  "archive_requests": 73,
+  "learned_acceptance": 0.9649364042626332,
+  "committed_per_target_call": 3.0609397944199705,
+  "drain": {
+    "http": {
+      "active_connections": 0,
+      "active_producers": 0,
+      "accepted_connections": 81,
+      "rejected_requests": 8,
+      "queued_finishes": 73,
+      "deadlines": 0,
+      "disconnected": 0,
+      "stopped": 0,
+      "producer_errors": 0,
+      "connection_errors": 0
+    },
+    "scheduler": {
+      "admitted": 73,
+      "completed": 73,
+      "failed": 0,
+      "cancelled": 0,
+      "iterations": 3156,
+      "memory_used": 0,
+      "memory_peak": 939524096,
+      "admission_closed": false
+    },
+    "native_bytes": 0,
+    "audit_epochs": 0
+  }
+}

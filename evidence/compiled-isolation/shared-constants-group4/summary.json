@@ -1,0 +1,111 @@
+{
+  "cases": [
+    {
+      "draft_calls": 4,
+      "learned_accepted": 0,
+      "learned_proposed": 0,
+      "replayed_target_tokens": 0,
+      "reused_target_tokens": 4,
+      "target_calls": 4,
+      "target_forward_tokens": 4,
+      "text": "4, 5",
+      "tokens": [
+        19,
+        11,
+        220,
+        20
+      ],
+      "width": 1
+    },
+    {
+      "draft_calls": 4,
+      "learned_accepted": 4,
+      "learned_proposed": 4,
+      "replayed_target_tokens": 0,
+      "reused_target_tokens": 8,
+      "target_calls": 4,
+      "target_forward_tokens": 8,
+      "text": "4, 5, 6,",
+      "tokens": [
+        19,
+        11,
+        220,
+        20,
+        11,
+        220,
+        21,
+        11
+      ],
+      "width": 2
+    },
+    {
+      "draft_calls": 12,
+      "learned_accepted": 12,
+      "learned_proposed": 12,
+      "replayed_target_tokens": 0,
+      "reused_target_tokens": 16,
+      "target_calls": 4,
+      "target_forward_tokens": 16,
+      "text": "4, 5, 6, 7, 8, 9",
+      "tokens": [
+        19,
+        11,
+        220,
+        20,
+        11,
+        220,
+        21,
+        11,
+        220,
+        22,
+        11,
+        220,
+        23,
+        11,
+        220,
+        24
+      ],
+      "width": 4
+    },
+    {
+      "draft_calls": 19,
+      "learned_accepted": 16,
+      "learned_proposed": 16,
+      "replayed_target_tokens": 0,
+      "reused_target_tokens": 20,
+      "target_calls": 4,
+      "target_forward_tokens": 20,
+      "text": "4, 5, 6, 7, 8, 9, 10",
+      "tokens": [
+        19,
+        11,
+        220,
+        20,
+        11,
+        220,
+        21,
+        11,
+        220,
+        22,
+        11,
+        220,
+        23,
+        11,
+        220,
+        24,
+        11,
+        220,
+        16,
+        15
+      ],
+      "width": 8
+    }
+  ],
+  "graph_mode": "compiled-decode",
+  "layer_group": 4,
+  "pass": true,
+  "profile": "accepted-target-window-reuse",
+  "same_parent_replay_reference": false,
+  "serving_qualified": false,
+  "throughput_claim": false
+}

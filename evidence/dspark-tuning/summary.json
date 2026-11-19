@@ -1,0 +1,155 @@
+[
+  {
+    "decode_tok_s": 31.959199735086997,
+    "accepted": 38,
+    "admitted": 64,
+    "generated": 64,
+    "coverage": 1.0,
+    "acceptance_floor_pass": false,
+    "combined_125_gate_pass": false,
+    "production_promoted": false,
+    "name": "w2-none",
+    "tuning": {
+      "width": 2,
+      "confidence": -1,
+      "adaptive": false
+    },
+    "proposal_seconds": 0.317481833
+  },
+  {
+    "decode_tok_s": 54.63394173402028,
+    "accepted": 80,
+    "admitted": 103,
+    "generated": 103,
+    "coverage": 1.0,
+    "acceptance_floor_pass": false,
+    "combined_125_gate_pass": false,
+    "production_promoted": false,
+    "name": "w4-none",
+    "tuning": {
+      "width": 4,
+      "confidence": -1,
+      "adaptive": false
+    },
+    "proposal_seconds": 0.2285558330000001
+  },
+  {
+    "decode_tok_s": 51.29862933020116,
+    "accepted": 88,
+    "admitted": 164,
+    "generated": 164,
+    "coverage": 1.0,
+    "acceptance_floor_pass": false,
+    "combined_125_gate_pass": false,
+    "production_promoted": false,
+    "name": "w8-none",
+    "tuning": {
+      "width": 8,
+      "confidence": -1,
+      "adaptive": false
+    },
+    "proposal_seconds": 0.254886918
+  },
+  {
+    "decode_tok_s": 37.477682658505024,
+    "accepted": 59,
+    "admitted": 59,
+    "generated": 194,
+    "coverage": 0.30412371134020616,
+    "acceptance_floor_pass": true,
+    "combined_125_gate_pass": false,
+    "production_promoted": false,
+    "name": "w4-c90",
+    "tuning": {
+      "width": 4,
+      "confidence": 0.8999999761581421,
+      "adaptive": false
+    },
+    "proposal_seconds": 0.43100237399999997
+  },
+  {
+    "decode_tok_s": 36.23727985130576,
+    "accepted": 57,
+    "admitted": 58,
+    "generated": 199,
+    "coverage": 0.2914572864321608,
+    "acceptance_floor_pass": true,
+    "combined_125_gate_pass": false,
+    "production_promoted": false,
+    "name": "w4-c95",
+    "tuning": {
+      "width": 4,
+      "confidence": 0.949999988079071,
+      "adaptive": false
+    },
+    "proposal_seconds": 0.459089878
+  },
+  {
+    "decode_tok_s": 36.613758867851686,
+    "accepted": 64,
+    "admitted": 64,
+    "generated": 410,
+    "coverage": 0.15609756097560976,
+    "acceptance_floor_pass": true,
+    "combined_125_gate_pass": false,
+    "production_promoted": false,
+    "name": "w8-c90",
+    "tuning": {
+      "width": 8,
+      "confidence": 0.8999999761581421,
+      "adaptive": false
+    },
+    "proposal_seconds": 0.6369399609999998
+  },
+  {
+    "decode_tok_s": 32.76685256249292,
+    "accepted": 59,
+    "admitted": 59,
+    "generated": 440,
+    "coverage": 0.1340909090909091,
+    "acceptance_floor_pass": true,
+    "combined_125_gate_pass": false,
+    "production_promoted": false,
+    "name": "w8-c95",
+    "tuning": {
+      "width": 8,
+      "confidence": 0.949999988079071,
+      "adaptive": false
+    },
+    "proposal_seconds": 0.7157310060000002
+  },
+  {
+    "decode_tok_s": 39.53024480648247,
+    "accepted": 67,
+    "admitted": 72,
+    "generated": 180,
+    "coverage": 0.4,
+    "acceptance_floor_pass": false,
+    "combined_125_gate_pass": false,
+    "production_promoted": false,
+    "name": "adaptive8-c90",
+    "tuning": {
+      "width": 8,
+      "confidence": 0.8999999761581421,
+      "adaptive": true
+    },
+    "proposal_seconds": 0.4224361640000001
+  },
+  {
+    "decode_tok_s": 37.50341248091593,
+    "accepted": 61,
+    "admitted": 68,
+    "generated": 185,
+    "coverage": 0.3675675675675676,
+    "acceptance_floor_pass": false,
+    "combined_125_gate_pass": false,
+    "production_promoted": false,
+    "name": "adaptive8-c95",
+    "tuning": {
+      "width": 8,
+      "confidence": 0.949999988079071,
+      "adaptive": true
+    },
+    "proposal_seconds": 0.424691875
+  }
+]

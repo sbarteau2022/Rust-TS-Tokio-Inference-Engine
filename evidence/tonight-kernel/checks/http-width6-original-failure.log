@@ -1,0 +1,9 @@
+/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/ts/http-bench.ts:44
+  if(!closed)child.kill('SIGTERM');if(!await waitForExit(exited,60000)){child.kill('SIGKILL');await exited;throw Error('owned HTTP process failed drain');}if(code!==0||!log.includes('native_bytes=0')||!log.includes('memory_used: 0'))throw Error('server drain failure');
+                                                                                                                 ^
+
+Error: owned HTTP process failed drain
+    at <anonymous> (/Users/stewartbarteau/Desktop/GitHub/Rust-TS-Tokio-Inference-Engine/ts/http-bench.ts:44:114)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+Node.js v26.9.0
